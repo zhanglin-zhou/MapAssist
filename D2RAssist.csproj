@@ -98,19 +98,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="frmOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="frmOverlay.Designer.cs">
+      <DependentUpon>frmOverlay.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapData.cs" />
-    <Compile Include="MapSeedReader.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\ImageManipulation.cs" />
+    <Compile Include="Helpers\MapApi.cs" />
+    <Compile Include="Helpers\MapRenderer.cs" />
+    <Compile Include="Helpers\WindowsExternal.cs" />
+    <Compile Include="Types\Game.cs" />
+    <Compile Include="Types\GameData.cs" />
+    <Compile Include="Types\Globals.cs" />
+    <Compile Include="Types\MapData.cs" />
+    <Compile Include="Helpers\GameMemory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SessionData.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Types\Offsets.cs" />
+    <Compile Include="Types\MapApiSession.cs" />
+    <Compile Include="Types\Settings.cs" />
+    <EmbeddedResource Include="frmOverlay.resx">
+      <DependentUpon>frmOverlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

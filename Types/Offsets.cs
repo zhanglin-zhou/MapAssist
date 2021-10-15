@@ -1,6 +1,6 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
- *   
+ *
  *   https://github.com/misterokaygo/D2RAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -19,22 +19,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace D2RAssist
+namespace D2RAssist.Types
 {
-    static class Program
+    public static class Offsets
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmOverlay());
-        }
+        public static int PlayerUnit = 0x205FE40;
     }
 }
