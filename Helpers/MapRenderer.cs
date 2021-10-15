@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static D2RAssist.MapData;
+using System.Text.RegularExpressions;
 
 namespace D2RAssist.Helpers
 {
@@ -33,7 +34,7 @@ namespace D2RAssist.Helpers
     {
         public static Point LineEnd = new Point(0, 0);
         public static Bitmap CachedBackground;
-        
+
         public static class Icons
         {
             public static readonly Bitmap DoorNext = CreateFilledRectangle(Settings.Map.Colors.DoorNext, 10, 10);
@@ -74,11 +75,12 @@ namespace D2RAssist.Helpers
             LineEnd = new Point(0, 0);
         }
 
-        public static Bitmap FromMapData(MapData mapData) {
+        public static Bitmap FromMapData(MapData mapData)
+        {
 
             Graphics CachedBackgroundGraphics;
             Bitmap updatedMap;
- 
+
             if (CachedBackground == null)
             {
                 var uncroppedBackground = new Bitmap(mapData.mapRows[0].Length, mapData.mapRows.Length, PixelFormat.Format32bppArgb);
@@ -165,10 +167,13 @@ namespace D2RAssist.Helpers
                 multiplier = 1;
             }
 
-            Point playerPoint = new Point((int)((Globals.CurrentGameData.PlayerX - mapData.levelOrigin.x) * multiplier), (int)((Globals.CurrentGameData.PlayerY - mapData.levelOrigin.y) * multiplier));
-
+            int miniMapPlayerX = (int)((Globals.CurrentGameData.PlayerX - mapData.levelOrigin.x) * multiplier);
+            int miniMapPlayerY = (int)((Globals.CurrentGameData.PlayerY - mapData.levelOrigin.y) * multiplier);
+            Point playerPoint = new Point(miniMapPlayerX, miniMapPlayerY);
             updatedMap = ImageManipulation.ResizeImage((Bitmap)CachedBackground.Clone(), (int)(CachedBackground.Width * multiplier), (int)(CachedBackground.Height * multiplier));
             CachedBackgroundGraphics = Graphics.FromImage(updatedMap);
+            drawArrows(miniMapPlayerX, miniMapPlayerY, CachedBackgroundGraphics, multiplier, mapData);
+
 
             int counter = 0;
             int originX = mapData.levelOrigin.x;
@@ -221,11 +226,6 @@ namespace D2RAssist.Helpers
                 }
             }
 
-            if (LineEnd.X != 0 && LineEnd.Y != 0)
-            {
-                CachedBackgroundGraphics.DrawLine(new Pen(Color.Red), playerPoint, LineEnd);
-            }
-
             CachedBackgroundGraphics.DrawImage(Icons.Player, playerPoint);
 
             if (Settings.Map.Rotate)
@@ -239,6 +239,97 @@ namespace D2RAssist.Helpers
         private static int MultiplyIntByDouble(int _int, double _double)
         {
             return (int)(_int * _double);
+        }
+
+        private static void drawArrows(int miniMapPlayerX, int miniMapPlayerY, Graphics minimap, double multiplier, MapData mapData)
+        {
+            //exits, blue arrows
+            foreach (KeyValuePair<string, AdjacentLevel> i in mapData.adjacentLevels)
+            {
+                if (mapData.adjacentLevels[i.Key].exits.Length == 0)
+                {
+                    continue;
+                }
+                int originX = mapData.levelOrigin.x;
+                int originY = mapData.levelOrigin.y;
+                int xnew = mapData.adjacentLevels[i.Key].exits[0].x;
+                int ynew = mapData.adjacentLevels[i.Key].exits[0].y;
+                int xcoord = (int)((xnew - originX) * multiplier);
+                int ycoord = (int)((ynew - originY) * multiplier);
+
+                //draw arrow
+                AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
+                Pen p = new Pen(Color.Blue, 5);
+                p.CustomEndCap = bigArrow;
+                minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, xcoord, ycoord);
+                //draw label
+                drawLabelAt("Area", i.Key, xcoord, ycoord, minimap);
+            }
+            //wp, draw first one found
+            bool wpFound = false;
+            foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
+            {
+                //wp green arrows
+                if (!wpFound && (string)mapObject.Key == "182" || (string)mapObject.Key == "298" || (string)mapObject.Key == "119" || (string)mapObject.Key == "145" || (string)mapObject.Key == "156" || (string)mapObject.Key == "157" || (string)mapObject.Key == "238" || (string)mapObject.Key == "237" || (string)mapObject.Key == "288" || (string)mapObject.Key == "323" || (string)mapObject.Key == "324" || (string)mapObject.Key == "398" || (string)mapObject.Key == "402" || (string)mapObject.Key == "429" || (string)mapObject.Key == "494" || (string)mapObject.Key == "496" || (string)mapObject.Key == "511" || (string)mapObject.Key == "539" || (string)mapObject.Key == "59" || (string)mapObject.Key == "60" || (string)mapObject.Key == "100")
+                {
+                    int originX = mapData.levelOrigin.x;
+                    int originY = mapData.levelOrigin.y;
+                    int pointX = (int)((mapData.objects[mapObject.Key][0].x - originX) * multiplier);
+                    int pointY = (int)((mapData.objects[mapObject.Key][0].y - originY) * multiplier);
+                    //draw arrow
+                    AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
+                    Pen p = new Pen(Color.Green, 5);
+                    p.CustomEndCap = bigArrow;
+
+                    minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
+                    //draw label
+                    drawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
+                    wpFound = true;
+                }
+                //summoner 357, stoney 61, forge 376
+                if ((string)mapObject.Key == "357" || (string)mapObject.Key == "61" || (string)mapObject.Key == "376")
+                {
+                    int originX = mapData.levelOrigin.x;
+                    int originY = mapData.levelOrigin.y;
+                    int pointX = (int)((mapData.objects[mapObject.Key][0].x - originX) * multiplier);
+                    int pointY = (int)((mapData.objects[mapObject.Key][0].y - originY) * multiplier);
+                    //draw arrow
+                    AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
+                    Pen p = new Pen(Color.White, 5);
+                    p.CustomEndCap = bigArrow;
+                    minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
+                    //draw label
+                    drawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
+                }
+            }
+        }
+        private static void drawLabelAt(string objectType, string objectKey, int posx, int posy, Graphics minimap)
+        {
+            minimap.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+            // Create font and brush.
+            Font drawFont = new Font("BD Megalona", 10);
+            SolidBrush drawBrush = new SolidBrush(Color.Yellow);
+            // Set format of string.
+            StringFormat drawFormat = new StringFormat();
+            drawFormat.FormatFlags = StringFormatFlags.NoClip;
+            //draw label line
+            int adjustment = 20;
+            Pen p = new Pen(Color.Yellow, 1);
+            minimap.DrawLine(p, posx + adjustment, posy - (adjustment), posx, posy);
+            //label box
+            RectangleF rectF1 = new RectangleF(posx + adjustment, posy - (2 * adjustment), 100, 100);
+            if (objectType == "Area")
+            {
+                string objName = Enum.GetName(typeof(Area), Int32.Parse(objectKey));
+                objName = Regex.Replace(objName, "(\\B[A-Z])", " $1");
+                minimap.DrawString(objName, drawFont, drawBrush, rectF1, drawFormat);
+            }
+            if (objectType == "GameObject")
+            {
+                string objName = Enum.GetName(typeof(GameObject), Int32.Parse(objectKey));
+                if (objName.Contains("Waypoint")) objName = "Waypoint";
+                minimap.DrawString(objName, drawFont, drawBrush, rectF1, drawFormat);
+            }
         }
     }
 }
