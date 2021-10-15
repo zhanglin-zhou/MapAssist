@@ -60,12 +60,12 @@ namespace D2RAssist.Helpers
 
         private static Bitmap CreateFilledEllipse(Color color, int width, int height)
         {
-            Bitmap rectangle = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            Graphics graphics = Graphics.FromImage(rectangle);
+            Bitmap ellipse = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            Graphics graphics = Graphics.FromImage(ellipse);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             graphics.FillEllipse(new SolidBrush(color), 0, 0, width, height);
             graphics.Dispose();
-            return rectangle;
+            return ellipse;
         }
 
         public static void Clear()
