@@ -112,13 +112,20 @@ namespace D2RAssist.Helpers
                 WindowsExternal.ReadProcessMemory(processHandle, posYAddress, addressBuffer, addressBuffer.Length, out bytesRead);
                 UInt16 playerY = BitConverter.ToUInt16(addressBuffer, 0);
 
+                IntPtr uiSettingsPath = IntPtr.Add(processAddress, 0x2054322);
+                WindowsExternal.ReadProcessMemory(processHandle, uiSettingsPath, byteBuffer, byteBuffer.Length,
+                    out bytesRead);
+                Boolean mapShown = BitConverter.ToBoolean(byteBuffer, 0);
+
                 return new GameData()
                 {
                     MapSeed = mapSeed,
                     PlayerX = playerX,
                     PlayerY = playerY,
                     AreaId = (Area)dwLevelId,
-                    Difficulty = aGameDifficulty
+                    Difficulty = aGameDifficulty,
+                    MapShown = mapShown,
+                    GameWindowActive = WindowsExternal.GetActiveWindowTitle() == "Diablo II: Resurrected",
                 };
             }
             catch(Exception e)
