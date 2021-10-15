@@ -47,7 +47,7 @@ namespace D2RAssist.Helpers
         public static class MapPointsOfInterest
         {
             public static readonly string[] Chests = { "5", "6", "87", "104", "105", "106", "107", "143", "140", "141", "144", "146", "147", "148", "176", "177", "181", "183", "198", "240", "241", "242", "243", "329", "330", "331", "332", "333", "334", "335", "336", "354", "355", "356", "371", "387", "389", "390", "391", "397", "405", "406", "407", "413", "420", "424", "425", "430", "431", "432", "433", "454", "455", "501", "502", "504", "505", "580", "581", };
-            public static readonly string[] Quests = { "357", "61", "376" };
+            public static readonly string[] Quests = { "61", "152", "266","357", "356", "354", "355", "376" };
             public static readonly string[] Waypoints = { "182", "298", "119", "145", "156", "157", "238", "237", "288", "323", "324", "398", "402", "429", "494", "496", "511", "539", "59", "60", "100" };
         }
             
@@ -162,6 +162,11 @@ namespace D2RAssist.Helpers
 
             double biggestDimension = CachedBackground.Width > CachedBackground.Height ? CachedBackground.Width : CachedBackground.Height;
 
+            if (biggestDimension == 0)
+            {
+                biggestDimension = 1;
+            }
+
             double multiplier = Settings.Map.Size / biggestDimension;
 
             if (multiplier == 0)
@@ -186,11 +191,11 @@ namespace D2RAssist.Helpers
                 {
                     continue;
                 }
-                int xnew = mapData.adjacentLevels[i.Key].exits[0].x;
-                int ynew = mapData.adjacentLevels[i.Key].exits[0].y;
-                int xcoord = (int)(multiplier * (xnew - originX));
-                int ycoord = (int)(multiplier * (ynew - originY));
-                var nextLevelPoint = LineEnd = new Point(xcoord, ycoord);
+                int x = mapData.adjacentLevels[i.Key].exits[0].x;
+                int y = mapData.adjacentLevels[i.Key].exits[0].y;
+                int coordX = (int)(multiplier * (x - originX));
+                int coordY = (int)(multiplier * (y - originY));
+                var nextLevelPoint = LineEnd = new Point(coordX, coordY);
                 if (counter == 0)
                 {
                     CachedBackgroundGraphics.DrawImage(Icons.DoorPrevious, nextLevelPoint);
@@ -204,24 +209,25 @@ namespace D2RAssist.Helpers
 
             foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
             {
-                int xCoord = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].x - originX, multiplier);
-                int yCoord = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].y - originY, multiplier);
-                Point mapObjectPoint = new Point(xCoord, yCoord);
-                if ((string)mapObject.Key == "182" || (string)mapObject.Key == "298" || (string)mapObject.Key == "119" || (string)mapObject.Key == "145" || (string)mapObject.Key == "156" || (string)mapObject.Key == "157" || (string)mapObject.Key == "238" || (string)mapObject.Key == "237" || (string)mapObject.Key == "288" || (string)mapObject.Key == "323" || (string)mapObject.Key == "324" || (string)mapObject.Key == "398" || (string)mapObject.Key == "402" || (string)mapObject.Key == "429" || (string)mapObject.Key == "494" || (string)mapObject.Key == "496" || (string)mapObject.Key == "511" || (string)mapObject.Key == "539" || (string)mapObject.Key == "59" || (string)mapObject.Key == "60" || (string)mapObject.Key == "100")
+                int coordX = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].x - originX, multiplier);
+                int coordY = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].y - originY, multiplier);
+                Point mapObjectPoint = new Point(coordX, coordY);
+                string mapObjectKey = (string)mapObject.Key;
+                if (MapPointsOfInterest.Waypoints.Contains(mapObject.Key))
                 {
                     CachedBackgroundGraphics.DrawImage(Icons.Waypoint, mapObjectPoint);
                 }
-                else if ((string)mapObject.Key == "152" || (string)mapObject.Key == "357" || (string)mapObject.Key == "356" || (string)mapObject.Key == "354" || (string)mapObject.Key == "355" || (string)mapObject.Key == "266")
+                else if (MapPointsOfInterest.Waypoints.Contains(mapObject.Key))
                 {
                     CachedBackgroundGraphics.DrawImage(Icons.DoorNext, mapObjectPoint);
                 }
-                else if (MapPointsOfInterest.Chests.Contains((string)mapObject.Key))
+                else if (MapPointsOfInterest.Chests.Contains(mapObjectKey))
                 {
                     foreach (XY coordinates in mapData.objects[mapObject.Key])
                     {
-                        xCoord = MultiplyIntByDouble(coordinates.x - originX, multiplier);
-                        yCoord = MultiplyIntByDouble(coordinates.y - originY, multiplier);
-                        mapObjectPoint = new Point(xCoord, yCoord);
+                        coordX = MultiplyIntByDouble(coordinates.x - originX, multiplier);
+                        coordY = MultiplyIntByDouble(coordinates.y - originY, multiplier);
+                        mapObjectPoint = new Point(coordX, coordY);
                         CachedBackgroundGraphics.DrawImage(Icons.SuperChest, mapObjectPoint);
                     }
                 }
@@ -244,7 +250,7 @@ namespace D2RAssist.Helpers
 
         private static void DrawArrows(int miniMapPlayerX, int miniMapPlayerY, Graphics minimap, double multiplier, MapData mapData)
         {
-            //exits
+            // Exits
             foreach (KeyValuePair<string, AdjacentLevel> i in mapData.adjacentLevels)
             {
                 if (mapData.adjacentLevels[i.Key].exits.Length == 0)
@@ -253,55 +259,56 @@ namespace D2RAssist.Helpers
                 }
                 int originX = mapData.levelOrigin.x;
                 int originY = mapData.levelOrigin.y;
-                int xnew = mapData.adjacentLevels[i.Key].exits[0].x;
-                int ynew = mapData.adjacentLevels[i.Key].exits[0].y;
-                int xcoord = (int)((xnew - originX) * multiplier);
-                int ycoord = (int)((ynew - originY) * multiplier);
+                int x = mapData.adjacentLevels[i.Key].exits[0].x;
+                int y = mapData.adjacentLevels[i.Key].exits[0].y;
+                int coordX = (int)((x - originX) * multiplier);
+                int coordY = (int)((y - originY) * multiplier);
 
-                //draw arrow
+                // Draw arrow
                 AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                Pen p = new Pen(Settings.Map.Colors.ArrowExit, 5);
-                p.CustomEndCap = bigArrow;
-                minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, xcoord, ycoord);
-                //draw label
-                DrawLabelAt("Area", i.Key, xcoord, ycoord, minimap);
+                Pen pen = new Pen(Settings.Map.Colors.ArrowExit, 5);
+                pen.CustomEndCap = bigArrow;
+                minimap.DrawLine(pen, miniMapPlayerX, miniMapPlayerY, coordX, coordY);
+                // Draw label
+                DrawLabelAt("Area", i.Key, coordX, coordY, minimap);
             }
             
-            bool wpFound = false;
+            bool waypointFound = false;
             foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
             {
-                if (!wpFound && MapPointsOfInterest.Waypoints.Contains((string)mapObject.Key))
+                if (!waypointFound && MapPointsOfInterest.Waypoints.Contains(mapObject.Key))
                 {
                     int originX = mapData.levelOrigin.x;
                     int originY = mapData.levelOrigin.y;
                     int pointX = (int)((mapData.objects[mapObject.Key][0].x - originX) * multiplier);
                     int pointY = (int)((mapData.objects[mapObject.Key][0].y - originY) * multiplier);
-                    //draw arrow
+                    // Draw arrow
                     AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                    Pen p = new Pen(Settings.Map.Colors.ArrowWaypoint, 5);
-                    p.CustomEndCap = bigArrow;
-
-                    minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
-                    //draw label
+                    Pen pen = new Pen(Settings.Map.Colors.ArrowWaypoint, 5);
+                    pen.CustomEndCap = bigArrow;
+                    minimap.DrawLine(pen, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
+                    // Draw label
                     DrawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
-                    wpFound = true;
+                    waypointFound = true;
                 }
-                if (MapPointsOfInterest.Quests.Contains((string)mapObject.Key))
+
+                if (MapPointsOfInterest.Quests.Contains(mapObject.Key))
                 {
                     int originX = mapData.levelOrigin.x;
                     int originY = mapData.levelOrigin.y;
                     int pointX = (int)((mapData.objects[mapObject.Key][0].x - originX) * multiplier);
                     int pointY = (int)((mapData.objects[mapObject.Key][0].y - originY) * multiplier);
-                    //draw arrow
+                    // Draw arrow
                     AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                    Pen p = new Pen(Settings.Map.Colors.ArrowQuest, 5);
-                    p.CustomEndCap = bigArrow;
-                    minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
-                    //draw label
+                    Pen pen = new Pen(Settings.Map.Colors.ArrowQuest, 5);
+                    pen.CustomEndCap = bigArrow;
+                    minimap.DrawLine(pen, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
+                    // Draw label
                     DrawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
                 }
             }
         }
+
         private static void DrawLabelAt(string objectType, string objectKey, int posx, int posy, Graphics minimap)
         {
             minimap.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
@@ -311,23 +318,23 @@ namespace D2RAssist.Helpers
             // Set format of string.
             StringFormat drawFormat = new StringFormat();
             drawFormat.FormatFlags = StringFormatFlags.NoClip;
-            //draw label line
+            // Draw label line
             int adjustment = 20;
             Pen p = new Pen(Settings.Map.Colors.LabelColor, 1);
             minimap.DrawLine(p, posx + adjustment, posy - (adjustment), posx, posy);
-            //label box
-            RectangleF rectF1 = new RectangleF(posx + adjustment, posy - (2 * adjustment), 100, 100);
+            // Label box
+            RectangleF rectangleF = new RectangleF(posx + adjustment, posy - (2 * adjustment), 100, 100);
             if (objectType == "Area")
             {
                 string objName = Enum.GetName(typeof(Game.Area), Int32.Parse(objectKey));
                 objName = Game.AreaName[Int32.Parse(objectKey)];
-                minimap.DrawString(objName, drawFont, drawBrush, rectF1, drawFormat);
+                minimap.DrawString(objName, drawFont, drawBrush, rectangleF, drawFormat);
             }
             if (objectType == "GameObject")
             {
                 string objName = Enum.GetName(typeof(Game.GameObject), Int32.Parse(objectKey));
                 if (objName.Contains("Waypoint")) objName = "Waypoint";
-                minimap.DrawString(objName, drawFont, drawBrush, rectF1, drawFormat);
+                minimap.DrawString(objName, drawFont, drawBrush, rectangleF, drawFormat);
             }
         }
     }
