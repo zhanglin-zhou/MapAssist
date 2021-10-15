@@ -75,6 +75,7 @@ namespace D2RAssist
 
         private async void MapUpdateTimer_Tick(object sender, EventArgs e)
         {
+            GameData previousGameData = Globals.LastGameData;
             Timer timer = sender as Timer;
             timer.Stop();
 
@@ -87,18 +88,20 @@ namespace D2RAssist
                     await MapApi.CreateNewSession();            
                 }
 
+                Globals.LastGameData = Globals.CurrentGameData;
+
                 if (ShouldHideMap())
                 {
                     mapOverlay.Hide();
                     timer.Start();
-                    return;
                 }
-                else if ((Globals.CurrentGameData.MapSeed != 0 && Globals.MapData == null) || (Globals.CurrentGameData.AreaId != Globals.LastGameData?.AreaId && Globals.CurrentGameData.AreaId != 0 || Globals.CurrentGameData.Difficulty != Globals.LastGameData?.Difficulty))
+                else if ((Globals.CurrentGameData.MapSeed != 0 && Globals.MapData == null) ||
+                    (Globals.CurrentGameData.AreaId != previousGameData?.AreaId &&
+                    Globals.CurrentGameData.AreaId != 0 ||
+                    Globals.CurrentGameData.Difficulty != previousGameData?.Difficulty))
                 {
                     Globals.MapData = await MapApi.GetMapData(Globals.CurrentGameData.AreaId);
                 }
-
-                Globals.LastGameData = Globals.CurrentGameData;
 
                 mapOverlay.Show();
                 mapOverlay.Refresh();
