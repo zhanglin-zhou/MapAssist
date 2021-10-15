@@ -18,6 +18,7 @@
  **/
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -43,18 +44,18 @@ namespace D2RAssist.Types
                 public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
             }
 
-            public static readonly double Opacity = 0.70;
+            public static readonly double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"], System.Globalization.CultureInfo.InvariantCulture);
             public static bool AlwaysOnTop = true;
             public static bool HideInTown = true;
             public static int Size = 450;
             public static MapPosition Position = MapPosition.TopRight;
-            public static int UpdateTime = 750;
+            public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
             public static bool Rotate = true;
         }
 
         public static class Api
         {
-            public static string Endpoint = "http://localhost:8080/";
+            public static string Endpoint = ConfigurationManager.AppSettings["ApiEndpoint"];
         }
     }
 }
