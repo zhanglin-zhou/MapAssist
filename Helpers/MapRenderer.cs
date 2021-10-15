@@ -211,7 +211,13 @@ namespace D2RAssist.Helpers
                 }
                 else if (MapPointsOfInterest.Chests.Contains((string)mapObject.Key))
                 {
-                    CachedBackgroundGraphics.DrawImage(Icons.SuperChest, mapObjectPoint);
+                    foreach (XY coordinates in mapData.objects[mapObject.Key])
+                    {
+                        xCoord = MultiplyIntByDouble(coordinates.x - originX, multiplier);
+                        yCoord = MultiplyIntByDouble(coordinates.y - originY, multiplier);
+                        mapObjectPoint = new Point(xCoord, yCoord);
+                        CachedBackgroundGraphics.DrawImage(Icons.SuperChest, mapObjectPoint);
+                    }
                 }
             }
 
