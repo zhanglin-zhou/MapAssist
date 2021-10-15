@@ -25,6 +25,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,6 +41,8 @@ namespace D2RAssist
         private const UInt32 SWP_NOSIZE = 0x0001;
         private const UInt32 SWP_NOMOVE = 0x0002;
         private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
+        private Screen _screen;
+        private IntPtr _d2RWindowPointer;
 
         public frmOverlay()
         {
@@ -48,11 +51,11 @@ namespace D2RAssist
 
         private void frmOverlay_Load(object sender, EventArgs e)
         {
-            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            int width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
-            int height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
-            this.Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
-            this.Size = new Size(width, height);
+            // We should select screen either from config or find the actual position of the D2R window/screen.
+            var d2rProcess = Process.GetProcessesByName("D2R")[0];
+            _d2RWindowPointer = d2rProcess.MainWindowHandle;
+            UpdateLocation();
+
             this.Opacity = Settings.Map.Opacity;
 
             Timer MapUpdateTimer = new Timer();
@@ -126,17 +129,32 @@ namespace D2RAssist
             {
                 return;
             }
+            
+            UpdateLocation();
+
             Bitmap gameMap = MapRenderer.FromMapData(Globals.MapData);
             Point anchor = new Point(0, 0);
             switch (Settings.Map.Position) {
                 case MapPosition.TopRight:
-                    anchor = new Point(mapOverlay.Width - gameMap.Width, 0);
+                    anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
+
                     break;
                 case MapPosition.TopLeft:
                     anchor = new Point(0, 0);
                     break;
             }
             e.Graphics.DrawImage(gameMap, anchor);
+        }
+
+        /// <summary>
+        /// Update the location and size of the form relative to the D2R window location.
+        /// </summary>
+        private void UpdateLocation()
+        {
+            this.WindowState = FormWindowState.Normal;
+            _screen = Screen.FromHandle(_d2RWindowPointer);
+            this.Location = new Point(_screen.WorkingArea.X, _screen.WorkingArea.Y);
+            this.Size = new Size(_screen.WorkingArea.Width, _screen.WorkingArea.Height);
         }
     }
 }
