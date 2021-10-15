@@ -49,7 +49,7 @@ namespace D2RAssist.Types
             public static bool HideInTown = true;
             public static int Size = 450;
             public static MapPosition Position = MapPosition.TopRight;
-            public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTimeMs"]);
+            public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
             public static bool Rotate = true;
         }
 
