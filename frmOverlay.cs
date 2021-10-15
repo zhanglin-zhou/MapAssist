@@ -119,8 +119,15 @@ namespace D2RAssist
         private bool ShouldHideMap()
         {
             return Globals.CurrentGameData.MapSeed == 0 || 
+                 !D2RProcessInForeground() ||
                 (Settings.Map.HideInTown == true &&
                 Globals.CurrentGameData.AreaId.IsTown());
+        }
+
+        private bool D2RProcessInForeground()
+        {
+            IntPtr activeWindowHandle = WindowsExternal.GetForegroundWindow();
+            return activeWindowHandle == _d2RWindowPointer;
         }
 
         private void mapOverlay_Paint(object sender, PaintEventArgs e)

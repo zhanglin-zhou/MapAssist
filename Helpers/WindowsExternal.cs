@@ -136,6 +136,12 @@ namespace D2RAssist.Helpers
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
 
+        /// <summary>
+        /// The GetForegroundWindow function returns a handle to the foreground window.
+        /// </summary>
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
         public struct Rect
         {
             public int Left { get; set; }
