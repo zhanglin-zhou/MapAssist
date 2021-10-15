@@ -128,7 +128,7 @@ namespace D2RAssist
                 return true;
             }
 
-            if (Settings.Map.ToggleOnInGameMap)
+            if (Settings.Map.ToggleViaInGameMap)
             {
                 // Hide the map if the ingame map is hidden
                 return !Globals.CurrentGameData.MapShown;

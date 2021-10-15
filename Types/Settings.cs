@@ -50,8 +50,8 @@ namespace D2RAssist.Types
 
             public static readonly double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"], System.Globalization.CultureInfo.InvariantCulture);
             public static bool AlwaysOnTop = true;
-            public static bool HideInTown = true;
-            public static bool ToggleOnInGameMap = true;
+            public static bool HideInTown = Convert.ToBoolean(ConfigurationManager.AppSettings["HideInTown"]);
+            public static bool ToggleViaInGameMap = Convert.ToBoolean(ConfigurationManager.AppSettings["ToggleViaInGameMap"]);
             public static int Size = 450;
             public static MapPosition Position = MapPosition.TopRight;
             public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);

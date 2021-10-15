@@ -33,6 +33,5 @@ namespace D2RAssist.Types
         public UInt16 Difficulty;
         public Area AreaId;
         public bool MapShown;
-        public bool GameWindowActive;
     }
 }
