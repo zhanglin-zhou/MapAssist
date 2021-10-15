@@ -26,6 +26,6 @@ namespace D2RAssist.Types
 {
     public static class Offsets
     {
-        public static int PlayerUnit = 0x205FE40;
+        public static int PlayerUnit = 0x205CE60;
     }
 }
