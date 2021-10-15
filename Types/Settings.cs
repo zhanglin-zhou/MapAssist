@@ -41,6 +41,7 @@ namespace D2RAssist.Types
                 public static readonly Color DoorPrevious = Color.FromArgb(255, 0, 149);
                 public static readonly Color Waypoint = Color.FromArgb(16, 140, 235);
                 public static readonly Color Player = Color.FromArgb(255, 255, 0);
+                public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
             }
 
             public static readonly double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"], System.Globalization.CultureInfo.InvariantCulture);
