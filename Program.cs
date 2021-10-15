@@ -16,7 +16,7 @@ namespace D2RAssist
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new frmOverlay());
         }
     }
 }
