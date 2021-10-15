@@ -24,6 +24,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using static D2RAssist.Types.Game;
 
 namespace D2RAssist.Helpers
 {
@@ -58,7 +59,7 @@ namespace D2RAssist.Helpers
             MapRenderer.Clear();
         }
 
-        public static async Task<MapData> GetMapData()
+        public static async Task<MapData> GetMapData(Area area)
         {
             if (Globals.MapApiSession == null)
             {
@@ -69,7 +70,7 @@ namespace D2RAssist.Helpers
 
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync(Settings.Api.Endpoint + "sessions/" + Globals.MapApiSession.id + "/areas/" + (uint)Globals.CurrentGameData.AreaId);
+                HttpResponseMessage response = await client.GetAsync(Settings.Api.Endpoint + "sessions/" + Globals.MapApiSession.id + "/areas/" + (uint)area);
                 return JsonConvert.DeserializeObject<MapData>(await response.Content.ReadAsStringAsync());
             }
         }

@@ -200,13 +200,12 @@ namespace D2RAssist.Helpers
                 CachedBackgroundGraphics.DrawLine(new Pen(Color.Red), playerPoint, LineEnd);
             }
 
-            var playerLoc = new Bitmap(10, 10, PixelFormat.Format32bppArgb);
-            Graphics graphics = Graphics.FromImage(playerLoc);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.FillRectangle(new SolidBrush(Color.FromArgb(255, 255, 0)), 0, 0, 10, 10);
-            CachedBackgroundGraphics.DrawImage(playerLoc, playerPoint);
+            CachedBackgroundGraphics.DrawImage(Icons.Player, playerPoint);
 
-            updatedMap = ImageManipulation.RotateImage(updatedMap, 53, true, false, Color.Transparent);
+            if (Settings.Map.Rotate)
+            {
+                updatedMap = ImageManipulation.RotateImage(updatedMap, 53, true, false, Color.Transparent);
+            }
 
             return updatedMap;
         }

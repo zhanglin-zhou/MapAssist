@@ -47,6 +47,8 @@ namespace D2RAssist.Types
             public static bool HideInTown = true;
             public static int Size = 450;
             public static MapPosition Position = MapPosition.TopRight;
+            public static int UpdateTime = 750;
+            public static bool Rotate = true;
         }
 
         public static class Api

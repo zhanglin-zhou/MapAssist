@@ -55,10 +55,10 @@ namespace D2RAssist
             this.Size = new Size(width, height);
             this.Opacity = Settings.Map.Opacity;
 
-            Timer GameDataTimer = new Timer();
-            GameDataTimer.Interval = 1000;
-            GameDataTimer.Tick += new EventHandler(GameDataTimer_Tick);
-            GameDataTimer.Start();
+            Timer MapUpdateTimer = new Timer();
+            MapUpdateTimer.Interval = Settings.Map.UpdateTime;
+            MapUpdateTimer.Tick += new EventHandler(MapUpdateTimer_Tick);
+            MapUpdateTimer.Start();
 
             if (Settings.Map.AlwaysOnTop)
             {
@@ -73,7 +73,7 @@ namespace D2RAssist
             mapOverlay.BackColor = Color.Transparent;
         }
 
-        private async void GameDataTimer_Tick(object sender, EventArgs e)
+        private async void MapUpdateTimer_Tick(object sender, EventArgs e)
         {
             Timer timer = sender as Timer;
             timer.Stop();
@@ -87,8 +87,6 @@ namespace D2RAssist
                     await MapApi.CreateNewSession();            
                 }
 
-                Globals.LastGameData = Globals.CurrentGameData;
-
                 if (ShouldHideMap())
                 {
                     mapOverlay.Hide();
@@ -97,8 +95,10 @@ namespace D2RAssist
                 }
                 else if ((Globals.CurrentGameData.MapSeed != 0 && Globals.MapData == null) || (Globals.CurrentGameData.AreaId != Globals.LastGameData?.AreaId && Globals.CurrentGameData.AreaId != 0 || Globals.CurrentGameData.Difficulty != Globals.LastGameData?.Difficulty))
                 {
-                    Globals.MapData = await MapApi.GetMapData();
+                    Globals.MapData = await MapApi.GetMapData(Globals.CurrentGameData.AreaId);
                 }
+
+                Globals.LastGameData = Globals.CurrentGameData;
 
                 mapOverlay.Show();
                 mapOverlay.Refresh();
