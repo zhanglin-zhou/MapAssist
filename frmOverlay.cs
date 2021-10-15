@@ -118,10 +118,23 @@ namespace D2RAssist
 
         private bool ShouldHideMap()
         {
-            return Globals.CurrentGameData.MapSeed == 0 || 
-                 !D2RProcessInForeground() ||
-                (Settings.Map.HideInTown == true &&
-                Globals.CurrentGameData.AreaId.IsTown());
+            if (Globals.CurrentGameData.MapSeed == 0 || !D2RProcessInForeground())
+            {
+                return true;
+            }
+
+            if (Settings.Map.HideInTown && Globals.CurrentGameData.AreaId.IsTown())
+            {
+                return true;
+            }
+
+            if (Settings.Map.ToggleViaInGameMap)
+            {
+                // Hide the map if the ingame map is hidden
+                return !Globals.CurrentGameData.MapShown;
+            }
+
+            return false;
         }
 
         private bool D2RProcessInForeground()
