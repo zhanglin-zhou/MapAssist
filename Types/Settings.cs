@@ -42,6 +42,10 @@ namespace D2RAssist.Types
                 public static readonly Color Waypoint = Color.FromArgb(16, 140, 235);
                 public static readonly Color Player = Color.FromArgb(255, 255, 0);
                 public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
+                public static readonly Color ArrowExit = Color.FromArgb(0,72,186);
+                public static readonly Color ArrowQuest = Color.FromArgb(255, 255, 255);
+                public static readonly Color ArrowWaypoint = Color.FromArgb(0, 204, 153);
+                public static readonly Color LabelColor = Color.FromArgb(255, 246, 0);
             }
 
             public static readonly double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"], System.Globalization.CultureInfo.InvariantCulture);
@@ -51,6 +55,7 @@ namespace D2RAssist.Types
             public static MapPosition Position = MapPosition.TopRight;
             public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
             public static bool Rotate = true;
+            public static string LabelFont = "BD Megalona";
         }
 
         public static class Api
