@@ -75,7 +75,6 @@ namespace D2RAssist
 
         private async void MapUpdateTimer_Tick(object sender, EventArgs e)
         {
-            GameData previousGameData = Globals.LastGameData;
             Timer timer = sender as Timer;
             timer.Stop();
 
@@ -83,9 +82,19 @@ namespace D2RAssist
 
             if (Globals.CurrentGameData != null)
             {
+                bool shouldUpdateMap = (Globals.CurrentGameData.MapSeed != 0 && Globals.MapData == null) ||
+                    (Globals.CurrentGameData.AreaId != Globals.LastGameData?.AreaId &&
+                    Globals.CurrentGameData.AreaId != 0 ||
+                    Globals.CurrentGameData.Difficulty != Globals.LastGameData?.Difficulty);
+
                 if (Globals.LastGameData?.MapSeed != Globals.CurrentGameData.MapSeed && Globals.CurrentGameData.MapSeed != 0)
                 {
                     await MapApi.CreateNewSession();            
+                }
+
+                if (shouldUpdateMap)
+                {
+                    Globals.MapData = await MapApi.GetMapData(Globals.CurrentGameData.AreaId);
                 }
 
                 Globals.LastGameData = Globals.CurrentGameData;
@@ -93,18 +102,13 @@ namespace D2RAssist
                 if (ShouldHideMap())
                 {
                     mapOverlay.Hide();
-                    timer.Start();
                 }
-                else if ((Globals.CurrentGameData.MapSeed != 0 && Globals.MapData == null) ||
-                    (Globals.CurrentGameData.AreaId != previousGameData?.AreaId &&
-                    Globals.CurrentGameData.AreaId != 0 ||
-                    Globals.CurrentGameData.Difficulty != previousGameData?.Difficulty))
+                else
                 {
-                    Globals.MapData = await MapApi.GetMapData(Globals.CurrentGameData.AreaId);
+                    mapOverlay.Show();
+                    mapOverlay.Refresh();
                 }
 
-                mapOverlay.Show();
-                mapOverlay.Refresh();
             }
             timer.Start();
         }
