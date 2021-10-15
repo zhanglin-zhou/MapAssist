@@ -47,8 +47,10 @@ namespace D2RAssist.Helpers
         public static class MapPointsOfInterest
         {
             public static readonly string[] Chests = { "5", "6", "87", "104", "105", "106", "107", "143", "140", "141", "144", "146", "147", "148", "176", "177", "181", "183", "198", "240", "241", "242", "243", "329", "330", "331", "332", "333", "334", "335", "336", "354", "355", "356", "371", "387", "389", "390", "391", "397", "405", "406", "407", "413", "420", "424", "425", "430", "431", "432", "433", "454", "455", "501", "502", "504", "505", "580", "581", };
+            public static readonly string[] Quests = { "357", "61", "376" };
+            public static readonly string[] Waypoints = { "182", "298", "119", "145", "156", "157", "238", "237", "288", "323", "324", "398", "402", "429", "494", "496", "511", "539", "59", "60", "100" };
         }
-
+            
         private static Bitmap CreateFilledRectangle(Color color, int width, int height)
         {
             Bitmap rectangle = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -259,7 +261,7 @@ namespace D2RAssist.Helpers
 
                 //draw arrow
                 AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                Pen p = new Pen(Color.Blue, 5);
+                Pen p = new Pen(Settings.Map.Colors.ArrowExit, 5);
                 p.CustomEndCap = bigArrow;
                 minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, xcoord, ycoord);
                 //draw label
@@ -269,8 +271,7 @@ namespace D2RAssist.Helpers
             bool wpFound = false;
             foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
             {
-                //wp green arrows
-                if (!wpFound && (string)mapObject.Key == "182" || (string)mapObject.Key == "298" || (string)mapObject.Key == "119" || (string)mapObject.Key == "145" || (string)mapObject.Key == "156" || (string)mapObject.Key == "157" || (string)mapObject.Key == "238" || (string)mapObject.Key == "237" || (string)mapObject.Key == "288" || (string)mapObject.Key == "323" || (string)mapObject.Key == "324" || (string)mapObject.Key == "398" || (string)mapObject.Key == "402" || (string)mapObject.Key == "429" || (string)mapObject.Key == "494" || (string)mapObject.Key == "496" || (string)mapObject.Key == "511" || (string)mapObject.Key == "539" || (string)mapObject.Key == "59" || (string)mapObject.Key == "60" || (string)mapObject.Key == "100")
+                if (!wpFound && MapPointsOfInterest.Waypoints.Contains((string)mapObject.Key))
                 {
                     int originX = mapData.levelOrigin.x;
                     int originY = mapData.levelOrigin.y;
@@ -278,7 +279,7 @@ namespace D2RAssist.Helpers
                     int pointY = (int)((mapData.objects[mapObject.Key][0].y - originY) * multiplier);
                     //draw arrow
                     AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                    Pen p = new Pen(Color.Green, 5);
+                    Pen p = new Pen(Settings.Map.Colors.ArrowWaypoint, 5);
                     p.CustomEndCap = bigArrow;
 
                     minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
@@ -286,8 +287,7 @@ namespace D2RAssist.Helpers
                     drawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
                     wpFound = true;
                 }
-                //summoner 357, stoney 61, forge 376
-                if ((string)mapObject.Key == "357" || (string)mapObject.Key == "61" || (string)mapObject.Key == "376")
+                if (MapPointsOfInterest.Quests.Contains((string)mapObject.Key))
                 {
                     int originX = mapData.levelOrigin.x;
                     int originY = mapData.levelOrigin.y;
@@ -295,7 +295,7 @@ namespace D2RAssist.Helpers
                     int pointY = (int)((mapData.objects[mapObject.Key][0].y - originY) * multiplier);
                     //draw arrow
                     AdjustableArrowCap bigArrow = new AdjustableArrowCap(5, 5);
-                    Pen p = new Pen(Color.White, 5);
+                    Pen p = new Pen(Settings.Map.Colors.ArrowQuest, 5);
                     p.CustomEndCap = bigArrow;
                     minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
                     //draw label
@@ -307,26 +307,26 @@ namespace D2RAssist.Helpers
         {
             minimap.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             // Create font and brush.
-            Font drawFont = new Font("BD Megalona", 10);
-            SolidBrush drawBrush = new SolidBrush(Color.Yellow);
+            Font drawFont = new Font(Settings.Map.LabelFont, 10);
+            SolidBrush drawBrush = new SolidBrush(Settings.Map.Colors.LabelColor);
             // Set format of string.
             StringFormat drawFormat = new StringFormat();
             drawFormat.FormatFlags = StringFormatFlags.NoClip;
             //draw label line
             int adjustment = 20;
-            Pen p = new Pen(Color.Yellow, 1);
+            Pen p = new Pen(Settings.Map.Colors.LabelColor, 1);
             minimap.DrawLine(p, posx + adjustment, posy - (adjustment), posx, posy);
             //label box
             RectangleF rectF1 = new RectangleF(posx + adjustment, posy - (2 * adjustment), 100, 100);
             if (objectType == "Area")
             {
-                string objName = Enum.GetName(typeof(Area), Int32.Parse(objectKey));
-                objName = Regex.Replace(objName, "(\\B[A-Z])", " $1");
+                string objName = Enum.GetName(typeof(Game.Area), Int32.Parse(objectKey));
+                objName = Game.AreaName[Int32.Parse(objectKey)];
                 minimap.DrawString(objName, drawFont, drawBrush, rectF1, drawFormat);
             }
             if (objectType == "GameObject")
             {
-                string objName = Enum.GetName(typeof(GameObject), Int32.Parse(objectKey));
+                string objName = Enum.GetName(typeof(Game.GameObject), Int32.Parse(objectKey));
                 if (objName.Contains("Waypoint")) objName = "Waypoint";
                 minimap.DrawString(objName, drawFont, drawBrush, rectF1, drawFormat);
             }
