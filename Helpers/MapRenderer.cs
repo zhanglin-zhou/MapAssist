@@ -174,8 +174,7 @@ namespace D2RAssist.Helpers
             Point playerPoint = new Point(miniMapPlayerX, miniMapPlayerY);
             updatedMap = ImageManipulation.ResizeImage((Bitmap)CachedBackground.Clone(), (int)(CachedBackground.Width * multiplier), (int)(CachedBackground.Height * multiplier));
             CachedBackgroundGraphics = Graphics.FromImage(updatedMap);
-            drawArrows(miniMapPlayerX, miniMapPlayerY, CachedBackgroundGraphics, multiplier, mapData);
-
+            DrawArrows(miniMapPlayerX, miniMapPlayerY, CachedBackgroundGraphics, multiplier, mapData);
 
             int counter = 0;
             int originX = mapData.levelOrigin.x;
@@ -243,9 +242,9 @@ namespace D2RAssist.Helpers
             return (int)(_int * _double);
         }
 
-        private static void drawArrows(int miniMapPlayerX, int miniMapPlayerY, Graphics minimap, double multiplier, MapData mapData)
+        private static void DrawArrows(int miniMapPlayerX, int miniMapPlayerY, Graphics minimap, double multiplier, MapData mapData)
         {
-            //exits, blue arrows
+            //exits
             foreach (KeyValuePair<string, AdjacentLevel> i in mapData.adjacentLevels)
             {
                 if (mapData.adjacentLevels[i.Key].exits.Length == 0)
@@ -265,9 +264,9 @@ namespace D2RAssist.Helpers
                 p.CustomEndCap = bigArrow;
                 minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, xcoord, ycoord);
                 //draw label
-                drawLabelAt("Area", i.Key, xcoord, ycoord, minimap);
+                DrawLabelAt("Area", i.Key, xcoord, ycoord, minimap);
             }
-            //wp, draw first one found
+            
             bool wpFound = false;
             foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
             {
@@ -284,7 +283,7 @@ namespace D2RAssist.Helpers
 
                     minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
                     //draw label
-                    drawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
+                    DrawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
                     wpFound = true;
                 }
                 if (MapPointsOfInterest.Quests.Contains((string)mapObject.Key))
@@ -299,11 +298,11 @@ namespace D2RAssist.Helpers
                     p.CustomEndCap = bigArrow;
                     minimap.DrawLine(p, miniMapPlayerX, miniMapPlayerY, pointX, pointY);
                     //draw label
-                    drawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
+                    DrawLabelAt("GameObject", mapObject.Key, pointX, pointY, minimap);
                 }
             }
         }
-        private static void drawLabelAt(string objectType, string objectKey, int posx, int posy, Graphics minimap)
+        private static void DrawLabelAt(string objectType, string objectKey, int posx, int posy, Graphics minimap)
         {
             minimap.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             // Create font and brush.
