@@ -16,20 +16,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
+
 using System;
-using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace D2RAssist.Helpers
 {
-    public static class ImageManipulation
+    public static class ImageUtils
     {
-        public static Bitmap RotateImage(Image inputImage, float angleDegrees, bool upsizeOk, bool clipOk, Color backgroundColor)
+        public static Bitmap RotateImage(Image inputImage, float angleDegrees, bool upsizeOk, bool clipOk,
+            Color backgroundColor)
         {
             // Test for zero rotation and return a clone of the input image
             if (angleDegrees == 0f)
@@ -40,7 +38,7 @@ namespace D2RAssist.Helpers
             int oldHeight = inputImage.Height;
             int newWidth = oldWidth;
             int newHeight = oldHeight;
-            float scaleFactor = 1f;
+            var scaleFactor = 1f;
 
             // If upsizing wanted or clipping not OK calculate the size of the resulting bitmap
             if (upsizeOk || !clipOk)
@@ -63,7 +61,8 @@ namespace D2RAssist.Helpers
 
             // Create the new bitmap object. If background color is transparent it must be 32-bit, 
             //  otherwise 24-bit is good enough.
-            Bitmap newBitmap = new Bitmap(newWidth, newHeight, backgroundColor == Color.Transparent ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
+            var newBitmap = new Bitmap(newWidth, newHeight,
+                backgroundColor == Color.Transparent ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
             newBitmap.SetResolution(inputImage.HorizontalResolution, inputImage.VerticalResolution);
 
             // Create the Graphics object that does the work
@@ -93,16 +92,15 @@ namespace D2RAssist.Helpers
             return newBitmap;
         }
 
-        public static Bitmap CropBitmap(Bitmap originalBitmap)
+        public static (Bitmap, Point) CropBitmap(Bitmap originalBitmap)
         {
-
             // Find the min/max non-white/transparent pixels
-            Point min = new Point(int.MaxValue, int.MaxValue);
-            Point max = new Point(int.MinValue, int.MinValue);
+            var min = new Point(int.MaxValue, int.MaxValue);
+            var max = new Point(int.MinValue, int.MinValue);
 
-            for (int x = 0; x < originalBitmap.Width; ++x)
+            for (var x = 0; x < originalBitmap.Width; ++x)
             {
-                for (int y = 0; y < originalBitmap.Height; ++y)
+                for (var y = 0; y < originalBitmap.Height; ++y)
                 {
                     Color pixelColor = originalBitmap.GetPixel(x, y);
                     if (pixelColor.A == 255)
@@ -117,47 +115,14 @@ namespace D2RAssist.Helpers
             }
 
             // Create a new bitmap from the crop rectangle
-            Rectangle cropRectangle = new Rectangle(min.X, min.Y, max.X - min.X, max.Y - min.Y);
-            Bitmap newBitmap = new Bitmap(cropRectangle.Width, cropRectangle.Height);
+            var cropRectangle = new Rectangle(min.X, min.Y, max.X - min.X, max.Y - min.Y);
+            var newBitmap = new Bitmap(cropRectangle.Width, cropRectangle.Height);
             using (Graphics g = Graphics.FromImage(newBitmap))
             {
                 g.DrawImage(originalBitmap, 0, 0, cropRectangle, GraphicsUnit.Pixel);
             }
 
-            return newBitmap;
-        }
-
-        public static Rectangle GetAutoCropBounds(Bitmap bitmap)
-        {
-            int maxX = 0;
-            int maxY = 0;
-
-            int minX = bitmap.Width;
-            int minY = bitmap.Height;
-
-            for (int x = 0; x < bitmap.Width; x++)
-            {
-                for (int y = 0; y < bitmap.Height; y++)
-                {
-                    var c = bitmap.GetPixel(x, y);
-                    var w = Color.White;
-                    if (c == Color.Transparent)
-                    {
-                        if (x > maxX)
-                            maxX = x;
-                        if (x < minX)
-                            minX = x;
-                        if (y > maxY)
-                            maxY = y;
-                        if (y < minY)
-                            minY = y;
-                    }
-                }
-            }
-
-            maxX += 2;
-
-            return new Rectangle(minX, minY, maxX - minX, maxY - minY);
+            return (newBitmap, min);
         }
 
         /// <summary>
@@ -174,7 +139,7 @@ namespace D2RAssist.Helpers
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
+            using (Graphics graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -190,6 +155,26 @@ namespace D2RAssist.Helpers
             }
 
             return destImage;
+        }
+
+        public static Bitmap CreateFilledRectangle(Color color, int width, int height)
+        {
+            var rectangle = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            Graphics graphics = Graphics.FromImage(rectangle);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.FillRectangle(new SolidBrush(color), 0, 0, width, height);
+            graphics.Dispose();
+            return rectangle;
+        }
+
+        public static Bitmap CreateFilledEllipse(Color color, int width, int height)
+        {
+            var ellipse = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            Graphics graphics = Graphics.FromImage(ellipse);
+            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            graphics.FillEllipse(new SolidBrush(color), 0, 0, width, height);
+            graphics.Dispose();
+            return ellipse;
         }
     }
 }

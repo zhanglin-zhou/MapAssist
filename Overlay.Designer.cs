@@ -1,4 +1,6 @@
 ﻿
+using System.Drawing;
+
 namespace D2RAssist
 {
     partial class Overlay
@@ -43,6 +45,7 @@ namespace D2RAssist
             this.mapOverlay.TabIndex = 0;
             this.mapOverlay.TabStop = false;
             this.mapOverlay.Paint += new System.Windows.Forms.PaintEventHandler(this.MapOverlay_Paint);
+
             // 
             // frmOverlay
             // 
@@ -53,12 +56,12 @@ namespace D2RAssist
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Overlay";
-            this.TransparencyKey = System.Drawing.SystemColors.Control;
+            this.TransparencyKey = Color.Black;
+            this.BackColor = Color.Black;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Overlay_Load);
             ((System.ComponentModel.ISupportInitialize)(this.mapOverlay)).EndInit();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -66,4 +69,3 @@ namespace D2RAssist
         private System.Windows.Forms.PictureBox mapOverlay;
     }
 }
-
