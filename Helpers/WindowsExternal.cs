@@ -129,5 +129,25 @@ namespace D2RAssist.Helpers
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool AttachConsole(int dwProcessId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr FindWindow(string strClassName, string strWindowName);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
+
+        /// <summary>
+        /// The GetForegroundWindow function returns a handle to the foreground window.
+        /// </summary>
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        public struct Rect
+        {
+            public int Left { get; set; }
+            public int Top { get; set; }
+            public int Right { get; set; }
+            public int Bottom { get; set; }
+        }
     }
 }

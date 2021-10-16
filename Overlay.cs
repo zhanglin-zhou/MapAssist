@@ -25,6 +25,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Net.Http;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,32 +34,29 @@ using D2RAssist.Helpers;
 
 namespace D2RAssist
 {
-    public partial class frmOverlay : Form
+    public partial class Overlay : Form
     {
         // Move to windows external
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
         private const UInt32 SWP_NOSIZE = 0x0001;
         private const UInt32 SWP_NOMOVE = 0x0002;
         private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
+        private Screen _screen;
 
-        public frmOverlay()
+        public Overlay()
         {
             InitializeComponent();
         }
 
-        private void frmOverlay_Load(object sender, EventArgs e)
+        private void Overlay_Load(object sender, EventArgs e)
         {
-            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            int width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
-            int height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
-            this.Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
-            this.Size = new Size(width, height);
             this.Opacity = Settings.Map.Opacity;
 
             Timer MapUpdateTimer = new Timer();
             MapUpdateTimer.Interval = Settings.Map.UpdateTime;
             MapUpdateTimer.Tick += new EventHandler(MapUpdateTimer_Tick);
             MapUpdateTimer.Start();
+            
 
             if (Settings.Map.AlwaysOnTop)
             {
@@ -115,28 +113,64 @@ namespace D2RAssist
 
         private bool ShouldHideMap()
         {
-            return Globals.CurrentGameData.MapSeed == 0 || 
-                (Settings.Map.HideInTown == true &&
-                Globals.CurrentGameData.AreaId.IsTown());
+            if (Globals.CurrentGameData.MapSeed == 0 || !D2RProcessInForeground())
+            {
+                return true;
+            }
+
+            if (Settings.Map.HideInTown && Globals.CurrentGameData.AreaId.IsTown())
+            {
+                return true;
+            }
+
+            if (Settings.Map.ToggleViaInGameMap)
+            {
+                // Hide the map if the ingame map is hidden
+                return !Globals.CurrentGameData.MapShown;
+            }
+
+            return false;
         }
 
-        private void mapOverlay_Paint(object sender, PaintEventArgs e)
+        private bool D2RProcessInForeground()
         {
-            if (Globals.MapData == null)
+            IntPtr activeWindowHandle = WindowsExternal.GetForegroundWindow();
+            return activeWindowHandle == Globals.CurrentGameData.MainWindowHandle;
+        }
+
+        private void MapOverlay_Paint(object sender, PaintEventArgs e)
+        {
+            // Handle race condition where mapData hasn't been received yet.
+            if (Globals.MapData == null || Globals.MapData.mapRows[0].Length == 0)
             {
                 return;
             }
+            
+            UpdateLocation();
+
             Bitmap gameMap = MapRenderer.FromMapData(Globals.MapData);
             Point anchor = new Point(0, 0);
-            switch (Settings.Map.Position) {
+            switch (Settings.Map.MapPosition) {
                 case MapPosition.TopRight:
-                    anchor = new Point(mapOverlay.Width - gameMap.Width, 0);
+                    anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
+
                     break;
                 case MapPosition.TopLeft:
                     anchor = new Point(0, 0);
                     break;
             }
             e.Graphics.DrawImage(gameMap, anchor);
+        }
+
+        /// <summary>
+        /// Update the location and size of the form relative to the D2R window location.
+        /// </summary>
+        private void UpdateLocation()
+        {
+            this.WindowState = FormWindowState.Normal;
+            _screen = Screen.FromHandle(Globals.CurrentGameData.MainWindowHandle);
+            this.Location = new Point(_screen.WorkingArea.X, _screen.WorkingArea.Y);
+            this.Size = new Size(_screen.WorkingArea.Width, _screen.WorkingArea.Height);
         }
     }
 }

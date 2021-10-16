@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static D2RAssist.MapData;
+using System.Text.RegularExpressions;
 
 namespace D2RAssist.Helpers
 {
@@ -33,21 +34,25 @@ namespace D2RAssist.Helpers
     {
         public static Point LineEnd = new Point(0, 0);
         public static Bitmap CachedBackground;
-        
+        public static string TombID = "0";
+
         public static class Icons
         {
             public static readonly Bitmap DoorNext = CreateFilledRectangle(Settings.Map.Colors.DoorNext, 10, 10);
             public static readonly Bitmap DoorPrevious = CreateFilledRectangle(Settings.Map.Colors.DoorPrevious, 10, 10);
             public static readonly Bitmap Waypoint = CreateFilledRectangle(Settings.Map.Colors.Waypoint, 10, 10);
-            public static readonly Bitmap Player = CreateFilledRectangle(Settings.Map.Colors.Player, 10, 10);
+            public static readonly Bitmap Player = CreateFilledEllipse(Settings.Map.Colors.Player, 10, 10);
             public static readonly Bitmap SuperChest = CreateFilledEllipse(Settings.Map.Colors.SuperChest, 10, 10);
         }
 
         public static class MapPointsOfInterest
         {
             public static readonly string[] Chests = { "5", "6", "87", "104", "105", "106", "107", "143", "140", "141", "144", "146", "147", "148", "176", "177", "181", "183", "198", "240", "241", "242", "243", "329", "330", "331", "332", "333", "334", "335", "336", "354", "355", "356", "371", "387", "389", "390", "391", "397", "405", "406", "407", "413", "420", "424", "425", "430", "431", "432", "433", "454", "455", "501", "502", "504", "505", "580", "581", };
+            public static readonly string[] Quests = { "61", "152", "266","357", "356", "354", "355", "376" };
+            public static readonly string[] Waypoints = { "182", "298", "119", "145", "156", "157", "238", "237", "288", "323", "324", "398", "402", "429", "494", "496", "511", "539", "59", "60", "100" };
+            public static readonly string[] TalTombs = { "66", "67", "68", "69", "70", "71", "72" };
         }
-
+            
         private static Bitmap CreateFilledRectangle(Color color, int width, int height)
         {
             Bitmap rectangle = new Bitmap(width, height, PixelFormat.Format32bppArgb);
@@ -74,11 +79,12 @@ namespace D2RAssist.Helpers
             LineEnd = new Point(0, 0);
         }
 
-        public static Bitmap FromMapData(MapData mapData) {
+        public static Bitmap FromMapData(MapData mapData)
+        {
 
             Graphics CachedBackgroundGraphics;
             Bitmap updatedMap;
- 
+
             if (CachedBackground == null)
             {
                 var uncroppedBackground = new Bitmap(mapData.mapRows[0].Length, mapData.mapRows.Length, PixelFormat.Format32bppArgb);
@@ -88,68 +94,10 @@ namespace D2RAssist.Helpers
                     for (int y = 0; y < mapData.mapRows[x].Length; y++)
                     {
                         int type = mapData.mapRows[x][y];
-                        switch (type)
+                        Color? typeColor = Settings.Map.Colors.LookupMapColor(type);
+                        if (typeColor != null)
                         {
-                            case 1:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(70, 51, 41));
-                                break;
-                            case -1:
-                                // uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 255, 255));
-                                break;
-                            case 0:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 0));
-                                break;
-                            case 16:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(168, 56, 50));
-                                break;
-                            case 7:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 255, 255));
-                                break;
-                            case 5:
-                                // uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 0));
-                                break;
-                            case 33:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 255));
-                                break;
-                            case 23:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 255));
-                                break;
-                            case 4:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 255, 255));
-                                break;
-                            case 21:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 0, 255));
-                                break;
-                            case 20:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(70, 51, 41));
-                                break;
-                            case 17:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 51, 255));
-                                break;
-                            case 3:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 0, 255));
-                                break;
-                            case 19:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 51, 255));
-                                break;
-                            case 2:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(10, 51, 23));
-                                break;
-                            case 37:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(50, 51, 23));
-                                break;
-                            case 6:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(80, 51, 33));
-                                break;
-                            case 39:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(20, 11, 33));
-                                break;
-                            case 53:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(10, 11, 43));
-                                break;
-                            default:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 255, 255));
-                                break;
+                            uncroppedBackground.SetPixel(y, x, (Color)typeColor);
                         }
                     }
                 }
@@ -158,6 +106,11 @@ namespace D2RAssist.Helpers
 
             double biggestDimension = CachedBackground.Width > CachedBackground.Height ? CachedBackground.Width : CachedBackground.Height;
 
+            if (biggestDimension == 0)
+            {
+                biggestDimension = 1;
+            }
+
             double multiplier = Settings.Map.Size / biggestDimension;
 
             if (multiplier == 0)
@@ -165,10 +118,12 @@ namespace D2RAssist.Helpers
                 multiplier = 1;
             }
 
-            Point playerPoint = new Point((int)((Globals.CurrentGameData.PlayerX - mapData.levelOrigin.x) * multiplier), (int)((Globals.CurrentGameData.PlayerY - mapData.levelOrigin.y) * multiplier));
-
+            int miniMapPlayerX = (int)((Globals.CurrentGameData.PlayerX - mapData.levelOrigin.x) * multiplier);
+            int miniMapPlayerY = (int)((Globals.CurrentGameData.PlayerY - mapData.levelOrigin.y) * multiplier);
+            Point playerPoint = new Point(miniMapPlayerX, miniMapPlayerY);
             updatedMap = ImageManipulation.ResizeImage((Bitmap)CachedBackground.Clone(), (int)(CachedBackground.Width * multiplier), (int)(CachedBackground.Height * multiplier));
             CachedBackgroundGraphics = Graphics.FromImage(updatedMap);
+            DrawArrows(miniMapPlayerX, miniMapPlayerY, CachedBackgroundGraphics, multiplier, mapData);
 
             int counter = 0;
             int originX = mapData.levelOrigin.x;
@@ -180,11 +135,11 @@ namespace D2RAssist.Helpers
                 {
                     continue;
                 }
-                int xnew = mapData.adjacentLevels[i.Key].exits[0].x;
-                int ynew = mapData.adjacentLevels[i.Key].exits[0].y;
-                int xcoord = (int)(multiplier * (xnew - originX));
-                int ycoord = (int)(multiplier * (ynew - originY));
-                var nextLevelPoint = LineEnd = new Point(xcoord, ycoord);
+                int x = mapData.adjacentLevels[i.Key].exits[0].x;
+                int y = mapData.adjacentLevels[i.Key].exits[0].y;
+                int coordX = (int)(multiplier * (x - originX));
+                int coordY = (int)(multiplier * (y - originY));
+                var nextLevelPoint = LineEnd = new Point(coordX, coordY);
                 if (counter == 0)
                 {
                     CachedBackgroundGraphics.DrawImage(Icons.DoorPrevious, nextLevelPoint);
@@ -198,32 +153,28 @@ namespace D2RAssist.Helpers
 
             foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
             {
-                int xCoord = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].x - originX, multiplier);
-                int yCoord = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].y - originY, multiplier);
-                Point mapObjectPoint = new Point(xCoord, yCoord);
-                if ((string)mapObject.Key == "182" || (string)mapObject.Key == "298" || (string)mapObject.Key == "119" || (string)mapObject.Key == "145" || (string)mapObject.Key == "156" || (string)mapObject.Key == "157" || (string)mapObject.Key == "238" || (string)mapObject.Key == "237" || (string)mapObject.Key == "288" || (string)mapObject.Key == "323" || (string)mapObject.Key == "324" || (string)mapObject.Key == "398" || (string)mapObject.Key == "402" || (string)mapObject.Key == "429" || (string)mapObject.Key == "494" || (string)mapObject.Key == "496" || (string)mapObject.Key == "511" || (string)mapObject.Key == "539" || (string)mapObject.Key == "59" || (string)mapObject.Key == "60" || (string)mapObject.Key == "100")
+                int coordX = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].x - originX, multiplier);
+                int coordY = MultiplyIntByDouble(mapData.objects[mapObject.Key][0].y - originY, multiplier);
+                Point mapObjectPoint = new Point(coordX, coordY);
+                string mapObjectKey = (string)mapObject.Key;
+                if (MapPointsOfInterest.Waypoints.Contains(mapObject.Key))
                 {
                     CachedBackgroundGraphics.DrawImage(Icons.Waypoint, mapObjectPoint);
                 }
-                else if ((string)mapObject.Key == "152" || (string)mapObject.Key == "357" || (string)mapObject.Key == "356" || (string)mapObject.Key == "354" || (string)mapObject.Key == "355" || (string)mapObject.Key == "266")
+                else if (MapPointsOfInterest.Waypoints.Contains(mapObject.Key))
                 {
                     CachedBackgroundGraphics.DrawImage(Icons.DoorNext, mapObjectPoint);
                 }
-                else if (MapPointsOfInterest.Chests.Contains((string)mapObject.Key))
+                else if (MapPointsOfInterest.Chests.Contains(mapObjectKey))
                 {
                     foreach (XY coordinates in mapData.objects[mapObject.Key])
                     {
-                        xCoord = MultiplyIntByDouble(coordinates.x - originX, multiplier);
-                        yCoord = MultiplyIntByDouble(coordinates.y - originY, multiplier);
-                        mapObjectPoint = new Point(xCoord, yCoord);
+                        coordX = MultiplyIntByDouble(coordinates.x - originX, multiplier);
+                        coordY = MultiplyIntByDouble(coordinates.y - originY, multiplier);
+                        mapObjectPoint = new Point(coordX, coordY);
                         CachedBackgroundGraphics.DrawImage(Icons.SuperChest, mapObjectPoint);
                     }
                 }
-            }
-
-            if (LineEnd.X != 0 && LineEnd.Y != 0)
-            {
-                CachedBackgroundGraphics.DrawLine(new Pen(Color.Red), playerPoint, LineEnd);
             }
 
             CachedBackgroundGraphics.DrawImage(Icons.Player, playerPoint);
@@ -239,6 +190,112 @@ namespace D2RAssist.Helpers
         private static int MultiplyIntByDouble(int _int, double _double)
         {
             return (int)(_int * _double);
+        }
+
+        private static void DrawArrows(int miniMapPlayerX, int miniMapPlayerY, Graphics minimap, double multiplier, MapData mapData)
+        {
+            int originX = mapData.levelOrigin.x;
+            int originY = mapData.levelOrigin.y;
+            // Setting up resuable pen
+            AdjustableArrowCap bigArrow = new AdjustableArrowCap(Settings.Map.ArrowThickness, Settings.Map.ArrowThickness);
+            Pen pen = new Pen(Color.Transparent, Settings.Map.ArrowThickness);
+            pen.CustomEndCap = bigArrow;
+
+            // Exits
+            foreach (KeyValuePair<string, AdjacentLevel> i in mapData.adjacentLevels)
+            {
+                if (mapData.adjacentLevels[i.Key].exits.Length == 0 || !Settings.Map.DrawExitArrow)
+                {
+                    continue;
+                }
+                if (MapPointsOfInterest.TalTombs.Contains(i.Key))
+                {
+                    TombCheck(i.Key);
+                    if (TombID == "0" || i.Key != TombID)
+                    {
+                        continue;
+                    }
+                }
+                int x = mapData.adjacentLevels[i.Key].exits[0].x;
+                int y = mapData.adjacentLevels[i.Key].exits[0].y;
+                int coordX = (int)((x - originX) * multiplier);
+                int coordY = (int)((y - originY) * multiplier);
+
+                // Draw arrow
+                pen.Color = Settings.Map.Colors.ArrowExit;
+                minimap.DrawLine(pen, miniMapPlayerX, miniMapPlayerY, coordX, coordY);
+                // Draw label
+                DrawLabelAt("Area", i.Key, coordX, coordY, minimap);
+            }
+            
+            bool waypointFound = false;
+            foreach (KeyValuePair<string, XY[]> mapObject in mapData.objects)
+            {
+                if (Settings.Map.DrawWaypointArrow && !waypointFound && MapPointsOfInterest.Waypoints.Contains(mapObject.Key))
+                {
+                    Point destPoint = GetMapObjectPoint(mapData, mapObject.Key, originX, originY, multiplier);
+                    // Draw arrow
+                    pen.Color = Settings.Map.Colors.ArrowWaypoint;
+                    minimap.DrawLine(pen, miniMapPlayerX, miniMapPlayerY, destPoint.X, destPoint.Y);
+                    // Draw label
+                    DrawLabelAt("GameObject", mapObject.Key, destPoint.X, destPoint.Y, minimap);
+                    waypointFound = true;
+                }
+
+                if (Settings.Map.DrawQuestArrow && (MapPointsOfInterest.Quests.Contains(mapObject.Key) || MapPointsOfInterest.TalTombs.Contains(mapObject.Key)))
+                {
+                    Point destPoint = GetMapObjectPoint(mapData, mapObject.Key, originX, originY, multiplier);
+                    // Draw arrow
+                    pen.Color = Settings.Map.Colors.ArrowQuest;
+                    minimap.DrawLine(pen, miniMapPlayerX, miniMapPlayerY, destPoint.X, destPoint.Y);
+                    // Draw label
+                    DrawLabelAt("GameObject", mapObject.Key, destPoint.X, destPoint.Y, minimap);
+                }
+            }
+        }
+
+        private async static void TombCheck(string mapObjectKey)
+        {
+            Game.Area tomb = (Game.Area)Int32.Parse(mapObjectKey);
+            MapData tombMapData = await MapApi.GetMapData(tomb);
+            if (tombMapData.objects.ContainsKey("152"))
+            {
+                TombID = mapObjectKey;
+            }
+        }
+
+        private static Point GetMapObjectPoint(MapData mapData, string mapObjectKey, int originX, int originY, double multiplier)
+        {
+            return new Point((int)((mapData.objects[mapObjectKey][0].x - originX) * multiplier), (int)((mapData.objects[mapObjectKey][0].y - originY) * multiplier));
+        }
+
+        private static void DrawLabelAt(string objectType, string objectKey, int posx, int posy, Graphics minimap)
+        {
+            minimap.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+            // Create font and brush.
+            Font drawFont = new Font(Settings.Map.LabelFont, 10);
+            SolidBrush drawBrush = new SolidBrush(Settings.Map.Colors.LabelColor);
+            // Set format of string.
+            StringFormat drawFormat = new StringFormat();
+            drawFormat.FormatFlags = StringFormatFlags.NoClip;
+            // Draw label line
+            int adjustment = 20;
+            Pen p = new Pen(Settings.Map.Colors.LabelColor, 1);
+            minimap.DrawLine(p, posx + adjustment, posy - (adjustment), posx, posy);
+            // Label box
+            RectangleF rectangleF = new RectangleF(posx + adjustment, posy - (2 * adjustment), 100, 100);
+            if (objectType == "Area")
+            {
+                string objName = Enum.GetName(typeof(Game.Area), Int32.Parse(objectKey));
+                objName = Game.AreaName[Int32.Parse(objectKey)];
+                minimap.DrawString(objName, drawFont, drawBrush, rectangleF, drawFormat);
+            }
+            if (objectType == "GameObject")
+            {
+                string objName = Enum.GetName(typeof(Game.GameObject), Int32.Parse(objectKey));
+                if (objName.Contains("Waypoint")) objName = "Waypoint";
+                minimap.DrawString(objName, drawFont, drawBrush, rectangleF, drawFormat);
+            }
         }
     }
 }

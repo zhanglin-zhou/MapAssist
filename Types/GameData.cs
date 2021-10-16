@@ -32,5 +32,7 @@ namespace D2RAssist.Types
         public UInt32 MapSeed;
         public UInt16 Difficulty;
         public Area AreaId;
+        public bool MapShown;
+        public IntPtr MainWindowHandle;
     }
 }
