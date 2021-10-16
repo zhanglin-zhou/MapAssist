@@ -7,7 +7,7 @@ namespace D2RAssist.Helpers
 {
     public static class PointOfInterestHandler
     {
-        private static readonly HashSet<GameObject> _interestingGameObjects = new HashSet<GameObject>
+        private static readonly HashSet<GameObject> _questObjects = new HashSet<GameObject>
         {
             GameObject.HoradricCubeChest,
             GameObject.HoradricScrollChest,
@@ -18,9 +18,10 @@ namespace D2RAssist.Helpers
             GameObject.InifussTree,
             GameObject.CairnStoneAlpha,
             GameObject.WirtCorpse,
-            GameObject.MaggotLairGooPile
+            GameObject.MaggotLairGooPile,
+            GameObject.HellForge
         };
-
+        
         private static readonly HashSet<GameObject> _goodChests = new HashSet<GameObject>
         {
             GameObject.GoodChest,
@@ -62,9 +63,7 @@ namespace D2RAssist.Helpers
                         {
                             Label = "Tal Rashas Tomb",
                             Position = areaData.AdjacentLevels[realTomb].Exits[0],
-                            DrawLabel = true,
-                            DrawLine = true,
-                            DrawIcon = Icons.DoorNext
+                            RenderingSettings = Settings.Rendering.NextArea
                         });
                     }
 
@@ -83,9 +82,7 @@ namespace D2RAssist.Helpers
                                 {
                                     Label = highestArea.Name(),
                                     Position = areaData.AdjacentLevels[highestArea].Exits[0],
-                                    DrawLabel = true,
-                                    DrawLine = true,
-                                    DrawIcon = Icons.DoorNext
+                                    RenderingSettings = Settings.Rendering.NextArea
                                 });
                             }
                         }
@@ -104,9 +101,7 @@ namespace D2RAssist.Helpers
                                 {
                                     Label = level.Area.Name(),
                                     Position = positin,
-                                    DrawLabel = true,
-                                    DrawLine = false,
-                                    DrawIcon = Icons.DoorPrevious
+                                    RenderingSettings = Settings.Rendering.PreviousArea
                                 });
                             }
                         }
@@ -130,20 +125,19 @@ namespace D2RAssist.Helpers
                 {
                     pointOfInterest.Add(new PointOfInterest
                     {
+                        Label = obj.ToString(),
                         Position = points[0],
-                        DrawLabel = false,
-                        DrawLine = false,
-                        DrawIcon = Icons.Waypoint
+                        RenderingSettings = Settings.Rendering.Waypoint
                     });
                 }
                 // Quest objects
-                else if (_interestingGameObjects.Contains(obj))
+                else if (_questObjects.Contains(obj))
                 {
                     pointOfInterest.Add(new PointOfInterest
                     {
+                        Label = obj.ToString(),
                         Position = points[0],
-                        DrawLabel = false,
-                        DrawLine = true
+                        RenderingSettings = Settings.Rendering.Quest
                     });
                 }
                 // Chests
@@ -153,8 +147,9 @@ namespace D2RAssist.Helpers
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
+                            Label = obj.ToString(),
                             Position = point,
-                            DrawIcon = Icons.SuperChest
+                            RenderingSettings = Settings.Rendering.SuperChest
                         });
                     }
                 }

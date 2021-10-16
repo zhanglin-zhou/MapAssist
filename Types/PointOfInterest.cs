@@ -6,8 +6,6 @@ namespace D2RAssist.Types
     {
         public string Label;
         public Point Position;
-        public bool DrawLabel;
-        public bool DrawLine;
-        public Bitmap DrawIcon;
+        public PointOfInterestRenderingSettings RenderingSettings;
     }
 }

@@ -44,7 +44,7 @@ namespace D2RAssist
             InitializeComponent();
             keyboardMouseEvents.KeyPress += (_, args) =>
             {
-                if (InGame() && args.KeyChar == Settings.Map.ShowHideKey)
+                if (InGame() && args.KeyChar == Settings.Map.ToggleKey)
                 {
                     _show = !_show;
                 }
@@ -126,12 +126,13 @@ namespace D2RAssist
         {
             return !_show || _currentGameData.Area == Area.None ||
                    (Settings.Map.HideInTown == true &&
-                    _currentGameData.Area.IsTown()) || !InGame();
+                    _currentGameData.Area.IsTown()) || !InGame() ||
+                   (Settings.Map.ToggleViaInGameMap && !_currentGameData.MapShown);
         }
 
-        private static bool InGame()
+        private bool InGame()
         {
-            return WindowsExternal.GetActiveWindowTitle() == "Diablo II: Resurrected";
+            return _currentGameData != null && _currentGameData.MainWindowHandle != IntPtr.Zero && WindowsExternal.GetForegroundWindow() == _currentGameData.MainWindowHandle;
         }
 
         private void MapOverlay_Paint(object sender, PaintEventArgs e)

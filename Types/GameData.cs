@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using System;
 using System.Drawing;
 
 namespace D2RAssist.Types
@@ -27,6 +28,8 @@ namespace D2RAssist.Types
         public uint MapSeed;
         public Difficulty Difficulty;
         public Area Area;
+        public bool MapShown;
+        public IntPtr MainWindowHandle;
 
         public bool HasGameChanged(GameData other)
         {
@@ -44,7 +47,7 @@ namespace D2RAssist.Types
         public override string ToString()
         {
             return
-                $"{nameof(PlayerPosition)}: {PlayerPosition}, {nameof(MapSeed)}: {MapSeed}, {nameof(Difficulty)}: {Difficulty}, {nameof(Area)}: {Area}";
+                $"{nameof(PlayerPosition)}: {PlayerPosition}, {nameof(MapSeed)}: {MapSeed}, {nameof(Difficulty)}: {Difficulty}, {nameof(Area)}: {Area}, {nameof(MapShown)}: {MapShown}";
         }
     }
 }

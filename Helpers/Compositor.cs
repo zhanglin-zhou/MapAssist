@@ -31,6 +31,10 @@ namespace D2RAssist.Helpers
         private readonly AreaData _areaData;
         private readonly Bitmap _background;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
+        private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
+
+        private readonly Dictionary<(Shape, int, Color), Bitmap> _iconCache =
+            new Dictionary<(Shape, int, Color), Bitmap>();
 
         public Compositor(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
         {
@@ -57,16 +61,26 @@ namespace D2RAssist.Helpers
 
                 var localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin);
 
-                imageGraphics.DrawImage(Icons.Player, localPlayerPosition);
+                if (Settings.Rendering.Player.CanDrawIcon())
+                {
+                    var playerIcon = GetIcon(Settings.Rendering.Player);
+                    imageGraphics.DrawImage(playerIcon, localPlayerPosition);
+                }
 
                 // The lines are dynamic, and follow the player, so have to be drawn here.
                 // The rest can be done in DrawBackground.
                 foreach (var poi in _pointsOfInterest)
                 {
-                    if (poi.DrawLine)
+                    if (poi.RenderingSettings.CanDrawLine())
                     {
-                        imageGraphics.DrawLine(new Pen(Settings.Map.Colors.PointOfInterestLine), localPlayerPosition,
-                            poi.Position.OffsetFrom(_areaData.Origin));
+                        var pen = new Pen(poi.RenderingSettings.LineColor, poi.RenderingSettings.LineThickness);
+                        if (poi.RenderingSettings.CanDrawArrowHead())
+                        {
+                            pen.CustomEndCap = new AdjustableArrowCap(poi.RenderingSettings.ArrowHeadSize,
+                                poi.RenderingSettings.ArrowHeadSize);
+                        }
+
+                        imageGraphics.DrawLine(pen, localPlayerPosition, poi.Position.OffsetFrom(_areaData.Origin));
                     }
                 }
             }
@@ -99,7 +113,7 @@ namespace D2RAssist.Helpers
             return image;
         }
 
-        private static Bitmap DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
+        private Bitmap DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
         {
             var background = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length,
                 PixelFormat.Format32bppArgb);
@@ -118,88 +132,74 @@ namespace D2RAssist.Helpers
                     for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
                     {
                         var type = areaData.CollisionGrid[y][x];
-                        switch (type)
+                        var typeColor = Settings.Map.LookupMapColor(type);
+                        if (typeColor != null)
                         {
-                            case 1:
-                                //background.SetPixel(x, y, Color.FromArgb(70, 51, 41));
-                                break;
-                            case -1:
-                                // uncroppedBackground.SetPixel(x, y, Color.FromArgb(255, 255, 255));
-                                break;
-                            case 0:
-                                background.SetPixel(x, y, Color.FromArgb(50, 50, 50));
-                                break;
-                            case 16:
-                                background.SetPixel(x, y, Color.FromArgb(168, 56, 50));
-                                break;
-                            case 7:
-                                background.SetPixel(x, y, Color.FromArgb(255, 255, 255));
-                                break;
-                            case 5:
-                                // uncroppedBackground.SetPixel(x, y, Color.FromArgb(0, 0, 0));
-                                break;
-                            case 33:
-                                background.SetPixel(x, y, Color.FromArgb(0, 0, 255));
-                                break;
-                            case 23:
-                                background.SetPixel(x, y, Color.FromArgb(0, 0, 255));
-                                break;
-                            case 4:
-                                background.SetPixel(x, y, Color.FromArgb(0, 255, 255));
-                                break;
-                            case 21:
-                                background.SetPixel(x, y, Color.FromArgb(255, 0, 255));
-                                break;
-                            case 20:
-                                background.SetPixel(x, y, Color.FromArgb(70, 51, 41));
-                                break;
-                            case 17:
-                                background.SetPixel(x, y, Color.FromArgb(255, 51, 255));
-                                break;
-                            case 3:
-                                background.SetPixel(x, y, Color.FromArgb(255, 0, 255));
-                                break;
-                            case 19:
-                                background.SetPixel(x, y, Color.FromArgb(0, 51, 255));
-                                break;
-                            case 2:
-                                background.SetPixel(x, y, Color.FromArgb(10, 51, 23));
-                                break;
-                            case 37:
-                                background.SetPixel(x, y, Color.FromArgb(50, 51, 23));
-                                break;
-                            case 6:
-                                background.SetPixel(x, y, Color.FromArgb(80, 51, 33));
-                                break;
-                            case 39:
-                                background.SetPixel(x, y, Color.FromArgb(20, 11, 33));
-                                break;
-                            case 53:
-                                background.SetPixel(x, y, Color.FromArgb(10, 11, 43));
-                                break;
-                            default:
-                                background.SetPixel(x, y, Color.FromArgb(255, 255, 255));
-                                break;
+                            background.SetPixel(x, y, (Color)typeColor);
                         }
                     }
                 }
 
                 foreach (var poi in pointOfInterest)
                 {
-                    if (poi.DrawIcon != null && poi.DrawIcon.Size != Size.Empty)
+                    if (poi.RenderingSettings.CanDrawIcon())
                     {
-                        backgroundGraphics.DrawImage(poi.DrawIcon, poi.Position.OffsetFrom(areaData.Origin));
+                        var icon = GetIcon(poi.RenderingSettings);
+                        backgroundGraphics.DrawImage(icon, poi.Position.OffsetFrom(areaData.Origin));
                     }
 
-                    if (poi.DrawLabel && !string.IsNullOrWhiteSpace(poi.Label))
+                    if (!string.IsNullOrWhiteSpace(poi.Label) && poi.RenderingSettings.CanDrawLabel())
                     {
-                        backgroundGraphics.DrawString(poi.Label, Settings.Map.Font,
-                            new SolidBrush(Settings.Map.Colors.TextColor), poi.Position.OffsetFrom(areaData.Origin));
+                        var font = GetFont(poi.RenderingSettings);
+                        backgroundGraphics.DrawString(poi.Label, font,
+                            new SolidBrush(poi.RenderingSettings.LabelColor),
+                            poi.Position.OffsetFrom(areaData.Origin));
                     }
                 }
 
                 return background;
             }
+        }
+
+        private Font GetFont(PointOfInterestRenderingSettings poiSettings)
+        {
+            var cacheKey = (poiSettings.LabelFont, poiSettings.LabelFontSize);
+            if (!_fontCache.ContainsKey(cacheKey))
+            {
+                var font = new Font(poiSettings.LabelFont,
+                    poiSettings.LabelFontSize);
+                _fontCache[cacheKey] = font;
+            }
+
+            return _fontCache[cacheKey];
+        }
+
+        private Bitmap GetIcon(PointOfInterestRenderingSettings poiSettings)
+        {
+            var cacheKey = (poiSettings.IconShape, poiSettings.IconSize, Color: poiSettings.IconColor);
+            if (!_iconCache.ContainsKey(cacheKey))
+            {
+                var bitmap = new Bitmap(poiSettings.IconSize, poiSettings.IconSize, PixelFormat.Format32bppArgb);
+                using (var g = Graphics.FromImage(bitmap))
+                {
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    switch (poiSettings.IconShape)
+                    {
+                        case Shape.Ellipse:
+                            g.FillEllipse(new SolidBrush(poiSettings.IconColor), 0, 0, poiSettings.IconSize,
+                                poiSettings.IconSize);
+                            break;
+                        case Shape.Rectangle:
+                            g.FillRectangle(new SolidBrush(poiSettings.IconColor), 0, 0, poiSettings.IconSize,
+                                poiSettings.IconSize);
+                            break;
+                    }
+                }
+
+                _iconCache[cacheKey] = bitmap;
+            }
+
+            return _iconCache[cacheKey];
         }
     }
 }

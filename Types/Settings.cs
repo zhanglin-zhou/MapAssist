@@ -17,7 +17,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
+
+// ReSharper disable FieldCanBeMadeReadOnly.Global
 
 namespace D2RAssist.Types
 {
@@ -27,43 +33,181 @@ namespace D2RAssist.Types
         TopRight
     }
 
+    public enum Shape
+    {
+        None,
+        Rectangle,
+        Ellipse
+    }
+
     public static class Settings
     {
+        public static class Rendering
+        {
+            public static PointOfInterestRenderingSettings
+                NextArea = Utils.GetRenderingSettingsForPrefix("NextArea");
+
+            public static PointOfInterestRenderingSettings PreviousArea =
+                Utils.GetRenderingSettingsForPrefix("PreviousArea");
+
+            public static PointOfInterestRenderingSettings Waypoint = Utils.GetRenderingSettingsForPrefix("Waypoint");
+            public static PointOfInterestRenderingSettings Quest = Utils.GetRenderingSettingsForPrefix("Quest");
+            public static PointOfInterestRenderingSettings Player = Utils.GetRenderingSettingsForPrefix("Player");
+
+            public static PointOfInterestRenderingSettings SuperChest =
+                Utils.GetRenderingSettingsForPrefix("SuperChest");
+        }
+
         public static class Map
         {
-            public static class Colors
+            private static readonly Dictionary<int, Color?> MapColors = new Dictionary<int, Color?>();
+
+            public static Color? LookupMapColor(int type)
             {
-                public static readonly Color DoorNext = Color.FromArgb(237, 107, 0);
-                public static readonly Color DoorPrevious = Color.FromArgb(255, 0, 149);
-                public static readonly Color Waypoint = Color.FromArgb(16, 140, 235);
-                public static readonly Color Player = Color.FromArgb(255, 255, 0);
-                public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
-                public static readonly Color TextColor = Color.Chartreuse;
-                public static readonly Color PointOfInterestLine = Color.Chartreuse;
+                string key = "MapColor[" + type + "]";
+
+                if (!MapColors.ContainsKey(type))
+                {
+                    string mapColorString = ConfigurationManager.AppSettings[key];
+                    if (!String.IsNullOrEmpty(mapColorString))
+                    {
+                        MapColors[type] = Utils.ParseColor(mapColorString);
+                    }
+                    else
+                    {
+                        MapColors[type] = null;
+                    }
+                }
+
+                return MapColors[type];
             }
 
-            public static readonly Font Font = new Font("Arial", 8);
-            public const double Opacity = 0.70;
-            public const bool AlwaysOnTop = true;
-            public const bool HideInTown = true;
-            public const int Size = 450;
-            public const MapPosition Position = MapPosition.TopRight;
-            public const int UpdateTime = 100;
-            public const bool Rotate = true;
-            public const char ShowHideKey = '\\';
+            public static double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"],
+                System.Globalization.CultureInfo.InvariantCulture);
 
-            public static readonly Area[] PrefetchAreas =
-            {
-                Area.CatacombsLevel2,
-                Area.DuranceOfHateLevel2,
-            };
+            public static bool AlwaysOnTop = Convert.ToBoolean(ConfigurationManager.AppSettings["AlwaysOnTop"]);
+            public static bool HideInTown = Convert.ToBoolean(ConfigurationManager.AppSettings["HideInTown"]);
 
-            public const bool ClearPrefetchedOnAreaChange = false;
+            public static bool ToggleViaInGameMap =
+                Convert.ToBoolean(ConfigurationManager.AppSettings["ToggleViaInGameMap"]);
+
+            public static int Size = Convert.ToInt16(ConfigurationManager.AppSettings["Size"]);
+
+            public static MapPosition Position =
+                (MapPosition)Enum.Parse(typeof(MapPosition), ConfigurationManager.AppSettings["MapPosition"], true);
+
+            public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
+            public static bool Rotate = Convert.ToBoolean(ConfigurationManager.AppSettings["Rotate"]);
+            public static char ToggleKey = Convert.ToChar(ConfigurationManager.AppSettings["ToggleKey"]);
+
+            public static Area[] PrefetchAreas =
+                Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["PrefetchAreas"]);
+
+            public static bool ClearPrefetchedOnAreaChange =
+                Convert.ToBoolean(ConfigurationManager.AppSettings["ClearPrefetchedOnAreaChange"]);
         }
 
         public static class Api
         {
-            public static string Endpoint = "http://localhost:8080/";
+            public static string Endpoint = ConfigurationManager.AppSettings["ApiEndpoint"];
+        }
+    }
+
+
+    public class PointOfInterestRenderingSettings
+    {
+        public Color IconColor;
+        public Shape IconShape;
+        public int IconSize;
+
+        public Color LineColor;
+        public float LineThickness;
+
+        public int ArrowHeadSize;
+        
+        public Color LabelColor;
+        public string LabelFont;
+        public int LabelFontSize;
+
+        public bool CanDrawIcon()
+        {
+            return IconShape != Shape.None && IconSize > 0 && IconColor != Color.Transparent;
+        }
+
+        public bool CanDrawLine()
+        {
+            return LineColor != Color.Transparent && LineThickness > 0;
+        }
+
+        public bool CanDrawArrowHead()
+        {
+            return CanDrawLine() && ArrowHeadSize > 0;
+        }
+
+        public bool CanDrawLabel()
+        {
+            return LabelColor != Color.Transparent && !string.IsNullOrWhiteSpace(LabelFont) &&
+                   LabelFontSize > 0;
+        }
+    }
+
+    public static class Utils
+    {
+        public static Area[] ParseCommaSeparatedAreasByName(string areas)
+        {
+            return areas
+                .Split(',')
+                .Select(o => LookupAreaByName(o.Trim()))
+                .Where(o => o != Area.None)
+                .ToArray();
+        }
+
+        private static Area LookupAreaByName(string name)
+        {
+            return Enum.GetValues(typeof(Area)).Cast<Area>().FirstOrDefault(area => area.Name() == name);
+        }
+
+        private static T GetConfigValue<T>(string key, Func<string, T> converter, T fallback = default)
+        {
+            var valueString = ConfigurationManager.AppSettings[key];
+            return string.IsNullOrWhiteSpace(valueString) ? fallback : converter.Invoke(valueString);
+        }
+
+        public static Color ParseColor(string value)
+        {
+            if (value.StartsWith("#"))
+            {
+                return ColorTranslator.FromHtml(value);
+            }
+
+            if (value.Contains(","))
+            {
+                var ints = value.Split(',').Select(o => int.Parse(o.Trim())).ToArray();
+                switch (ints.Length)
+                {
+                    case 4:
+                        return Color.FromArgb(ints[0], ints[1], ints[2], ints[3]);
+                    case 3:
+                        return Color.FromArgb(ints[0], ints[1], ints[2]);
+                }
+            }
+            return Color.FromName(value);
+        }
+
+        public static PointOfInterestRenderingSettings GetRenderingSettingsForPrefix(string name)
+        {
+            return new PointOfInterestRenderingSettings
+            {
+                IconColor = GetConfigValue($"{name}.IconColor", ParseColor, Color.Transparent),
+                IconShape = GetConfigValue($"{name}.IconShape", t => (Shape)Enum.Parse(typeof(Shape), t, true)),
+                IconSize = GetConfigValue($"{name}.IconSize", Convert.ToInt32),
+                LineColor = GetConfigValue($"{name}.LineColor", ParseColor, Color.Transparent),
+                LineThickness = GetConfigValue($"{name}.LineThickness", Convert.ToSingle, 1),
+                ArrowHeadSize = GetConfigValue($"{name}.ArrowHeadSize", Convert.ToInt32),
+                LabelColor = GetConfigValue($"{name}.LabelColor", ParseColor, Color.Transparent),
+                LabelFont = GetConfigValue($"{name}.LabelFont", t => t, "Arial"),
+                LabelFontSize = GetConfigValue($"{name}.LabelFontSize", Convert.ToInt32, 8),
+            };
         }
     }
 }

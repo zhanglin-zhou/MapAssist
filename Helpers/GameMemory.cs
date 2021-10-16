@@ -110,13 +110,20 @@ namespace D2RAssist.Helpers
                 WindowsExternal.ReadProcessMemory(processHandle, posYAddress, addressBuffer, addressBuffer.Length,
                     out _);
                 var playerY = BitConverter.ToUInt16(addressBuffer, 0);
-
+                    
+                var uiSettingsPath = IntPtr.Add(processAddress, Offsets.InGameMap);
+                WindowsExternal.ReadProcessMemory(processHandle, uiSettingsPath, byteBuffer, byteBuffer.Length,
+                    out _);
+                var mapShown = BitConverter.ToBoolean(byteBuffer, 0);
+                
                 return new GameData
                 {
                     PlayerPosition = new Point(playerX, playerY),
                     MapSeed = mapSeed,
                     Area = (Area)dwLevelId,
-                    Difficulty = (Difficulty)aGameDifficulty
+                    Difficulty = (Difficulty)aGameDifficulty,
+                    MapShown = mapShown,
+                    MainWindowHandle = gameProcess.MainWindowHandle
                 };
             }
             catch (Exception)

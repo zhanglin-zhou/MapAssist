@@ -31,6 +31,7 @@ namespace D2RAssist
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Overlay));
             this.mapOverlay = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.mapOverlay)).BeginInit();
             this.SuspendLayout();
@@ -39,12 +40,12 @@ namespace D2RAssist
             // 
             this.mapOverlay.BackColor = System.Drawing.Color.Transparent;
             this.mapOverlay.Location = new System.Drawing.Point(12, 3);
-            this.mapOverlay.Name = "Map Overlay";
+            this.mapOverlay.Name = "mapOverlay";
             this.mapOverlay.Size = new System.Drawing.Size(0, 0);
             this.mapOverlay.TabIndex = 0;
             this.mapOverlay.TabStop = false;
             this.mapOverlay.Paint += new System.Windows.Forms.PaintEventHandler(this.MapOverlay_Paint);
-            
+
             // 
             // frmOverlay
             // 
@@ -53,13 +54,11 @@ namespace D2RAssist
             this.ClientSize = new System.Drawing.Size(1767, 996);
             this.Controls.Add(this.mapOverlay);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Overlay";
-            //this.TransparencyKey = System.Drawing.SystemColors.Control;
             this.TransparencyKey = Color.Black;
             this.BackColor = Color.Black;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.ShowInTaskbar = false;
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.Overlay_Load);
             ((System.ComponentModel.ISupportInitialize)(this.mapOverlay)).EndInit();
             this.ResumeLayout(false);

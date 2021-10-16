@@ -19,7 +19,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace D2RAssist.Helpers
 {
@@ -89,22 +88,5 @@ namespace D2RAssist.Helpers
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-
-        public static string GetActiveWindowTitle()
-        {
-            const int maxLen = 256;
-            var buf = new StringBuilder(maxLen);
-            var handle = GetForegroundWindow();
-
-            if (GetWindowText(handle, buf, maxLen) > 0)
-            {
-                return buf.ToString();
-            }
-
-            return null;
-        }
     }
 }
