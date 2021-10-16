@@ -43,7 +43,7 @@ namespace D2RAssist.Types
                 public static readonly Color Player = Color.FromArgb(255, 255, 0);
                 public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
                 public static readonly Color ArrowExit = Color.FromArgb(0,72,186);
-                public static readonly Color ArrowQuest = Color.FromArgb(255, 255, 255);
+                public static readonly Color ArrowQuest = Color.FromArgb(255, 0, 0);
                 public static readonly Color ArrowWaypoint = Color.FromArgb(0, 204, 153);
                 public static readonly Color LabelColor = Color.FromArgb(255, 246, 0);
             }
@@ -57,6 +57,10 @@ namespace D2RAssist.Types
             public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
             public static bool Rotate = true;
             public static string LabelFont = "BD Megalona";
+            public static int ArrowThickness = Convert.ToInt16(ConfigurationManager.AppSettings["ArrowThickness"]);
+            public static bool DrawExitArrow = Convert.ToBoolean(ConfigurationManager.AppSettings["DrawExitArrow"]);
+            public static bool DrawQuestArrow = Convert.ToBoolean(ConfigurationManager.AppSettings["DrawQuestArrow"]);
+            public static bool DrawWaypointArrow = Convert.ToBoolean(ConfigurationManager.AppSettings["DrawWaypointArrow"]);
         }
 
         public static class Api
