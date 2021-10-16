@@ -39,15 +39,15 @@ namespace D2RAssist.Types
             {
                 public static Dictionary<int, Color?> MapColors = new Dictionary<int, Color?>();
 
-                public static readonly Color DoorNext = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["DoorNext"]); // Color.FromArgb(237, 107, 0);
-                public static readonly Color DoorPrevious = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["DoorPrevious"]); // Color.FromArgb(255, 0, 149);
-                public static readonly Color Waypoint = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["Waypoint"]); // Color.FromArgb(16, 140, 235);
-                public static readonly Color Player = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["Player"]); // Color.FromArgb(255, 255, 0);
-                public static readonly Color SuperChest = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["SuperChest"]); // Color.FromArgb(17, 255, 0);
-                public static readonly Color ArrowExit = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowExit"]); // Color.FromArgb(0,72,186);
-                public static readonly Color ArrowQuest = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowQuest"]); // Color.FromArgb(255, 255, 255);
-                public static readonly Color ArrowWaypoint = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowWaypoint"]); // Color.FromArgb(0, 204, 153);
-                public static readonly Color LabelColor = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["LabelColor"]); // Color.FromArgb(255, 246, 0);
+                public static readonly Color DoorNext = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["DoorNext"]);
+                public static readonly Color DoorPrevious = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["DoorPrevious"]);
+                public static readonly Color Waypoint = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["Waypoint"]);
+                public static readonly Color Player = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["Player"]);
+                public static readonly Color SuperChest = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["SuperChest"]);
+                public static readonly Color ArrowExit = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowExit"]);
+                public static readonly Color ArrowQuest = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowQuest"]);
+                public static readonly Color ArrowWaypoint = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowWaypoint"]);
+                public static readonly Color LabelColor = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["LabelColor"]);
 
                 public static Color? LookupMapColor(int type)
                 {
@@ -75,7 +75,7 @@ namespace D2RAssist.Types
             public static bool HideInTown = Convert.ToBoolean(ConfigurationManager.AppSettings["HideInTown"]);
             public static bool ToggleViaInGameMap = Convert.ToBoolean(ConfigurationManager.AppSettings["ToggleViaInGameMap"]);
             public static int Size = Convert.ToInt16(ConfigurationManager.AppSettings["Size"]);
-            public static MapPosition Position = (MapPosition)Convert.ToInt16(ConfigurationManager.AppSettings["MapPosition"]);
+            public static MapPosition MapPosition = (MapPosition)Convert.ToInt16(ConfigurationManager.AppSettings["MapPosition"]);
             public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
             public static bool Rotate = Convert.ToBoolean(ConfigurationManager.AppSettings["Rotate"]);
             public static string LabelFont = ConfigurationManager.AppSettings["LabelFont"];

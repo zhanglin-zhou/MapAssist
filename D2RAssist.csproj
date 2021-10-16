@@ -83,6 +83,9 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources/Icon1.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -154,6 +157,7 @@
     <Content Include="D2MapApi\README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Icon1.ico" />
     <Content Include="Resources\test.json" />
   </ItemGroup>
   <ItemGroup>

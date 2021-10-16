@@ -154,7 +154,7 @@ namespace D2RAssist
 
             Bitmap gameMap = MapRenderer.FromMapData(Globals.MapData);
             Point anchor = new Point(0, 0);
-            switch (Settings.Map.Position) {
+            switch (Settings.Map.MapPosition) {
                 case MapPosition.TopRight:
                     anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
 

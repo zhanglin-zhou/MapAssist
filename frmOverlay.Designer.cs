@@ -29,6 +29,7 @@ namespace D2RAssist
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOverlay));
             this.mapOverlay = new System.Windows.Forms.PictureBox();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
@@ -37,16 +38,43 @@ namespace D2RAssist
             ((System.ComponentModel.ISupportInitialize)(this.mapOverlay)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // mapOverlay
             // 
             this.mapOverlay.BackColor = System.Drawing.Color.Transparent;
             this.mapOverlay.Location = new System.Drawing.Point(12, 3);
-            this.mapOverlay.Name = "Map Overlay";
+            this.mapOverlay.Name = "mapOverlay";
             this.mapOverlay.Size = new System.Drawing.Size(0, 0);
             this.mapOverlay.TabIndex = 0;
             this.mapOverlay.TabStop = false;
             this.mapOverlay.Paint += new System.Windows.Forms.PaintEventHandler(this.mapOverlay_Paint);
-            
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.Location = new System.Drawing.Point(0, 0);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(104, 24);
+            this.radioButton1.TabIndex = 0;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.Location = new System.Drawing.Point(0, 0);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(104, 24);
+            this.radioButton2.TabIndex = 0;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.Location = new System.Drawing.Point(0, 0);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(104, 24);
+            this.radioButton3.TabIndex = 0;
+            // 
+            // listBox1
+            // 
+            this.listBox1.Location = new System.Drawing.Point(0, 0);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(120, 96);
+            this.listBox1.TabIndex = 0;
             // 
             // frmOverlay
             // 
@@ -55,6 +83,7 @@ namespace D2RAssist
             this.ClientSize = new System.Drawing.Size(1767, 996);
             this.Controls.Add(this.mapOverlay);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmOverlay";
             this.TransparencyKey = System.Drawing.SystemColors.Control;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
