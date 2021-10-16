@@ -92,7 +92,7 @@ namespace D2RAssist.Helpers
             return newBitmap;
         }
 
-        public static Bitmap CropBitmap(Bitmap originalBitmap)
+        public static (Bitmap, Point) CropBitmap(Bitmap originalBitmap)
         {
             // Find the min/max non-white/transparent pixels
             var min = new Point(int.MaxValue, int.MaxValue);
@@ -122,7 +122,7 @@ namespace D2RAssist.Helpers
                 g.DrawImage(originalBitmap, 0, 0, cropRectangle, GraphicsUnit.Pixel);
             }
 
-            return newBitmap;
+            return (newBitmap, min);
         }
 
         /// <summary>

@@ -30,6 +30,7 @@ namespace D2RAssist.Helpers
     {
         private readonly AreaData _areaData;
         private readonly Bitmap _background;
+        private readonly Point _cropOffset;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
         private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
 
@@ -40,7 +41,7 @@ namespace D2RAssist.Helpers
         {
             _areaData = areaData;
             _pointsOfInterest = pointOfInterest;
-            _background = DrawBackground(areaData, pointOfInterest);
+            (_background, _cropOffset) = DrawBackground(areaData, pointOfInterest);
         }
 
         public Bitmap Compose(GameData gameData)
@@ -52,6 +53,7 @@ namespace D2RAssist.Helpers
             }
 
             var image = (Bitmap)_background.Clone();
+
             using (var imageGraphics = Graphics.FromImage(image))
             {
                 imageGraphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -59,7 +61,7 @@ namespace D2RAssist.Helpers
                 imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
                 imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                var localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin);
+                var localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset);
 
                 if (Settings.Rendering.Player.CanDrawIcon())
                 {
@@ -80,12 +82,11 @@ namespace D2RAssist.Helpers
                                 poi.RenderingSettings.ArrowHeadSize);
                         }
 
-                        imageGraphics.DrawLine(pen, localPlayerPosition, poi.Position.OffsetFrom(_areaData.Origin));
+                        imageGraphics.DrawLine(pen, localPlayerPosition,
+                            poi.Position.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset));
                     }
                 }
             }
-
-            image = ImageUtils.CropBitmap(image);
 
             double biggestDimension = Math.Max(image.Width, image.Height);
 
@@ -103,7 +104,6 @@ namespace D2RAssist.Helpers
                     (int)(image.Height * multiplier));
             }
 
-
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (Settings.Map.Rotate)
             {
@@ -113,7 +113,7 @@ namespace D2RAssist.Helpers
             return image;
         }
 
-        private Bitmap DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
+        private (Bitmap, Point) DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
         {
             var background = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length,
                 PixelFormat.Format32bppArgb);
@@ -157,7 +157,7 @@ namespace D2RAssist.Helpers
                     }
                 }
 
-                return background;
+                return ImageUtils.CropBitmap(background);
             }
         }
 
