@@ -139,7 +139,8 @@ namespace D2RAssist
 
         private void mapOverlay_Paint(object sender, PaintEventArgs e)
         {
-            if (Globals.MapData == null)
+            // Handle race condition where mapData hasn't been received yet.
+            if (Globals.MapData == null || Globals.MapData.mapRows[0].Length == 0)
             {
                 return;
             }
