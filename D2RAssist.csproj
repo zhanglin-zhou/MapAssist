@@ -2,12 +2,13 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
+        <RandomGuid>$([System.Guid]::NewGuid())</RandomGuid>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
         <ProjectGuid>{FB3AC437-B7BB-42FF-A2A2-F10551F95F6C}</ProjectGuid>
         <OutputType>WinExe</OutputType>
         <RootNamespace>D2RAssist</RootNamespace>
-        <AssemblyName>D2RAssist</AssemblyName>
+        <AssemblyName>$(RandomGuid)</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -83,24 +84,24 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <SignManifests>true</SignManifests>
     </PropertyGroup>
-      <PropertyGroup>
+    <PropertyGroup>
         <Win32Resource>
         </Win32Resource>
-      </PropertyGroup>
-      <PropertyGroup>
+    </PropertyGroup>
+    <PropertyGroup>
         <SignManifests>false</SignManifests>
-      </PropertyGroup>
-      <PropertyGroup>
+    </PropertyGroup>
+    <PropertyGroup>
         <TargetZone>LocalIntranet</TargetZone>
-      </PropertyGroup>
-      <PropertyGroup />
-      <PropertyGroup>
+    </PropertyGroup>
+    <PropertyGroup />
+    <PropertyGroup>
         <ApplicationIcon>Resources\Icon1.ico</ApplicationIcon>
-      </PropertyGroup>
-      <PropertyGroup />
-      <PropertyGroup>
+    </PropertyGroup>
+    <PropertyGroup />
+    <PropertyGroup>
         <NoWin32Manifest>true</NoWin32Manifest>
-      </PropertyGroup>
+    </PropertyGroup>
 
     <ItemGroup>
         <Reference Include="System" />
@@ -147,27 +148,9 @@
         <EmbeddedResource Include="Overlay.resx">
             <DependentUpon>Overlay.cs</DependentUpon>
         </EmbeddedResource>
-        <EmbeddedResource Include="Properties\Resources.resx">
-            <Generator>ResXFileCodeGenerator</Generator>
-            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-            <SubType>Designer</SubType>
-        </EmbeddedResource>
-        <Compile Include="Properties\Resources.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Resources.resx</DependentUpon>
-        </Compile>
         <None Include="D2MapApi\Run.bat">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Include="Properties\Settings.settings">
-            <Generator>SettingsSingleFileGenerator</Generator>
-            <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-        </None>
-        <Compile Include="Properties\Settings.Designer.cs">
-            <AutoGen>True</AutoGen>
-            <DependentUpon>Settings.settings</DependentUpon>
-            <DesignTimeSharedInput>True</DesignTimeSharedInput>
-        </Compile>
         <Content Include="D2MapApi\d2mapapi.exe">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
