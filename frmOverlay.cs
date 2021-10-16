@@ -42,7 +42,6 @@ namespace D2RAssist
         private const UInt32 SWP_NOMOVE = 0x0002;
         private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
         private Screen _screen;
-        private IntPtr _d2RWindowPointer;
 
         public frmOverlay()
         {
@@ -51,11 +50,6 @@ namespace D2RAssist
 
         private void frmOverlay_Load(object sender, EventArgs e)
         {
-            // We should select screen either from config or find the actual position of the D2R window/screen.
-            var d2rProcess = Process.GetProcessesByName("D2R")[0];
-            _d2RWindowPointer = d2rProcess.MainWindowHandle;
-            UpdateLocation();
-
             this.Opacity = Settings.Map.Opacity;
 
             using (Timer MapUpdateTimer = new Timer())
@@ -142,12 +136,13 @@ namespace D2RAssist
         private bool D2RProcessInForeground()
         {
             IntPtr activeWindowHandle = WindowsExternal.GetForegroundWindow();
-            return activeWindowHandle == _d2RWindowPointer;
+            return activeWindowHandle == Globals.CurrentGameData.MainWindowHandle;
         }
 
         private void mapOverlay_Paint(object sender, PaintEventArgs e)
         {
-            if (Globals.MapData == null)
+            // Handle race condition where mapData hasn't been received yet.
+            if (Globals.MapData == null || Globals.MapData.mapRows[0].Length == 0)
             {
                 return;
             }
@@ -174,7 +169,7 @@ namespace D2RAssist
         private void UpdateLocation()
         {
             this.WindowState = FormWindowState.Normal;
-            _screen = Screen.FromHandle(_d2RWindowPointer);
+            _screen = Screen.FromHandle(Globals.CurrentGameData.MainWindowHandle);
             this.Location = new Point(_screen.WorkingArea.X, _screen.WorkingArea.Y);
             this.Size = new Size(_screen.WorkingArea.Width, _screen.WorkingArea.Height);
         }
