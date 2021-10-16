@@ -38,6 +38,7 @@ namespace D2RAssist
         private Compositor _compositor;
         private MapApi _mapApi;
         private bool _show = true;
+        private Screen _screen;
 
         public Overlay(IKeyboardMouseEvents keyboardMouseEvents)
         {
@@ -124,15 +125,18 @@ namespace D2RAssist
 
         private bool ShouldHideMap()
         {
-            return !_show || _currentGameData.Area == Area.None ||
-                   (Settings.Map.HideInTown == true &&
-                    _currentGameData.Area.IsTown()) || !InGame() ||
-                   (Settings.Map.ToggleViaInGameMap && !_currentGameData.MapShown);
+            if (!_show) return true;
+            if (_currentGameData.Area == Area.None) return true;
+            if (Settings.Map.HideInTown && _currentGameData.Area.IsTown()) return true;
+            if (!InGame()) return true;
+            if (Settings.Map.ToggleViaInGameMap && !_currentGameData.MapShown) return true;
+            return false;
         }
 
         private bool InGame()
         {
-            return _currentGameData != null && _currentGameData.MainWindowHandle != IntPtr.Zero && WindowsExternal.GetForegroundWindow() == _currentGameData.MainWindowHandle;
+            return _currentGameData != null && _currentGameData.MainWindowHandle != IntPtr.Zero &&
+                   WindowsExternal.GetForegroundWindow() == _currentGameData.MainWindowHandle;
         }
 
         private void MapOverlay_Paint(object sender, PaintEventArgs e)
@@ -142,12 +146,14 @@ namespace D2RAssist
                 return;
             }
 
+            UpdateLocation();
+
             var gameMap = _compositor.Compose(_currentGameData);
             var anchor = new Point(0, 0);
             switch (Settings.Map.Position)
             {
                 case MapPosition.TopRight:
-                    anchor = new Point(mapOverlay.Width - gameMap.Width, 0);
+                    anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
                     break;
                 case MapPosition.TopLeft:
                     anchor = new Point(0, 0);
@@ -155,6 +161,17 @@ namespace D2RAssist
             }
 
             e.Graphics.DrawImage(gameMap, anchor);
+        }
+
+        /// <summary>
+        /// Update the location and size of the form relative to the D2R window location.
+        /// </summary>
+        private void UpdateLocation()
+        {
+            _screen = Screen.FromHandle(_currentGameData.MainWindowHandle);
+            Location = new Point(_screen.WorkingArea.X, _screen.WorkingArea.Y);
+            Size = new Size(_screen.WorkingArea.Width, _screen.WorkingArea.Height);
+            mapOverlay.Size = Size;
         }
     }
 }
