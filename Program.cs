@@ -31,7 +31,7 @@ namespace D2RAssist
         [STAThread]
         static void Main()
         {
-            using (var globalHook = Hook.GlobalEvents())
+            using (IKeyboardMouseEvents globalHook = Hook.GlobalEvents())
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

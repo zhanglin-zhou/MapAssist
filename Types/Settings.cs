@@ -124,7 +124,7 @@ namespace D2RAssist.Types
         public float LineThickness;
 
         public int ArrowHeadSize;
-        
+
         public Color LabelColor;
         public string LabelFont;
         public int LabelFontSize;
@@ -169,7 +169,7 @@ namespace D2RAssist.Types
 
         private static T GetConfigValue<T>(string key, Func<string, T> converter, T fallback = default)
         {
-            var valueString = ConfigurationManager.AppSettings[key];
+            string valueString = ConfigurationManager.AppSettings[key];
             return string.IsNullOrWhiteSpace(valueString) ? fallback : converter.Invoke(valueString);
         }
 
@@ -180,17 +180,20 @@ namespace D2RAssist.Types
                 return ColorTranslator.FromHtml(value);
             }
 
-            if (value.Contains(","))
+            if (!value.Contains(","))
             {
-                var ints = value.Split(',').Select(o => int.Parse(o.Trim())).ToArray();
-                switch (ints.Length)
-                {
-                    case 4:
-                        return Color.FromArgb(ints[0], ints[1], ints[2], ints[3]);
-                    case 3:
-                        return Color.FromArgb(ints[0], ints[1], ints[2]);
-                }
+                return Color.FromName(value);
             }
+
+            int[] ints = value.Split(',').Select(o => int.Parse(o.Trim())).ToArray();
+            switch (ints.Length)
+            {
+                case 4:
+                    return Color.FromArgb(ints[0], ints[1], ints[2], ints[3]);
+                case 3:
+                    return Color.FromArgb(ints[0], ints[1], ints[2]);
+            }
+
             return Color.FromName(value);
         }
 

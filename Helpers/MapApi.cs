@@ -22,10 +22,12 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
+#pragma warning disable 649
 
 namespace D2RAssist.Helpers
 {
@@ -39,13 +41,13 @@ namespace D2RAssist.Helpers
 
         public static MapApi Create(string endpoint, Difficulty difficulty, uint mapSeed)
         {
-            var sessionId = CreateSession(endpoint, difficulty, mapSeed);
+            string sessionId = CreateSession(endpoint, difficulty, mapSeed);
             return new MapApi(endpoint, sessionId);
         }
 
         private static string CreateSession(string endpoint, Difficulty difficulty, uint mapSeed)
         {
-            var values = new Dictionary<string, uint>
+            Dictionary<string, uint> values = new Dictionary<string, uint>
             {
                 { "difficulty", (uint)difficulty },
                 { "mapid", mapSeed }
@@ -53,9 +55,9 @@ namespace D2RAssist.Helpers
 
             using (var client = new HttpClient())
             {
-                var json = JsonConvert.SerializeObject(values);
+                string json = JsonConvert.SerializeObject(values);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = client.PostAsync(endpoint + "sessions/", content).GetAwaiter().GetResult();
+                HttpResponseMessage response = client.PostAsync(endpoint + "sessions/", content).GetAwaiter().GetResult();
                 var session =
                     JsonConvert.DeserializeObject<MapApiSession>(response.Content.ReadAsStringAsync().GetAwaiter()
                         .GetResult());
@@ -67,7 +69,7 @@ namespace D2RAssist.Helpers
         {
             using (var client = new HttpClient())
             {
-                var response =
+                HttpResponseMessage response =
                     client.DeleteAsync(endpoint + "sessions/" + sessionId).GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
             }
@@ -91,14 +93,14 @@ namespace D2RAssist.Helpers
 
         public AreaData GetMapData(Area area)
         {
-            if (!_cache.TryGetValue(area, out var areaData))
+            if (!_cache.TryGetValue(area, out AreaData areaData))
             {
                 // Not in the cache, block.
                 Console.WriteLine($"Cache miss on {area}");
                 areaData = GetMapDataInternal(area);
             }
 
-            var adjacentAreas = areaData.AdjacentLevels.Keys.ToArray();
+            Area[] adjacentAreas = areaData.AdjacentLevels.Keys.ToArray();
             if (adjacentAreas.Any())
             {
                 _prefetchRequests.Add(adjacentAreas);
@@ -111,7 +113,7 @@ namespace D2RAssist.Helpers
         {
             while (true)
             {
-                var areas = _prefetchRequests.Take();
+                Area[] areas = _prefetchRequests.Take();
                 if (Settings.Map.ClearPrefetchedOnAreaChange)
                 {
                     _cache.Clear();
@@ -124,7 +126,7 @@ namespace D2RAssist.Helpers
                     return;
                 }
 
-                foreach (var area in areas)
+                foreach (Area area in areas)
                 {
                     if (_cache.ContainsKey(area)) continue;
 
@@ -138,8 +140,8 @@ namespace D2RAssist.Helpers
         {
             using (var client = new HttpClient())
             {
-                var response = client.GetAsync(_endpoint + "sessions/" + _sessionId +
-                                               "/areas/" + (uint)area).GetAwaiter().GetResult();
+                HttpResponseMessage response = client.GetAsync(_endpoint + "sessions/" + _sessionId +
+                                                               "/areas/" + (uint)area).GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
                 var rawMapData =
                     JsonConvert.DeserializeObject<RawAreaData>(response.Content.ReadAsStringAsync().GetAwaiter()
@@ -155,6 +157,7 @@ namespace D2RAssist.Helpers
             DestroySession(_endpoint, _sessionId);
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private class MapApiSession
         {
             public string id;

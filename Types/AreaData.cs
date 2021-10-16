@@ -19,9 +19,8 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using D2RAssist.Types;
 
-namespace D2RAssist
+namespace D2RAssist.Types
 {
     public class AdjacentLevel
     {

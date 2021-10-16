@@ -293,7 +293,7 @@ namespace D2RAssist.Types
 
         public static string Name(this Area area)
         {
-            return _areaNames.TryGetValue((int)area, out var areaName) ? areaName : area.ToString();
+            return _areaNames.TryGetValue((int)area, out string areaName) ? areaName : area.ToString();
         }
     }
 }

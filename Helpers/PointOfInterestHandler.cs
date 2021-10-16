@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using D2RAssist.Types;
@@ -7,7 +8,7 @@ namespace D2RAssist.Helpers
 {
     public static class PointOfInterestHandler
     {
-        private static readonly HashSet<GameObject> _questObjects = new HashSet<GameObject>
+        private static readonly HashSet<GameObject> QuestObjects = new HashSet<GameObject>
         {
             GameObject.HoradricCubeChest,
             GameObject.HoradricScrollChest,
@@ -22,7 +23,7 @@ namespace D2RAssist.Helpers
             GameObject.HellForge
         };
         
-        private static readonly HashSet<GameObject> _goodChests = new HashSet<GameObject>
+        private static readonly HashSet<GameObject> GoodChests = new HashSet<GameObject>
         {
             GameObject.GoodChest,
             GameObject.SparklyChest,
@@ -34,7 +35,7 @@ namespace D2RAssist.Helpers
 
         public static List<PointOfInterest> Get(MapApi mapApi, AreaData areaData)
         {
-            var pointOfInterest = new List<PointOfInterest>();
+            List<PointOfInterest> pointOfInterest = new List<PointOfInterest>();
 
             switch (areaData.Area)
             {
@@ -42,7 +43,7 @@ namespace D2RAssist.Helpers
                     // Work out which tomb is the right once. 
                     // Load the maps for all of the tombs, and check which one has the Orifice.
                     // Declare that tomb as point of interest.
-                    var tombs = new[]
+                    Area[] tombs = new[]
                     {
                         Area.TalRashasTomb1, Area.TalRashasTomb2, Area.TalRashasTomb3, Area.TalRashasTomb4,
                         Area.TalRashasTomb5, Area.TalRashasTomb6, Area.TalRashasTomb7
@@ -50,7 +51,7 @@ namespace D2RAssist.Helpers
                     var realTomb = Area.None;
                     Parallel.ForEach(tombs, tombArea =>
                     {
-                        var tombData = mapApi.GetMapData(tombArea);
+                        AreaData tombData = mapApi.GetMapData(tombArea);
                         if (tombData.Objects.ContainsKey(GameObject.HoradricOrifice))
                         {
                             realTomb = tombArea;
@@ -73,7 +74,7 @@ namespace D2RAssist.Helpers
                     // Also draw labels and previous doors for all other areas.
                     if (areaData.AdjacentLevels.Any())
                     {
-                        var highestArea = areaData.AdjacentLevels.Keys.Max();
+                        Area highestArea = areaData.AdjacentLevels.Keys.Max();
                         if (highestArea > areaData.Area)
                         {
                             if (areaData.AdjacentLevels[highestArea].Exits.Any())
@@ -87,7 +88,7 @@ namespace D2RAssist.Helpers
                             }
                         }
 
-                        foreach (var level in areaData.AdjacentLevels.Values)
+                        foreach (AdjacentLevel level in areaData.AdjacentLevels.Values)
                         {
                             // Already have something drawn for this.
                             if (level.Area == highestArea)
@@ -95,7 +96,7 @@ namespace D2RAssist.Helpers
                                 continue;
                             }
 
-                            foreach (var positin in level.Exits)
+                            foreach (Point positin in level.Exits)
                             {
                                 pointOfInterest.Add(new PointOfInterest
                                 {
@@ -110,10 +111,10 @@ namespace D2RAssist.Helpers
                     break;
             }
 
-            foreach (var objAndPoints in areaData.Objects)
+            foreach (KeyValuePair<GameObject, Point[]> objAndPoints in areaData.Objects)
             {
-                var obj = objAndPoints.Key;
-                var points = objAndPoints.Value;
+                GameObject obj = objAndPoints.Key;
+                Point[] points = objAndPoints.Value;
 
                 if (!points.Any())
                 {
@@ -131,7 +132,7 @@ namespace D2RAssist.Helpers
                     });
                 }
                 // Quest objects
-                else if (_questObjects.Contains(obj))
+                else if (QuestObjects.Contains(obj))
                 {
                     pointOfInterest.Add(new PointOfInterest
                     {
@@ -141,9 +142,9 @@ namespace D2RAssist.Helpers
                     });
                 }
                 // Chests
-                else if (_goodChests.Contains(obj))
+                else if (GoodChests.Contains(obj))
                 {
-                    foreach (var point in points)
+                    foreach (Point point in points)
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {

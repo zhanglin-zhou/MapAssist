@@ -34,19 +34,19 @@ namespace D2RAssist.Helpers
                 return (Bitmap)inputImage.Clone();
 
             // Set up old and new image dimensions, assuming upsizing not wanted and clipping OK
-            var oldWidth = inputImage.Width;
-            var oldHeight = inputImage.Height;
-            var newWidth = oldWidth;
-            var newHeight = oldHeight;
+            int oldWidth = inputImage.Width;
+            int oldHeight = inputImage.Height;
+            int newWidth = oldWidth;
+            int newHeight = oldHeight;
             var scaleFactor = 1f;
 
             // If upsizing wanted or clipping not OK calculate the size of the resulting bitmap
             if (upsizeOk || !clipOk)
             {
-                var angleRadians = angleDegrees * Math.PI / 180d;
+                double angleRadians = angleDegrees * Math.PI / 180d;
 
-                var cos = Math.Abs(Math.Cos(angleRadians));
-                var sin = Math.Abs(Math.Sin(angleRadians));
+                double cos = Math.Abs(Math.Cos(angleRadians));
+                double sin = Math.Abs(Math.Sin(angleRadians));
                 newWidth = (int)Math.Round(oldWidth * cos + oldHeight * sin);
                 newHeight = (int)Math.Round(oldWidth * sin + oldHeight * cos);
             }
@@ -66,7 +66,7 @@ namespace D2RAssist.Helpers
             newBitmap.SetResolution(inputImage.HorizontalResolution, inputImage.VerticalResolution);
 
             // Create the Graphics object that does the work
-            using (var graphicsObject = Graphics.FromImage(newBitmap))
+            using (Graphics graphicsObject = Graphics.FromImage(newBitmap))
             {
                 graphicsObject.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphicsObject.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -102,7 +102,7 @@ namespace D2RAssist.Helpers
             {
                 for (var y = 0; y < originalBitmap.Height; ++y)
                 {
-                    var pixelColor = originalBitmap.GetPixel(x, y);
+                    Color pixelColor = originalBitmap.GetPixel(x, y);
                     if (pixelColor.A == 255)
                     {
                         if (x < min.X) min.X = x;
@@ -117,7 +117,7 @@ namespace D2RAssist.Helpers
             // Create a new bitmap from the crop rectangle
             var cropRectangle = new Rectangle(min.X, min.Y, max.X - min.X, max.Y - min.Y);
             var newBitmap = new Bitmap(cropRectangle.Width, cropRectangle.Height);
-            using (var g = Graphics.FromImage(newBitmap))
+            using (Graphics g = Graphics.FromImage(newBitmap))
             {
                 g.DrawImage(originalBitmap, 0, 0, cropRectangle, GraphicsUnit.Pixel);
             }
@@ -139,7 +139,7 @@ namespace D2RAssist.Helpers
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-            using (var graphics = Graphics.FromImage(destImage))
+            using (Graphics graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -160,7 +160,7 @@ namespace D2RAssist.Helpers
         public static Bitmap CreateFilledRectangle(Color color, int width, int height)
         {
             var rectangle = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            var graphics = Graphics.FromImage(rectangle);
+            Graphics graphics = Graphics.FromImage(rectangle);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             graphics.FillRectangle(new SolidBrush(color), 0, 0, width, height);
             graphics.Dispose();
@@ -170,7 +170,7 @@ namespace D2RAssist.Helpers
         public static Bitmap CreateFilledEllipse(Color color, int width, int height)
         {
             var ellipse = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            var graphics = Graphics.FromImage(ellipse);
+            Graphics graphics = Graphics.FromImage(ellipse);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
             graphics.FillEllipse(new SolidBrush(color), 0, 0, width, height);
             graphics.Dispose();

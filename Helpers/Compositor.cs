@@ -54,24 +54,24 @@ namespace D2RAssist.Helpers
 
             var image = (Bitmap)_background.Clone();
 
-            using (var imageGraphics = Graphics.FromImage(image))
+            using (Graphics imageGraphics = Graphics.FromImage(image))
             {
                 imageGraphics.CompositingQuality = CompositingQuality.HighQuality;
                 imageGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
                 imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                var localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset);
+                Point localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset);
 
                 if (Settings.Rendering.Player.CanDrawIcon())
                 {
-                    var playerIcon = GetIcon(Settings.Rendering.Player);
+                    Bitmap playerIcon = GetIcon(Settings.Rendering.Player);
                     imageGraphics.DrawImage(playerIcon, localPlayerPosition);
                 }
 
                 // The lines are dynamic, and follow the player, so have to be drawn here.
                 // The rest can be done in DrawBackground.
-                foreach (var poi in _pointsOfInterest)
+                foreach (PointOfInterest poi in _pointsOfInterest)
                 {
                     if (poi.RenderingSettings.CanDrawLine())
                     {
@@ -90,7 +90,7 @@ namespace D2RAssist.Helpers
 
             double biggestDimension = Math.Max(image.Width, image.Height);
 
-            var multiplier = Settings.Map.Size / biggestDimension;
+            double multiplier = Settings.Map.Size / biggestDimension;
 
             if (multiplier == 0)
             {
@@ -117,7 +117,7 @@ namespace D2RAssist.Helpers
         {
             var background = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length,
                 PixelFormat.Format32bppArgb);
-            using (var backgroundGraphics = Graphics.FromImage(background))
+            using (Graphics backgroundGraphics = Graphics.FromImage(background))
             {
                 backgroundGraphics.FillRectangle(new SolidBrush(Color.Transparent), 0, 0,
                     areaData.CollisionGrid[0].Length,
@@ -131,8 +131,8 @@ namespace D2RAssist.Helpers
                 {
                     for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
                     {
-                        var type = areaData.CollisionGrid[y][x];
-                        var typeColor = Settings.Map.LookupMapColor(type);
+                        int type = areaData.CollisionGrid[y][x];
+                        Color? typeColor = Settings.Map.LookupMapColor(type);
                         if (typeColor != null)
                         {
                             background.SetPixel(x, y, (Color)typeColor);
@@ -140,17 +140,17 @@ namespace D2RAssist.Helpers
                     }
                 }
 
-                foreach (var poi in pointOfInterest)
+                foreach (PointOfInterest poi in pointOfInterest)
                 {
                     if (poi.RenderingSettings.CanDrawIcon())
                     {
-                        var icon = GetIcon(poi.RenderingSettings);
+                        Bitmap icon = GetIcon(poi.RenderingSettings);
                         backgroundGraphics.DrawImage(icon, poi.Position.OffsetFrom(areaData.Origin));
                     }
 
                     if (!string.IsNullOrWhiteSpace(poi.Label) && poi.RenderingSettings.CanDrawLabel())
                     {
-                        var font = GetFont(poi.RenderingSettings);
+                        Font font = GetFont(poi.RenderingSettings);
                         backgroundGraphics.DrawString(poi.Label, font,
                             new SolidBrush(poi.RenderingSettings.LabelColor),
                             poi.Position.OffsetFrom(areaData.Origin));
@@ -163,7 +163,7 @@ namespace D2RAssist.Helpers
 
         private Font GetFont(PointOfInterestRenderingSettings poiSettings)
         {
-            var cacheKey = (poiSettings.LabelFont, poiSettings.LabelFontSize);
+            (string LabelFont, int LabelFontSize) cacheKey = (poiSettings.LabelFont, poiSettings.LabelFontSize);
             if (!_fontCache.ContainsKey(cacheKey))
             {
                 var font = new Font(poiSettings.LabelFont,
@@ -176,11 +176,11 @@ namespace D2RAssist.Helpers
 
         private Bitmap GetIcon(PointOfInterestRenderingSettings poiSettings)
         {
-            var cacheKey = (poiSettings.IconShape, poiSettings.IconSize, Color: poiSettings.IconColor);
+            (Shape IconShape, int IconSize, Color Color) cacheKey = (poiSettings.IconShape, poiSettings.IconSize, Color: poiSettings.IconColor);
             if (!_iconCache.ContainsKey(cacheKey))
             {
                 var bitmap = new Bitmap(poiSettings.IconSize, poiSettings.IconSize, PixelFormat.Format32bppArgb);
-                using (var g = Graphics.FromImage(bitmap))
+                using (Graphics g = Graphics.FromImage(bitmap))
                 {
                     g.SmoothingMode = SmoothingMode.AntiAlias;
                     switch (poiSettings.IconShape)

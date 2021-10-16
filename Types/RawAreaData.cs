@@ -1,7 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnassignedField.Global
+// ReSharper disable CollectionNeverUpdated.Global
 
 namespace D2RAssist.Types
 {
@@ -54,21 +59,21 @@ namespace D2RAssist.Types
                     .Select(o =>
                     {
                         var adjacentArea = Area.None;
-                        if (int.TryParse(o.Key, out var parsed))
+                        if (int.TryParse(o.Key, out int parsed))
                         {
                             adjacentArea = (Area)parsed;
                         }
 
-                        var level = o.Value.ToInternal(adjacentArea);
+                        AdjacentLevel level = o.Value.ToInternal(adjacentArea);
                         return (adjacentArea, level);
                     })
                     .Where(o => o.adjacentArea != Area.None)
                     .ToDictionary(k => k.adjacentArea, v => v.level),
                 NPCs = npcs.Select(o =>
                     {
-                        var positions = o.Value.Select(j => j.ToPoint()).ToArray();
+                        Point[] positions = o.Value.Select(j => j.ToPoint()).ToArray();
                         var npc = NPC.Invalid;
-                        if (int.TryParse(o.Key, out var parsed))
+                        if (int.TryParse(o.Key, out int parsed))
                         {
                             npc = (NPC)parsed;
                         }
@@ -79,9 +84,9 @@ namespace D2RAssist.Types
                     .ToDictionary(k => k.npc, v => v.positions),
                 Objects = objects.Select(o =>
                     {
-                        var positions = o.Value.Select(j => j.ToPoint()).ToArray();
+                        Point[] positions = o.Value.Select(j => j.ToPoint()).ToArray();
                         var gameObject = GameObject.NotApplicable;
-                        if (int.TryParse(o.Key, out var parsed))
+                        if (int.TryParse(o.Key, out int parsed))
                         {
                             gameObject = (GameObject)parsed;
                         }

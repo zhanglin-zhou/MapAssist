@@ -18,6 +18,7 @@
  **/
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using D2RAssist.Types;
@@ -54,9 +55,9 @@ namespace D2RAssist
 
         private void Overlay_Load(object sender, EventArgs e)
         {
-            var screen = Screen.PrimaryScreen.WorkingArea;
-            var width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
-            var height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
+            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
+            int width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
+            int height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
             Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
             Size = new Size(width, height);
             Opacity = Settings.Map.Opacity;
@@ -82,7 +83,7 @@ namespace D2RAssist
         {
             _timer.Stop();
 
-            var gameData = GameMemory.GetGameData();
+            GameData gameData = GameMemory.GetGameData();
             if (gameData != null)
             {
                 if (gameData.HasGameChanged(_currentGameData))
@@ -97,8 +98,8 @@ namespace D2RAssist
                     Console.WriteLine($"Area changed: {gameData.Area}");
                     if (gameData.Area != Area.None)
                     {
-                        var areaData = _mapApi.GetMapData(gameData.Area);
-                        var pointOfInterests = PointOfInterestHandler.Get(_mapApi, areaData);
+                        AreaData areaData = _mapApi.GetMapData(gameData.Area);
+                        List<PointOfInterest> pointOfInterests = PointOfInterestHandler.Get(_mapApi, areaData);
                         _compositor = new Compositor(areaData, pointOfInterests);
                     }
                     else
@@ -148,7 +149,7 @@ namespace D2RAssist
 
             UpdateLocation();
 
-            var gameMap = _compositor.Compose(_currentGameData);
+            Bitmap gameMap = _compositor.Compose(_currentGameData);
             var anchor = new Point(0, 0);
             switch (Settings.Map.Position)
             {
