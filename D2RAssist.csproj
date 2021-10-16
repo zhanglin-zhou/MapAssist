@@ -13,7 +13,6 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\Scott\Desktop\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -88,7 +87,7 @@
     </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <Win32Resource>C:\Users\Scott\source\repos\D2RAssist\D2RAssist\Properties\Resources.resx</Win32Resource>
+    <Win32Resource>.\Properties\Resources.resx</Win32Resource>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
