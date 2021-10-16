@@ -34,7 +34,7 @@ using D2RAssist.Helpers;
 
 namespace D2RAssist
 {
-    public partial class frmOverlay : Form
+    public partial class Overlay : Form
     {
         // Move to windows external
         private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
@@ -43,19 +43,21 @@ namespace D2RAssist
         private const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
         private Screen _screen;
 
-        public frmOverlay()
+        public Overlay()
         {
             InitializeComponent();
         }
 
-        private void frmOverlay_Load(object sender, EventArgs e)
+        private void Overlay_Load(object sender, EventArgs e)
         {
             this.Opacity = Settings.Map.Opacity;
 
-            Timer MapUpdateTimer = new Timer();
-            MapUpdateTimer.Interval = Settings.Map.UpdateTime;
-            MapUpdateTimer.Tick += new EventHandler(MapUpdateTimer_Tick);
-            MapUpdateTimer.Start();
+            using (Timer MapUpdateTimer = new Timer())
+            {
+                MapUpdateTimer.Interval = Settings.Map.UpdateTime;
+                MapUpdateTimer.Tick += new EventHandler(MapUpdateTimer_Tick);
+                MapUpdateTimer.Start();
+            }
 
             if (Settings.Map.AlwaysOnTop)
             {
@@ -137,7 +139,7 @@ namespace D2RAssist
             return activeWindowHandle == Globals.CurrentGameData.MainWindowHandle;
         }
 
-        private void mapOverlay_Paint(object sender, PaintEventArgs e)
+        private void MapOverlay_Paint(object sender, PaintEventArgs e)
         {
             // Handle race condition where mapData hasn't been received yet.
             if (Globals.MapData == null || Globals.MapData.mapRows[0].Length == 0)
@@ -149,7 +151,7 @@ namespace D2RAssist
 
             Bitmap gameMap = MapRenderer.FromMapData(Globals.MapData);
             Point anchor = new Point(0, 0);
-            switch (Settings.Map.Position) {
+            switch (Settings.Map.MapPosition) {
                 case MapPosition.TopRight:
                     anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
 

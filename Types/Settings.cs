@@ -37,26 +37,52 @@ namespace D2RAssist.Types
         {
             public static class Colors
             {
-                public static readonly Color DoorNext = Color.FromArgb(237, 107, 0);
-                public static readonly Color DoorPrevious = Color.FromArgb(255, 0, 149);
-                public static readonly Color Waypoint = Color.FromArgb(16, 140, 235);
-                public static readonly Color Player = Color.FromArgb(255, 255, 0);
-                public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
-                public static readonly Color ArrowExit = Color.FromArgb(0,72,186);
-                public static readonly Color ArrowQuest = Color.FromArgb(255, 255, 255);
-                public static readonly Color ArrowWaypoint = Color.FromArgb(0, 204, 153);
-                public static readonly Color LabelColor = Color.FromArgb(255, 246, 0);
+                public static Dictionary<int, Color?> MapColors = new Dictionary<int, Color?>();
+
+                public static readonly Color DoorNext = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["DoorNext"]);
+                public static readonly Color DoorPrevious = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["DoorPrevious"]);
+                public static readonly Color Waypoint = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["Waypoint"]);
+                public static readonly Color Player = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["Player"]);
+                public static readonly Color SuperChest = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["SuperChest"]);
+                public static readonly Color ArrowExit = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowExit"]);
+                public static readonly Color ArrowQuest = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowQuest"]);
+                public static readonly Color ArrowWaypoint = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["ArrowWaypoint"]);
+                public static readonly Color LabelColor = ColorTranslator.FromHtml(ConfigurationManager.AppSettings["LabelColor"]);
+
+                public static Color? LookupMapColor(int type)
+                {
+                    string key = "MapColor[" + type + "]";
+
+                    if (!MapColors.ContainsKey(type))
+                    {
+                        string mapColorString = ConfigurationManager.AppSettings[key];
+                        if (!String.IsNullOrEmpty(mapColorString))
+                        {
+                            MapColors[type] = ColorTranslator.FromHtml(mapColorString);
+                        }
+                        else
+                        {
+                            MapColors[type] = null;
+                        }
+                    }
+
+                    return MapColors[type];
+                }
             }
 
             public static readonly double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"], System.Globalization.CultureInfo.InvariantCulture);
-            public static bool AlwaysOnTop = true;
+            public static bool AlwaysOnTop = Convert.ToBoolean(ConfigurationManager.AppSettings["AlwaysOnTop"]);
             public static bool HideInTown = Convert.ToBoolean(ConfigurationManager.AppSettings["HideInTown"]);
             public static bool ToggleViaInGameMap = Convert.ToBoolean(ConfigurationManager.AppSettings["ToggleViaInGameMap"]);
-            public static int Size = 450;
-            public static MapPosition Position = MapPosition.TopRight;
+            public static int Size = Convert.ToInt16(ConfigurationManager.AppSettings["Size"]);
+            public static MapPosition MapPosition = (MapPosition)Convert.ToInt16(ConfigurationManager.AppSettings["MapPosition"]);
             public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
-            public static bool Rotate = true;
-            public static string LabelFont = "BD Megalona";
+            public static bool Rotate = Convert.ToBoolean(ConfigurationManager.AppSettings["Rotate"]);
+            public static string LabelFont = ConfigurationManager.AppSettings["LabelFont"];
+            public static int ArrowThickness = Convert.ToInt16(ConfigurationManager.AppSettings["ArrowThickness"]);
+            public static bool DrawExitArrow = Convert.ToBoolean(ConfigurationManager.AppSettings["DrawExitArrow"]);
+            public static bool DrawQuestArrow = Convert.ToBoolean(ConfigurationManager.AppSettings["DrawQuestArrow"]);
+            public static bool DrawWaypointArrow = Convert.ToBoolean(ConfigurationManager.AppSettings["DrawWaypointArrow"]);
         }
 
         public static class Api
