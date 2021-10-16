@@ -19,7 +19,6 @@ namespace D2RAssist.Helpers
             GameObject.InifussTree,
             GameObject.CairnStoneAlpha,
             GameObject.WirtCorpse,
-            GameObject.MaggotLairGooPile,
             GameObject.HellForge
         };
         
