@@ -18,10 +18,8 @@
  **/
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Gma.System.MouseKeyHook;
 
 namespace D2RAssist
 {
@@ -33,9 +31,12 @@ namespace D2RAssist
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Overlay());
+            using (var globalHook = Hook.GlobalEvents())
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new Overlay(globalHook));
+            }
         }
     }
 }

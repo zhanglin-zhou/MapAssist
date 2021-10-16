@@ -19,18 +19,10 @@
 
 using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-using Newtonsoft.Json;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using System.Net.Http;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using D2RAssist.Types;
 using D2RAssist.Helpers;
+using Gma.System.MouseKeyHook;
 
 namespace D2RAssist
 {
@@ -45,10 +37,18 @@ namespace D2RAssist
         private GameData _currentGameData;
         private Compositor _compositor;
         private MapApi _mapApi;
+        private bool _show = true;
 
-        public Overlay()
+        public Overlay(IKeyboardMouseEvents keyboardMouseEvents)
         {
             InitializeComponent();
+            keyboardMouseEvents.KeyPress += (_, args) =>
+            {
+                if (InGame() && args.KeyChar == Settings.Map.ShowHideKey)
+                {
+                    _show = !_show;
+                }
+            };
         }
 
         private void Overlay_Load(object sender, EventArgs e)
@@ -124,7 +124,7 @@ namespace D2RAssist
 
         private bool ShouldHideMap()
         {
-            return _currentGameData.Area == Area.None ||
+            return !_show || _currentGameData.Area == Area.None ||
                    (Settings.Map.HideInTown == true &&
                     _currentGameData.Area.IsTown()) || !InGame();
         }

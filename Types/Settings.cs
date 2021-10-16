@@ -50,6 +50,7 @@ namespace D2RAssist.Types
             public const MapPosition Position = MapPosition.TopRight;
             public const int UpdateTime = 100;
             public const bool Rotate = true;
+            public const char ShowHideKey = '\\';
 
             public static readonly Area[] PrefetchAreas =
             {

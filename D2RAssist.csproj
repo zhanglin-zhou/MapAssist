@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -84,18 +84,18 @@
         <SignManifests>true</SignManifests>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="System"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="System.Net.Http"/>
-        <Reference Include="System.Numerics"/>
-        <Reference Include="System.Xml.Linq"/>
-        <Reference Include="System.Data.DataSetExtensions"/>
-        <Reference Include="Microsoft.CSharp"/>
-        <Reference Include="System.Data"/>
-        <Reference Include="System.Deployment"/>
-        <Reference Include="System.Drawing"/>
-        <Reference Include="System.Windows.Forms"/>
-        <Reference Include="System.Xml"/>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Numerics" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Deployment" />
+        <Reference Include="System.Drawing" />
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Overlay.cs">
@@ -104,27 +104,27 @@
         <Compile Include="Overlay.Designer.cs">
             <DependentUpon>Overlay.cs</DependentUpon>
         </Compile>
-        <Compile Include="Helpers\Extensions.cs"/>
-        <Compile Include="Helpers\ImageUtils.cs"/>
-        <Compile Include="Helpers\PointOfInterestHandler.cs"/>
-        <Compile Include="Helpers\MapApi.cs"/>
-        <Compile Include="Helpers\Compositor.cs"/>
-        <Compile Include="Helpers\WindowsExternal.cs"/>
-        <Compile Include="Types\Area.cs"/>
-        <Compile Include="Types\Difficulty.cs"/>
-        <Compile Include="Types\Game.cs"/>
-        <Compile Include="Types\GameData.cs"/>
-        <Compile Include="Types\GameObject.cs"/>
-        <Compile Include="Types\AreaData.cs"/>
-        <Compile Include="Helpers\GameMemory.cs"/>
-        <Compile Include="Program.cs"/>
-        <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="Types\Icons.cs"/>
-        <Compile Include="Types\NPC.cs"/>
-        <Compile Include="Types\Offsets.cs"/>
-        <Compile Include="Types\PointOfInterest.cs"/>
-        <Compile Include="Types\RawAreaData.cs"/>
-        <Compile Include="Types\Settings.cs"/>
+        <Compile Include="Helpers\Extensions.cs" />
+        <Compile Include="Helpers\ImageUtils.cs" />
+        <Compile Include="Helpers\PointOfInterestHandler.cs" />
+        <Compile Include="Helpers\MapApi.cs" />
+        <Compile Include="Helpers\Compositor.cs" />
+        <Compile Include="Helpers\WindowsExternal.cs" />
+        <Compile Include="Types\Area.cs" />
+        <Compile Include="Types\Difficulty.cs" />
+        <Compile Include="Types\Game.cs" />
+        <Compile Include="Types\GameData.cs" />
+        <Compile Include="Types\GameObject.cs" />
+        <Compile Include="Types\AreaData.cs" />
+        <Compile Include="Helpers\GameMemory.cs" />
+        <Compile Include="Program.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Types\Icons.cs" />
+        <Compile Include="Types\NPC.cs" />
+        <Compile Include="Types\Offsets.cs" />
+        <Compile Include="Types\PointOfInterest.cs" />
+        <Compile Include="Types\RawAreaData.cs" />
+        <Compile Include="Types\Settings.cs" />
         <EmbeddedResource Include="Overlay.resx">
             <DependentUpon>Overlay.cs</DependentUpon>
         </EmbeddedResource>
@@ -140,7 +140,7 @@
         <None Include="D2MapApi\Run.bat">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Include="D2RAssist_TemporaryKey.pfx"/>
+        <None Include="D2RAssist_TemporaryKey.pfx" />
         <None Include="Properties\Settings.settings">
             <Generator>SettingsSingleFileGenerator</Generator>
             <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -159,10 +159,10 @@
         <Content Include="D2MapApi\README.txt">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="Resources\test.json"/>
+        <Content Include="Resources\test.json" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="App.config"/>
+        <None Include="App.config" />
     </ItemGroup>
     <ItemGroup>
         <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -184,5 +184,5 @@
             <Version>13.0.1</Version>
         </PackageReference>
     </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
