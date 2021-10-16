@@ -84,7 +84,11 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources/Icon1.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Win32Resource>C:\Users\Scott\source\repos\D2RAssist\D2RAssist\Properties\Resources.resx</Win32Resource>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -134,6 +138,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="D2MapApi\Run.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -158,6 +163,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon1.ico" />
+    <None Include="Resources\Icon1.ico" />
+    <None Include="Resources\Icon2.ico" />
     <Content Include="Resources\test.json" />
   </ItemGroup>
   <ItemGroup>

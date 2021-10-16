@@ -58,10 +58,12 @@ namespace D2RAssist
 
             this.Opacity = Settings.Map.Opacity;
 
-            Timer MapUpdateTimer = new Timer();
-            MapUpdateTimer.Interval = Settings.Map.UpdateTime;
-            MapUpdateTimer.Tick += new EventHandler(MapUpdateTimer_Tick);
-            MapUpdateTimer.Start();
+            using (Timer MapUpdateTimer = new Timer())
+            {
+                MapUpdateTimer.Interval = Settings.Map.UpdateTime;
+                MapUpdateTimer.Tick += new EventHandler(MapUpdateTimer_Tick);
+                MapUpdateTimer.Start();
+            }
 
             if (Settings.Map.AlwaysOnTop)
             {
