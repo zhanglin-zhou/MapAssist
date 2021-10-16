@@ -112,7 +112,6 @@
         <Compile Include="Helpers\WindowsExternal.cs" />
         <Compile Include="Types\Area.cs" />
         <Compile Include="Types\Difficulty.cs" />
-        <Compile Include="Types\Game.cs" />
         <Compile Include="Types\GameData.cs" />
         <Compile Include="Types\GameObject.cs" />
         <Compile Include="Types\AreaData.cs" />

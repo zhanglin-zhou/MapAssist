@@ -39,7 +39,7 @@ namespace D2RAssist.Types
                 public static readonly Color Player = Color.FromArgb(255, 255, 0);
                 public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
                 public static readonly Color TextColor = Color.Chartreuse;
-                public static readonly Color POILine = Color.Chartreuse;
+                public static readonly Color PointOfInterestLine = Color.Chartreuse;
             }
 
             public static readonly Font Font = new Font("Arial", 8);

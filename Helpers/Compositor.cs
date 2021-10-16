@@ -39,6 +39,66 @@ namespace D2RAssist.Helpers
             _background = DrawBackground(areaData, pointOfInterest);
         }
 
+        public Bitmap Compose(GameData gameData)
+        {
+            if (gameData.Area != _areaData.Area)
+            {
+                throw new ApplicationException("Asked to compose an image for a different area." +
+                                               $"Compositor area: {_areaData.Area}, Game data: {gameData.Area}");
+            }
+
+            var image = (Bitmap)_background.Clone();
+            using (var imageGraphics = Graphics.FromImage(image))
+            {
+                imageGraphics.CompositingQuality = CompositingQuality.HighQuality;
+                imageGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
+                imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                var localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin);
+
+                imageGraphics.DrawImage(Icons.Player, localPlayerPosition);
+
+                // The lines are dynamic, and follow the player, so have to be drawn here.
+                // The rest can be done in DrawBackground.
+                foreach (var poi in _pointsOfInterest)
+                {
+                    if (poi.DrawLine)
+                    {
+                        imageGraphics.DrawLine(new Pen(Settings.Map.Colors.PointOfInterestLine), localPlayerPosition,
+                            poi.Position.OffsetFrom(_areaData.Origin));
+                    }
+                }
+            }
+
+            image = ImageUtils.CropBitmap(image);
+
+            double biggestDimension = Math.Max(image.Width, image.Height);
+
+            var multiplier = Settings.Map.Size / biggestDimension;
+
+            if (multiplier == 0)
+            {
+                multiplier = 1;
+            }
+
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (multiplier != 1)
+            {
+                image = ImageUtils.ResizeImage(image, (int)(image.Width * multiplier),
+                    (int)(image.Height * multiplier));
+            }
+
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (Settings.Map.Rotate)
+            {
+                image = ImageUtils.RotateImage(image, 53, true, false, Color.Transparent);
+            }
+
+            return image;
+        }
+
         private static Bitmap DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
         {
             var background = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length,
@@ -140,66 +200,6 @@ namespace D2RAssist.Helpers
 
                 return background;
             }
-        }
-
-        public Bitmap Compose(GameData gameData)
-        {
-            if (gameData.Area != _areaData.Area)
-            {
-                throw new ApplicationException("Asked to compose an image for a different area." +
-                                               $"Compositor area: {_areaData.Area}, Game data: {gameData.Area}");
-            }
-
-            var image = (Bitmap)_background.Clone();
-            using (var imageGraphics = Graphics.FromImage(image))
-            {
-                imageGraphics.CompositingQuality = CompositingQuality.HighQuality;
-                imageGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
-                imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                var localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin);
-
-                imageGraphics.DrawImage(Icons.Player, localPlayerPosition);
-
-                // The lines are dynamic, and follow the player, so have to be drawn here.
-                // The rest can be done in DrawBackground.
-                foreach (var poi in _pointsOfInterest)
-                {
-                    if (poi.DrawLine)
-                    {
-                        imageGraphics.DrawLine(new Pen(Settings.Map.Colors.POILine), localPlayerPosition,
-                            poi.Position.OffsetFrom(_areaData.Origin));
-                    }
-                }
-            }
-
-            image = ImageUtils.CropBitmap(image);
-
-            double biggestDimension = Math.Max(image.Width, image.Height);
-
-            var multiplier = Settings.Map.Size / biggestDimension;
-
-            if (multiplier == 0)
-            {
-                multiplier = 1;
-            }
-
-            // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (multiplier != 1)
-            {
-                image = ImageUtils.ResizeImage(image, (int)(image.Width * multiplier),
-                    (int)(image.Height * multiplier));
-            }
-
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (Settings.Map.Rotate)
-            {
-                image = ImageUtils.RotateImage(image, 53, true, false, Color.Transparent);
-            }
-
-            return image;
         }
     }
 }
