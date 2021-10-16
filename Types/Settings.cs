@@ -16,12 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
-using System;
-using System.Collections.Generic;
+
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace D2RAssist.Types
 {
@@ -30,6 +26,7 @@ namespace D2RAssist.Types
         TopLeft,
         TopRight
     }
+
     public static class Settings
     {
         public static class Map
@@ -41,15 +38,26 @@ namespace D2RAssist.Types
                 public static readonly Color Waypoint = Color.FromArgb(16, 140, 235);
                 public static readonly Color Player = Color.FromArgb(255, 255, 0);
                 public static readonly Color SuperChest = Color.FromArgb(17, 255, 0);
+                public static readonly Color TextColor = Color.Chartreuse;
+                public static readonly Color POILine = Color.Chartreuse;
             }
 
-            public static readonly double Opacity = 0.70;
-            public static bool AlwaysOnTop = true;
-            public static bool HideInTown = true;
-            public static int Size = 450;
-            public static MapPosition Position = MapPosition.TopRight;
-            public static int UpdateTime = 750;
-            public static bool Rotate = true;
+            public static readonly Font Font = new Font("Arial", 8);
+            public const double Opacity = 0.70;
+            public const bool AlwaysOnTop = true;
+            public const bool HideInTown = true;
+            public const int Size = 450;
+            public const MapPosition Position = MapPosition.TopRight;
+            public const int UpdateTime = 100;
+            public const bool Rotate = true;
+
+            public static readonly Area[] PrefetchAreas =
+            {
+                Area.CatacombsLevel2,
+                Area.DuranceOfHateLevel2,
+            };
+
+            public const bool ClearPrefetchedOnAreaChange = false;
         }
 
         public static class Api
