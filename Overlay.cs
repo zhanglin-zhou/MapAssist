@@ -153,7 +153,6 @@ namespace D2RAssist
             switch (Settings.Map.MapPosition) {
                 case MapPosition.TopRight:
                     anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
-
                     break;
                 case MapPosition.TopLeft:
                     anchor = new Point(0, 0);
@@ -171,6 +170,7 @@ namespace D2RAssist
             _screen = Screen.FromHandle(Globals.CurrentGameData.MainWindowHandle);
             this.Location = new Point(_screen.WorkingArea.X, _screen.WorkingArea.Y);
             this.Size = new Size(_screen.WorkingArea.Width, _screen.WorkingArea.Height);
+            mapOverlay.Size = this.Size;
         }
     }
 }
