@@ -31,7 +31,7 @@ namespace D2RAssist
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmOverlay());
+            Application.Run(new Overlay());
         }
     }
 }

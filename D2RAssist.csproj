@@ -105,11 +105,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmOverlay.cs">
+    <Compile Include="Overlay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmOverlay.Designer.cs">
-      <DependentUpon>frmOverlay.cs</DependentUpon>
+    <Compile Include="Overlay.Designer.cs">
+      <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\ImageManipulation.cs" />
@@ -126,8 +126,8 @@
     <Compile Include="Types\Offsets.cs" />
     <Compile Include="Types\MapApiSession.cs" />
     <Compile Include="Types\Settings.cs" />
-    <EmbeddedResource Include="frmOverlay.resx">
-      <DependentUpon>frmOverlay.cs</DependentUpon>
+    <EmbeddedResource Include="Overlay.resx">
+      <DependentUpon>Overlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -142,7 +142,6 @@
     <None Include="D2MapApi\Run.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="D2RAssist_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

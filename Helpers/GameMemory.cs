@@ -128,7 +128,7 @@ namespace D2RAssist.Helpers
                     MainWindowHandle = gameProcess.MainWindowHandle,
                 };
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return null;
             }
