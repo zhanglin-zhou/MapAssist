@@ -125,6 +125,7 @@ namespace D2RAssist.Helpers
                     AreaId = (Area)dwLevelId,
                     Difficulty = aGameDifficulty,
                     MapShown = mapShown,
+                    MainWindowHandle = gameProcess.MainWindowHandle,
                 };
             }
             catch(Exception e)
