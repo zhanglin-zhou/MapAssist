@@ -40,7 +40,7 @@ namespace D2RAssist.Helpers
             public static readonly Bitmap DoorNext = CreateFilledRectangle(Settings.Map.Colors.DoorNext, 10, 10);
             public static readonly Bitmap DoorPrevious = CreateFilledRectangle(Settings.Map.Colors.DoorPrevious, 10, 10);
             public static readonly Bitmap Waypoint = CreateFilledRectangle(Settings.Map.Colors.Waypoint, 10, 10);
-            public static readonly Bitmap Player = CreateFilledRectangle(Settings.Map.Colors.Player, 10, 10);
+            public static readonly Bitmap Player = CreateFilledEllipse(Settings.Map.Colors.Player, 10, 10);
             public static readonly Bitmap SuperChest = CreateFilledEllipse(Settings.Map.Colors.SuperChest, 10, 10);
         }
 
@@ -92,68 +92,10 @@ namespace D2RAssist.Helpers
                     for (int y = 0; y < mapData.mapRows[x].Length; y++)
                     {
                         int type = mapData.mapRows[x][y];
-                        switch (type)
+                        Color? typeColor = Settings.Map.Colors.LookupMapColor(type);
+                        if (typeColor != null)
                         {
-                            case 1:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(70, 51, 41));
-                                break;
-                            case -1:
-                                // uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 255, 255));
-                                break;
-                            case 0:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 0));
-                                break;
-                            case 16:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(168, 56, 50));
-                                break;
-                            case 7:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 255, 255));
-                                break;
-                            case 5:
-                                // uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 0));
-                                break;
-                            case 33:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 255));
-                                break;
-                            case 23:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 0, 255));
-                                break;
-                            case 4:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 255, 255));
-                                break;
-                            case 21:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 0, 255));
-                                break;
-                            case 20:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(70, 51, 41));
-                                break;
-                            case 17:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 51, 255));
-                                break;
-                            case 3:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 0, 255));
-                                break;
-                            case 19:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(0, 51, 255));
-                                break;
-                            case 2:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(10, 51, 23));
-                                break;
-                            case 37:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(50, 51, 23));
-                                break;
-                            case 6:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(80, 51, 33));
-                                break;
-                            case 39:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(20, 11, 33));
-                                break;
-                            case 53:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(10, 11, 43));
-                                break;
-                            default:
-                                uncroppedBackground.SetPixel(y, x, Color.FromArgb(255, 255, 255));
-                                break;
+                            uncroppedBackground.SetPixel(y, x, (Color)typeColor);
                         }
                     }
                 }
