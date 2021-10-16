@@ -1,6 +1,6 @@
 # D2RAssist
 
-Join the discussion: https://discord.gg/N4sCN7ByUs
+Join the discussion: https://discord.gg/Z2ue2ctY
 
 Feel free to contribute a pull request with new features or fixes, the code is under GPL so make sure to please follow the license.
 
