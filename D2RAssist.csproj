@@ -161,7 +161,6 @@
     <Content Include="D2MapApi\README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Icon1.ico" />
     <None Include="Resources\Icon1.ico" />
     <None Include="Resources\Icon2.ico" />
     <Content Include="Resources\test.json" />
