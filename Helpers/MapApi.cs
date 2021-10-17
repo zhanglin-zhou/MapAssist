@@ -24,7 +24,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 #pragma warning disable 649
@@ -33,19 +35,15 @@ namespace D2RAssist.Helpers
 {
     public class MapApi : IDisposable
     {
+        public static readonly HttpClient Client = HttpClient();
         private readonly string _endpoint;
         private readonly string _sessionId;
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private readonly BlockingCollection<Area[]> _prefetchRequests;
         private readonly Thread _thread;
+        private readonly HttpClient _client;
 
-        public static MapApi Create(string endpoint, Difficulty difficulty, uint mapSeed)
-        {
-            string sessionId = CreateSession(endpoint, difficulty, mapSeed);
-            return new MapApi(endpoint, sessionId);
-        }
-
-        private static string CreateSession(string endpoint, Difficulty difficulty, uint mapSeed)
+        private string CreateSession(string endpoint, Difficulty difficulty, uint mapSeed)
         {
             Dictionary<string, uint> values = new Dictionary<string, uint>
             {
@@ -53,32 +51,27 @@ namespace D2RAssist.Helpers
                 { "mapid", mapSeed }
             };
 
-            using (var client = new HttpClient())
-            {
-                string json = JsonConvert.SerializeObject(values);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = client.PostAsync(endpoint + "sessions/", content).GetAwaiter().GetResult();
-                var session =
-                    JsonConvert.DeserializeObject<MapApiSession>(response.Content.ReadAsStringAsync().GetAwaiter()
-                        .GetResult());
-                return session.id;
-            }
+            string json = JsonConvert.SerializeObject(values);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = _client.PostAsync(endpoint + "sessions/", content).GetAwaiter().GetResult();
+            var session =
+                JsonConvert.DeserializeObject<MapApiSession>(response.Content.ReadAsStringAsync().GetAwaiter()
+                    .GetResult());
+            return session.id;
         }
 
-        private static void DestroySession(string endpoint, string sessionId)
+        private void DestroySession(string endpoint, string sessionId)
         {
-            using (var client = new HttpClient())
-            {
-                HttpResponseMessage response =
-                    client.DeleteAsync(endpoint + "sessions/" + sessionId).GetAwaiter().GetResult();
-                response.EnsureSuccessStatusCode();
-            }
+            HttpResponseMessage response =
+                _client.DeleteAsync(endpoint + "sessions/" + sessionId).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
         }
 
-        private MapApi(string endpoint, string sessionId)
+        public MapApi(HttpClient client, string endpoint, Difficulty difficulty, uint mapSeed)
         {
+            _client = client;
             _endpoint = endpoint;
-            _sessionId = sessionId;
+            _sessionId = CreateSession(endpoint, difficulty, mapSeed); ;
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
             _prefetchRequests = new BlockingCollection<Area[]>();
@@ -138,16 +131,27 @@ namespace D2RAssist.Helpers
 
         private AreaData GetMapDataInternal(Area area)
         {
-            using (var client = new HttpClient())
+            HttpResponseMessage response = _client.GetAsync(_endpoint + "sessions/" + _sessionId +
+                                                            "/areas/" + (uint)area).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
+            var rawMapData =
+                JsonConvert.DeserializeObject<RawAreaData>(response.Content.ReadAsStringAsync().GetAwaiter()
+                    .GetResult());
+            return rawMapData.ToInternal(area);
+        }
+
+        private static HttpClient HttpClient()
+        {
+            var client = new HttpClient(new HttpClientHandler
             {
-                HttpResponseMessage response = client.GetAsync(_endpoint + "sessions/" + _sessionId +
-                                                               "/areas/" + (uint)area).GetAwaiter().GetResult();
-                response.EnsureSuccessStatusCode();
-                var rawMapData =
-                    JsonConvert.DeserializeObject<RawAreaData>(response.Content.ReadAsStringAsync().GetAwaiter()
-                        .GetResult());
-                return rawMapData.ToInternal(area);
-            }
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            });
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            client.DefaultRequestHeaders.AcceptEncoding.Add(
+                new StringWithQualityHeaderValue("gzip"));
+            client.DefaultRequestHeaders.AcceptEncoding.Add(
+                new StringWithQualityHeaderValue("deflate"));
+            return client;
         }
 
         public void Dispose()

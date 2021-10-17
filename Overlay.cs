@@ -79,6 +79,12 @@ namespace D2RAssist
             mapOverlay.BackColor = Color.Transparent;
         }
 
+        private void Overlay_FormClosing(object sender, EventArgs e)
+        {
+            MapApi.Client.Dispose();
+            _mapApi?.Dispose();
+        }
+
         private void MapUpdateTimer_Tick(object sender, EventArgs e)
         {
             _timer.Stop();
@@ -90,7 +96,7 @@ namespace D2RAssist
                 {
                     Console.WriteLine($"Game changed: {gameData}");
                     _mapApi?.Dispose();
-                    _mapApi = MapApi.Create(Settings.Api.Endpoint, gameData.Difficulty, gameData.MapSeed);
+                    _mapApi = new MapApi(MapApi.Client, Settings.Api.Endpoint, gameData.Difficulty, gameData.MapSeed);
                 }
 
                 if (gameData.HasMapChanged(_currentGameData))
