@@ -24,7 +24,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 #pragma warning disable 649
@@ -53,7 +55,7 @@ namespace D2RAssist.Helpers
                 { "mapid", mapSeed }
             };
 
-            using (var client = new HttpClient())
+            using (var client = HttpClient())
             {
                 string json = JsonConvert.SerializeObject(values);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -67,7 +69,7 @@ namespace D2RAssist.Helpers
 
         private static void DestroySession(string endpoint, string sessionId)
         {
-            using (var client = new HttpClient())
+            using (var client = HttpClient())
             {
                 HttpResponseMessage response =
                     client.DeleteAsync(endpoint + "sessions/" + sessionId).GetAwaiter().GetResult();
@@ -138,7 +140,7 @@ namespace D2RAssist.Helpers
 
         private AreaData GetMapDataInternal(Area area)
         {
-            using (var client = new HttpClient())
+            using (var client = HttpClient())
             {
                 HttpResponseMessage response = client.GetAsync(_endpoint + "sessions/" + _sessionId +
                                                                "/areas/" + (uint)area).GetAwaiter().GetResult();
@@ -148,6 +150,20 @@ namespace D2RAssist.Helpers
                         .GetResult());
                 return rawMapData.ToInternal(area);
             }
+        }
+
+        private static HttpClient HttpClient()
+        {
+            var client = new HttpClient(new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            });
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
+            client.DefaultRequestHeaders.AcceptEncoding.Add(
+                new StringWithQualityHeaderValue("gzip"));
+            client.DefaultRequestHeaders.AcceptEncoding.Add(
+                new StringWithQualityHeaderValue("deflate"));
+            return client;
         }
 
         public void Dispose()
