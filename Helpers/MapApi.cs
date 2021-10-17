@@ -35,7 +35,7 @@ namespace D2RAssist.Helpers
 {
     public class MapApi : IDisposable
     {
-        public static readonly HttpClient client = HttpClient();
+        public static readonly HttpClient Client = HttpClient();
         private readonly string _endpoint;
         private readonly string _sessionId;
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
