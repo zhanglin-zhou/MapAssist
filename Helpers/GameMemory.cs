@@ -21,6 +21,7 @@ using D2RAssist.Types;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace D2RAssist.Helpers
@@ -92,6 +93,9 @@ namespace D2RAssist.Helpers
                 IntPtr pLevel = IntPtr.Add(aRoom2, 0x90);
                 WindowsExternal.ReadProcessMemory(processHandle, pLevel, addressBuffer, addressBuffer.Length, out _);
                 var aLevel = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
+
+                if (addressBuffer.All(o => o == 0))
+                    return null;
 
                 IntPtr aLevelId = IntPtr.Add(aLevel, 0x1F8);
                 WindowsExternal.ReadProcessMemory(processHandle, aLevelId, dwordBuffer, dwordBuffer.Length, out _);
