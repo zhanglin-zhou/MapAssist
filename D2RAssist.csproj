@@ -8,7 +8,8 @@
         <ProjectGuid>{FB3AC437-B7BB-42FF-A2A2-F10551F95F6C}</ProjectGuid>
         <OutputType>WinExe</OutputType>
         <RootNamespace>D2RAssist</RootNamespace>
-        <AssemblyName>$(RandomGuid)</AssemblyName>
+        <AssemblyName Condition=" '$(CustomAssemblyName)' == '' ">$(RandomGuid)</AssemblyName>
+        <AssemblyName Condition=" '$(CustomAssemblyName)' != '' ">'$(CustomAssemblyName)'</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -39,6 +40,7 @@
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +50,7 @@
         <DefineConstants>TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
+        <Prefer32bit>false</Prefer32bit>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
         <DebugSymbols>true</DebugSymbols>
@@ -57,7 +60,7 @@
         <PlatformTarget>x64</PlatformTarget>
         <LangVersion>7.3</LangVersion>
         <ErrorReport>prompt</ErrorReport>
-        <Prefer32Bit>true</Prefer32Bit>
+        <Prefer32Bit>false</Prefer32Bit>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
         <OutputPath>bin\x64\Release\</OutputPath>
@@ -67,7 +70,7 @@
         <PlatformTarget>x64</PlatformTarget>
         <LangVersion>7.3</LangVersion>
         <ErrorReport>prompt</ErrorReport>
-        <Prefer32Bit>true</Prefer32Bit>
+        <Prefer32Bit>false</Prefer32Bit>
     </PropertyGroup>
     <PropertyGroup>
         <ManifestCertificateThumbprint>3DB9B26A33D3BC5805AF01B7BC6B71FE986ABD87</ManifestCertificateThumbprint>
