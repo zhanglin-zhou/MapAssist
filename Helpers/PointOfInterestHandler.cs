@@ -95,12 +95,12 @@ namespace D2RAssist.Helpers
                                 continue;
                             }
 
-                            foreach (Point positin in level.Exits)
+                            foreach (Point position in level.Exits)
                             {
                                 pointOfInterest.Add(new PointOfInterest
                                 {
                                     Label = level.Area.Name(),
-                                    Position = positin,
+                                    Position = position,
                                     RenderingSettings = Settings.Rendering.PreviousArea
                                 });
                             }
