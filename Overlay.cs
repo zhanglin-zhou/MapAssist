@@ -105,8 +105,8 @@ namespace D2RAssist
                     if (gameData.Area != Area.None)
                     {
                         AreaData areaData = _mapApi.GetMapData(gameData.Area);
-                        List<PointOfInterest> pointsOfInterests = PointOfInterestHandler.Get(_mapApi, areaData);
-                        _compositor = new Compositor(areaData, pointsOfInterests);
+                        List<PointOfInterest> pointsOfInterest = PointOfInterestHandler.Get(_mapApi, areaData);
+                        _compositor = new Compositor(areaData, pointsOfInterest);
                     }
                     else
                     {
