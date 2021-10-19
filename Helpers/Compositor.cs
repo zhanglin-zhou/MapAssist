@@ -28,7 +28,7 @@ namespace D2RAssist.Helpers
 {
     public class Compositor
     {
-        public readonly AreaData _areaData;
+        private readonly AreaData _areaData;
         private readonly Bitmap _background;
         public readonly Point _cropOffset;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;

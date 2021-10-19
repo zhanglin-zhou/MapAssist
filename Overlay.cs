@@ -38,6 +38,7 @@ namespace D2RAssist
         private readonly Timer _timer = new Timer();
         private GameData _currentGameData;
         private Compositor _compositor;
+        private AreaData _areaData;
         private MapApi _mapApi;
         private bool _show = true;
         private Screen _screen;
@@ -105,9 +106,9 @@ namespace D2RAssist
                     Console.WriteLine($"Area changed: {gameData.Area}");
                     if (gameData.Area != Area.None)
                     {
-                        AreaData areaData = _mapApi.GetMapData(gameData.Area);
-                        List<PointOfInterest> pointsOfInterest = PointOfInterestHandler.Get(_mapApi, areaData);
-                        _compositor = new Compositor(areaData, pointsOfInterest);
+                        _areaData = _mapApi.GetMapData(gameData.Area);
+                        List<PointOfInterest> pointsOfInterest = PointOfInterestHandler.Get(_mapApi, _areaData);
+                        _compositor = new Compositor(_areaData, pointsOfInterest);
                     }
                     else
                     {
@@ -192,7 +193,7 @@ namespace D2RAssist
                 e.Graphics.SetClip(new RectangleF(0, 50, w, h));
             }
 
-            Point center = _currentGameData.PlayerPosition.OffsetFrom(_compositor._areaData.Origin).OffsetFrom(_compositor._cropOffset);
+            Point center = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor._cropOffset);
 
             Vector2 playerPos = new Vector2(center.X, center.Y);
             Vector2 Transform(Vector2 p) =>
