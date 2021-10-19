@@ -162,14 +162,14 @@ namespace D2RAssist
             float w = 0;
             float h = 0;
             float scale = 0.0F;
-            Vector2 _screenCenterCache = new Vector2();
+            Vector2 center = new Vector2();
 
             if (Settings.Map.Position == MapPosition.Center)
             {
                 w = _screen.WorkingArea.Width;
                 h = _screen.WorkingArea.Height;
                 scale = 1024.0F / h * w * 3f / 4f / 2.3F;
-                _screenCenterCache = new Vector2(w / 2, h / 2);
+                center = new Vector2(w / 2, h / 2);
 
                 e.Graphics.SetClip(new RectangleF(0, 0, w, h));
             }
@@ -178,7 +178,7 @@ namespace D2RAssist
                 w = 640;
                 h = 360;
                 scale = 1024.0F / h * w * 3f / 4f / 3.35F;
-                _screenCenterCache = new Vector2(w / 2, (h / 2) + 48);
+                center = new Vector2(w / 2, (h / 2) + 48);
 
                 e.Graphics.SetClip(new RectangleF(0, 50, w, h));
             }
@@ -187,17 +187,17 @@ namespace D2RAssist
                 w = 640;
                 h = 360;
                 scale = 1024.0F / h * w * 3f / 4f / 3.35F;
-                _screenCenterCache = new Vector2(w / 2, (h / 2) + 40);
+                center = new Vector2(w / 2, (h / 2) + 40);
 
                 e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
                 e.Graphics.SetClip(new RectangleF(0, 50, w, h));
             }
 
-            Point center = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor._cropOffset);
+            Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor._cropOffset);
 
-            Vector2 playerPos = new Vector2(center.X, center.Y);
+            Vector2 playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
             Vector2 Transform(Vector2 p) =>
-                _screenCenterCache +
+                center +
                 DeltaInWorldToMinimapDelta(
                     p - playerPos,
                     (float)Math.Sqrt(w * w + h * h),
@@ -216,26 +216,6 @@ namespace D2RAssist
             };
 
             e.Graphics.DrawImage(gameMap, destinationPoints);
-
-            //if (Settings.Map.Position == MapPosition.Center)
-            //{
-
-            //}
-            //else
-            //{
-            //    var anchor = new Point(0, 0);
-            //    switch (Settings.Map.Position)
-            //    {
-            //        case MapPosition.TopRight:
-            //            anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
-            //            break;
-            //        case MapPosition.TopLeft:
-            //            anchor = new Point(0, 0);
-            //            break;
-            //    }
-
-            //    e.Graphics.DrawImage(gameMap, anchor);
-            //}
         }
 
         public Vector2 DeltaInWorldToMinimapDelta(Vector2 delta, double diag, float scale, float deltaZ = 0)
