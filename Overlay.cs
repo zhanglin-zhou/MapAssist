@@ -165,8 +165,8 @@ namespace D2RAssist
 
             if (Settings.Map.Position == MapPosition.Center)
             {
-                w = this.Width;
-                h = this.Height;
+                w = _screen.WorkingArea.Width;
+                h = _screen.WorkingArea.Height;
                 scale = 1024.0F / h * w * 3f / 4f / 2.3F;
                 _screenCenterCache = new Vector2(w / 2, h / 2);
 
@@ -192,10 +192,9 @@ namespace D2RAssist
                 e.Graphics.SetClip(new RectangleF(0, 50, w, h));
             }
 
-            int s_p_offset_x = _currentGameData.PlayerPosition.X - _compositor.AreaData.Origin.X - _compositor.CropOffset.X;
-            int s_p_offset_y = _currentGameData.PlayerPosition.Y - _compositor.AreaData.Origin.Y - _compositor.CropOffset.Y;
+            Point center = _currentGameData.PlayerPosition.OffsetFrom(_compositor._areaData.Origin).OffsetFrom(_compositor._cropOffset);
 
-            Vector2 playerPos = new Vector2(s_p_offset_x, s_p_offset_y);
+            Vector2 playerPos = new Vector2(center.X, center.Y);
             Vector2 Transform(Vector2 p) =>
                 _screenCenterCache +
                 DeltaInWorldToMinimapDelta(

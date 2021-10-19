@@ -28,11 +28,9 @@ namespace D2RAssist.Helpers
 {
     public class Compositor
     {
-        private readonly AreaData _areaData;
-        public AreaData AreaData { get { return _areaData; } }
+        public readonly AreaData _areaData;
         private readonly Bitmap _background;
-        private readonly Point _cropOffset;
-        public Point CropOffset { get { return _cropOffset; } }
+        public readonly Point _cropOffset;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
         private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
 
@@ -46,7 +44,7 @@ namespace D2RAssist.Helpers
             (_background, _cropOffset) = DrawBackground(areaData, pointOfInterest);
         }
 
-        public Bitmap Compose(GameData gameData, bool noShift = false)
+        public Bitmap Compose(GameData gameData, bool scale = true)
         {
             if (gameData.Area != _areaData.Area)
             {
@@ -95,7 +93,7 @@ namespace D2RAssist.Helpers
 
             double multiplier = 1;
 
-            if (!noShift)
+            if (scale)
             {
                 double biggestDimension = Math.Max(image.Width, image.Height);
 
@@ -115,7 +113,7 @@ namespace D2RAssist.Helpers
             }
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (!noShift && Settings.Map.Rotate)
+            if (scale && Settings.Map.Rotate)
             {
                 image = ImageUtils.RotateImage(image, 53, true, false, Color.Transparent);
             }
