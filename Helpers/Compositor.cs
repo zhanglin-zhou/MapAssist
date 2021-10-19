@@ -132,7 +132,7 @@ namespace D2RAssist.Helpers
                     for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
                     {
                         int type = areaData.CollisionGrid[y][x];
-                        Color? typeColor = Settings.Map.LookupMapColor(type);
+                        Color? typeColor = Settings.Map.MapColors[type];
                         if (typeColor != null)
                         {
                             background.SetPixel(x, y, (Color)typeColor);
