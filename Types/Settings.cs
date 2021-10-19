@@ -60,7 +60,15 @@ namespace D2RAssist.Types
 
         public static class Map
         {
-            private static readonly Dictionary<int, Color?> MapColors = new Dictionary<int, Color?>();
+            public static readonly Dictionary<int, Color?> MapColors = new Dictionary<int, Color?>();
+
+            public static void InitMapColors()
+            {
+                for (var i = -1; i < 600; i++)
+                {
+                    LookupMapColor(i);
+                }
+            }
 
             public static Color? LookupMapColor(int type)
             {

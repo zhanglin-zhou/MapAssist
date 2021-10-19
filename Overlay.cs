@@ -55,6 +55,7 @@ namespace D2RAssist
 
         private void Overlay_Load(object sender, EventArgs e)
         {
+            Settings.Map.InitMapColors();
             Rectangle screen = Screen.PrimaryScreen.WorkingArea;
             int width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
             int height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
