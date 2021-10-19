@@ -29,8 +29,10 @@ namespace D2RAssist.Helpers
     public class Compositor
     {
         private readonly AreaData _areaData;
+        public AreaData AreaData { get { return _areaData; } }
         private readonly Bitmap _background;
         private readonly Point _cropOffset;
+        public Point CropOffset { get { return _cropOffset; } }
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
         private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
 
@@ -44,7 +46,7 @@ namespace D2RAssist.Helpers
             (_background, _cropOffset) = DrawBackground(areaData, pointOfInterest);
         }
 
-        public Bitmap Compose(GameData gameData)
+        public Bitmap Compose(GameData gameData, bool noShift = false)
         {
             if (gameData.Area != _areaData.Area)
             {
@@ -61,8 +63,11 @@ namespace D2RAssist.Helpers
                 imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
                 imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                Point localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset);
-
+                Point localPlayerPosition = gameData.PlayerPosition.
+                    OffsetFrom(_areaData.Origin).
+                    OffsetFrom(_cropOffset).
+                    OffsetFrom(new Point(Settings.Rendering.Player.IconSize, Settings.Rendering.Player.IconSize));
+                
                 if (Settings.Rendering.Player.CanDrawIcon())
                 {
                     Bitmap playerIcon = GetIcon(Settings.Rendering.Player);
@@ -88,13 +93,18 @@ namespace D2RAssist.Helpers
                 }
             }
 
-            double biggestDimension = Math.Max(image.Width, image.Height);
+            double multiplier = 1;
 
-            double multiplier = Settings.Map.Size / biggestDimension;
-
-            if (multiplier == 0)
+            if (!noShift)
             {
-                multiplier = 1;
+                double biggestDimension = Math.Max(image.Width, image.Height);
+
+                multiplier = Settings.Map.Size / biggestDimension;
+
+                if (multiplier == 0)
+                {
+                    multiplier = 1;
+                }
             }
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -105,7 +115,7 @@ namespace D2RAssist.Helpers
             }
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (Settings.Map.Rotate)
+            if (!noShift && Settings.Map.Rotate)
             {
                 image = ImageUtils.RotateImage(image, 53, true, false, Color.Transparent);
             }

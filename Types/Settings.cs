@@ -30,7 +30,8 @@ namespace D2RAssist.Types
     public enum MapPosition
     {
         TopLeft,
-        TopRight
+        TopRight,
+        Center
     }
 
     public enum Shape
