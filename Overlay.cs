@@ -156,55 +156,86 @@ namespace D2RAssist
 
             UpdateLocation();
 
-            Bitmap gameMap = _compositor.Compose(_currentGameData, Settings.Map.Position == MapPosition.Center);
+            Bitmap gameMap = _compositor.Compose(_currentGameData, true);
+
+            float w = 0;
+            float h = 0;
+            float scale = 0.0F;
+            Vector2 _screenCenterCache = new Vector2();
 
             if (Settings.Map.Position == MapPosition.Center)
             {
-                float w = this.Width;
-                float h = this.Height;
+                w = this.Width;
+                h = this.Height;
+                scale = 1024.0F / h * w * 3f / 4f / 2.3F;
+                _screenCenterCache = new Vector2(w / 2, h / 2);
 
-                int s_p_offset_x = _currentGameData.PlayerPosition.X - _compositor.AreaData.Origin.X - _compositor.CropOffset.X;
-                int s_p_offset_y = _currentGameData.PlayerPosition.Y - _compositor.AreaData.Origin.Y - _compositor.CropOffset.Y;
+                e.Graphics.SetClip(new RectangleF(0, 0, w, h));
+            }
+            else if (Settings.Map.Position == MapPosition.TopLeft)
+            {
+                w = 640;
+                h = 360;
+                scale = 1024.0F / h * w * 3f / 4f / 3.35F;
+                _screenCenterCache = new Vector2(w / 2, (h / 2) + 48);
 
-                Vector2 _screenCenterCache = new Vector2(w / 2, h / 2);
+                e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+            }
+            else if (Settings.Map.Position == MapPosition.TopRight)
+            {
+                w = 640;
+                h = 360;
+                scale = 1024.0F / h * w * 3f / 4f / 3.35F;
+                _screenCenterCache = new Vector2(w / 2, (h / 2) + 40);
 
-                Vector2 playerPos = new Vector2(s_p_offset_x, s_p_offset_y);
-                Vector2 Transform(Vector2 p) =>
-                    _screenCenterCache +
-                    DeltaInWorldToMinimapDelta(
-                        p - playerPos,
-                        (float)Math.Sqrt(w * w + h * h),
-                        1024.0F / h * w * 3f / 4f / 2.25F,
-                        0);
+                e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
+                e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+            }
 
-                var p1 = Transform(new Vector2(0, 0));
-                var p2 = Transform(new Vector2(gameMap.Width, 0));
-                var p3 = Transform(new Vector2(gameMap.Width, gameMap.Height));
-                var p4 = Transform(new Vector2(0, gameMap.Height));
+            int s_p_offset_x = _currentGameData.PlayerPosition.X - _compositor.AreaData.Origin.X - _compositor.CropOffset.X;
+            int s_p_offset_y = _currentGameData.PlayerPosition.Y - _compositor.AreaData.Origin.Y - _compositor.CropOffset.Y;
 
-                System.Drawing.PointF[] destinationPoints = {
+            Vector2 playerPos = new Vector2(s_p_offset_x, s_p_offset_y);
+            Vector2 Transform(Vector2 p) =>
+                _screenCenterCache +
+                DeltaInWorldToMinimapDelta(
+                    p - playerPos,
+                    (float)Math.Sqrt(w * w + h * h),
+                    scale,
+                    0);
+
+            var p1 = Transform(new Vector2(0, 0));
+            var p2 = Transform(new Vector2(gameMap.Width, 0));
+            var p3 = Transform(new Vector2(gameMap.Width, gameMap.Height));
+            var p4 = Transform(new Vector2(0, gameMap.Height));
+
+            System.Drawing.PointF[] destinationPoints = {
                         new System.Drawing.PointF(p1.X, p1.Y),
                         new System.Drawing.PointF(p2.X, p2.Y),
                         new System.Drawing.PointF(p4.X, p4.Y)
                     };
 
-                e.Graphics.DrawImage(gameMap, destinationPoints);
-            }
-            else
-            {
-                var anchor = new Point(0, 0);
-                switch (Settings.Map.Position)
-                {
-                    case MapPosition.TopRight:
-                        anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
-                        break;
-                    case MapPosition.TopLeft:
-                        anchor = new Point(0, 0);
-                        break;
-                }
+            e.Graphics.DrawImage(gameMap, destinationPoints);
 
-                e.Graphics.DrawImage(gameMap, anchor);
-            }
+            //if (Settings.Map.Position == MapPosition.Center)
+            //{
+
+            //}
+            //else
+            //{
+            //    var anchor = new Point(0, 0);
+            //    switch (Settings.Map.Position)
+            //    {
+            //        case MapPosition.TopRight:
+            //            anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
+            //            break;
+            //        case MapPosition.TopLeft:
+            //            anchor = new Point(0, 0);
+            //            break;
+            //    }
+
+            //    e.Graphics.DrawImage(gameMap, anchor);
+            //}
         }
 
         public Vector2 DeltaInWorldToMinimapDelta(Vector2 delta, double diag, float scale, float deltaZ = 0)
