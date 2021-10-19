@@ -209,11 +209,11 @@ namespace D2RAssist
             var p3 = Transform(new Vector2(gameMap.Width, gameMap.Height));
             var p4 = Transform(new Vector2(0, gameMap.Height));
 
-            System.Drawing.PointF[] destinationPoints = {
-                        new System.Drawing.PointF(p1.X, p1.Y),
-                        new System.Drawing.PointF(p2.X, p2.Y),
-                        new System.Drawing.PointF(p4.X, p4.Y)
-                    };
+            PointF[] destinationPoints = {
+                new PointF(p1.X, p1.Y),
+                new PointF(p2.X, p2.Y),
+                new PointF(p4.X, p4.Y)
+            };
 
             e.Graphics.DrawImage(gameMap, destinationPoints);
 
