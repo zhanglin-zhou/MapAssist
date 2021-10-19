@@ -18,6 +18,7 @@
  **/
 
 using System;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing;
@@ -98,20 +99,29 @@ namespace D2RAssist.Helpers
             var min = new Point(int.MaxValue, int.MaxValue);
             var max = new Point(int.MinValue, int.MinValue);
 
-            for (var x = 0; x < originalBitmap.Width; ++x)
+            unsafe
             {
-                for (var y = 0; y < originalBitmap.Height; ++y)
-                {
-                    Color pixelColor = originalBitmap.GetPixel(x, y);
-                    if (pixelColor.A == 255)
-                    {
-                        if (x < min.X) min.X = x;
-                        if (y < min.Y) min.Y = y;
+                var bData = originalBitmap.LockBits(new Rectangle(0, 0, originalBitmap.Width, originalBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                byte bitsPerPixel = 32;
+                byte* scan0 = (byte*)bData.Scan0.ToPointer();
 
-                        if (x > max.X) max.X = x;
-                        if (y > max.Y) max.Y = y;
+                for (int y = 0; y < bData.Height; ++y)
+                {
+                    for (int x = 0; x < bData.Width; ++x)
+                    {
+                        byte* data = scan0 + y * bData.Stride + x * bitsPerPixel / 8;
+                        //data[0 = blue, 1 = green, 2 = red, 3 = alpha]
+                        if (data[3] == byte.MaxValue)
+                        {
+                            if (x < min.X) min.X = x;
+                            if (y < min.Y) min.Y = y;
+
+                            if (x > max.X) max.X = x;
+                            if (y > max.Y) max.Y = y;
+                        }
                     }
                 }
+                originalBitmap.UnlockBits(bData);
             }
 
             // Create a new bitmap from the crop rectangle
