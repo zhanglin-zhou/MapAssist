@@ -28,95 +28,106 @@ namespace D2RAssist.Helpers
 {
     class GameMemory
     {
+
+        public static IntPtr? ProcessHandle = null;
         public static GameData GetGameData()
         {
             // Clean up and organize, add better exception handeling.
             try
             {
-                Process gameProcess = Process.GetProcessesByName("D2R")[0];
-                IntPtr processHandle =
-                    WindowsExternal.OpenProcess((uint)WindowsExternal.ProcessAccessFlags.VirtualMemoryRead, false,
-                        gameProcess.Id);
+                Process[] d2rProcesses = Process.GetProcessesByName("D2R");
+                Process gameProcess = d2rProcesses.Length > 0 ? d2rProcesses[0] : null;
+                if (gameProcess == null)
+                {
+                    ProcessHandle = null;
+                    return null;
+                }
+                
+                if (ProcessHandle == null)
+                {
+                    ProcessHandle =
+                        WindowsExternal.OpenProcess((uint)WindowsExternal.ProcessAccessFlags.VirtualMemoryRead, false, gameProcess.Id);
+                }
                 IntPtr processAddress = gameProcess.MainModule.BaseAddress;
                 IntPtr pPlayerUnit = IntPtr.Add(processAddress, Offsets.PlayerUnit);
 
                 var addressBuffer = new byte[8];
                 var dwordBuffer = new byte[4];
                 var byteBuffer = new byte[1];
-                WindowsExternal.ReadProcessMemory(processHandle, pPlayerUnit, addressBuffer, addressBuffer.Length,
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pPlayerUnit, addressBuffer, addressBuffer.Length,
                     out _);
 
                 var playerUnit = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
                 IntPtr pPlayer = IntPtr.Add(playerUnit, 0x10);
                 IntPtr pAct = IntPtr.Add(playerUnit, 0x20);
 
-                WindowsExternal.ReadProcessMemory(processHandle, pPlayer, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pPlayer, addressBuffer, addressBuffer.Length, out _);
                 var player = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 var playerNameBuffer = new byte[16];
-                WindowsExternal.ReadProcessMemory(processHandle, player, playerNameBuffer, playerNameBuffer.Length,
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, player, playerNameBuffer, playerNameBuffer.Length,
                     out _);
                 string playerName = Encoding.ASCII.GetString(playerNameBuffer);
 
-                WindowsExternal.ReadProcessMemory(processHandle, pAct, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pAct, addressBuffer, addressBuffer.Length, out _);
                 var aAct = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 IntPtr pActUnk1 = IntPtr.Add(aAct, 0x70);
 
-                WindowsExternal.ReadProcessMemory(processHandle, pActUnk1, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pActUnk1, addressBuffer, addressBuffer.Length, out _);
                 var aActUnk1 = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 IntPtr pGameDifficulty = IntPtr.Add(aActUnk1, 0x830);
 
-                WindowsExternal.ReadProcessMemory(processHandle, pGameDifficulty, byteBuffer, byteBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pGameDifficulty, byteBuffer, byteBuffer.Length, out _);
                 ushort aGameDifficulty = byteBuffer[0];
 
                 IntPtr aDwAct = IntPtr.Add(aAct, 0x20);
-                WindowsExternal.ReadProcessMemory(processHandle, aDwAct, dwordBuffer, dwordBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, aDwAct, dwordBuffer, dwordBuffer.Length, out _);
 
                 IntPtr aMapSeed = IntPtr.Add(aAct, 0x14);
 
                 IntPtr pPath = IntPtr.Add(playerUnit, 0x38);
 
-                WindowsExternal.ReadProcessMemory(processHandle, pPath, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pPath, addressBuffer, addressBuffer.Length, out _);
                 var path = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 IntPtr pRoom1 = IntPtr.Add(path, 0x20);
 
-                WindowsExternal.ReadProcessMemory(processHandle, pRoom1, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pRoom1, addressBuffer, addressBuffer.Length, out _);
                 var aRoom1 = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 IntPtr pRoom2 = IntPtr.Add(aRoom1, 0x18);
-                WindowsExternal.ReadProcessMemory(processHandle, pRoom2, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pRoom2, addressBuffer, addressBuffer.Length, out _);
                 var aRoom2 = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 IntPtr pLevel = IntPtr.Add(aRoom2, 0x90);
-                WindowsExternal.ReadProcessMemory(processHandle, pLevel, addressBuffer, addressBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pLevel, addressBuffer, addressBuffer.Length, out _);
                 var aLevel = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
                 if (addressBuffer.All(o => o == 0))
                     return null;
 
                 IntPtr aLevelId = IntPtr.Add(aLevel, 0x1F8);
-                WindowsExternal.ReadProcessMemory(processHandle, aLevelId, dwordBuffer, dwordBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, aLevelId, dwordBuffer, dwordBuffer.Length, out _);
                 var dwLevelId = BitConverter.ToUInt32(dwordBuffer, 0);
 
                 IntPtr posXAddress = IntPtr.Add(path, 0x02);
                 IntPtr posYAddress = IntPtr.Add(path, 0x06);
 
-                WindowsExternal.ReadProcessMemory(processHandle, aMapSeed, dwordBuffer, dwordBuffer.Length, out _);
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, aMapSeed, dwordBuffer, dwordBuffer.Length, out _);
                 var mapSeed = BitConverter.ToUInt32(dwordBuffer, 0);
 
-                WindowsExternal.ReadProcessMemory(processHandle, posXAddress, addressBuffer, addressBuffer.Length,
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, posXAddress, addressBuffer, addressBuffer.Length,
                     out _);
                 var playerX = BitConverter.ToUInt16(addressBuffer, 0);
 
-                WindowsExternal.ReadProcessMemory(processHandle, posYAddress, addressBuffer, addressBuffer.Length,
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, posYAddress, addressBuffer, addressBuffer.Length,
                     out _);
                 var playerY = BitConverter.ToUInt16(addressBuffer, 0);
                     
                 IntPtr uiSettingsPath = IntPtr.Add(processAddress, Offsets.InGameMap);
-                WindowsExternal.ReadProcessMemory(processHandle, uiSettingsPath, byteBuffer, byteBuffer.Length,
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, uiSettingsPath, byteBuffer, byteBuffer.Length,
                     out _);
                 var mapShown = BitConverter.ToBoolean(byteBuffer, 0);
                 

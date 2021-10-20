@@ -84,7 +84,6 @@ namespace D2RAssist
 
         private void Overlay_FormClosing(object sender, EventArgs e)
         {
-            MapApi.Client.Dispose();
             _mapApi?.Dispose();
         }
 
