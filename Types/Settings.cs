@@ -30,7 +30,8 @@ namespace D2RAssist.Types
     public enum MapPosition
     {
         TopLeft,
-        TopRight
+        TopRight,
+        Center
     }
 
     public enum Shape
@@ -92,6 +93,8 @@ namespace D2RAssist.Types
 
             public static double Opacity = Convert.ToDouble(ConfigurationManager.AppSettings["Opacity"],
                 System.Globalization.CultureInfo.InvariantCulture);
+            
+            public static bool OverlayMode = Convert.ToBoolean(ConfigurationManager.AppSettings["OverlayMode"]);
 
             public static bool AlwaysOnTop = Convert.ToBoolean(ConfigurationManager.AppSettings["AlwaysOnTop"]);
             public static bool HideInTown = Convert.ToBoolean(ConfigurationManager.AppSettings["HideInTown"]);

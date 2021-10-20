@@ -30,7 +30,7 @@ namespace D2RAssist.Helpers
     {
         private readonly AreaData _areaData;
         private readonly Bitmap _background;
-        private readonly Point _cropOffset;
+        public readonly Point CropOffset;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
         private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
 
@@ -41,10 +41,10 @@ namespace D2RAssist.Helpers
         {
             _areaData = areaData;
             _pointsOfInterest = pointOfInterest;
-            (_background, _cropOffset) = DrawBackground(areaData, pointOfInterest);
+            (_background, CropOffset) = DrawBackground(areaData, pointOfInterest);
         }
 
-        public Bitmap Compose(GameData gameData)
+        public Bitmap Compose(GameData gameData, bool scale = true)
         {
             if (gameData.Area != _areaData.Area)
             {
@@ -61,8 +61,11 @@ namespace D2RAssist.Helpers
                 imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
                 imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                Point localPlayerPosition = gameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset);
-
+                Point localPlayerPosition = gameData.PlayerPosition
+                    .OffsetFrom(_areaData.Origin)
+                    .OffsetFrom(CropOffset)
+                    .OffsetFrom(new Point(Settings.Rendering.Player.IconSize, Settings.Rendering.Player.IconSize));
+                
                 if (Settings.Rendering.Player.CanDrawIcon())
                 {
                     Bitmap playerIcon = GetIcon(Settings.Rendering.Player);
@@ -83,18 +86,23 @@ namespace D2RAssist.Helpers
                         }
 
                         imageGraphics.DrawLine(pen, localPlayerPosition,
-                            poi.Position.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset));
+                            poi.Position.OffsetFrom(_areaData.Origin).OffsetFrom(CropOffset));
                     }
                 }
             }
 
-            double biggestDimension = Math.Max(image.Width, image.Height);
+            double multiplier = 1;
 
-            double multiplier = Settings.Map.Size / biggestDimension;
-
-            if (multiplier == 0)
+            if (scale)
             {
-                multiplier = 1;
+                double biggestDimension = Math.Max(image.Width, image.Height);
+
+                multiplier = Settings.Map.Size / biggestDimension;
+
+                if (multiplier == 0)
+                {
+                    multiplier = 1;
+                }
             }
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -105,7 +113,7 @@ namespace D2RAssist.Helpers
             }
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (Settings.Map.Rotate)
+            if (scale && Settings.Map.Rotate)
             {
                 image = ImageUtils.RotateImage(image, 53, true, false, Color.Transparent);
             }

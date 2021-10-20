@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using D2RAssist.Types;
 using D2RAssist.Helpers;
 using Gma.System.MouseKeyHook;
+using System.Numerics;
 
 namespace D2RAssist
 {
@@ -37,6 +38,7 @@ namespace D2RAssist
         private readonly Timer _timer = new Timer();
         private GameData _currentGameData;
         private Compositor _compositor;
+        private AreaData _areaData;
         private MapApi _mapApi;
         private bool _show = true;
         private Screen _screen;
@@ -105,9 +107,9 @@ namespace D2RAssist
                     Console.WriteLine($"Area changed: {gameData.Area}");
                     if (gameData.Area != Area.None)
                     {
-                        AreaData areaData = _mapApi.GetMapData(gameData.Area);
-                        List<PointOfInterest> pointsOfInterest = PointOfInterestHandler.Get(_mapApi, areaData);
-                        _compositor = new Compositor(areaData, pointsOfInterest);
+                        _areaData = _mapApi.GetMapData(gameData.Area);
+                        List<PointOfInterest> pointsOfInterest = PointOfInterestHandler.Get(_mapApi, _areaData);
+                        _compositor = new Compositor(_areaData, pointsOfInterest);
                     }
                     else
                     {
@@ -156,19 +158,96 @@ namespace D2RAssist
 
             UpdateLocation();
 
-            Bitmap gameMap = _compositor.Compose(_currentGameData);
-            var anchor = new Point(0, 0);
-            switch (Settings.Map.Position)
-            {
-                case MapPosition.TopRight:
-                    anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
-                    break;
-                case MapPosition.TopLeft:
-                    anchor = new Point(0, 0);
-                    break;
-            }
+            Bitmap gameMap = _compositor.Compose(_currentGameData, !Settings.Map.OverlayMode);
 
-            e.Graphics.DrawImage(gameMap, anchor);
+            if (Settings.Map.OverlayMode)
+            {
+                float w = 0;
+                float h = 0;
+                float scale = 0.0F;
+                Vector2 center = new Vector2();
+
+                if (Settings.Map.Position == MapPosition.Center)
+                {
+                    w = _screen.WorkingArea.Width;
+                    h = _screen.WorkingArea.Height;
+                    scale = 1024.0F / h * w * 3f / 4f / 2.3F;
+                    center = new Vector2(w / 2, h / 2);
+
+                    e.Graphics.SetClip(new RectangleF(0, 0, w, h));
+                }
+                else if (Settings.Map.Position == MapPosition.TopLeft)
+                {
+                    w = 640;
+                    h = 360;
+                    scale = 1024.0F / h * w * 3f / 4f / 3.35F;
+                    center = new Vector2(w / 2, (h / 2) + 48);
+
+                    e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+                }
+                else if (Settings.Map.Position == MapPosition.TopRight)
+                {
+                    w = 640;
+                    h = 360;
+                    scale = 1024.0F / h * w * 3f / 4f / 3.35F;
+                    center = new Vector2(w / 2, (h / 2) + 40);
+
+                    e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
+                    e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+                }
+
+                Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor.CropOffset);
+
+                Vector2 playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
+                Vector2 Transform(Vector2 p) =>
+                    center +
+                    DeltaInWorldToMinimapDelta(
+                        p - playerPos,
+                        (float)Math.Sqrt(w * w + h * h),
+                        scale,
+                        0);
+
+                var p1 = Transform(new Vector2(0, 0));
+                var p2 = Transform(new Vector2(gameMap.Width, 0));
+                var p4 = Transform(new Vector2(0, gameMap.Height));
+
+                PointF[] destinationPoints = {
+                    new PointF(p1.X, p1.Y),
+                    new PointF(p2.X, p2.Y),
+                    new PointF(p4.X, p4.Y)
+                };
+
+                e.Graphics.DrawImage(gameMap, destinationPoints);
+            }
+            else
+            {
+                var anchor = new Point(0, 0);
+                switch (Settings.Map.Position)
+                {
+                    case MapPosition.Center:
+                        anchor = new Point(_screen.WorkingArea.Width / 2, _screen.WorkingArea.Height / 2);
+                        break;
+                    case MapPosition.TopRight:
+                        anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
+                        break;
+                    case MapPosition.TopLeft:
+                        anchor = new Point(0, 0);
+                        break;
+                }
+
+                e.Graphics.DrawImage(gameMap, anchor);
+            }
+        }
+
+        public Vector2 DeltaInWorldToMinimapDelta(Vector2 delta, double diag, float scale, float deltaZ = 0)
+        {
+            var CAMERA_ANGLE = -26F * 3.14159274F / 180;
+
+            var cos = (float)(diag * Math.Cos(CAMERA_ANGLE) / scale);
+            var sin = (float)(diag * Math.Sin(CAMERA_ANGLE) /
+                               scale);
+
+            return new Vector2((delta.X - delta.Y) * cos, deltaZ - (delta.X + delta.Y) * sin);
         }
 
         /// <summary>
