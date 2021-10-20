@@ -114,6 +114,9 @@ namespace D2RAssist.Types
             public static Area[] PrefetchAreas =
                 Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["PrefetchAreas"]);
 
+            public static Area[] HiddenAreas =
+                Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["HiddenAreas"]);
+
             public static bool ClearPrefetchedOnAreaChange =
                 Convert.ToBoolean(ConfigurationManager.AppSettings["ClearPrefetchedOnAreaChange"]);
         }

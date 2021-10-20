@@ -138,6 +138,7 @@ namespace D2RAssist
             if (!_show) return true;
             if (_currentGameData.Area == Area.None) return true;
             if (Settings.Map.HideInTown && _currentGameData.Area.IsTown()) return true;
+            if (Array.Exists(Settings.Map.HiddenAreas, element => element == _currentGameData.Area)) return true;
             if (!InGame()) return true;
             if (Settings.Map.ToggleViaInGameMap && !_currentGameData.MapShown) return true;
             return false;
