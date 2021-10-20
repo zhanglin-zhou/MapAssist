@@ -21,7 +21,7 @@ namespace D2RAssist.Types
 {
     public static class Offsets
     {
-        public static int PlayerUnit = 0x205CE60;
-        public static int InGameMap = 0x2051342;
+        public static int PlayerUnit = 0x2028E60;
+        public static int InGameMap = 0x201D342;
     }
 }
