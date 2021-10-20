@@ -30,7 +30,7 @@ namespace D2RAssist.Helpers
     {
         private readonly AreaData _areaData;
         private readonly Bitmap _background;
-        public readonly Point _cropOffset;
+        public readonly Point CropOffset;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
         private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
 
@@ -41,7 +41,7 @@ namespace D2RAssist.Helpers
         {
             _areaData = areaData;
             _pointsOfInterest = pointOfInterest;
-            (_background, _cropOffset) = DrawBackground(areaData, pointOfInterest);
+            (_background, CropOffset) = DrawBackground(areaData, pointOfInterest);
         }
 
         public Bitmap Compose(GameData gameData, bool scale = true)
@@ -61,10 +61,10 @@ namespace D2RAssist.Helpers
                 imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
                 imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                Point localPlayerPosition = gameData.PlayerPosition.
-                    OffsetFrom(_areaData.Origin).
-                    OffsetFrom(_cropOffset).
-                    OffsetFrom(new Point(Settings.Rendering.Player.IconSize, Settings.Rendering.Player.IconSize));
+                Point localPlayerPosition = gameData.PlayerPosition
+                    .OffsetFrom(_areaData.Origin)
+                    .OffsetFrom(CropOffset)
+                    .OffsetFrom(new Point(Settings.Rendering.Player.IconSize, Settings.Rendering.Player.IconSize));
                 
                 if (Settings.Rendering.Player.CanDrawIcon())
                 {
@@ -86,7 +86,7 @@ namespace D2RAssist.Helpers
                         }
 
                         imageGraphics.DrawLine(pen, localPlayerPosition,
-                            poi.Position.OffsetFrom(_areaData.Origin).OffsetFrom(_cropOffset));
+                            poi.Position.OffsetFrom(_areaData.Origin).OffsetFrom(CropOffset));
                     }
                 }
             }

@@ -195,7 +195,7 @@ namespace D2RAssist
                     e.Graphics.SetClip(new RectangleF(0, 50, w, h));
                 }
 
-                Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor._cropOffset);
+                Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor.CropOffset);
 
                 Vector2 playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
                 Vector2 Transform(Vector2 p) =>
@@ -208,7 +208,6 @@ namespace D2RAssist
 
                 var p1 = Transform(new Vector2(0, 0));
                 var p2 = Transform(new Vector2(gameMap.Width, 0));
-                var p3 = Transform(new Vector2(gameMap.Width, gameMap.Height));
                 var p4 = Transform(new Vector2(0, gameMap.Height));
 
                 PointF[] destinationPoints = {
