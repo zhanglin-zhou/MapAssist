@@ -97,7 +97,6 @@ namespace D2RAssist.Types
             public static bool OverlayMode = Convert.ToBoolean(ConfigurationManager.AppSettings["OverlayMode"]);
 
             public static bool AlwaysOnTop = Convert.ToBoolean(ConfigurationManager.AppSettings["AlwaysOnTop"]);
-            public static bool HideInTown = Convert.ToBoolean(ConfigurationManager.AppSettings["HideInTown"]);
 
             public static bool ToggleViaInGameMap =
                 Convert.ToBoolean(ConfigurationManager.AppSettings["ToggleViaInGameMap"]);
@@ -113,6 +112,9 @@ namespace D2RAssist.Types
 
             public static Area[] PrefetchAreas =
                 Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["PrefetchAreas"]);
+
+            public static Area[] HiddenAreas =
+                Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["HiddenAreas"]);
 
             public static bool ClearPrefetchedOnAreaChange =
                 Convert.ToBoolean(ConfigurationManager.AppSettings["ClearPrefetchedOnAreaChange"]);
