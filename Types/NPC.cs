@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-namespace D2RAssist.Types
+namespace MapAssist.Types
 {
     public enum NPC
     {
