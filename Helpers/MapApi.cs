@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using D2RAssist.Types;
+using MapAssist.Types;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
@@ -31,7 +31,7 @@ using System.Text;
 using System.Threading;
 #pragma warning disable 649
 
-namespace D2RAssist.Helpers
+namespace MapAssist.Helpers
 {
     public class MapApi : IDisposable
     {

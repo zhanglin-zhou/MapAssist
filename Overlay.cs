@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using D2RAssist.Types;
-using D2RAssist.Helpers;
+using MapAssist.Types;
+using MapAssist.Helpers;
 using Gma.System.MouseKeyHook;
 using System.Numerics;
 
-namespace D2RAssist
+namespace MapAssist
 {
     public partial class Overlay : Form
     {
@@ -250,7 +250,7 @@ namespace D2RAssist
         }
 
         /// <summary>
-        /// Update the location and size of the form relative to the D2R window location.
+        /// Update the location and size of the form relative to the window location.
         /// </summary>
         private void UpdateLocation()
         {
