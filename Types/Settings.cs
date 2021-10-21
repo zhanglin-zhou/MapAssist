@@ -126,7 +126,6 @@ namespace D2RAssist.Types
         }
     }
 
-
     public class PointOfInterestRenderingSettings
     {
         public Color IconColor;

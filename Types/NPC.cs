@@ -1,4 +1,23 @@
-﻿namespace D2RAssist.Types
+﻿/**
+ *   Copyright (C) 2021 okaygo
+ *
+ *   https://github.com/misterokaygo/D2RAssist/
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
+
+namespace D2RAssist.Types
 {
     public enum NPC
     {
@@ -230,7 +249,7 @@
         BloodMage4 = 225, // Unused
         BloodMage5 = 226, // Unused
         Maggot = 227,
-        MummyGenerator = 228, //TEST: Sarcophagus
+        MummyGenerator = 228, // TEST: Sarcophagus
         Radament = 229,
         FireBeast = 230, // Unused
         IceGlobe = 231, // Unused
@@ -335,17 +354,17 @@
         LightningTrap = 330, // A trap
         Kaelan = 331, // Act2Guard2
         InvisoSpawner = 332, // Dummy
-        DiabloClone = 333, //Unused???
+        DiabloClone = 333, // Unused???
         SuckerNest = 334,
         FeederNest = 335,
         BloodHookNest = 336,
         BloodWingNest = 337,
         Guard = 338, // Act2Hire
         MiniSpider = 339, // Dummy
-        BonePrison = 340, //Unused???
-        BonePrison2 = 341, //Unused???
-        BonePrison3 = 342, //Unused???
-        BonePrison4 = 343, //Unused???
+        BonePrison = 340, // Unused???
+        BonePrison2 = 341, // Unused???
+        BonePrison3 = 342, // Unused???
+        BonePrison4 = 343, // Unused???
         BoneWall = 344, // Dummy
         CouncilMember = 345,
         CouncilMember2 = 346,
@@ -360,7 +379,7 @@
         SevenTombs = 355, // Dummy
         Decoy = 356,
         Valkyrie = 357,
-        Act2Guard3 = 358, //Unused???
+        Act2Guard3 = 358, // Unused???
         IronWolf = 359, // Act3Hire
         Balrog = 360,
         PitLord = 361,
@@ -738,7 +757,6 @@
         DarkLord3 = 731,
         Specter3 = 732,
         BurningSoul3 = 733,
-
         Invalid,
         NpcNotApplicable = 0xFFFF
     }
