@@ -80,10 +80,10 @@ namespace MapAssist.Helpers
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
-                            Label = "Tal Rashas Tomb",
+                            Label = realTomb.Name(),
                             Position = areaData.AdjacentLevels[realTomb].Exits[0],
                             RenderingSettings = Settings.Rendering.NextArea
-                        });
+                        }); ;
                     }
 
                     break;

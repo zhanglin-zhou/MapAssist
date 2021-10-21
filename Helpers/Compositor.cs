@@ -17,12 +17,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using MapAssist.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using MapAssist.Types;
+using MapAssist.Settings;
 
 namespace MapAssist.Helpers
 {
@@ -169,7 +170,7 @@ namespace MapAssist.Helpers
             }
         }
 
-        private Font GetFont(PointOfInterestRenderingSettings poiSettings)
+        private Font GetFont(PointOfInterestRendering poiSettings)
         {
             (string LabelFont, int LabelFontSize) cacheKey = (poiSettings.LabelFont, poiSettings.LabelFontSize);
             if (!_fontCache.ContainsKey(cacheKey))
@@ -182,7 +183,7 @@ namespace MapAssist.Helpers
             return _fontCache[cacheKey];
         }
 
-        private Bitmap GetIcon(PointOfInterestRenderingSettings poiSettings)
+        private Bitmap GetIcon(PointOfInterestRendering poiSettings)
         {
             (Shape IconShape, int IconSize, Color Color) cacheKey = (poiSettings.IconShape, poiSettings.IconSize, Color: poiSettings.IconColor);
             if (!_iconCache.ContainsKey(cacheKey))
