@@ -32,6 +32,7 @@ namespace MapAssist.Helpers
     class GameMemory
     {
         private static byte[] processBytes = new byte[] { 68, 50, 82 };
+        private static string processName = Encoding.UTF8.GetString(processBytes);
         public static IntPtr? ProcessHandle = null;
 
         public static GameData GetGameData()
@@ -39,7 +40,7 @@ namespace MapAssist.Helpers
             // Clean up and organize, add better exception handeling.
             try
             {
-                Process[] process = Process.GetProcessesByName(Encoding.UTF8.GetString(processBytes));
+                Process[] process = Process.GetProcessesByName(processName);
                 Process gameProcess = process.Length > 0 ? process[0] : null;
                 if (gameProcess == null)
                 {
