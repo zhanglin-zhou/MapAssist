@@ -31,8 +31,7 @@ namespace MapAssist.Helpers
 {
     class GameMemory
     {
-        private static byte[] processBytes = new byte[] { 68, 50, 82 };
-        private static string processName = Encoding.UTF8.GetString(processBytes);
+        private static string processName = Encoding.UTF8.GetString(new byte[] { 68, 50, 82 });
         public static IntPtr? ProcessHandle = null;
 
         public static GameData GetGameData()
