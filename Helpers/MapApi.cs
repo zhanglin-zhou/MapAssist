@@ -18,6 +18,7 @@
  **/
 
 using D2RAssist.Types;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -44,7 +45,7 @@ namespace D2RAssist.Helpers
 
         private string CreateSession(string endpoint, Difficulty difficulty, uint mapSeed)
         {
-            var values = new Dictionary<string, uint>
+            Dictionary<string, uint> values = new Dictionary<string, uint>
             {
                 { "difficulty", (uint)difficulty },
                 { "mapid", mapSeed }
