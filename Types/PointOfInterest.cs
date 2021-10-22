@@ -18,6 +18,7 @@
  **/
 
 using System.Drawing;
+using MapAssist.Settings;
 
 namespace MapAssist.Types
 {
@@ -25,6 +26,6 @@ namespace MapAssist.Types
     {
         public string Label;
         public Point Position;
-        public PointOfInterestRenderingSettings RenderingSettings;
+        public PointOfInterestRendering RenderingSettings;
     }
 }

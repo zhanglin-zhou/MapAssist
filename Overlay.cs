@@ -23,6 +23,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MapAssist.Types;
 using MapAssist.Helpers;
+using MapAssist.Settings;
 using Gma.System.MouseKeyHook;
 using System.Numerics;
 
