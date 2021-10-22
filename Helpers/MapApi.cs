@@ -18,7 +18,6 @@
  **/
 
 using D2RAssist.Types;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace D2RAssist.Helpers
 
         private string CreateSession(string endpoint, Difficulty difficulty, uint mapSeed)
         {
-            Dictionary<string, uint> values = new Dictionary<string, uint>
+            var values = new Dictionary<string, uint>
             {
                 { "difficulty", (uint)difficulty },
                 { "mapid", mapSeed }
@@ -158,15 +157,24 @@ namespace D2RAssist.Helpers
         {
             _prefetchRequests.Add(new Area[] { });
             _thread.Join();
-            DestroySession(_endpoint, _sessionId);
+            try
+            {
+                DestroySession(_endpoint, _sessionId);
+            }
+            catch (HttpRequestException) // Prevent HttpRequestException if D2MapAPI is closed before this program.
+            {
+                Console.WriteLine("D2MapAPI server was closed, session was already destroyed.");
+            }
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        private class MapApiSession
-        {
-            public string id;
-            public uint difficulty;
-            public uint mapId;
-        }
     }
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private class MapApiSession
+    {
+        public string id;
+        public uint difficulty;
+        public uint mapId;
+    }
+}
 }
