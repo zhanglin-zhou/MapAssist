@@ -17,27 +17,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using System.Collections.Generic;
-using System.Drawing;
-
-namespace MapAssist.Types
+namespace MapAssist.Settings
 {
-    public class AdjacentLevel
+    public enum Shape
     {
-        public Area Area;
-        public Point[] Exits;
-        public Point Origin;
-        public int Width;
-        public int Height;
-    }
-
-    public class AreaData
-    {
-        public Area Area;
-        public Point Origin;
-        public Dictionary<Area, AdjacentLevel> AdjacentLevels;
-        public int[][] CollisionGrid;
-        public Dictionary<Npc, Point[]> NPCs;
-        public Dictionary<GameObject, Point[]> Objects;
+        None,
+        Rectangle,
+        Ellipse
     }
 }

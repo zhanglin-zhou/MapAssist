@@ -169,7 +169,7 @@ namespace MapAssist.Types
 
     public static class AreaExtensions
     {
-        private static Dictionary<int, string> _areaNames = new Dictionary<int, string>()
+        private readonly static Dictionary<int, string> _areaNames = new Dictionary<int, string>()
         {
             { 0, "None" },
             { 1, "Rogue Encampment" },

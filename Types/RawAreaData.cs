@@ -91,15 +91,15 @@ namespace MapAssist.Types
                 NPCs = npcs.Select(o =>
                     {
                         Point[] positions = o.Value.Select(j => j.ToPoint()).ToArray();
-                        var npc = NPC.Invalid;
+                        var npc = Npc.Invalid;
                         if (int.TryParse(o.Key, out int parsed))
                         {
-                            npc = (NPC)parsed;
+                            npc = (Npc)parsed;
                         }
 
                         return (npc, positions);
                     })
-                    .Where(o => o.npc != NPC.Invalid)
+                    .Where(o => o.npc != Npc.Invalid)
                     .ToDictionary(k => k.npc, v => v.positions),
                 Objects = objects.Select(o =>
                     {

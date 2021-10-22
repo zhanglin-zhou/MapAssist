@@ -19,7 +19,7 @@
 
 namespace MapAssist.Types
 {
-    public enum NPC
+    public enum Npc
     {
         Skeleton = 0,
         Returned = 1,
