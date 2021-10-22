@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,14 +17,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using D2RAssist.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using MapAssist.Types;
+using MapAssist.Settings;
 
-namespace D2RAssist.Helpers
+namespace MapAssist.Helpers
 {
     public class Compositor
     {
@@ -169,7 +170,7 @@ namespace D2RAssist.Helpers
             }
         }
 
-        private Font GetFont(PointOfInterestRenderingSettings poiSettings)
+        private Font GetFont(PointOfInterestRendering poiSettings)
         {
             (string LabelFont, int LabelFontSize) cacheKey = (poiSettings.LabelFont, poiSettings.LabelFontSize);
             if (!_fontCache.ContainsKey(cacheKey))
@@ -182,7 +183,7 @@ namespace D2RAssist.Helpers
             return _fontCache[cacheKey];
         }
 
-        private Bitmap GetIcon(PointOfInterestRenderingSettings poiSettings)
+        private Bitmap GetIcon(PointOfInterestRendering poiSettings)
         {
             (Shape IconShape, int IconSize, Color Color) cacheKey = (poiSettings.IconShape, poiSettings.IconSize, Color: poiSettings.IconColor);
             if (!_iconCache.ContainsKey(cacheKey))

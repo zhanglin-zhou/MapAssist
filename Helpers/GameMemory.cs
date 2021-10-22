@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,32 +17,36 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using D2RAssist.Types;
+using MapAssist.Types;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.Security.Cryptography;
+using System.Numerics;
 
-namespace D2RAssist.Helpers
+namespace MapAssist.Helpers
 {
     class GameMemory
     {
-
+        private static string processName = Encoding.UTF8.GetString(new byte[] { 68, 50, 82 });
         public static IntPtr? ProcessHandle = null;
+
         public static GameData GetGameData()
         {
             // Clean up and organize, add better exception handeling.
             try
             {
-                Process[] d2rProcesses = Process.GetProcessesByName("D2R");
-                Process gameProcess = d2rProcesses.Length > 0 ? d2rProcesses[0] : null;
+                Process[] process = Process.GetProcessesByName(processName);
+                Process gameProcess = process.Length > 0 ? process[0] : null;
                 if (gameProcess == null)
                 {
                     ProcessHandle = null;
                     return null;
                 }
-                
+
                 if (ProcessHandle == null)
                 {
                     ProcessHandle =
@@ -125,12 +129,12 @@ namespace D2RAssist.Helpers
                 WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, posYAddress, addressBuffer, addressBuffer.Length,
                     out _);
                 var playerY = BitConverter.ToUInt16(addressBuffer, 0);
-                    
+
                 IntPtr uiSettingsPath = IntPtr.Add(processAddress, Offsets.InGameMap);
                 WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, uiSettingsPath, byteBuffer, byteBuffer.Length,
                     out _);
                 var mapShown = BitConverter.ToBoolean(byteBuffer, 0);
-                
+
                 return new GameData
                 {
                     PlayerPosition = new Point(playerX, playerY),

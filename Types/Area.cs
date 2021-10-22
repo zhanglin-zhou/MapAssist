@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 
-namespace D2RAssist.Types
+namespace MapAssist.Types
 {
     public enum Area : uint
     {
@@ -169,7 +169,7 @@ namespace D2RAssist.Types
 
     public static class AreaExtensions
     {
-        private static Dictionary<int, string> _areaNames = new Dictionary<int, string>()
+        private readonly static Dictionary<int, string> _areaNames = new Dictionary<int, string>()
         {
             { 0, "None" },
             { 1, "Rogue Encampment" },

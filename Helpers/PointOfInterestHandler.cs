@@ -1,7 +1,7 @@
 ﻿/**
  *   Copyright (C) 2021 okaygo
  *
- *   https://github.com/misterokaygo/D2RAssist/
+ *   https://github.com/misterokaygo/MapAssist/
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using D2RAssist.Types;
+using MapAssist.Types;
 
-namespace D2RAssist.Helpers
+namespace MapAssist.Helpers
 {
     public static class PointOfInterestHandler
     {
@@ -80,10 +80,10 @@ namespace D2RAssist.Helpers
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
-                            Label = "Tal Rashas Tomb",
+                            Label = realTomb.Name(),
                             Position = areaData.AdjacentLevels[realTomb].Exits[0],
                             RenderingSettings = Settings.Rendering.NextArea
-                        });
+                        }); ;
                     }
 
                     break;
