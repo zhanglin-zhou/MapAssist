@@ -64,8 +64,6 @@ namespace MapAssist.Helpers
                 var dwordBuffer = new byte[4];
                 var byteBuffer = new byte[1];
 
-
-
                 //QQlol's code fix joker
                 if (foundcheck == false)
                 {
