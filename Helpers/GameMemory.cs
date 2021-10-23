@@ -1,4 +1,4 @@
-﻿/**
+/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -33,6 +33,9 @@ namespace MapAssist.Helpers
     {
         private static string processName = Encoding.UTF8.GetString(new byte[] { 68, 50, 82 });
         public static IntPtr? ProcessHandle = null;
+        public static bool foundcheck = false;
+        public static IntPtr? SaveAddress = null;
+        public static IntPtr? CheckAddress = null;
 
         public static GameData GetGameData()
         {
@@ -56,12 +59,60 @@ namespace MapAssist.Helpers
                 IntPtr pPlayerUnit = IntPtr.Add(processAddress, Offsets.PlayerUnit);
 
                 var addressBuffer = new byte[8];
+                var addressBuffer1 = new byte[8];
+                var addressBuffer2 = new byte[8];
                 var dwordBuffer = new byte[4];
                 var byteBuffer = new byte[1];
-                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pPlayerUnit, addressBuffer, addressBuffer.Length,
-                    out _);
 
-                var playerUnit = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
+
+
+                //QQlol's code fix joker
+                if (foundcheck == false)
+                {
+                    for (int i = 0; i < 128; i++)
+                    {
+                        IntPtr decryptpPlayer = IntPtr.Add(pPlayerUnit, (int)i * 8);
+
+                        WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, decryptpPlayer, addressBuffer1, addressBuffer1.Length, out _);
+
+                        IntPtr tplayerUnit = (IntPtr)BitConverter.ToInt64(addressBuffer1, 0);
+
+                        if (tplayerUnit.ToInt64() != 0)
+                        {
+                            IntPtr decryptpPlayerCheck = IntPtr.Add(tplayerUnit, (int)0xB8);
+
+                            WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, decryptpPlayerCheck, addressBuffer2, addressBuffer2.Length, out _);
+                            IntPtr CheckplayerUnit = (IntPtr)BitConverter.ToInt64(addressBuffer2, 0);
+                            if (CheckplayerUnit.ToInt64() == 0x0000000000000100)
+                            {
+                                //Console.WriteLine("Successfully finding the player pointer");
+                                SaveAddress = tplayerUnit;
+                                CheckAddress = decryptpPlayer;
+                                foundcheck = true;
+                                break;
+                            }
+                            else
+                            {
+                                //Console.WriteLine("Failed to find player pointer");
+                            }
+                        }
+                    }
+                }
+
+                var playerUnit = (IntPtr)SaveAddress;
+                var CheckUnit = (IntPtr)CheckAddress;
+
+                WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, CheckUnit, addressBuffer, addressBuffer.Length, out _);
+
+                IntPtr CleanPointer = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
+
+                if (CleanPointer.ToInt64() == 0)
+                {
+                    //Console.WriteLine("Clean player pointer");
+                    foundcheck = false;
+                    return null;
+                }
+
                 IntPtr pPlayer = IntPtr.Add(playerUnit, 0x10);
                 IntPtr pAct = IntPtr.Add(playerUnit, 0x20);
 
@@ -109,8 +160,8 @@ namespace MapAssist.Helpers
                 WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pLevel, addressBuffer, addressBuffer.Length, out _);
                 var aLevel = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
-                if (addressBuffer.All(o => o == 0))
-                    return null;
+                //if (addressBuffer.All(o => o == 0))
+                //    return null;
 
                 IntPtr aLevelId = IntPtr.Add(aLevel, 0x1F8);
                 WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, aLevelId, dwordBuffer, dwordBuffer.Length, out _);
