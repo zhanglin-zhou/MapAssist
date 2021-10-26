@@ -158,15 +158,24 @@ namespace MapAssist.Helpers
         {
             _prefetchRequests.Add(new Area[] { });
             _thread.Join();
-            DestroySession(_endpoint, _sessionId);
+            try
+            {
+                DestroySession(_endpoint, _sessionId);
+            }
+            catch (HttpRequestException) // Prevent HttpRequestException if D2MapAPI is closed before this program.
+            {
+                Console.WriteLine("D2MapAPI server was closed, session was already destroyed.");
+            }
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        private class MapApiSession
-        {
-            public string id;
-            public uint difficulty;
-            public uint mapId;
-        }
     }
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    private class MapApiSession
+    {
+        public string id;
+        public uint difficulty;
+        public uint mapId;
+    }
+}
 }
