@@ -26,6 +26,7 @@ using MapAssist.Helpers;
 using MapAssist.Settings;
 using Gma.System.MouseKeyHook;
 using System.Numerics;
+using System.Configuration;
 
 namespace MapAssist
 {
@@ -49,9 +50,28 @@ namespace MapAssist
             InitializeComponent();
             keyboardMouseEvents.KeyPress += (_, args) =>
             {
-                if (InGame() && args.KeyChar == Settings.Map.ToggleKey)
+                if (InGame())
                 {
-                    _show = !_show;
+                    if (args.KeyChar == Settings.Map.ToggleKey)
+                    {
+                        _show = !_show;
+                    }
+                    if (args.KeyChar == Settings.Map.ZoomInKey)
+                    {
+                        if (Settings.Map.zoomLevel > 0.25f)
+                        {
+                            Settings.Map.zoomLevel -= 0.25f;
+                            Settings.Map.Size = (int)(Settings.Map.Size * 1.15f);
+                        }
+                    }
+                    if (args.KeyChar == Settings.Map.ZoomOutKey)
+                    {
+                        if (Settings.Map.zoomLevel < 4f)
+                        {
+                            Settings.Map.zoomLevel += 0.25f;
+                            Settings.Map.Size = (int)(Settings.Map.Size * .85f);
+                        }
+                    }
                 }
             };
         }
@@ -167,33 +187,35 @@ namespace MapAssist
                 float scale = 0.0F;
                 Vector2 center = new Vector2();
 
-                if (Settings.Map.Position == MapPosition.Center)
-                {
-                    w = _screen.WorkingArea.Width;
-                    h = _screen.WorkingArea.Height;
-                    scale = 1024.0F / h * w * 3f / 4f / 2.3F;
-                    center = new Vector2(w / 2, h / 2);
+                if (ConfigurationManager.AppSettings["ZoomLevelDefault"] == null) { Settings.Map.zoomLevel = 1; }
 
-                    e.Graphics.SetClip(new RectangleF(0, 0, w, h));
-                }
-                else if (Settings.Map.Position == MapPosition.TopLeft)
+                switch (Settings.Map.Position)
                 {
-                    w = 640;
-                    h = 360;
-                    scale = 1024.0F / h * w * 3f / 4f / 3.35F;
-                    center = new Vector2(w / 2, (h / 2) + 48);
+                    case MapPosition.Center:
+                        w = _screen.WorkingArea.Width;
+                        h = _screen.WorkingArea.Height;
+                        scale = (1024.0F / h * w * 3f / 4f / 2.3F) * Settings.Map.zoomLevel;
+                        center = new Vector2(w / 2, h / 2 + 20);
 
-                    e.Graphics.SetClip(new RectangleF(0, 50, w, h));
-                }
-                else if (Settings.Map.Position == MapPosition.TopRight)
-                {
-                    w = 640;
-                    h = 360;
-                    scale = 1024.0F / h * w * 3f / 4f / 3.35F;
-                    center = new Vector2(w / 2, (h / 2) + 40);
+                        e.Graphics.SetClip(new RectangleF(0, 0, w, h));
+                        break;
+                    case MapPosition.TopLeft:
+                        w = 640;
+                        h = 360;
+                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Settings.Map.zoomLevel;
+                        center = new Vector2(w / 2, (h / 2) + 48);
 
-                    e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
-                    e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+                        e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+                        break;
+                    case MapPosition.TopRight:
+                        w = 640;
+                        h = 360;
+                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Settings.Map.zoomLevel;
+                        center = new Vector2(w / 2, (h / 2) + 40);
+
+                        e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
+                        e.Graphics.SetClip(new RectangleF(0, 50, w, h));
+                        break;
                 }
 
                 Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor.CropOffset);
