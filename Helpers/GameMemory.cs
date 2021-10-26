@@ -158,8 +158,8 @@ namespace MapAssist.Helpers
                 WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, pLevel, addressBuffer, addressBuffer.Length, out _);
                 var aLevel = (IntPtr)BitConverter.ToInt64(addressBuffer, 0);
 
-                //if (addressBuffer.All(o => o == 0))
-                //    return null;
+                if (addressBuffer.All(o => o == 0))
+                    return null;
 
                 IntPtr aLevelId = IntPtr.Add(aLevel, 0x1F8);
                 WindowsExternal.ReadProcessMemory((IntPtr)ProcessHandle, aLevelId, dwordBuffer, dwordBuffer.Length, out _);
