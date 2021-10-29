@@ -31,6 +31,11 @@ namespace MapAssist.Helpers
             int processId
         );
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(
+            IntPtr hObject
+        );
+
         [Flags]
         public enum ProcessAccessFlags : uint
         {
