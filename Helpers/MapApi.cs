@@ -70,7 +70,7 @@ namespace MapAssist.Helpers
         public MapApi(HttpClient client, Difficulty difficulty, uint mapSeed)
         {
             _client = client;
-            _sessionId = CreateSession(difficulty, mapSeed); ;
+            _sessionId = CreateSession(difficulty, mapSeed);
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
             _prefetchRequests = new BlockingCollection<Area[]>();
