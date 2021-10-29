@@ -1,4 +1,4 @@
-﻿/**
+/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -21,7 +21,7 @@ namespace MapAssist.Types
 {
     public static class Offsets
     {
-        public static int PlayerUnit = 0x2028E60;
-        public static int InGameMap = 0x201D342;
+        public static int PlayerUnit = 0x2027660;
+        public static int InGameMap = 0x2037322;
     }
 }
