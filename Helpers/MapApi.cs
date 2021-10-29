@@ -76,6 +76,7 @@ namespace MapAssist.Helpers
             _cache = new ConcurrentDictionary<Area, AreaData>();
             _prefetchRequests = new BlockingCollection<Area[]>();
             _thread = new Thread(Prefetch);
+            _thread.IsBackground = true;
             _thread.Start();
 
             if (Settings.Map.PrefetchAreas.Any())

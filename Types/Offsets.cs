@@ -21,7 +21,7 @@ namespace MapAssist.Types
 {
     public static class Offsets
     {
-        public static int PlayerUnit = 0x2027660;
+        public static int UnitTable = 0x2027660;
         public static int InGameMap = 0x2037322;
     }
 }
