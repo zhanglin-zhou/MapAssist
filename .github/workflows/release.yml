@@ -34,6 +34,7 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}} /p:DebugSymbols=false
+
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -42,4 +43,4 @@ jobs:
         files: |
           LICENSE
           README.md
-          .\bin\x64\Release\*.*
+          ${{env.GITHUB_WORKSPACE}}\bin\x64\Release\*.*
