@@ -57,12 +57,12 @@ namespace MapAssist.Settings
 
         public static Color? LookupMapColor(int type)
         {
-            string key = "MapColor[" + type + "]";
+            var key = "MapColor[" + type + "]";
 
             if (!MapColors.ContainsKey(type))
             {
-                string mapColorString = ConfigurationManager.AppSettings[key];
-                if (!String.IsNullOrEmpty(mapColorString))
+                var mapColorString = ConfigurationManager.AppSettings[key];
+                if (!string.IsNullOrEmpty(mapColorString))
                 {
                     MapColors[type] = Utils.ParseColor(mapColorString);
                 }
@@ -93,6 +93,9 @@ namespace MapAssist.Settings
         public static int UpdateTime = Convert.ToInt16(ConfigurationManager.AppSettings["UpdateTime"]);
         public static bool Rotate = Convert.ToBoolean(ConfigurationManager.AppSettings["Rotate"]);
         public static char ToggleKey = Convert.ToChar(ConfigurationManager.AppSettings["ToggleKey"]);
+        public static char ZoomInKey = Convert.ToChar(ConfigurationManager.AppSettings["ZoomInKey"]);
+        public static char ZoomOutKey = Convert.ToChar(ConfigurationManager.AppSettings["ZoomOutKey"]);
+        public static float ZoomLevel = Convert.ToSingle(ConfigurationManager.AppSettings["ZoomLevelDefault"]);
 
         public static Area[] PrefetchAreas =
             Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["PrefetchAreas"]);
