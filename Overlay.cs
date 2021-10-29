@@ -80,8 +80,8 @@ namespace MapAssist
         {
             Settings.Map.InitMapColors();
             Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            int width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
-            int height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
+            var width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
+            var height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
             Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
             Size = new Size(width, height);
             Opacity = Settings.Map.Opacity;
@@ -119,7 +119,7 @@ namespace MapAssist
                 {
                     Console.WriteLine($"Game changed: {gameData}");
                     _mapApi?.Dispose();
-                    _mapApi = new MapApi(MapApi.Client, Settings.Api.Endpoint, gameData.Difficulty, gameData.MapSeed);
+                    _mapApi = new MapApi(MapApi.Client, gameData.Difficulty, gameData.MapSeed);
                 }
 
                 if (gameData.HasMapChanged(_currentGameData))
@@ -184,8 +184,8 @@ namespace MapAssist
             {
                 float w = 0;
                 float h = 0;
-                float scale = 0.0F;
-                Vector2 center = new Vector2();
+                var scale = 0.0F;
+                var center = new Vector2();
 
                 if (ConfigurationManager.AppSettings["ZoomLevelDefault"] == null) { Settings.Map.ZoomLevel = 1; }
 
@@ -220,7 +220,7 @@ namespace MapAssist
 
                 Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor.CropOffset);
 
-                Vector2 playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
+                var playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
                 Vector2 Transform(Vector2 p) =>
                     center +
                     DeltaInWorldToMinimapDelta(

@@ -110,5 +110,6 @@ namespace MapAssist.Settings
     public static class Api
     {
         public static string Endpoint = ConfigurationManager.AppSettings["ApiEndpoint"];
+        public static string Token = ConfigurationManager.AppSettings["ApiToken"];
     }
 }
