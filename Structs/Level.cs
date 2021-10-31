@@ -1,4 +1,4 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -17,11 +17,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-namespace MapAssist.Types
+using System.Runtime.InteropServices;
+using MapAssist.Types;
+
+namespace MapAssist.Structs
 {
-    public static class Offsets
+    [StructLayout(LayoutKind.Explicit)]
+    unsafe public struct Level
     {
-        public static int UnitHashTable = 0x2027660;
-        public static int UiSettings = 0x2037322;
+        [FieldOffset(0x1F8)] public Area LevelId;
     }
 }
