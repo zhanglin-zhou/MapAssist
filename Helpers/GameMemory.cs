@@ -54,41 +54,59 @@ namespace MapAssist.Helpers
                 if (Equals(PlayerUnit, default(UnitAny)))
                 {
                     var unitHashTable = Read<UnitHashTable>(processHandle, IntPtr.Add(processAddress, Offsets.UnitHashTable));
-                    foreach(var pUnitAny in unitHashTable.UnitTable)
+                    foreach (var pUnitAny in unitHashTable.UnitTable)
                     {
-                        if (pUnitAny == IntPtr.Zero)
+                        var pListNext = pUnitAny;
+
+                        while (pListNext != IntPtr.Zero)
                         {
-                            continue;
+                            var unitAny = Read<UnitAny>(processHandle, pListNext);
+                            if (unitAny.OwnerType == 256) // 0x100
+                            {
+                                PlayerUnitPtr = pUnitAny;
+                                PlayerUnit = unitAny;
+                                break;
+                            }
+                            pListNext = (IntPtr)unitAny.pListNext;
                         }
-                        var unitAny = Read<UnitAny>(processHandle, pUnitAny);
-                        if (unitAny.OwnerType == 0x0000000000000100) // 256
+
+                        if (PlayerUnitPtr != IntPtr.Zero)
                         {
-                            PlayerUnitPtr = pUnitAny;
-                            PlayerUnit = unitAny;
                             break;
                         }
                     }
+                }
+
+                if (PlayerUnitPtr == IntPtr.Zero)
+                {
+                    throw new Exception("Player pointer is zero.");
                 }
 
                 IntPtr aPlayerUnit = Read<IntPtr>(processHandle, PlayerUnitPtr); 
     
                 if (aPlayerUnit == IntPtr.Zero)
                 {
-                    throw new Exception("Player pointer is zero.");
+                    throw new Exception("Player address is zero.");
                 }
 
                 var playerName = Encoding.ASCII.GetString(Read<byte>(processHandle, PlayerUnit.UnitData, 16)).TrimEnd((char)0);
                 var act = Read<Act>(processHandle, (IntPtr)PlayerUnit.pAct);
                 var mapSeed = act.MapSeed;
 
-                if (mapSeed == 0)
+                if (mapSeed <= 0 || mapSeed > 0xFFFFFFFF)
                 {
-                    throw new Exception("Map seed is zero.");
+                    throw new Exception("Map seed is out of bounds.");
                 }
 
                 var actId = act.ActId;
                 var actMisc = Read<ActMisc>(processHandle, (IntPtr)act.ActMisc);
                 var gameDifficulty = actMisc.GameDifficulty;
+
+                if (!gameDifficulty.IsValid())
+                {
+                    throw new Exception("Game difficulty out of bounds.");
+                }
+
                 var path = Read<Path>(processHandle, (IntPtr)PlayerUnit.pPath);
                 var positionX = path.DynamicX;
                 var positionY = path.DynamicY;
@@ -97,9 +115,9 @@ namespace MapAssist.Helpers
                 var level = Read<Level>(processHandle, (IntPtr)roomEx.pLevel);
                 var levelId = level.LevelId;
 
-                if (levelId == 0)
+                if (!levelId.IsValid())
                 {
-                    throw new Exception("Level id is zero.");
+                    throw new Exception("Level id out of bounds.");
                 }
 
                 var mapShown = Read<UiSettings>(processHandle, IntPtr.Add(processAddress, Offsets.UiSettings)).MapShown;
@@ -108,14 +126,15 @@ namespace MapAssist.Helpers
                 {
                     PlayerPosition = new Point(positionX, positionY),
                     MapSeed = mapSeed,
-                    Area = (Area)levelId,
-                    Difficulty = (Difficulty)gameDifficulty,
+                    Area = levelId,
+                    Difficulty = gameDifficulty,
                     MapShown = mapShown,
                     MainWindowHandle = gameProcess.MainWindowHandle
                 };
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Console.WriteLine(exception.Message);
                 PlayerUnit = default;
                 PlayerUnitPtr = IntPtr.Zero;
                 return null;
