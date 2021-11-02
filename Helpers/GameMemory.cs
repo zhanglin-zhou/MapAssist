@@ -83,11 +83,15 @@ namespace MapAssist.Helpers
                         while (pListNext != IntPtr.Zero)
                         {
                             var unitAny = Read<UnitAny>(processHandle, pListNext);
-                            if (unitAny.OwnerType == 256) // 0x100
+                            if (unitAny.Inventory != IntPtr.Zero)
                             {
-                                PlayerUnitPtr = pUnitAny;
-                                PlayerUnit = unitAny;
-                                break;
+                                var inventory = Read<Inventory>(processHandle, (IntPtr)unitAny.Inventory);
+                                if (inventory.unk1 != 0x0)
+                                {
+                                    PlayerUnitPtr = pUnitAny;
+                                    PlayerUnit = unitAny;
+                                    break;
+                                }
                             }
                             pListNext = (IntPtr)unitAny.pListNext;
                         }
