@@ -141,8 +141,11 @@ namespace MapAssist
             }
             else
             {
-                SetTopMost();
-                mapOverlay.Show();
+                if (!mapOverlay.Visible)
+                {
+                    mapOverlay.Show();
+                    SetTopMost();
+                }
                 mapOverlay.Refresh();
             }
 
