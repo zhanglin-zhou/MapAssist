@@ -90,12 +90,7 @@ namespace MapAssist
             _timer.Tick += MapUpdateTimer_Tick;
             _timer.Start();
 
-            if (Map.AlwaysOnTop)
-            {
-                var initialStyle = (uint)WindowsExternal.GetWindowLongPtr(Handle, -20);
-                WindowsExternal.SetWindowLong(Handle, -20, initialStyle | 0x80000 | 0x20);
-                WindowsExternal.SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-            }
+            if (Map.AlwaysOnTop) SetTopMost();
 
             mapOverlay.Location = new Point(0, 0);
             mapOverlay.Width = Width;
@@ -146,11 +141,22 @@ namespace MapAssist
             }
             else
             {
-                mapOverlay.Show();
+                if (!mapOverlay.Visible)
+                {
+                    mapOverlay.Show();
+                    if (Map.AlwaysOnTop) SetTopMost();
+                }
                 mapOverlay.Refresh();
             }
 
             _timer.Start();
+        }
+        
+        private void SetTopMost()
+        {
+            var initialStyle = (uint)WindowsExternal.GetWindowLongPtr(Handle, -20);
+            WindowsExternal.SetWindowLong(Handle, -20, initialStyle | 0x80000 | 0x20);
+            WindowsExternal.SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
         }
 
         private bool ShouldHideMap()
