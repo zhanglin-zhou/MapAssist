@@ -20,10 +20,12 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using MapAssist.Types;
+
 using MapAssist.Structs;
+using MapAssist.Types;
 
 namespace MapAssist.Helpers
 {
@@ -32,6 +34,7 @@ namespace MapAssist.Helpers
         private static readonly string ProcessName = Encoding.UTF8.GetString(new byte[] { 68, 50, 82 });
         private static IntPtr PlayerUnitPtr;
         private static UnitAny PlayerUnit = default;
+        private static int _lastProcessId = 0;
 
         unsafe public static GameData GetGameData()
         {
@@ -40,12 +43,31 @@ namespace MapAssist.Helpers
             try
             {
                 Process[] process = Process.GetProcessesByName(ProcessName);
-                Process gameProcess = process.Length > 0 ? process[0] : null;
+
+                Process gameProcess = null;
+
+                IntPtr windowInFocus = WindowsExternal.GetForegroundWindow();
+                if (windowInFocus == IntPtr.Zero)
+                {
+                    gameProcess = process.FirstOrDefault();
+                }
+                else
+                {
+                    gameProcess = process.FirstOrDefault(p => p.MainWindowHandle == windowInFocus);
+                }
 
                 if (gameProcess == null)
                 {
                     throw new Exception("Game process not found.");
                 }
+
+                // If changing processes we need to re-find the player
+                if (gameProcess.Id != _lastProcessId)
+                {
+                    ResetPlayerUnit();
+                }
+
+                _lastProcessId = gameProcess.Id;
 
                 processHandle =
                     WindowsExternal.OpenProcess((uint)WindowsExternal.ProcessAccessFlags.VirtualMemoryRead, false, gameProcess.Id);
@@ -129,14 +151,14 @@ namespace MapAssist.Helpers
                     Area = levelId,
                     Difficulty = gameDifficulty,
                     MapShown = mapShown,
-                    MainWindowHandle = gameProcess.MainWindowHandle
+                    MainWindowHandle = gameProcess.MainWindowHandle,
+                    PlayerName = playerName
                 };
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.Message);
-                PlayerUnit = default;
-                PlayerUnitPtr = IntPtr.Zero;
+                ResetPlayerUnit();
                 return null;
             }
             finally
@@ -146,6 +168,12 @@ namespace MapAssist.Helpers
                     WindowsExternal.CloseHandle(processHandle);
                 }
             }
+        }
+
+        private static void ResetPlayerUnit()
+        {
+            PlayerUnit = default;
+            PlayerUnitPtr = IntPtr.Zero;
         }
 
         public static T[] Read<T>(IntPtr processHandle, IntPtr address, int count) where T : struct
@@ -177,4 +205,3 @@ namespace MapAssist.Helpers
         }
     }
 }
-
