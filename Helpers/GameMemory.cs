@@ -74,7 +74,8 @@ namespace MapAssist.Helpers
 
                 if (Equals(PlayerUnit, default(UnitAny)))
                 {
-                    var unitHashTable = Read<UnitHashTable>(processHandle, IntPtr.Add(processAddress, Offsets.UnitHashTable));
+                    var unitHashTable =
+                        Read<UnitHashTable>(processHandle, IntPtr.Add(processAddress, Offsets.UnitHashTable));
                     foreach (var pUnitAny in unitHashTable.UnitTable)
                     {
                         var pListNext = pUnitAny;
@@ -91,6 +92,7 @@ namespace MapAssist.Helpers
                                     break;
                                 }
                             }
+
                             pListNext = (IntPtr)unitAny.pListNext;
                         }
 
@@ -98,6 +100,11 @@ namespace MapAssist.Helpers
                         {
                             break;
                         }
+                    }
+
+                    if (Equals(PlayerUnit, default(UnitAny)))
+                    {
+                        throw new Exception("Unable to find player unit");
                     }
                 }
 
