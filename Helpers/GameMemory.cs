@@ -32,7 +32,6 @@ namespace MapAssist.Helpers
     class GameMemory
     {
         private static readonly string ProcessName = Encoding.UTF8.GetString(new byte[] { 68, 50, 82 });
-        private static IntPtr PlayerUnitPtr;
         private static UnitAny PlayerUnit = default;
         private static int _lastProcessId = 0;
 
@@ -75,7 +74,8 @@ namespace MapAssist.Helpers
 
                 if (Equals(PlayerUnit, default(UnitAny)))
                 {
-                    var unitHashTable = Read<UnitHashTable>(processHandle, IntPtr.Add(processAddress, Offsets.UnitHashTable));
+                    var unitHashTable =
+                        Read<UnitHashTable>(processHandle, IntPtr.Add(processAddress, Offsets.UnitHashTable));
                     foreach (var pUnitAny in unitHashTable.UnitTable)
                     {
                         var pListNext = pUnitAny;
@@ -83,32 +83,29 @@ namespace MapAssist.Helpers
                         while (pListNext != IntPtr.Zero)
                         {
                             var unitAny = Read<UnitAny>(processHandle, pListNext);
-                            if (unitAny.OwnerType == 256) // 0x100
+                            if (unitAny.Inventory != IntPtr.Zero)
                             {
-                                PlayerUnitPtr = pUnitAny;
-                                PlayerUnit = unitAny;
-                                break;
+                                var inventory = Read<Inventory>(processHandle, (IntPtr)unitAny.Inventory);
+                                if (inventory.pUnk1 != IntPtr.Zero)
+                                {
+                                    PlayerUnit = unitAny;
+                                    break;
+                                }
                             }
+
                             pListNext = (IntPtr)unitAny.pListNext;
                         }
 
-                        if (PlayerUnitPtr != IntPtr.Zero)
+                        if (!Equals(PlayerUnit, default(UnitAny)))
                         {
                             break;
                         }
                     }
-                }
 
-                if (PlayerUnitPtr == IntPtr.Zero)
-                {
-                    throw new Exception("Player pointer is zero.");
-                }
-
-                IntPtr aPlayerUnit = Read<IntPtr>(processHandle, PlayerUnitPtr); 
-    
-                if (aPlayerUnit == IntPtr.Zero)
-                {
-                    throw new Exception("Player address is zero.");
+                    if (Equals(PlayerUnit, default(UnitAny)))
+                    {
+                        throw new Exception("Unable to find player unit");
+                    }
                 }
 
                 var playerName = Encoding.ASCII.GetString(Read<byte>(processHandle, PlayerUnit.UnitData, 16)).TrimEnd((char)0);
@@ -173,7 +170,6 @@ namespace MapAssist.Helpers
         private static void ResetPlayerUnit()
         {
             PlayerUnit = default;
-            PlayerUnitPtr = IntPtr.Zero;
         }
 
         public static T[] Read<T>(IntPtr processHandle, IntPtr address, int count) where T : struct

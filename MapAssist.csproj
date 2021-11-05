@@ -119,6 +119,7 @@
     <Compile Include="Helpers\Compositor.cs" />
     <Compile Include="Helpers\WindowsExternal.cs" />
     <Compile Include="Structs\Act.cs" />
+    <Compile Include="Structs\Inventory.cs" />
     <Compile Include="Structs\UiSettings.cs" />
     <Compile Include="Structs\Level.cs" />
     <Compile Include="Structs\Path.cs" />
