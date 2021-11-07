@@ -48,5 +48,5 @@ namespace MapAssist.Types
         public ushort StaticX { get => _path.StaticX; }
         public ushort StaticY { get => _path.StaticY; }
         public Room Room { get => new Room(_path.pRoom); }
-}
+    }
 }
