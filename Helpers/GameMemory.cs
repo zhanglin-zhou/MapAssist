@@ -63,7 +63,6 @@ namespace MapAssist.Helpers
                         PlayerPosition = playerUnit.Position,
                         MapSeed = mapSeed,
                         Area = levelId,
-                        RealTombArea = playerUnit.Act.ActMisc.RealTombArea,
                         Difficulty = gameDifficulty,
                         MapShown = mapShown,
                         MainWindowHandle = GameManager.MainWindowHandle,
