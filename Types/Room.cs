@@ -55,10 +55,10 @@ namespace MapAssist.Types
                 }
             }
         }
-        public RoomEx RoomEx { get => new RoomEx(_room.pRoomEx);  }
-        public uint NumRoomsNear { get => _room.numRoomsNear; }
-        public Act Act { get => new Act(_room.pAct);  }
-        public UnitAny UnitFirst { get => new UnitAny(_room.pUnitFirst); }
-        public Room RoomNext { get => new Room(_room.pRoomNext);  }
+        public RoomEx RoomEx => new RoomEx(_room.pRoomEx);
+        public uint NumRoomsNear => _room.numRoomsNear;
+        public Act Act => new Act(_room.pAct);
+        public UnitAny UnitFirst => new UnitAny(_room.pUnitFirst);
+        public Room RoomNext => new Room(_room.pRoomNext);
     }
 }

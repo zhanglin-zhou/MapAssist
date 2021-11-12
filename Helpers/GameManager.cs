@@ -40,8 +40,15 @@ namespace MapAssist.Helpers
         {
             if (_ProcessContext != null && _ProcessContext.OpenContextCount > 0)
             {
-                _ProcessContext.OpenContextCount++;
-                return _ProcessContext;
+                IntPtr windowInFocus = WindowsExternal.GetForegroundWindow();
+                if(_MainWindowHandle == windowInFocus)
+                {
+                    _ProcessContext.OpenContextCount++;
+                    return _ProcessContext;
+                } else
+                {
+                    GameProcess = null;
+                }
             }
 
             if (GameProcess == null)
@@ -105,21 +112,14 @@ namespace MapAssist.Helpers
                                 {
                                     PlayerUnitPtr = pUnitAny;
                                     _PlayerUnit = unitAny;
-                                    break;
+                                    return _PlayerUnit;
                                 }
                                 unitAny = unitAny.ListNext;
                             }
                         }
-                    }
-
-
-                    if (!Equals(_PlayerUnit, default(Types.UnitAny)))
+                    } else
                     {
                         return _PlayerUnit;
-                    }
-                    else
-                    {
-                        ResetPlayerUnit();
                     }
                     throw new Exception("Player unit not found.");
                 }

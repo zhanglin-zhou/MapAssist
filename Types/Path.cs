@@ -43,10 +43,10 @@ namespace MapAssist.Types
             return this;
         }
 
-        public ushort DynamicX { get => _path.DynamicX; }
-        public ushort DynamicY { get => _path.DynamicY; }
-        public ushort StaticX { get => _path.StaticX; }
-        public ushort StaticY { get => _path.StaticY; }
-        public Room Room { get => new Room(_path.pRoom); }
+        public ushort DynamicX => _path.DynamicX;
+        public ushort DynamicY => _path.DynamicY;
+        public ushort StaticX => _path.StaticX;
+        public ushort StaticY => _path.StaticY;
+        public Room Room => new Room(_path.pRoom);
     }
 }

@@ -1,24 +1,28 @@
 ﻿/**
- *   Copyright (C) 2021 okaygo
- *
- *   https://github.com/misterokaygo/MapAssist/
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- **/
-
+*   Copyright (C) 2021 okaygo
+*
+*   https://github.com/misterokaygo/MapAssist/
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+**/
+using System.Collections.Generic;
 namespace MapAssist.Types
 {
+    public static class NPC
+    {
+        public static HashSet<uint> Dummies = new HashSet<uint> { 149, 151, 152, 153, 157, 158, 159, 195, 196, 197, 179, 185, 203, 204, 205, 268, 269, 271, 272, 293, 294, 289, 290, 291, 292, 296, 318, 319, 320, 321, 322, 323, 324, 325, 332, 338, 339, 344, 355, 359, 363, 364, 370, 377, 378, 392, 393, 401, 411, 412, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 711 };
+    }
     public enum Npc
     {
         Skeleton = 0,
