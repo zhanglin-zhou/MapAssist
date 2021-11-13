@@ -43,8 +43,8 @@ namespace MapAssist.Types
             return this;
         }
 
-        public uint MapSeed { get => _act.MapSeed; }
-        public uint ActId { get => _act.ActId; }
-        public ActMisc ActMisc { get => new ActMisc(_act.pActMisc); }
+        public uint MapSeed => _act.MapSeed;
+        public uint ActId => _act.ActId;
+        public ActMisc ActMisc => new ActMisc(_act.pActMisc);
     }
 }

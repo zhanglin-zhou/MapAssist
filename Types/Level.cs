@@ -43,7 +43,7 @@ namespace MapAssist.Types
             return this;
         }
 
-        public Area LevelId { get => _level.LevelId; }
+        public Area LevelId => _level.LevelId;
 
     }
 }

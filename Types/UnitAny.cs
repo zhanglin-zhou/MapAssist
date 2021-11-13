@@ -51,42 +51,45 @@ namespace MapAssist.Types
                 {
                     _unitAny = processContext.Read<Structs.UnitAny>(_pUnit);
                     _path = new Path(_unitAny.pPath);
-
-                    if (IsPlayer())
+                    switch (_unitAny.UnitType)
                     {
-                        _name = Encoding.ASCII.GetString(processContext.Read<byte>(_unitAny.pUnitData, 16)).TrimEnd((char)0);
-                        _inventory = processContext.Read<Inventory>(_unitAny.pInventory);
-                        _act = new Act(_unitAny.pAct);
-                    }
-
-                    if (IsMonster())
-                    {
-                        _monsterData = processContext.Read<MonsterData>(_unitAny.pUnitData);
-                        // var temp = ReadStruct<Structs.SubName>(monsterData.pMonStats);
-                        // var unitClassName = new string((sbyte*)temp.ClassName, 0, 16).Trim().Replace("\0", "");// Encoding.UTF8.GetString(temp.Name);
+                        case UnitType.Player:
+                            if (IsPlayer())
+                            {
+                                _name = Encoding.ASCII.GetString(processContext.Read<byte>(_unitAny.pUnitData, 16)).TrimEnd((char)0);
+                                _inventory = processContext.Read<Inventory>(_unitAny.pInventory);
+                                _act = new Act(_unitAny.pAct);
+                            }
+                            break;
+                        case UnitType.Monster:
+                            if (IsMonster())
+                            {
+                                _monsterData = processContext.Read<MonsterData>(_unitAny.pUnitData);
+                            }
+                            break;
                     }
                 }
             }
             return this;
         }
 
-        public string Name { get => _name;  }
-        public UnitType UnitType { get => _unitAny.UnitType; }
-        public uint TxtFileNo { get => _unitAny.TxtFileNo; }
-        public uint UnitId { get => _unitAny.UnitId; }
-        public uint Mode { get => _unitAny.Mode; }
-        public IntPtr UnitDataPtr { get => _unitAny.pUnitData; }
-        public MonsterData MonsterData { get => _monsterData; }
-        public Act Act { get => _act; }
-        public Path Path { get => _path; }
-        public IntPtr StatsListExPtr { get => _unitAny.pStatsListEx; }
-        public Inventory Inventory { get => _inventory; }
-        public uint OwnerType { get => _unitAny.OwnerType; }
-        public ushort X { get => IsMovable() ? _path.DynamicX : _path.StaticX; }
-        public ushort Y { get => IsMovable() ? _path.DynamicY : _path.StaticY; }
-        public Point Position { get => new Point(X, Y); }
-        public UnitAny ListNext { get => new UnitAny(_unitAny.pListNext); }
-        public UnitAny RoomNext { get => new UnitAny(_unitAny.pRoomNext); }
+        public string Name => _name;
+        public UnitType UnitType => _unitAny.UnitType;
+        public uint TxtFileNo => _unitAny.TxtFileNo;
+        public uint UnitId => _unitAny.UnitId;
+        public uint Mode => _unitAny.Mode;
+        public IntPtr UnitDataPtr => _unitAny.pUnitData;
+        public MonsterData MonsterData => _monsterData;
+        public Act Act => _act;
+        public Path Path => _path;
+        public IntPtr StatsListExPtr => _unitAny.pStatsListEx;
+        public Inventory Inventory => _inventory;
+        public uint OwnerType => _unitAny.OwnerType;
+        public ushort X => IsMovable() ? _path.DynamicX : _path.StaticX;
+        public ushort Y => IsMovable() ? _path.DynamicY : _path.StaticY;
+        public Point Position => new Point(X, Y);
+        public UnitAny ListNext => new UnitAny(_unitAny.pListNext);
+        public UnitAny RoomNext => new UnitAny(_unitAny.pRoomNext);
 
         public bool IsMovable()
         {
@@ -105,21 +108,33 @@ namespace MapAssist.Types
 
         public bool IsPlayerUnit()
         {
-            return IsPlayer() && _unitAny.pInventory != IntPtr.Zero && Inventory.pUnk1 != IntPtr.Zero;
+            using (var processContext = GameManager.GetProcessContext())
+            {
+                if (IsPlayer() && _unitAny.pInventory != IntPtr.Zero)
+                {
+                    var expansionCharacter = processContext.Read<byte>(processContext.FromOffset(Offsets.ExpansionCheck)) == 1;
+                    var userBaseOffset = 0x30;
+                    var checkUser1 = 1;
+                    if (expansionCharacter)
+                    {
+                        userBaseOffset = 0x70;
+                        checkUser1 = 0;
+                    }
+                    var userBaseCheck = processContext.Read<int>(IntPtr.Add(_unitAny.pInventory, userBaseOffset));
+                    if (userBaseCheck != checkUser1)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public bool IsMonster()
         {
             if (_unitAny.UnitType != UnitType.Monster) return false;
             if (_unitAny.Mode == 0 || _unitAny.Mode == 12) return false;
-            if ((_unitAny.TxtFileNo >= 110 && _unitAny.TxtFileNo <= 113) || (_unitAny.TxtFileNo == 608 && _unitAny.Mode == 8)) return false;
-            if (_unitAny.TxtFileNo == 68 && _unitAny.Mode == 14) return false;
-            if ((_unitAny.TxtFileNo == 258 || _unitAny.TxtFileNo == 261) && (_unitAny.Mode == 14)) return false;
-            // if (D2COMMON_get_unit_stat(unit, 172, 0) == 2) return 0;
-            var falsePositives = new List<uint> { 227, 283, 326, 327, 328, 329, 330, 410, 411, 412, 413, 414, 415, 416, 366, 406, 351, 352, 353, 266, 408, 516, 517, 518, 519, 522, 523, 543, 543, 545 };
-            if (falsePositives.Contains(_unitAny.TxtFileNo)) return false;
-            // ms_wchar_t* wname = D2CLIENT_get_unit_name(unit);
-            // if ((strcmp(name, "an evil force") == 0) || (strcmp(name, "dummy") == 0))
+            if (NPC.Dummies.TryGetValue(_unitAny.TxtFileNo, out var _)) { return false; }
             return true;
         }
 

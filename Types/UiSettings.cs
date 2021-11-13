@@ -43,6 +43,6 @@ namespace MapAssist.Types
             return this;
         }
 
-        public bool MapShown { get => _uiSettings.MapShown; }
+        public bool MapShown => _uiSettings.MapShown == 1;
     }
 }

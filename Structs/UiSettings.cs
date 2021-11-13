@@ -24,6 +24,6 @@ namespace MapAssist.Structs
     [StructLayout(LayoutKind.Explicit)]
     public struct UiSettings
     {
-        [FieldOffset(0x00)] public bool MapShown;
+        [FieldOffset(0x00)] public byte MapShown;
     }
 }

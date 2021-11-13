@@ -43,6 +43,6 @@ namespace MapAssist.Types
             return this;
         }
 
-        public Level Level { get => new Level(_roomEx.pLevel);  }
+        public Level Level => new Level(_roomEx.pLevel);
     }
 }

@@ -43,9 +43,9 @@ namespace MapAssist.Types
             return this;
         }
 
-        public Difficulty GameDifficulty { get => _actMisc.GameDifficulty; }
-        public Act Act { get => new Act(_actMisc.pAct); }
-        public Level LevelFirst { get => new Level(_actMisc.pLevelFirst); }
-        public Area RealTombArea { get => _actMisc.RealTombArea;  }
+        public Difficulty GameDifficulty => _actMisc.GameDifficulty;
+        public Act Act => new Act(_actMisc.pAct);
+        public Level LevelFirst => new Level(_actMisc.pLevelFirst);
+        public Area RealTombArea => _actMisc.RealTombArea;
     }
 }
