@@ -51,9 +51,12 @@ namespace MapAssist.Types
             {
                 using (var processContext = GameManager.GetProcessContext())
                 {
-                    var roomList = new Room[NumRoomsNear];
                     var buf = new byte[8];
-                    for (var p = 0; p < NumRoomsNear; p++)
+                    WindowsExternal.ReadProcessMemory(processContext.Handle, IntPtr.Add(_pRoom, 0x40), buf, buf.Length, out _);
+                    var numRoomsNear = BitConverter.ToUInt32(buf, 0);
+
+                    var roomList = new Room[numRoomsNear];
+                    for (var p = 0; p < numRoomsNear; p++)
                     {
                         WindowsExternal.ReadProcessMemory(processContext.Handle, IntPtr.Add(_room.pRoomsNear, p * 8), buf, buf.Length, out _);
                         var pRoom = (IntPtr)BitConverter.ToInt64(buf, 0);
