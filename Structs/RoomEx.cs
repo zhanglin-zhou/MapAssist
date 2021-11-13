@@ -1,4 +1,4 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -17,12 +17,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-namespace MapAssist.Types
+using System;
+using System.Runtime.InteropServices;
+
+namespace MapAssist.Structs
 {
-    public static class Offsets
+    [StructLayout(LayoutKind.Explicit)]
+    public struct RoomEx
     {
-        public static int UnitHashTable = 0x20AF660;
-        public static int UiSettings = 0x20BF322;
-        public static int ExpansionCheck = 0x20BF335;
+        [FieldOffset(0x90)] public IntPtr pLevel;
     }
 }

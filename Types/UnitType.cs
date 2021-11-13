@@ -1,4 +1,4 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -19,10 +19,13 @@
 
 namespace MapAssist.Types
 {
-    public static class Offsets
+    public enum UnitType : uint
     {
-        public static int UnitHashTable = 0x20AF660;
-        public static int UiSettings = 0x20BF322;
-        public static int ExpansionCheck = 0x20BF335;
+        Player = 0,
+        Monster,
+        Object,
+        Missle,
+        Item,
+        Tile,
     }
 }

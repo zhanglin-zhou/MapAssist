@@ -1,4 +1,4 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -17,12 +17,34 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using System;
+using MapAssist.Helpers;
+using MapAssist.Interfaces;
+
 namespace MapAssist.Types
 {
-    public static class Offsets
+    public class Act : IUpdatable<Act>
     {
-        public static int UnitHashTable = 0x20AF660;
-        public static int UiSettings = 0x20BF322;
-        public static int ExpansionCheck = 0x20BF335;
+        private readonly IntPtr _pAct = IntPtr.Zero;
+        private Structs.Act _act;
+
+        public Act(IntPtr pAct)
+        {
+            _pAct = pAct;
+            Update();
+        }
+
+        public Act Update()
+        {
+            using (var processContext = GameManager.GetProcessContext())
+            {
+                _act = processContext.Read<Structs.Act>(_pAct);
+            }
+            return this;
+        }
+
+        public uint MapSeed => _act.MapSeed;
+        public uint ActId => _act.ActId;
+        public ActMisc ActMisc => new ActMisc(_act.pActMisc);
     }
 }
