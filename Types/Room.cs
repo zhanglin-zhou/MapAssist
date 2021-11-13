@@ -21,6 +21,7 @@ using MapAssist.Helpers;
 using MapAssist.Interfaces;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MapAssist.Types
 {
@@ -29,10 +30,10 @@ namespace MapAssist.Types
         private readonly IntPtr _pRoom = IntPtr.Zero;
         private Structs.Room _room;
 
-        public Room(IntPtr pRoom)
+        public Room(IntPtr pRoom, bool update = true)
         {
             _pRoom = pRoom;
-            Update();
+            if (update) { Update(); }
         }
 
         public Room Update()
@@ -50,11 +51,28 @@ namespace MapAssist.Types
             {
                 using (var processContext = GameManager.GetProcessContext())
                 {
-                    var pRooms = processContext.Read<IntPtr>(_room.pRoomsNear, (int)NumRoomsNear);
-                    return pRooms.Select(pRoom => new Room(pRoom)).ToArray();
+                    //var pRooms = processContext.Read<IntPtr>(_room.pRoomsNear, (int)NumRoomsNear);
+                    var pRooms = new IntPtr[NumRoomsNear];
+                    var buf = new byte[8];
+                    for(var p = 0; p < NumRoomsNear; p++)
+                    {
+                        WindowsExternal.ReadProcessMemory(processContext.Handle, IntPtr.Add(_room.pRoomsNear, p * 8), buf, buf.Length, out _);
+                        pRooms[p] = (IntPtr)BitConverter.ToInt64(buf, 0);
+                        //pRooms[p] = processContext.Read<IntPtr>(IntPtr.Add(_room.pRoomsNear, p * 8));
+                    }
+                    var roomList = new Room[NumRoomsNear];
+                    for(var i = 0; i < NumRoomsNear; i++)
+                    {
+                        roomList[i] = new Room(pRooms[i], false);
+                    }
+                    return roomList;
+                    //return pRooms.Select(pRoom => new Room(pRoom)).ToArray();
                 }
             }
         }
+        public override bool Equals(object obj) => obj is Room other && Equals(other);
+        public bool Equals(Room room) => _pRoom == room._pRoom;
+        public override int GetHashCode() => _pRoom.GetHashCode();
         public RoomEx RoomEx => new RoomEx(_room.pRoomEx);
         public uint NumRoomsNear => _room.numRoomsNear;
         public Act Act => new Act(_room.pAct);

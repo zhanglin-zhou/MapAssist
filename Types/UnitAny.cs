@@ -65,6 +65,10 @@ namespace MapAssist.Types
                             if (IsMonster())
                             {
                                 _monsterData = processContext.Read<MonsterData>(_unitAny.pUnitData);
+                                var monster = new Monster();
+                                monster.MonsterData = _monsterData;
+                                monster.Type = _monsterData.MonsterType;
+                                monster.Position = new Point(_path.DynamicX, _path.DynamicY);
                             }
                             break;
                     }

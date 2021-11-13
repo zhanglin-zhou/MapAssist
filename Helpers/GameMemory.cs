@@ -18,6 +18,8 @@
  **/
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using MapAssist.Types;
 
 namespace MapAssist.Helpers
@@ -58,6 +60,26 @@ namespace MapAssist.Helpers
 
                     var mapShown = GameManager.UiSettings.MapShown;
 
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    var rooms = new HashSet<Room>() { playerUnit.Path.Room };
+                    rooms = GetRooms(playerUnit.Path.Room, ref rooms);
+
+                    foreach(var room in rooms)
+                    {
+                        room.Update();
+                    }
+
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+                    Debug.WriteLine("getting rooms took " + elapsedMs);
+
+                    GetUnits(rooms);
+
+                    /*foreach(var monster in UnitList.Monsters)
+                    {
+                        Debug.WriteLine(monster.Position);
+                    }*/
+
                     return new GameData
                     {
                         PlayerPosition = playerUnit.Position,
@@ -76,6 +98,36 @@ namespace MapAssist.Helpers
                 GameManager.ResetPlayerUnit();
                 return null;
             }
+        }
+        private static void GetUnits(HashSet<Room> rooms)
+        {
+            foreach (var room in rooms)
+            {
+                var unitAny = room.UnitFirst;
+                while (unitAny.IsValid())
+                {
+                    unitAny.Update();
+                    unitAny = unitAny.RoomNext;
+                }
+            }
+        }
+        private static HashSet<Room> GetRooms(Room startingRoom, ref HashSet<Room> roomsList)
+        {
+            var roomsNear = startingRoom.RoomsNear;
+            foreach (var roomNear in roomsNear)
+            {
+                if (!roomsList.Contains(roomNear))
+                {
+                    roomsList.Add(roomNear);
+                    GetRooms(roomNear, ref roomsList);
+                }
+            }
+            if (!roomsList.Contains(startingRoom.RoomNext))
+            {
+                roomsList.Add(startingRoom.RoomNext);
+                GetRooms(startingRoom.RoomNext, ref roomsList);
+            }
+            return roomsList;
         }
     }
 }
