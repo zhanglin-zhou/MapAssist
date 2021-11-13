@@ -64,16 +64,17 @@ namespace MapAssist.Helpers
                     var rooms = new HashSet<Room>() { playerUnit.Path.Room };
                     rooms = GetRooms(playerUnit.Path.Room, ref rooms);
 
-                    foreach(var room in rooms)
+                    foreach (var room in rooms)
                     {
                         room.Update();
                     }
 
                     watch.Stop();
+
                     var elapsedMs = watch.ElapsedMilliseconds;
                     Debug.WriteLine("getting rooms took " + elapsedMs);
 
-                    GetUnits(rooms);
+                    //GetUnits(rooms);
 
                     /*foreach(var monster in UnitList.Monsters)
                     {
@@ -122,10 +123,10 @@ namespace MapAssist.Helpers
                     GetRooms(roomNear, ref roomsList);
                 }
             }
-            if (!roomsList.Contains(startingRoom.RoomNext))
+            if (!roomsList.Contains(startingRoom.RoomNextFast))
             {
-                roomsList.Add(startingRoom.RoomNext);
-                GetRooms(startingRoom.RoomNext, ref roomsList);
+                roomsList.Add(startingRoom.RoomNextFast);
+                GetRooms(startingRoom.RoomNextFast, ref roomsList);
             }
             return roomsList;
         }

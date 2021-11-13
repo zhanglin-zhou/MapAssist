@@ -51,22 +51,15 @@ namespace MapAssist.Types
             {
                 using (var processContext = GameManager.GetProcessContext())
                 {
-                    //var pRooms = processContext.Read<IntPtr>(_room.pRoomsNear, (int)NumRoomsNear);
-                    var pRooms = new IntPtr[NumRoomsNear];
+                    var roomList = new Room[NumRoomsNear];
                     var buf = new byte[8];
-                    for(var p = 0; p < NumRoomsNear; p++)
+                    for (var p = 0; p < NumRoomsNear; p++)
                     {
                         WindowsExternal.ReadProcessMemory(processContext.Handle, IntPtr.Add(_room.pRoomsNear, p * 8), buf, buf.Length, out _);
-                        pRooms[p] = (IntPtr)BitConverter.ToInt64(buf, 0);
-                        //pRooms[p] = processContext.Read<IntPtr>(IntPtr.Add(_room.pRoomsNear, p * 8));
-                    }
-                    var roomList = new Room[NumRoomsNear];
-                    for(var i = 0; i < NumRoomsNear; i++)
-                    {
-                        roomList[i] = new Room(pRooms[i], false);
+                        var pRoom = (IntPtr)BitConverter.ToInt64(buf, 0);
+                        roomList[p] = new Room(pRoom, false);
                     }
                     return roomList;
-                    //return pRooms.Select(pRoom => new Room(pRoom)).ToArray();
                 }
             }
         }
@@ -78,5 +71,6 @@ namespace MapAssist.Types
         public Act Act => new Act(_room.pAct);
         public UnitAny UnitFirst => new UnitAny(_room.pUnitFirst);
         public Room RoomNext => new Room(_room.pRoomNext);
+        public Room RoomNextFast => new Room(_room.pRoomNext, false);
     }
 }
