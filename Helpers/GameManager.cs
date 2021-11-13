@@ -41,11 +41,12 @@ namespace MapAssist.Helpers
             if (_ProcessContext != null && _ProcessContext.OpenContextCount > 0)
             {
                 IntPtr windowInFocus = WindowsExternal.GetForegroundWindow();
-                if(_MainWindowHandle == windowInFocus)
+                if (_MainWindowHandle == windowInFocus)
                 {
                     _ProcessContext.OpenContextCount++;
                     return _ProcessContext;
-                } else
+                } 
+                else
                 {
                     GameProcess = null;
                 }

@@ -120,8 +120,8 @@ namespace MapAssist.Types
                         userBaseOffset = 0x70;
                         checkUser1 = 0;
                     }
-                    var UserBaseCheck = processContext.Read<int>(IntPtr.Add(_unitAny.pInventory, userBaseOffset));
-                    if (UserBaseCheck != checkUser1)
+                    var userBaseCheck = processContext.Read<int>(IntPtr.Add(_unitAny.pInventory, userBaseOffset));
+                    if (userBaseCheck != checkUser1)
                     {
                         return true;
                     }
@@ -134,7 +134,7 @@ namespace MapAssist.Types
         {
             if (_unitAny.UnitType != UnitType.Monster) return false;
             if (_unitAny.Mode == 0 || _unitAny.Mode == 12) return false;
-            if (NPC.Dummies.Contains(_unitAny.TxtFileNo)) { return false; }
+            if (NPC.Dummies.Contains((Npc)_unitAny.TxtFileNo)) { return false; }
             return true;
         }
 
