@@ -60,26 +60,14 @@ namespace MapAssist.Helpers
 
                     var mapShown = GameManager.UiSettings.MapShown;
 
-                    var watch = System.Diagnostics.Stopwatch.StartNew();
                     var rooms = new HashSet<Room>() { playerUnit.Path.Room };
                     rooms = GetRooms(playerUnit.Path.Room, ref rooms);
-
                     foreach (var room in rooms)
                     {
                         room.Update();
                     }
-
-                    watch.Stop();
-
-                    var elapsedMs = watch.ElapsedMilliseconds;
-                    Debug.WriteLine("getting rooms took " + elapsedMs);
-
-                    //GetUnits(rooms);
-
-                    /*foreach(var monster in UnitList.Monsters)
-                    {
-                        Debug.WriteLine(monster.Position);
-                    }*/
+                    var monsterList = new List<UnitAny>();
+                    GetUnits(rooms, ref monsterList);
 
                     return new GameData
                     {
@@ -89,7 +77,8 @@ namespace MapAssist.Helpers
                         Difficulty = gameDifficulty,
                         MapShown = mapShown,
                         MainWindowHandle = GameManager.MainWindowHandle,
-                        PlayerName = playerUnit.Name
+                        PlayerName = playerUnit.Name,
+                        Monsters = monsterList,
                     };
                 }
             }
@@ -100,14 +89,21 @@ namespace MapAssist.Helpers
                 return null;
             }
         }
-        private static void GetUnits(HashSet<Room> rooms)
+        private static void GetUnits(HashSet<Room> rooms, ref List<UnitAny> monsterList)
         {
             foreach (var room in rooms)
             {
                 var unitAny = room.UnitFirst;
                 while (unitAny.IsValid())
                 {
-                    unitAny.Update();
+                    switch (unitAny.UnitType)
+                    {
+                        case UnitType.Monster:
+                            if (!monsterList.Contains(unitAny) && unitAny.IsMonster()){ 
+                                monsterList.Add(unitAny); 
+                            }
+                            break;
+                    }
                     unitAny = unitAny.RoomNext;
                 }
             }

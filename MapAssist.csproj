@@ -133,7 +133,6 @@
     <Compile Include="Structs\UiSettings.cs" />
     <Compile Include="Structs\UnitAny.cs" />
     <Compile Include="Structs\UnitHashTable.cs" />
-    <Compile Include="Types\Monster.cs" />
     <Compile Include="Types\UiSettings.cs" />
     <Compile Include="Types\RoomEx.cs" />
     <Compile Include="Types\Room.cs" />
