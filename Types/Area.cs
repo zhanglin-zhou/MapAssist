@@ -284,7 +284,7 @@ namespace MapAssist.Types
             { 110, "Bloody Foothills" },
             { 111, "Frigid Highlands" },
             { 112, "Arreat Plateau" },
-            { 113, "Crystalized Passage" },
+            { 113, "Crystalline Passage" },
             { 114, "Frozen River" },
             { 115, "Glacial Trail" },
             { 116, "Drifter Cavern" },
@@ -312,7 +312,12 @@ namespace MapAssist.Types
 
         public static string Name(this Area area)
         {
-            return _areaNames.TryGetValue((int)area, out string areaName) ? areaName : area.ToString();
+            return _areaNames.TryGetValue((int)area, out var areaName) ? areaName : area.ToString();
+        }
+
+        public static bool IsValid(this Area area)
+        {
+            return (uint)area >= 1 && (uint)area <= 136;
         }
     }
 }

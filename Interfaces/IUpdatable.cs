@@ -1,4 +1,4 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -17,12 +17,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-namespace MapAssist.Types
+namespace MapAssist.Interfaces
 {
-    public static class Offsets
+    public interface IUpdatable<T>
     {
-        public static int UnitHashTable = 0x20AF660;
-        public static int UiSettings = 0x20BF322;
-        public static int ExpansionCheck = 0x20BF335;
+        T Update();
     }
 }

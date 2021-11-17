@@ -57,12 +57,12 @@ namespace MapAssist.Settings
 
         public static Color? LookupMapColor(int type)
         {
-            string key = "MapColor[" + type + "]";
+            var key = "MapColor[" + type + "]";
 
             if (!MapColors.ContainsKey(type))
             {
-                string mapColorString = ConfigurationManager.AppSettings[key];
-                if (!String.IsNullOrEmpty(mapColorString))
+                var mapColorString = ConfigurationManager.AppSettings[key];
+                if (!string.IsNullOrEmpty(mapColorString))
                 {
                     MapColors[type] = Utils.ParseColor(mapColorString);
                 }
@@ -95,7 +95,7 @@ namespace MapAssist.Settings
         public static char ToggleKey = Convert.ToChar(ConfigurationManager.AppSettings["ToggleKey"]);
         public static char ZoomInKey = Convert.ToChar(ConfigurationManager.AppSettings["ZoomInKey"]);
         public static char ZoomOutKey = Convert.ToChar(ConfigurationManager.AppSettings["ZoomOutKey"]);
-        public static float zoomLevel = Convert.ToSingle(ConfigurationManager.AppSettings["ZoomLevelDefault"]);
+        public static float ZoomLevel = Convert.ToSingle(ConfigurationManager.AppSettings["ZoomLevelDefault"]);
 
         public static Area[] PrefetchAreas =
             Utils.ParseCommaSeparatedAreasByName(ConfigurationManager.AppSettings["PrefetchAreas"]);
@@ -110,5 +110,6 @@ namespace MapAssist.Settings
     public static class Api
     {
         public static string Endpoint = ConfigurationManager.AppSettings["ApiEndpoint"];
+        public static string Token = ConfigurationManager.AppSettings["ApiToken"];
     }
 }

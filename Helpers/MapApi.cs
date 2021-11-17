@@ -35,47 +35,49 @@ namespace MapAssist.Helpers
 {
     public class MapApi : IDisposable
     {
-        public static readonly HttpClient Client = HttpClient();
-        private readonly string _endpoint;
+        public static readonly HttpClient Client = HttpClient(Settings.Api.Endpoint, Settings.Api.Token);
         private readonly string _sessionId;
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private readonly BlockingCollection<Area[]> _prefetchRequests;
         private readonly Thread _thread;
         private readonly HttpClient _client;
 
-        private string CreateSession(string endpoint, Difficulty difficulty, uint mapSeed)
+        private string CreateSession(Difficulty difficulty, uint mapSeed)
         {
-            Dictionary<string, uint> values = new Dictionary<string, uint>
+            var values = new Dictionary<string, uint>
             {
                 { "difficulty", (uint)difficulty },
                 { "mapid", mapSeed }
             };
 
-            string json = JsonConvert.SerializeObject(values);
+            var json = JsonConvert.SerializeObject(values);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = _client.PostAsync(endpoint + "sessions/", content).GetAwaiter().GetResult();
+            HttpResponseMessage response = _client.PostAsync("sessions/", content).GetAwaiter().GetResult();
+            response.EnsureSuccessStatusCode();
             var session =
                 JsonConvert.DeserializeObject<MapApiSession>(response.Content.ReadAsStringAsync().GetAwaiter()
                     .GetResult());
             return session.id;
         }
 
-        private void DestroySession(string endpoint, string sessionId)
+        private void DestroySession(string sessionId)
         {
             HttpResponseMessage response =
-                _client.DeleteAsync(endpoint + "sessions/" + sessionId).GetAwaiter().GetResult();
+                _client.DeleteAsync("sessions/" + sessionId).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
         }
 
-        public MapApi(HttpClient client, string endpoint, Difficulty difficulty, uint mapSeed)
+        public MapApi(HttpClient client, Difficulty difficulty, uint mapSeed)
         {
             _client = client;
-            _endpoint = endpoint;
-            _sessionId = CreateSession(endpoint, difficulty, mapSeed); ;
+            _sessionId = CreateSession(difficulty, mapSeed);
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
             _prefetchRequests = new BlockingCollection<Area[]>();
-            _thread = new Thread(Prefetch);
+            _thread = new Thread(Prefetch)
+            {
+                IsBackground = true
+            };
             _thread.Start();
 
             if (Settings.Map.PrefetchAreas.Any())
@@ -131,26 +133,33 @@ namespace MapAssist.Helpers
 
         private AreaData GetMapDataInternal(Area area)
         {
-            HttpResponseMessage response = _client.GetAsync(_endpoint + "sessions/" + _sessionId +
+            HttpResponseMessage response = _client.GetAsync("sessions/" + _sessionId +
                                                             "/areas/" + (uint)area).GetAwaiter().GetResult();
             response.EnsureSuccessStatusCode();
-            var rawMapData =
-                JsonConvert.DeserializeObject<RawAreaData>(response.Content.ReadAsStringAsync().GetAwaiter()
-                    .GetResult());
+            var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var rawMapData = JsonConvert.DeserializeObject<RawAreaData>(content);
             return rawMapData.ToInternal(area);
         }
 
-        private static HttpClient HttpClient()
+        private static HttpClient HttpClient(string endpoint, string token)
         {
             var client = new HttpClient(new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            });
+            })
+            {
+                BaseAddress = new Uri(endpoint)
+            };
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
             client.DefaultRequestHeaders.AcceptEncoding.Add(
                 new StringWithQualityHeaderValue("gzip"));
             client.DefaultRequestHeaders.AcceptEncoding.Add(
                 new StringWithQualityHeaderValue("deflate"));
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+            }
             return client;
         }
 
@@ -160,7 +169,7 @@ namespace MapAssist.Helpers
             _thread.Join();
             try
             {
-                DestroySession(_endpoint, _sessionId);
+                DestroySession(_sessionId);
             }
             catch (HttpRequestException) // Prevent HttpRequestException if D2MapAPI is closed before this program.
             {
@@ -169,6 +178,7 @@ namespace MapAssist.Helpers
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "ReSharper")]
         private class MapApiSession
         {
             public string id;

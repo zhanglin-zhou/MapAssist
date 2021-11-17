@@ -1,4 +1,4 @@
-/**
+﻿/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -17,12 +17,33 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using System;
+using MapAssist.Helpers;
+using MapAssist.Interfaces;
+
 namespace MapAssist.Types
 {
-    public static class Offsets
+    public class Level : IUpdatable<Level>
     {
-        public static int UnitHashTable = 0x20AF660;
-        public static int UiSettings = 0x20BF322;
-        public static int ExpansionCheck = 0x20BF335;
+        private readonly IntPtr _pLevel = IntPtr.Zero;
+        private Structs.Level _level;
+
+        public Level(IntPtr pLevel)
+        {
+            _pLevel = pLevel;
+            Update();
+        }
+
+        public Level Update()
+        {
+            using (var processContext = GameManager.GetProcessContext())
+            {
+                _level = processContext.Read<Structs.Level>(_pLevel);
+            }
+            return this;
+        }
+
+        public Area LevelId => _level.LevelId;
+
     }
 }

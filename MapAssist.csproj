@@ -2,13 +2,14 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <RandomGuid>$([System.Guid]::NewGuid())</RandomGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProjectGuid>{FB3AC437-B7BB-42FF-A2A2-F10551F95F6C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>MapAssist</RootNamespace>
-    <CustomAssemblyName></CustomAssemblyName>
+    <CustomAssemblyName />
     <AssemblyName Condition=" '$(CustomAssemblyName)' != '' ">$(CustomAssemblyName)</AssemblyName>
     <AssemblyName Condition=" '$(Configuration)' == 'Release' AND '$(CustomAssemblyName)' == '' ">$(RandomGuid)</AssemblyName>
     <AssemblyName Condition=" '$(Configuration)' == 'Debug' AND '$(CustomAssemblyName)' == ''">MapAssist</AssemblyName>
@@ -32,29 +33,6 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32bit>false</Prefer32bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32bit>false</Prefer32bit>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -128,6 +106,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\GameManager.cs" />
+    <Compile Include="Helpers\ProcessContext.cs" />
+    <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Overlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -140,6 +121,24 @@
     <Compile Include="Helpers\MapApi.cs" />
     <Compile Include="Helpers\Compositor.cs" />
     <Compile Include="Helpers\WindowsExternal.cs" />
+    <Compile Include="Structs\Act.cs" />
+    <Compile Include="Structs\ActMisc.cs" />
+    <Compile Include="Structs\Inventory.cs" />
+    <Compile Include="Structs\UiSettings.cs" />
+    <Compile Include="Structs\Level.cs" />
+    <Compile Include="Structs\MonsterData.cs" />
+    <Compile Include="Structs\Path.cs" />
+    <Compile Include="Structs\Room.cs" />
+    <Compile Include="Structs\RoomEx.cs" />
+    <Compile Include="Structs\UiSettings.cs" />
+    <Compile Include="Structs\UnitAny.cs" />
+    <Compile Include="Structs\UnitHashTable.cs" />
+    <Compile Include="Types\UiSettings.cs" />
+    <Compile Include="Types\RoomEx.cs" />
+    <Compile Include="Types\Room.cs" />
+    <Compile Include="Types\Level.cs" />
+    <Compile Include="Types\ActMisc.cs" />
+    <Compile Include="Types\Act.cs" />
     <Compile Include="Types\Area.cs" />
     <Compile Include="Types\Difficulty.cs" />
     <Compile Include="Types\GameData.cs" />
@@ -150,6 +149,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\Npc.cs" />
     <Compile Include="Types\Offsets.cs" />
+    <Compile Include="Types\Path.cs" />
     <Compile Include="Types\PointOfInterest.cs" />
     <Compile Include="Types\RawAreaData.cs" />
     <Compile Include="Settings\MapPosition.cs" />
@@ -157,6 +157,8 @@
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\Shape.cs" />
     <Compile Include="Settings\Utils.cs" />
+    <Compile Include="Types\UnitAny.cs" />
+    <Compile Include="Types\UnitType.cs" />
     <EmbeddedResource Include="Overlay.resx">
       <DependentUpon>Overlay.cs</DependentUpon>
     </EmbeddedResource>
@@ -185,5 +187,6 @@
       <Version>13.0.1</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -52,24 +52,24 @@ namespace MapAssist
             {
                 if (InGame())
                 {
-                    if (args.KeyChar == Settings.Map.ToggleKey)
+                    if (args.KeyChar == Map.ToggleKey)
                     {
                         _show = !_show;
                     }
-                    if (args.KeyChar == Settings.Map.ZoomInKey)
+                    if (args.KeyChar == Map.ZoomInKey)
                     {
-                        if (Settings.Map.zoomLevel > 0.25f)
+                        if (Map.ZoomLevel > 0.25f)
                         {
-                            Settings.Map.zoomLevel -= 0.25f;
-                            Settings.Map.Size = (int)(Settings.Map.Size * 1.15f);
+                            Map.ZoomLevel -= 0.25f;
+                            Map.Size = (int)(Map.Size * 1.15f);
                         }
                     }
-                    if (args.KeyChar == Settings.Map.ZoomOutKey)
+                    if (args.KeyChar == Map.ZoomOutKey)
                     {
-                        if (Settings.Map.zoomLevel < 4f)
+                        if (Map.ZoomLevel < 4f)
                         {
-                            Settings.Map.zoomLevel += 0.25f;
-                            Settings.Map.Size = (int)(Settings.Map.Size * .85f);
+                            Map.ZoomLevel += 0.25f;
+                            Map.Size = (int)(Map.Size * .85f);
                         }
                     }
                 }
@@ -78,24 +78,19 @@ namespace MapAssist
 
         private void Overlay_Load(object sender, EventArgs e)
         {
-            Settings.Map.InitMapColors();
+            Map.InitMapColors();
             Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            int width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
-            int height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
+            var width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
+            var height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
             Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
             Size = new Size(width, height);
-            Opacity = Settings.Map.Opacity;
+            Opacity = Map.Opacity;
 
-            _timer.Interval = Settings.Map.UpdateTime;
+            _timer.Interval = Map.UpdateTime;
             _timer.Tick += MapUpdateTimer_Tick;
             _timer.Start();
 
-            if (Settings.Map.AlwaysOnTop)
-            {
-                var initialStyle = (uint)WindowsExternal.GetWindowLongPtr(Handle, -20);
-                WindowsExternal.SetWindowLong(Handle, -20, initialStyle | 0x80000 | 0x20);
-                WindowsExternal.SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-            }
+            if (Map.AlwaysOnTop) SetTopMost();
 
             mapOverlay.Location = new Point(0, 0);
             mapOverlay.Width = Width;
@@ -119,7 +114,7 @@ namespace MapAssist
                 {
                     Console.WriteLine($"Game changed: {gameData}");
                     _mapApi?.Dispose();
-                    _mapApi = new MapApi(MapApi.Client, Settings.Api.Endpoint, gameData.Difficulty, gameData.MapSeed);
+                    _mapApi = new MapApi(MapApi.Client, gameData.Difficulty, gameData.MapSeed);
                 }
 
                 if (gameData.HasMapChanged(_currentGameData))
@@ -136,30 +131,41 @@ namespace MapAssist
                         _compositor = null;
                     }
                 }
+            }
 
-                _currentGameData = gameData;
+            _currentGameData = gameData;
 
-                if (ShouldHideMap())
-                {
-                    mapOverlay.Hide();
-                }
-                else
+            if (ShouldHideMap())
+            {
+                mapOverlay.Hide();
+            }
+            else
+            {
+                if (!mapOverlay.Visible)
                 {
                     mapOverlay.Show();
-                    mapOverlay.Refresh();
+                    if (Map.AlwaysOnTop) SetTopMost();
                 }
+                mapOverlay.Refresh();
             }
 
             _timer.Start();
+        }
+        
+        private void SetTopMost()
+        {
+            var initialStyle = (uint)WindowsExternal.GetWindowLongPtr(Handle, -20);
+            WindowsExternal.SetWindowLong(Handle, -20, initialStyle | 0x80000 | 0x20);
+            WindowsExternal.SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
         }
 
         private bool ShouldHideMap()
         {
             if (!_show) return true;
-            if (_currentGameData.Area == Area.None) return true;
-            if (Array.Exists(Settings.Map.HiddenAreas, element => element == _currentGameData.Area)) return true;
             if (!InGame()) return true;
-            if (Settings.Map.ToggleViaInGameMap && !_currentGameData.MapShown) return true;
+            if (_currentGameData.Area == Area.None) return true;
+            if (Array.Exists(Map.HiddenAreas, element => element == _currentGameData.Area)) return true;
+            if (Map.ToggleViaInGameMap && !_currentGameData.MapShown) return true;
             return false;
         }
 
@@ -178,23 +184,23 @@ namespace MapAssist
 
             UpdateLocation();
 
-            Bitmap gameMap = _compositor.Compose(_currentGameData, !Settings.Map.OverlayMode);
+            Bitmap gameMap = _compositor.Compose(_currentGameData, !Map.OverlayMode);
 
-            if (Settings.Map.OverlayMode)
+            if (Map.OverlayMode)
             {
                 float w = 0;
                 float h = 0;
-                float scale = 0.0F;
-                Vector2 center = new Vector2();
+                var scale = 0.0F;
+                var center = new Vector2();
 
-                if (ConfigurationManager.AppSettings["ZoomLevelDefault"] == null) { Settings.Map.zoomLevel = 1; }
+                if (ConfigurationManager.AppSettings["ZoomLevelDefault"] == null) { Map.ZoomLevel = 1; }
 
-                switch (Settings.Map.Position)
+                switch (Map.Position)
                 {
                     case MapPosition.Center:
                         w = _screen.WorkingArea.Width;
                         h = _screen.WorkingArea.Height;
-                        scale = (1024.0F / h * w * 3f / 4f / 2.3F) * Settings.Map.zoomLevel;
+                        scale = (1024.0F / h * w * 3f / 4f / 2.3F) * Map.ZoomLevel;
                         center = new Vector2(w / 2, h / 2 + 20);
 
                         e.Graphics.SetClip(new RectangleF(0, 0, w, h));
@@ -202,7 +208,7 @@ namespace MapAssist
                     case MapPosition.TopLeft:
                         w = 640;
                         h = 360;
-                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Settings.Map.zoomLevel;
+                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Map.ZoomLevel;
                         center = new Vector2(w / 2, (h / 2) + 48);
 
                         e.Graphics.SetClip(new RectangleF(0, 50, w, h));
@@ -210,7 +216,7 @@ namespace MapAssist
                     case MapPosition.TopRight:
                         w = 640;
                         h = 360;
-                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Settings.Map.zoomLevel;
+                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Map.ZoomLevel;
                         center = new Vector2(w / 2, (h / 2) + 40);
 
                         e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
@@ -220,7 +226,7 @@ namespace MapAssist
 
                 Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(_compositor.CropOffset);
 
-                Vector2 playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
+                var playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
                 Vector2 Transform(Vector2 p) =>
                     center +
                     DeltaInWorldToMinimapDelta(
@@ -244,7 +250,7 @@ namespace MapAssist
             else
             {
                 var anchor = new Point(0, 0);
-                switch (Settings.Map.Position)
+                switch (Map.Position)
                 {
                     case MapPosition.Center:
                         anchor = new Point(_screen.WorkingArea.Width / 2, _screen.WorkingArea.Height / 2);
