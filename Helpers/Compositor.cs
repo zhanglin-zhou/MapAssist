@@ -96,10 +96,22 @@ namespace MapAssist.Helpers
                     var clr = unitAny.IsElite() ? renderMonster.EliteColor : renderMonster.NormalColor;
                     var pen = new Pen(clr, 1);
                     var sz = new Size(5, 5);
+                    var sz2 = new Size(2, 2);
                     var pos = new Point(unitAny.Path.DynamicX, unitAny.Path.DynamicY);
                     var midPoint = pos.OffsetFrom(_areaData.Origin).OffsetFrom(CropOffset);
                     var rect = new Rectangle(midPoint, sz);
                     imageGraphics.DrawRectangle(pen, rect);
+                    var i = 0;
+                    foreach (var immunity in unitAny.Immunities)
+                    {
+                        var brush = new SolidBrush(ResistColors.ResistColor[immunity]);
+                        //shove the point we're drawing the immunity at to the left to align based on number of immunities
+                        var iPoint = new Point((i * -2) + (1 * (unitAny.Immunities.Count - 1)) - 1, 3);
+                        var pen2 = new Pen(ResistColors.ResistColor[immunity], 1);
+                        var rect2 = new Rectangle(midPoint.OffsetFrom(iPoint), sz2);
+                        imageGraphics.FillRectangle(brush, rect2);
+                        i++;
+                    }
                 }
             }
 

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using MapAssist.Helpers;
 using MapAssist.Interfaces;
@@ -35,6 +36,8 @@ namespace MapAssist.Types
         private Path _path;
         private Inventory _inventory;
         private MonsterData _monsterData;
+        private Dictionary<Stat, int> _statList;
+        private List<Resist> _immunities;
         private string _name;
         private bool _isMonster;
         private bool _updated;
@@ -53,6 +56,9 @@ namespace MapAssist.Types
                 {
                     _unitAny = processContext.Read<Structs.UnitAny>(_pUnit);
                     _path = new Path(_unitAny.pPath);
+                    var statListStruct = processContext.Read<StatListStruct>(_unitAny.pStatsListEx);
+                    _statList = processContext.Read<StatValue>(statListStruct.Stats.FirstStatPtr, Convert.ToInt32(statListStruct.Stats.Size)).ToDictionary(s => s.Stat, s => s.Value);
+                    _immunities = GetImmunities();
                     switch (_unitAny.UnitType)
                     {
                         case UnitType.Player:
@@ -93,6 +99,7 @@ namespace MapAssist.Types
         public Point Position => new Point(X, Y);
         public UnitAny ListNext => new UnitAny(_unitAny.pListNext);
         public UnitAny RoomNext => new UnitAny(_unitAny.pRoomNext);
+        public List<Resist> Immunities => _immunities;
 
         public bool IsMovable()
         {
@@ -151,6 +158,29 @@ namespace MapAssist.Types
         public bool IsElite()
         {
             return _monsterData.MonsterType > 0;
+        }
+
+        private List<Resist> GetImmunities()
+        {
+            _statList.TryGetValue(Stat.STAT_DAMAGERESIST, out var resistanceDamage);
+            _statList.TryGetValue(Stat.STAT_MAGICRESIST, out var resistanceMagic);
+            _statList.TryGetValue(Stat.STAT_FIRERESIST, out var resistanceFire);
+            _statList.TryGetValue(Stat.STAT_LIGHTRESIST, out var resistanceLightning);
+            _statList.TryGetValue(Stat.STAT_COLDRESIST, out var resistanceCold);
+            _statList.TryGetValue(Stat.STAT_POISONRESIST, out var resistancePoison);
+
+            var resists = new List<int> { resistanceDamage, resistanceMagic, resistanceFire, resistanceLightning, resistanceCold, resistancePoison };
+            var immunities = new List<Resist>();
+
+            for (var i = 0; i < 6; i++)
+            {
+                if (resists[i] >= 100)
+                {
+                    immunities.Add((Resist)i);
+                }
+            }
+
+            return immunities;
         }
 
         public override bool Equals(object obj) => obj is UnitAny other && Equals(other);
