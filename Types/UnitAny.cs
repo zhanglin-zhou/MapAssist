@@ -36,6 +36,8 @@ namespace MapAssist.Types
         private Inventory _inventory;
         private MonsterData _monsterData;
         private string _name;
+        private bool _isMonster;
+        private bool _updated;
 
         public UnitAny(IntPtr pUnit)
         {
@@ -69,6 +71,7 @@ namespace MapAssist.Types
                             break;
                     }
                 }
+                _updated = true;
             }
             return this;
         }
@@ -132,10 +135,17 @@ namespace MapAssist.Types
 
         public bool IsMonster()
         {
-            if (_unitAny.UnitType != UnitType.Monster) return false;
-            if (_unitAny.Mode == 0 || _unitAny.Mode == 12) return false;
-            if (NPC.Dummies.TryGetValue(_unitAny.TxtFileNo, out var _)) { return false; }
-            return true;
+            if (_updated)
+            {
+                return _isMonster;
+            } else
+            {
+                if (_unitAny.UnitType != UnitType.Monster) return false;
+                if (_unitAny.Mode == 0 || _unitAny.Mode == 12) return false;
+                if (NPC.Dummies.TryGetValue(_unitAny.TxtFileNo, out var _)) { return false; }
+                _isMonster = true;
+                return true;
+            }
         }
 
         public bool IsElite()

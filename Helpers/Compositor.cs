@@ -90,6 +90,17 @@ namespace MapAssist.Helpers
                             poi.Position.OffsetFrom(_areaData.Origin).OffsetFrom(CropOffset));
                     }
                 }
+                MonsterRendering renderMonster = Utils.GetMonsterRendering();
+                foreach (var unitAny in gameData.Monsters)
+                {
+                    var clr = unitAny.IsElite() ? renderMonster.EliteColor : renderMonster.NormalColor;
+                    var pen = new Pen(clr, 1);
+                    var sz = new Size(5, 5);
+                    var pos = new Point(unitAny.Path.DynamicX, unitAny.Path.DynamicY);
+                    var midPoint = pos.OffsetFrom(_areaData.Origin).OffsetFrom(CropOffset);
+                    var rect = new Rectangle(midPoint, sz);
+                    imageGraphics.DrawRectangle(pen, rect);
+                }
             }
 
             double multiplier = 1;
