@@ -41,6 +41,15 @@ namespace MapAssist.Settings
         public static PointOfInterestRendering Player = Utils.GetRenderingSettingsForPrefix("Player");
         public static PointOfInterestRendering Shrine = Utils.GetRenderingSettingsForPrefix("Shrine");
 
+        public static bool GameInfoAlwaysShow = Convert.ToBoolean(ConfigurationManager.AppSettings["GameInfo.AlwaysShow"]);
+
+        public static string ItemFilterFileName = Convert.ToString(ConfigurationManager.AppSettings["ItemLog.FilterFileName"]);
+        public static int ItemLogMaxSize = Convert.ToInt16(ConfigurationManager.AppSettings["ItemLog.MaxSize"]);
+        public static bool ItemLogAlwaysShow = Convert.ToBoolean(ConfigurationManager.AppSettings["ItemLog.AlwaysShow"]);
+        public static bool ItemLogPlaySoundOnDrop = Convert.ToBoolean(ConfigurationManager.AppSettings["ItemLog.PlaySoundOnDrop"]);
+        public static PointOfInterestRendering Item = Utils.GetRenderingSettingsForPrefix("Item");
+        public static PointOfInterestRendering ItemLog = Utils.GetRenderingSettingsForPrefix("ItemLog");
+
         public static PointOfInterestRendering SuperChest = Utils.GetRenderingSettingsForPrefix("SuperChest");
         public static PointOfInterestRendering NormalChest = Utils.GetRenderingSettingsForPrefix("NormalChest");
         public static PointOfInterestRendering ArmorWeapRack = Utils.GetRenderingSettingsForPrefix("ArmorWeapRack");
