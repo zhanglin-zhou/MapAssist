@@ -1,0 +1,7 @@
+﻿*.txt text
+*.cs text
+*.csproj text
+*.yaml text
+*.yml text
+*.sln text
+*.resx text
