@@ -1,4 +1,6 @@
-﻿*.txt text
+﻿* text=auto
+
+*.txt text
 *.cs text
 *.csproj text
 *.yaml text
