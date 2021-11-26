@@ -106,9 +106,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\ConfigurationParser.cs" />
+    <Compile Include="Files\FileManager.cs" />
     <Compile Include="Helpers\GameManager.cs" />
     <Compile Include="Helpers\LootFilter.cs" />
     <Compile Include="Helpers\ProcessContext.cs" />
+    <Compile Include="Helpers\YamlConverters.cs" />
     <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Overlay.cs">
       <SubType>Form</SubType>
@@ -127,6 +130,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\MapAssistConfiguration.cs" />
     <Compile Include="Structs\Act.cs" />
     <Compile Include="Structs\ActMisc.cs" />
     <Compile Include="Structs\Inventory.cs" />
@@ -161,7 +165,6 @@
     <Compile Include="Types\RawAreaData.cs" />
     <Compile Include="Settings\MapPosition.cs" />
     <Compile Include="Settings\PointOfInterestRendering.cs" />
-    <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\Shape.cs" />
     <Compile Include="Settings\Utils.cs" />
     <Compile Include="Types\UnitAny.cs" />
@@ -173,10 +176,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="AppConfig.yaml" />
     <None Include="Resources\Icon1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -208,4 +209,7 @@
     <None Include="Resources\ching.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(ProjectDir)AppConfig.yaml $(ProjectDir)$(OutDir)$(TargetName)$(TargetExt).yaml</PostBuildEvent>
+  </PropertyGroup>
 </Project>

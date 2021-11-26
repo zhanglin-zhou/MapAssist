@@ -18,8 +18,12 @@
  **/
 
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
+using MapAssist.Files;
+using MapAssist.Settings;
+using Newtonsoft.Json;
 
 namespace MapAssist
 {
@@ -31,11 +35,29 @@ namespace MapAssist
         [STAThread]
         static void Main()
         {
-            using (IKeyboardMouseEvents globalHook = Hook.GlobalEvents())
+            var configurationOk = false;
+            try
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new Overlay(globalHook));
+                MapAssistConfiguration.Load();
+                configurationOk = true;
+            }
+            catch(YamlDotNet.Core.YamlException e)
+            {
+                MessageBox.Show(e.Message, "Yaml parsing error occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "General error occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            if (configurationOk)
+            {
+                using (IKeyboardMouseEvents globalHook = Hook.GlobalEvents())
+                {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new Overlay(globalHook));
+                }
             }
         }
     }

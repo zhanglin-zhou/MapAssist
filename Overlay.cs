@@ -52,26 +52,26 @@ namespace MapAssist
             {
                 if (InGame())
                 {
-                    if (args.KeyChar == Map.ToggleKey)
+                    if (args.KeyChar == MapAssistConfiguration.Loaded.HotkeyConfiguration.ToggleKey)
                     {
                         _show = !_show;
                     }
 
-                    if (args.KeyChar == Map.ZoomInKey)
+                    if (args.KeyChar == MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomInKey)
                     {
-                        if (Map.ZoomLevel > 0.25f)
+                        if (MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel > 0.25f)
                         {
-                            Map.ZoomLevel -= 0.25f;
-                            Map.Size = (int)(Map.Size * 1.15f);
+                            MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel -= 0.25f;
+                            MapAssistConfiguration.Loaded.RenderingConfiguration.Size = (int)(MapAssistConfiguration.Loaded.RenderingConfiguration.Size * 1.15f);
                         }
                     }
 
-                    if (args.KeyChar == Map.ZoomOutKey)
+                    if (args.KeyChar == MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomOutKey)
                     {
-                        if (Map.ZoomLevel < 4f)
+                        if (MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel < 4f)
                         {
-                            Map.ZoomLevel += 0.25f;
-                            Map.Size = (int)(Map.Size * .85f);
+                            MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel += 0.25f;
+                            MapAssistConfiguration.Loaded.RenderingConfiguration.Size = (int)(MapAssistConfiguration.Loaded.RenderingConfiguration.Size * .85f);
                         }
                     }
                 }
@@ -80,19 +80,18 @@ namespace MapAssist
 
         private void Overlay_Load(object sender, EventArgs e)
         {
-            Map.InitMapColors();
             Rectangle screen = Screen.PrimaryScreen.WorkingArea;
             var width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
             var height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
             Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
             Size = new Size(width, height);
-            Opacity = Map.Opacity;
+            Opacity = MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity;
 
-            _timer.Interval = Map.UpdateTime;
+            _timer.Interval = MapAssistConfiguration.Loaded.UpdateTime;
             _timer.Tick += MapUpdateTimer_Tick;
             _timer.Start();
 
-            if (Map.AlwaysOnTop) SetTopMost();
+            if (MapAssistConfiguration.Loaded.RenderingConfiguration.AlwaysOnTop) SetTopMost();
 
             mapOverlay.Location = new Point(0, 0);
             mapOverlay.Width = Width;
@@ -137,6 +136,7 @@ namespace MapAssist
 
             _currentGameData = gameData;
 
+                    if (MapAssistConfiguration.Loaded.RenderingConfiguration.AlwaysOnTop) SetTopMost();
             mapOverlay.Refresh();
 
             _timer.Start();
@@ -162,7 +162,7 @@ namespace MapAssist
                 return;
             }
 
-            if (Rendering.GameInfoAlwaysShow == false && !_show)
+            if (MapAssistConfiguration.Loaded.GameInfo.AlwaysShow == false && !_show)
             {
                 return;
             }
@@ -172,11 +172,12 @@ namespace MapAssist
             {
                 blackBarWidth = (screenW - 2880) / 4;
             }
+            
             var overlayWidthDiff = screenW - Width;
             var textXOffset = blackBarWidth + (int)(screenW * .06f) - overlayWidthDiff;
-            var fontSize = Rendering.ItemLog.LabelFontSize;
+            var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
             var fontHeight = (fontSize + fontSize / 2);
-            var font = new Font(Rendering.ItemLog.LabelFont, fontSize);
+            var font = new Font(MapAssistConfiguration.Loaded.ItemLog.LabelFont, fontSize);
             var stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Near;
             stringFormat.LineAlignment = StringAlignment.Near;
@@ -200,7 +201,7 @@ namespace MapAssist
                 stateCount++;
             }*/
 
-            if (Rendering.ItemLogAlwaysShow == false && !_show)
+            if (MapAssistConfiguration.Loaded.ItemLog.AlwaysShow == false && !_show)
             {
                 return;
             }
@@ -250,30 +251,28 @@ namespace MapAssist
                 new Point(textXOffset, (fontHeight * 2) + (i * (fontSize + fontSize / 2))), stringFormat);
             }
 
-            if (!_show || Array.Exists(Map.HiddenAreas, element => element == _currentGameData.Area) || (Map.ToggleViaInGameMap && !_currentGameData.MapShown) || (_currentGameData.Area == Area.None))
+            if (!_show || Array.Exists(MapAssistConfiguration.Loaded.HiddenAreas, element => element == _currentGameData.Area) || (MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGameMap && !_currentGameData.MapShown) || (_currentGameData.Area == Area.None))
             {
                 return;
             }
 
             UpdateLocation();
 
-            Bitmap gameMap = _compositor.Compose(_currentGameData, !Map.OverlayMode);
+            Bitmap gameMap = _compositor.Compose(_currentGameData, !MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode);
 
-            if (Map.OverlayMode)
+            if (MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode)
             {
                 float w = 0;
                 float h = 0;
                 var scale = 0.0F;
                 var center = new Vector2();
 
-                if (ConfigurationManager.AppSettings["ZoomLevelDefault"] == null) { Map.ZoomLevel = 1; }
-
-                switch (Map.Position)
+                switch (MapAssistConfiguration.Loaded.RenderingConfiguration.Position)
                 {
                     case MapPosition.Center:
                         w = _screen.WorkingArea.Width;
                         h = _screen.WorkingArea.Height;
-                        scale = (1024.0F / h * w * 3f / 4f / 2.3F) * Map.ZoomLevel;
+                        scale = (1024.0F / h * w * 3f / 4f / 2.3F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
                         center = new Vector2(w / 2, h / 2 + 20);
 
                         e.Graphics.SetClip(new RectangleF(0, 0, w, h));
@@ -281,7 +280,7 @@ namespace MapAssist
                     case MapPosition.TopLeft:
                         w = 640;
                         h = 360;
-                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Map.ZoomLevel;
+                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
                         center = new Vector2(w / 2, (h / 2) + 48);
 
                         e.Graphics.SetClip(new RectangleF(0, 50, w, h));
@@ -289,7 +288,7 @@ namespace MapAssist
                     case MapPosition.TopRight:
                         w = 640;
                         h = 360;
-                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * Map.ZoomLevel;
+                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
                         center = new Vector2(w / 2, (h / 2) + 40);
 
                         e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
@@ -325,7 +324,7 @@ namespace MapAssist
             else
             {
                 var anchor = new Point(0, 0);
-                switch (Map.Position)
+                switch (MapAssistConfiguration.Loaded.RenderingConfiguration.Position)
                 {
                     case MapPosition.Center:
                         anchor = new Point(_screen.WorkingArea.Width / 2, _screen.WorkingArea.Height / 2);
