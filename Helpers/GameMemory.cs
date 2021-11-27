@@ -142,8 +142,7 @@ namespace MapAssist.Helpers
                                 {
                                     if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop)
                                     {
-                                        var player = new SoundPlayer(Properties.Resources.ching);
-                                        player.Play();
+                                        AudioPlayer.PlayItemAlert();
                                     }
                                     Items.ItemUnitHashesSeen[_currentProcessId].Add(unitAny.ItemHash());
                                     Items.ItemUnitIdsSeen[_currentProcessId].Add(unitAny.UnitId);
