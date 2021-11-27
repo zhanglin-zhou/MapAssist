@@ -13,7 +13,7 @@ Shako:
 Thresher:
  - Ethereal: true
    Qualities: [normal, superior]
-   Sockets: [4]
+   Sockets: [0, 4]
  - Qualities: unique # The Reaper's Toll
 
 #This mage plate rule will look for any normal/superior mage plate with 3 or 4 sockets
