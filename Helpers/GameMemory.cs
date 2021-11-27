@@ -147,7 +147,7 @@ namespace MapAssist.Helpers
                                     }
                                     Items.ItemUnitHashesSeen[_currentProcessId].Add(unitAny.ItemHash());
                                     Items.ItemUnitIdsSeen[_currentProcessId].Add(unitAny.UnitId);
-                                    if (Items.ItemLog.Count == MapAssistConfiguration.Loaded.ItemLog.MaxSize)
+                                    if (Items.ItemLog[_currentProcessId].Count == MapAssistConfiguration.Loaded.ItemLog.MaxSize)
                                     {
                                         Items.ItemLog[_currentProcessId].RemoveAt(0);
                                         Items.ItemLog[_currentProcessId].Add(unitAny);
