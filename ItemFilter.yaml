@@ -12,7 +12,7 @@ Shako:
 #This thresher rule will look for only ethereal threshers with 4 sockets that are either normal/superior quality
 Thresher:
  - Ethereal: true
-   Qualities: normal/superior
+   Qualities: [normal, superior]
    Sockets: [4]
  - Qualities: unique # The Reaper's Toll
 
@@ -47,7 +47,7 @@ x-bases:
   Qualities: [normal, superior]
   Sockets: [4]
  - &pally-shield-base
-   Qualities: normal/superior
+   Qualities: [normal, superior]
    Sockets: [0, 4]
 #This ring rule will show all magic, rare, and unique rings
 Ring:
