@@ -57,10 +57,10 @@ namespace MapAssist.Helpers
 
             using (var imageGraphics = Graphics.FromImage(image))
             {
-                imageGraphics.CompositingQuality = CompositingQuality.HighQuality;
-                imageGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                imageGraphics.SmoothingMode = SmoothingMode.HighQuality;
-                imageGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                imageGraphics.CompositingQuality = CompositingQuality.HighSpeed;
+                imageGraphics.InterpolationMode = InterpolationMode.Bicubic;
+                imageGraphics.SmoothingMode = SmoothingMode.HighSpeed;
+                imageGraphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
 
                 Point localPlayerPosition = gameData.PlayerPosition
                     .OffsetFrom(_areaData.Origin)
@@ -195,10 +195,10 @@ namespace MapAssist.Helpers
                 backgroundGraphics.FillRectangle(new SolidBrush(Color.Transparent), 0, 0,
                     areaData.CollisionGrid[0].Length,
                     areaData.CollisionGrid.Length);
-                backgroundGraphics.CompositingQuality = CompositingQuality.HighQuality;
-                backgroundGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                backgroundGraphics.SmoothingMode = SmoothingMode.HighQuality;
-                backgroundGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                backgroundGraphics.CompositingQuality = CompositingQuality.HighSpeed;
+                backgroundGraphics.InterpolationMode = InterpolationMode.Bicubic;
+                backgroundGraphics.SmoothingMode = SmoothingMode.HighSpeed;
+                backgroundGraphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
 
                 for (var y = 0; y < areaData.CollisionGrid.Length; y++)
                 {

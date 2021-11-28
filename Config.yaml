@@ -16,6 +16,7 @@ RenderingConfiguration:
   OverlayMode: false
   AlwaysOnTop: true
   ToggleViaInGameMap: true
+  ShowOverlayFPS: true
   Size: 450
   Position: TopRight
   Rotate: true

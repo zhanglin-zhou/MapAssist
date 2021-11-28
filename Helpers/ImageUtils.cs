@@ -69,9 +69,9 @@ namespace MapAssist.Helpers
             // Create the Graphics object that does the work
             using (var graphicsObject = Graphics.FromImage(newBitmap))
             {
-                graphicsObject.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphicsObject.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                graphicsObject.SmoothingMode = SmoothingMode.HighQuality;
+                graphicsObject.InterpolationMode = InterpolationMode.Bicubic;
+                graphicsObject.PixelOffsetMode = PixelOffsetMode.HighSpeed;
+                graphicsObject.SmoothingMode = SmoothingMode.HighSpeed;
 
                 // Fill in the specified background color if necessary
                 if (backgroundColor != Color.Transparent)
@@ -154,10 +154,10 @@ namespace MapAssist.Helpers
             using (var graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                graphics.InterpolationMode = InterpolationMode.Bicubic;
+                graphics.SmoothingMode = SmoothingMode.HighSpeed;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighSpeed;
 
                 using (var wrapMode = new ImageAttributes())
                 {

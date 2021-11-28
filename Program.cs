@@ -18,6 +18,7 @@
  **/
 
 using System;
+using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
@@ -35,16 +36,50 @@ namespace MapAssist
         [STAThread]
         static void Main()
         {
-            var configurationOk = LoadMainConfiguration() && LoadLootLogConfiguration();
-            if (configurationOk)
+            try
             {
-                using (IKeyboardMouseEvents globalHook = Hook.GlobalEvents())
+                var configurationOk = LoadMainConfiguration() && LoadLootLogConfiguration();
+                if (configurationOk)
                 {
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new Overlay(globalHook));
+                    using (IKeyboardMouseEvents globalHook = Hook.GlobalEvents())
+                    {
+                        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                        Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+                        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+
+                        using (var overlay = new Overlay(globalHook))
+                        {
+                            overlay.Run();
+                        }
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                ProcessException(e);
+            }
+        }
+
+        private static void ProcessException(Exception e)
+        {
+            var message = e.Message + Environment.NewLine + Environment.NewLine + e.StackTrace;
+
+            MessageBox.Show(message, "MapAssist Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            Application.Exit();
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            ProcessException((Exception) e.ExceptionObject);
+        }
+
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            ProcessException(e.Exception);
         }
 
         private static bool LoadMainConfiguration()

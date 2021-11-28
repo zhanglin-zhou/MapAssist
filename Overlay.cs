@@ -17,37 +17,56 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
-using MapAssist.Types;
+using GameOverlay.Drawing;
+using GameOverlay.Windows;
+using Gma.System.MouseKeyHook;
 using MapAssist.Helpers;
 using MapAssist.Settings;
-using Gma.System.MouseKeyHook;
-using System.Numerics;
+using MapAssist.Types;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
+using System.Numerics;
 
 namespace MapAssist
 {
-    public partial class Overlay : Form
+    public class Overlay : IDisposable
     {
-        // Move to windows external
-        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-        private const uint SWP_NOSIZE = 0x0001;
-        private const uint SWP_NOMOVE = 0x0002;
-        private const uint TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
-        private readonly Timer _timer = new Timer();
+        private readonly GraphicsWindow _window;
+
+        private System.Windows.Forms.NotifyIcon _trayIcon;
+
         private GameData _currentGameData;
         private Compositor _compositor;
         private AreaData _areaData;
         private MapApi _mapApi;
         private bool _show = true;
-        private Screen _screen;
+
+        private readonly Dictionary<string, SolidBrush> _brushes;
+        private readonly Dictionary<string, Font> _fonts;
 
         public Overlay(IKeyboardMouseEvents keyboardMouseEvents)
         {
-            InitializeComponent();
+            var gfx = new Graphics()
+            {
+                MeasureFPS = true
+            };
+
+            _brushes = new Dictionary<string, SolidBrush>();
+            _fonts = new Dictionary<string, Font>();
+
+            _window = new GraphicsWindow(0, 0, 1, 1, gfx)
+            {
+                FPS = 60,
+                IsTopmost = true,
+                IsVisible = true
+            };
+
+            _window.DrawGraphics += _window_DrawGraphics;
+            _window.SetupGraphics += _window_SetupGraphics;
+            _window.DestroyGraphics += _window_DestroyGraphics;
+
             keyboardMouseEvents.KeyPress += (_, args) =>
             {
                 if (InGame())
@@ -76,39 +95,262 @@ namespace MapAssist
                     }
                 }
             };
+
+            _trayIcon = new System.Windows.Forms.NotifyIcon()
+            {
+                Icon = Properties.Resources.Icon1,
+                ContextMenu = new System.Windows.Forms.ContextMenu(new System.Windows.Forms.MenuItem[] {
+                    new System.Windows.Forms.MenuItem("Exit", Exit)
+                }),
+                Text = "MapAssist",
+                Visible = true
+            };
         }
 
-        private void Overlay_Load(object sender, EventArgs e)
+        void Exit(object sender, EventArgs e)
         {
-            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            var width = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
-            var height = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
-            Location = new Point((screen.Width - width) / 2, (screen.Height - height) / 2);
-            Size = new Size(width, height);
-            Opacity = MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity;
+            _trayIcon.Visible = false;
 
-            _timer.Interval = MapAssistConfiguration.Loaded.UpdateTime;
-            _timer.Tick += MapUpdateTimer_Tick;
-            _timer.Start();
-
-            if (MapAssistConfiguration.Loaded.RenderingConfiguration.AlwaysOnTop) SetTopMost();
-
-            mapOverlay.Location = new Point(0, 0);
-            mapOverlay.Width = Width;
-            mapOverlay.Height = Height;
-            mapOverlay.BackColor = Color.Transparent;
+            Dispose();
         }
 
-        private void Overlay_FormClosing(object sender, EventArgs e)
+        private void _window_SetupGraphics(object sender, SetupGraphicsEventArgs e)
         {
-            _mapApi?.Dispose();
+            var gfx = e.Graphics;
+
+            _brushes["green"] = gfx.CreateSolidBrush(0, 255, 0);
+            _brushes["red"] = gfx.CreateSolidBrush(255, 0, 0);
+            _brushes[ItemQuality.INFERIOR.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.INFERIOR]);
+            _brushes[ItemQuality.NORMAL.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.NORMAL]);
+            _brushes[ItemQuality.SUPERIOR.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.SUPERIOR]);
+            _brushes[ItemQuality.MAGIC.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.MAGIC]);
+            _brushes[ItemQuality.SET.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.SET]);
+            _brushes[ItemQuality.RARE.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.RARE]);
+            _brushes[ItemQuality.UNIQUE.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.UNIQUE]);
+            _brushes[ItemQuality.CRAFT.ToString()] = fromDrawingColor(gfx, Items.ItemColors[ItemQuality.CRAFT]);
+
+            if (e.RecreateResources) return;
+
+            _fonts["consolas"] = gfx.CreateFont("Consolas", 14);
+            _fonts["itemlog"] = gfx.CreateFont(MapAssistConfiguration.Loaded.ItemLog.LabelFont, MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
         }
 
-        private void MapUpdateTimer_Tick(object sender, EventArgs e)
-        {
-            _timer.Stop();
+        private SolidBrush fromDrawingColor(Graphics g, System.Drawing.Color c) =>
+            g.CreateSolidBrush(fromDrawingColor(c));
 
+        private Color fromDrawingColor(System.Drawing.Color c) =>
+            new Color(c.R, c.G, c.B, c.A);
+
+        private void _window_DrawGraphics(object sender, DrawGraphicsEventArgs e)
+        {
+            var gfx = e.Graphics;
+
+            UpdateGameData();
+
+            gfx.ClearScene();
+
+            if (_compositor == null || !InGame())
+            {
+                return;
+            }
+
+            if (MapAssistConfiguration.Loaded.GameInfo.AlwaysShow == false && !_show)
+            {
+                return;
+            }
+
+            if (_compositor != null && _currentGameData != null)
+            {
+                var screenW = _window.Width;
+                var blackBarWidth = screenW > 2880 ? (screenW - 2880) / 4 : 0;
+                var textXOffset = blackBarWidth + (int)(screenW * .06f);
+
+                var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+                var fontHeight = (fontSize + fontSize / 2);
+                var fontOffset = fontHeight;
+
+                if (MapAssistConfiguration.Loaded.RenderingConfiguration.ShowOverlayFPS)
+                {
+                    var padding = 16;
+                    var infoText = new System.Text.StringBuilder()
+                        .Append("FPS: ").Append(gfx.FPS.ToString().PadRight(padding))
+                        .Append("DeltaTime: ").Append(e.DeltaTime.ToString().PadRight(padding))
+                        .ToString();
+
+                    gfx.DrawText(_fonts["consolas"], _brushes["green"], textXOffset, fontOffset, infoText);
+
+                    fontOffset += fontHeight;
+                }
+
+                gfx.DrawText(_fonts["consolas"], _brushes["red"], textXOffset, fontOffset, "Game IP: " + _currentGameData.GameIP);
+                fontOffset += fontHeight + 5;
+
+                for (var i = 0; i < Items.CurrentItemLog.Count; i++)
+                {
+                    var color = _brushes[Items.CurrentItemLog[i].ItemData.ItemQuality.ToString()];
+                    var isEth = (Items.CurrentItemLog[i].ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
+                    var itemBaseName = Items.ItemNames[Items.CurrentItemLog[i].TxtFileNo];
+                    var itemSpecialName = "";
+                    var itemLabelExtra = "";
+                    if (isEth)
+                    {
+                        itemLabelExtra += "[Eth] ";
+                        color = _brushes[ItemQuality.SUPERIOR.ToString()];
+                    }
+                    if (Items.CurrentItemLog[i].Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
+                    {
+                        itemLabelExtra += "[" + numSockets + " S] ";
+                        color = _brushes[ItemQuality.SUPERIOR.ToString()];
+                    }
+                    switch (Items.CurrentItemLog[i].ItemData.ItemQuality)
+                    {
+                        case ItemQuality.UNIQUE:
+                            color = _brushes[Items.CurrentItemLog[i].ItemData.ItemQuality.ToString()];
+                            itemSpecialName = Items.UniqueFromCode[Items.ItemCodes[Items.CurrentItemLog[i].TxtFileNo]] + " ";
+                            break;
+                        case ItemQuality.SET:
+                            color = _brushes[Items.CurrentItemLog[i].ItemData.ItemQuality.ToString()];
+                            itemSpecialName = Items.SetFromCode[Items.ItemCodes[Items.CurrentItemLog[i].TxtFileNo]] + " ";
+                            break;
+                        case ItemQuality.CRAFT:
+                            color = _brushes[Items.CurrentItemLog[i].ItemData.ItemQuality.ToString()];
+                            break;
+                        case ItemQuality.RARE:
+                            color = _brushes[Items.CurrentItemLog[i].ItemData.ItemQuality.ToString()];
+                            break;
+                        case ItemQuality.MAGIC:
+                            color = _brushes[Items.CurrentItemLog[i].ItemData.ItemQuality.ToString()];
+                            break;
+                    }
+
+                    gfx.DrawText(_fonts["itemlog"], color, textXOffset, fontOffset + (i * fontHeight), itemLabelExtra + itemSpecialName + itemBaseName);
+                }
+
+                if (!_show || Array.Exists(MapAssistConfiguration.Loaded.HiddenAreas, element => element == _currentGameData.Area) || (MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGameMap && !_currentGameData.MapShown) || (_currentGameData.Area == Area.None))
+                {
+                    return;
+                }
+
+                var gamemap = _compositor.Compose(_currentGameData, !MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode);
+
+                var anchor = new Point(0, 0);
+
+                if (MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode)
+                {
+                    _window.FitTo(_currentGameData.MainWindowHandle, true);
+
+                    float w = 0;
+                    float h = 0;
+                    var scale = 0.0F;
+                    var center = new Vector2();
+
+                    if (ConfigurationManager.AppSettings["ZoomLevelDefault"] == null) { MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel = 1; }
+
+                    switch (MapAssistConfiguration.Loaded.RenderingConfiguration.Position)
+                    {
+                        case MapPosition.Center:
+                            w = _window.Width;
+                            h = _window.Height;
+                            scale = (1024.0F / h * w * 3f / 4f / 2.3F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
+                            center = new Vector2(w / 2, h / 2 + 20);
+                            break;
+                        case MapPosition.TopLeft:
+                            w = 640;
+                            h = 360;
+                            scale = (1024.0F / h * w * 3f / 4f / 3.35F + 48) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
+                            center = new Vector2(w / 2, h / 2);
+                            break;
+                        case MapPosition.TopRight:
+                            w = 640;
+                            h = 360;
+                            scale = (1024.0F / h * w * 3f / 4f / 3.35F + 40) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
+                            center = new Vector2(w / 2, h / 2);
+                            break;
+                    }
+
+                    var cropOffset = new System.Drawing.Point(); ;
+
+                    if (_compositor != null)
+                    {
+                        cropOffset = _compositor.CropOffset;
+                    }
+
+                    System.Drawing.Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin).OffsetFrom(cropOffset);
+
+                    var playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
+                    Vector2 Transform(Vector2 p) =>
+                        center +
+                        DeltaInWorldToMinimapDelta(
+                            p - playerPos,
+                            (float)Math.Sqrt(w * w + h * h),
+                            scale,
+                            0);
+
+                    var p1 = Transform(new Vector2(0, 0));
+                    var p2 = Transform(new Vector2(gamemap.Width, 0));
+                    var p4 = Transform(new Vector2(0, gamemap.Height));
+
+                    System.Drawing.PointF[] destinationPoints = {
+                        new System.Drawing.PointF(p1.X, p1.Y),
+                        new System.Drawing.PointF(p2.X, p2.Y),
+                        new System.Drawing.PointF(p4.X, p4.Y)
+                    };
+
+                    var b = new System.Drawing.Bitmap((int) w, (int) h);
+
+                    using (var g = System.Drawing.Graphics.FromImage(b))
+                    {
+                        g.DrawImage(gamemap, destinationPoints);
+                    }
+
+                    gamemap = b;
+                    
+                    if (MapAssistConfiguration.Loaded.RenderingConfiguration.Position == MapPosition.TopRight)
+                    {
+                        anchor = new Point(_window.Width - gamemap.Width, 0);
+                    }
+                }
+                else
+                {
+                    UpdateLocation();
+
+                    switch (MapAssistConfiguration.Loaded.RenderingConfiguration.Position)
+                    {
+                        case MapPosition.Center:
+                            anchor = new Point(_window.Width / 2 - gamemap.Width / 2, _window.Height / 2 - gamemap.Height / 2);
+                            break;
+                        case MapPosition.TopRight:
+                            anchor = new Point(_window.Width - gamemap.Width, 0);
+                            break;
+                    }
+                }
+
+                using (var image = new Image(gfx, ImageToByte(gamemap)))
+                {
+                    gfx.DrawImage(image, anchor, (float) MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity);
+                }
+            }
+        }
+
+        public static byte[] ImageToByte(System.Drawing.Image img)
+        {
+            using (var stream = new MemoryStream())
+            {
+                img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return stream.ToArray();
+            }
+        }
+
+        public void Run()
+        {
+            _window.Create();
+            _window.Join();
+        }
+
+        private void UpdateGameData()
+        {
             GameData gameData = GameMemory.GetGameData();
+
             if (gameData != null)
             {
                 if (gameData.HasGameChanged(_currentGameData))
@@ -121,224 +363,32 @@ namespace MapAssist
                 if (gameData.HasMapChanged(_currentGameData))
                 {
                     Console.WriteLine($"Area changed: {gameData.Area}");
+
+                    Compositor compositor = null;
+
                     if (gameData.Area != Area.None)
                     {
                         _areaData = _mapApi.GetMapData(gameData.Area);
-                        List<PointOfInterest> pointsOfInterest = PointOfInterestHandler.Get(_mapApi, _areaData);
-                        _compositor = new Compositor(_areaData, pointsOfInterest);
+                        var pointsOfInterest = PointOfInterestHandler.Get(_mapApi, _areaData);
+                        compositor = new Compositor(_areaData, pointsOfInterest);
                     }
-                    else
-                    {
-                        _compositor = null;
-                    }
+
+                    _compositor = compositor;
                 }
             }
 
             _currentGameData = gameData;
 
-                    if (MapAssistConfiguration.Loaded.RenderingConfiguration.AlwaysOnTop) SetTopMost();
-            mapOverlay.Refresh();
-
-            _timer.Start();
-        }
-
-        private void SetTopMost()
-        {
-            var initialStyle = (uint)WindowsExternal.GetWindowLongPtr(Handle, -20);
-            WindowsExternal.SetWindowLong(Handle, -20, initialStyle | 0x80000 | 0x20);
-            WindowsExternal.SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+            if (_show && !_window.IsVisible)
+            {
+                if (MapAssistConfiguration.Loaded.RenderingConfiguration.AlwaysOnTop) _window.PlaceAbove(_currentGameData.MainWindowHandle);
+            }
         }
 
         private bool InGame()
         {
             return _currentGameData != null && _currentGameData.MainWindowHandle != IntPtr.Zero &&
                    WindowsExternal.GetForegroundWindow() == _currentGameData.MainWindowHandle;
-        }
-
-        private void MapOverlay_Paint(object sender, PaintEventArgs e)
-        {
-            if (_compositor == null || !InGame())
-            {
-                return;
-            }
-
-            if (MapAssistConfiguration.Loaded.GameInfo.AlwaysShow == false && !_show)
-            {
-                return;
-            }
-            var screenW = Screen.PrimaryScreen.WorkingArea.Width;
-            var blackBarWidth = 0;
-            if (screenW > 2880)
-            {
-                blackBarWidth = (screenW - 2880) / 4;
-            }
-            
-            var overlayWidthDiff = screenW - Width;
-            var textXOffset = blackBarWidth + (int)(screenW * .06f) - overlayWidthDiff;
-            var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
-            var fontHeight = (fontSize + fontSize / 2);
-            var font = new Font(MapAssistConfiguration.Loaded.ItemLog.LabelFont, fontSize);
-            var stringFormat = new StringFormat();
-            stringFormat.Alignment = StringAlignment.Near;
-            stringFormat.LineAlignment = StringAlignment.Near;
-
-            var color = Color.Red;
-            e.Graphics.DrawString("Game IP: " + _currentGameData.GameIP, font,
-            new SolidBrush(color),
-            new Point(textXOffset, fontHeight), stringFormat);
-
-            /*stringFormat.Alignment = StringAlignment.Center;
-            stringFormat.LineAlignment = StringAlignment.Near;
-            var stateList = _currentGameData.PlayerUnit.StateList;
-            color = Color.DarkOrange;
-            var stateCount = 0;
-            foreach (var state in stateList)
-            {
-                var stateStr = Enum.GetName(typeof(State), state).Substring(6);
-                e.Graphics.DrawString(stateStr, font,
-                new SolidBrush(color),
-                new Point(screenW / 2, (stateCount * fontHeight)), stringFormat);
-                stateCount++;
-            }*/
-
-            if (MapAssistConfiguration.Loaded.ItemLog.AlwaysShow == false && !_show)
-            {
-                return;
-            }
-
-
-            stringFormat.Alignment = StringAlignment.Near;
-            stringFormat.LineAlignment = StringAlignment.Near;
-            for (var i = 0; i < Items.CurrentItemLog.Count; i++)
-            {
-                color = Items.ItemColors[Items.CurrentItemLog[i].ItemData.ItemQuality];
-                var isEth = (Items.CurrentItemLog[i].ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
-                var itemBaseName = Items.ItemNames[Items.CurrentItemLog[i].TxtFileNo];
-                var itemSpecialName = "";
-                var itemLabelExtra = "";
-                if (isEth)
-                {
-                    itemLabelExtra += "[Eth] ";
-                    color = Items.ItemColors[ItemQuality.SUPERIOR];
-                }
-                if(Items.CurrentItemLog[i].Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
-                {
-                    itemLabelExtra += "[" + numSockets + " S] ";
-                    color = Items.ItemColors[ItemQuality.SUPERIOR];
-                }
-                switch (Items.CurrentItemLog[i].ItemData.ItemQuality)
-                {
-                    case ItemQuality.UNIQUE:
-                        color = Items.ItemColors[Items.CurrentItemLog[i].ItemData.ItemQuality];
-                        itemSpecialName = Items.UniqueFromCode[Items.ItemCodes[Items.CurrentItemLog[i].TxtFileNo]] + " ";
-                        break;
-                    case ItemQuality.SET:
-                        color = Items.ItemColors[Items.CurrentItemLog[i].ItemData.ItemQuality];
-                        itemSpecialName = Items.SetFromCode[Items.ItemCodes[Items.CurrentItemLog[i].TxtFileNo]] + " ";
-                        break;
-                    case ItemQuality.CRAFT:
-                        color = Items.ItemColors[Items.CurrentItemLog[i].ItemData.ItemQuality];
-                        break;
-                    case ItemQuality.RARE:
-                        color = Items.ItemColors[Items.CurrentItemLog[i].ItemData.ItemQuality];
-                        break;
-                    case ItemQuality.MAGIC:
-                        color = Items.ItemColors[Items.CurrentItemLog[i].ItemData.ItemQuality];
-                        break;
-                }
-                e.Graphics.DrawString(itemLabelExtra + itemSpecialName + itemBaseName, font,
-                new SolidBrush(color),
-                new Point(textXOffset, (fontHeight * 2) + (i * (fontSize + fontSize / 2))), stringFormat);
-            }
-
-            if (!_show || Array.Exists(MapAssistConfiguration.Loaded.HiddenAreas, element => element == _currentGameData.Area) || (MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGameMap && !_currentGameData.MapShown) || (_currentGameData.Area == Area.None))
-            {
-                return;
-            }
-
-            UpdateLocation();
-
-            Bitmap gameMap = _compositor.Compose(_currentGameData, !MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode);
-
-            if (MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode)
-            {
-                float w = 0;
-                float h = 0;
-                var scale = 0.0F;
-                var center = new Vector2();
-
-                switch (MapAssistConfiguration.Loaded.RenderingConfiguration.Position)
-                {
-                    case MapPosition.Center:
-                        w = _screen.WorkingArea.Width;
-                        h = _screen.WorkingArea.Height;
-                        scale = (1024.0F / h * w * 3f / 4f / 2.3F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
-                        center = new Vector2(w / 2, h / 2 + 20);
-
-                        e.Graphics.SetClip(new RectangleF(0, 0, w, h));
-                        break;
-                    case MapPosition.TopLeft:
-                        w = 640;
-                        h = 360;
-                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
-                        center = new Vector2(w / 2, (h / 2) + 48);
-
-                        e.Graphics.SetClip(new RectangleF(0, 50, w, h));
-                        break;
-                    case MapPosition.TopRight:
-                        w = 640;
-                        h = 360;
-                        scale = (1024.0F / h * w * 3f / 4f / 3.35F) * MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
-                        center = new Vector2(w / 2, (h / 2) + 40);
-
-                        e.Graphics.TranslateTransform(_screen.WorkingArea.Width - w, -8);
-                        e.Graphics.SetClip(new RectangleF(0, 50, w, h));
-                        break;
-                }
-
-                Point playerPosInArea = _currentGameData.PlayerPosition.OffsetFrom(_areaData.Origin)
-                    .OffsetFrom(_compositor.CropOffset);
-
-                var playerPos = new Vector2(playerPosInArea.X, playerPosInArea.Y);
-
-                Vector2 Transform(Vector2 p) =>
-                    center +
-                    DeltaInWorldToMinimapDelta(
-                        p - playerPos,
-                        (float)Math.Sqrt(w * w + h * h),
-                        scale,
-                        0);
-
-                var p1 = Transform(new Vector2(0, 0));
-                var p2 = Transform(new Vector2(gameMap.Width, 0));
-                var p4 = Transform(new Vector2(0, gameMap.Height));
-
-                PointF[] destinationPoints = {
-                    new PointF(p1.X, p1.Y),
-                    new PointF(p2.X, p2.Y),
-                    new PointF(p4.X, p4.Y)
-                };
-
-                e.Graphics.DrawImage(gameMap, destinationPoints);
-            }
-            else
-            {
-                var anchor = new Point(0, 0);
-                switch (MapAssistConfiguration.Loaded.RenderingConfiguration.Position)
-                {
-                    case MapPosition.Center:
-                        anchor = new Point(_screen.WorkingArea.Width / 2, _screen.WorkingArea.Height / 2);
-                        break;
-                    case MapPosition.TopRight:
-                        anchor = new Point(_screen.WorkingArea.Width - gameMap.Width, 0);
-                        break;
-                    case MapPosition.TopLeft:
-                        anchor = new Point(0, 0);
-                        break;
-                }
-
-                e.Graphics.DrawImage(gameMap, anchor);
-            }
         }
 
         public Vector2 DeltaInWorldToMinimapDelta(Vector2 delta, double diag, float scale, float deltaZ = 0)
@@ -353,14 +403,46 @@ namespace MapAssist
         }
 
         /// <summary>
-        /// Update the location and size of the form relative to the window location.
+        /// Resize overlay to currently active screen
         /// </summary>
         private void UpdateLocation()
         {
-            _screen = Screen.FromHandle(_currentGameData.MainWindowHandle);
-            Location = new Point(_screen.WorkingArea.X, _screen.WorkingArea.Y);
-            Size = new Size(_screen.WorkingArea.Width, _screen.WorkingArea.Height);
-            mapOverlay.Size = Size;
+            var screen = System.Windows.Forms.Screen.FromHandle(_currentGameData.MainWindowHandle);
+            _window.Move(screen.WorkingArea.X, screen.WorkingArea.Y);
+            _window.Resize(screen.WorkingArea.Width, screen.WorkingArea.Height);
+        }
+
+        ~Overlay()
+        {
+            Dispose(false);
+        }
+
+        private void _window_DestroyGraphics(object sender, DestroyGraphicsEventArgs e)
+        {
+            _mapApi?.Dispose();
+
+            foreach (var pair in _brushes) pair.Value.Dispose();
+            foreach (var pair in _fonts) pair.Value.Dispose();
+
+            _compositor = null;
+        }
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                _window.Dispose();
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
