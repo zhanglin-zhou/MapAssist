@@ -179,15 +179,15 @@ namespace MapAssist
                     case MapPosition.TopRight:
                         if (MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode)
                         {
-                            anchor = new Point(_window.Width - smallCornerSize.Width, 0);
+                            anchor = new Point(_window.Width - smallCornerSize.Width, 100);
                         }
                         else
                         {
-                            anchor = new Point(_window.Width - gamemap.Width, 0);
+                            anchor = new Point(_window.Width - gamemap.Width, 100);
                         }                        
                         break;
                     default:
-                        anchor = new Point(LeftSideOffsetStart() + 100, 100);
+                        anchor = new Point(PlayerIconWidth() + 40, 100);
                         break;
                 }
 
@@ -244,17 +244,10 @@ namespace MapAssist
             }
         }
 
-        private int LeftSideOffsetStart()
-        {
-            var blackBarWidth = _window.Width > 2880 ? (_window.Width - 2880) / 4 : 0;
-            return blackBarWidth;
-        }
-
         private void DrawGameInfo(Graphics gfx, string renderDeltaText)
         {
             // Setup
-
-            var textXOffset = LeftSideOffsetStart() + (int)(_window.Width * .06f);
+            var textXOffset = PlayerIconWidth() + 40;
 
             var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
             var fontHeight = (fontSize + fontSize / 2);
@@ -372,8 +365,37 @@ namespace MapAssist
         /// </summary>
         private void UpdateLocation()
         {
-            _window.FitTo(_currentGameData.MainWindowHandle, true);
+            var rect = WindowRect();
+            var ultraWideMargin = UltraWideMargin();
+
+            _window.Resize(rect.Left + ultraWideMargin, rect.Top, rect.Right - rect.Left - ultraWideMargin * 2, rect.Bottom - rect.Top);
             _window.PlaceAbove(_currentGameData.MainWindowHandle);
+        }
+
+        private WindowBounds WindowRect()
+        {
+            WindowBounds rect;
+            WindowHelper.GetWindowClientBounds(_currentGameData.MainWindowHandle, out rect);
+
+            return rect;
+        }
+
+        private Size WindowSize()
+        {
+            var rect = WindowRect();
+            return new Size(rect.Right - rect.Left, rect.Bottom - rect.Top);
+        }
+
+        private int UltraWideMargin()
+        {
+            var size = WindowSize();
+            return (int)Math.Max(Math.Round((size.Width - size.Height * 2.1) / 2), 0);
+        }
+
+        private int PlayerIconWidth()
+        {
+            var size = WindowSize();
+            return (int)Math.Round(size.Height / 20f);
         }
 
         ~Overlay()
