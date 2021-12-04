@@ -22,8 +22,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using MapAssist.Helpers;
 using MapAssist.Interfaces;
+using MapAssist.Settings;
 using MapAssist.Structs;
 
 namespace MapAssist.Types
@@ -98,9 +100,11 @@ namespace MapAssist.Types
 
                                 break;
                             case UnitType.Item:
+                                _itemData = processContext.Read<ItemData>(_unitAny.pUnitData);
                                 if (IsDropped())
                                 {
-                                    _itemData = processContext.Read<ItemData>(_unitAny.pUnitData);
+                                    var processId = processContext.ProcessId;
+                                    Items.LogItem(this, processId);
                                 }
                                 break;
                         }
