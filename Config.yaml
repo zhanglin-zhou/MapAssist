@@ -151,6 +151,8 @@ ItemLog:
   Enabled: true
   FilterFileName: "ItemFilter.yaml"
   PlaySoundOnDrop: true
+  # Must be a .wav file, path relative to MapAssist location
+  SoundFile: ""
   DisplayForSeconds: 45
   LabelFont: "Helvetica"
   LabelFontSize: 14

@@ -220,6 +220,8 @@ public class ItemLogConfiguration
 
     [YamlMember(Alias = "DisplayForSeconds", ApplyNamingConventions = false)]
     public double DisplayForSeconds { get; set; }
+    [YamlMember(Alias = "SoundFile", ApplyNamingConventions = false)]
+    public string SoundFile { get; set; }
 
     [YamlMember(Alias = "LabelFont", ApplyNamingConventions = false)]
     public string LabelFont { get; set; }
