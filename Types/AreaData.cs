@@ -26,9 +26,7 @@ namespace MapAssist.Types
     {
         public Area Area;
         public Point[] Exits;
-        public Point Origin;
-        public int Width;
-        public int Height;
+        public bool IsPortal;
     }
 
     public class AreaData

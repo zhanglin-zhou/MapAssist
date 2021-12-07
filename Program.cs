@@ -56,7 +56,6 @@ namespace MapAssist
                     var isGemActive = rand.NextDouble() < 0.05;
 
                     MessageBox.Show("An instance of " + appName + " is already running." + (isGemActive ? " Better go catch it!" : ""), appName, MessageBoxButtons.OK);
-
                     return;
                 }
 
@@ -69,6 +68,12 @@ namespace MapAssist
 
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
+
+                    if (!MapApi.StartPipedChild())
+                    {
+                        MessageBox.Show("Unable to start d2mapapi pipe.", appName, MessageBoxButtons.OK);
+                        return;
+                    }
 
                     var contextMenu = new ContextMenuStrip();
 
@@ -101,7 +106,7 @@ namespace MapAssist
                             overlay.KeyPressHandler(sender, args);
                         }
                     };
-
+                    
                     backWorkOverlay.DoWork += new DoWorkEventHandler(RunOverlay);
                     backWorkOverlay.WorkerSupportsCancellation = true;
                     backWorkOverlay.RunWorkerAsync();
@@ -237,6 +242,7 @@ namespace MapAssist
             trayIcon.Visible = false;
 
             GameManager.Dispose();
+            MapApi.Dispose();
             globalHook.Dispose();
             overlay.Dispose();
 

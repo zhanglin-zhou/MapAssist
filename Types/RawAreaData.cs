@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -40,41 +41,75 @@ namespace MapAssist.Types
         }
     }
 
-    public class RawAdjacentLevel
+    public class XY2
     {
-        public XY[] exits;
-        public XY origin;
-        public int width;
-        public int height;
+        public int x0;
+        public int y0;
+        public int x1;
+        public int y1;
+    }
+
+    public class Exit
+    {
+        public XY[] offsets;
+        public bool isPortal;
 
         public AdjacentLevel ToInternal(Area area)
         {
             return new AdjacentLevel
             {
                 Area = area,
-                Origin = origin.ToPoint(),
-                Exits = exits.Select(o => o.ToPoint()).ToArray(),
-                Width = width,
-                Height = height,
+                Exits = offsets.Select(o => o.ToPoint()).ToArray(),
+                IsPortal = isPortal,
             };
         }
     }
 
     public class RawAreaData
     {
-        public XY levelOrigin;
-        public Dictionary<string, RawAdjacentLevel> adjacentLevels;
-        public int[][] mapRows;
+        public XY2 crop;
+        public XY offset;
+        public Dictionary<string, Exit> exits;
+        public int[] mapData;
         public Dictionary<string, XY[]> npcs;
         public Dictionary<string, XY[]> objects;
 
         public AreaData ToInternal(Area area)
         {
+            if (exits == null) exits = new Dictionary<string, Exit>();
+            if (npcs == null) npcs = new Dictionary<string, XY[]>();
+            if (objects == null) objects = new Dictionary<string, XY[]>();
+
+            var mapRows = new int[crop.y1 - crop.y0][];
+
+            var y = 0;
+            var x = 0;
+            var val = 1;
+
+            foreach (var v in mapData)
+            {
+                if (mapRows[y] == null)
+                {
+                    mapRows[y] = new int[0];
+                }
+
+                if (v != -1)
+                {
+                    mapRows[y] = mapRows[y].Concat(new int[v].Select(_ => val)).ToArray();
+                    val = 1 - val;
+                }
+                else
+                {
+                    y++;
+                    val = 1;
+                }
+            }
+
             return new AreaData
             {
                 Area = area,
-                Origin = levelOrigin.ToPoint(),
-                AdjacentLevels = adjacentLevels
+                Origin = offset.ToPoint(),
+                AdjacentLevels = exits
                     .Select(o =>
                     {
                         var adjacentArea = Area.None;

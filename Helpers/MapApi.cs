@@ -17,57 +17,108 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using MapAssist.Properties;
 using MapAssist.Settings;
 using MapAssist.Types;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 #pragma warning disable 649
 
 namespace MapAssist.Helpers
 {
-    public class MapApi : IDisposable
+    public class MapApi
     {
-        public static readonly HttpClient Client = HttpClient(MapAssistConfiguration.Loaded.ApiConfiguration.Endpoint, MapAssistConfiguration.Loaded.ApiConfiguration.Token);
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
-        private readonly string _sessionId;
+        private static Process _pipeClient;
+        private static Thread _pipeReaderThread;
+        private static object _pipeRequestLock = new object();
+        private static BlockingCollection<(uint, string)> collection = new BlockingCollection<(uint, string)>();
+        
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
-        private readonly HttpClient _client;
+        private Difficulty _difficulty;
+        private uint _mapSeed;
 
-        private string CreateSession(Difficulty difficulty, uint mapSeed)
+        public static bool StartPipedChild()
         {
-            var values = new Dictionary<string, uint> {{"difficulty", (uint)difficulty}, {"mapid", mapSeed}};
+            File.WriteAllBytes("piped.exe", Resources.piped);
 
-            var json = JsonConvert.SerializeObject(values);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = _client.PostAsync("sessions/", content).GetAwaiter().GetResult();
-            response.EnsureSuccessStatusCode();
-            var session =
-                JsonConvert.DeserializeObject<MapApiSession>(response.Content.ReadAsStringAsync().GetAwaiter()
-                    .GetResult());
-            return session.id;
+            _pipeClient = new Process();
+            _pipeClient.StartInfo.FileName = "piped.exe";
+            _pipeClient.StartInfo.UseShellExecute = false;
+            _pipeClient.StartInfo.RedirectStandardOutput = true;
+            _pipeClient.StartInfo.RedirectStandardInput = true;
+            _pipeClient.StartInfo.RedirectStandardError = true;
+            
+            try
+            {
+                _pipeClient.Start();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            var streamReader = _pipeClient.StandardOutput;
+
+            _pipeReaderThread = new Thread(() =>
+            {
+                Func<int, byte[]> ReadBytes = (length) =>
+                {
+                    var data = new byte[0];
+                    while (data.Length < length)
+                    {
+                        var tryReadLength = length - data.Length;
+                        var chunk = new byte[tryReadLength];
+                        var readLength = streamReader.BaseStream.Read(chunk, 0, tryReadLength);
+
+                        data = Combine(data, chunk.Take(readLength).ToArray());
+                    }
+                    return data;
+                };
+
+                while (true)
+                {
+                    var length = BitConverter.ToUInt32(ReadBytes(4), 0);
+
+                    if (length == 0)
+                    {
+                        collection.Add((0, null));
+                        continue;
+                    }
+
+                    var json = Encoding.UTF8.GetString(ReadBytes((int)length));
+                    var jsonObj = JObject.Parse(json);
+
+                    if (jsonObj.ContainsKey("error"))
+                    {
+                        _log.Error(jsonObj["error"].ToString());
+                        continue;
+                    }
+
+                    collection.Add((length, json));
+                }
+            });
+            _pipeReaderThread.Start();
+
+            var (startupLength, _) = collection.Take();
+            return startupLength == 0;
         }
-
-        private void DestroySession(string sessionId)
+        
+        public MapApi(Difficulty difficulty, uint mapSeed)
         {
-            HttpResponseMessage response =
-                _client.DeleteAsync("sessions/" + sessionId).GetAwaiter().GetResult();
-            response.EnsureSuccessStatusCode();
-        }
+            _difficulty = difficulty;
+            _mapSeed = mapSeed;
 
-        public MapApi(HttpClient client, Difficulty difficulty, uint mapSeed)
-        {
-            _client = client;
-            _sessionId = CreateSession(difficulty, mapSeed);
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
 
@@ -123,53 +174,57 @@ namespace MapAssist.Helpers
 
         private AreaData GetMapDataInternal(Area area)
         {
-            HttpResponseMessage response = _client.GetAsync("sessions/" + _sessionId +
-                                                            "/areas/" + (uint)area).GetAwaiter().GetResult();
-            response.EnsureSuccessStatusCode();
-            var content = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var rawMapData = JsonConvert.DeserializeObject<RawAreaData>(content);
-            return rawMapData.ToInternal(area);
-        }
+            var req = new Req();
+            req.seed = _mapSeed;
+            req.difficulty = (uint)_difficulty;
+            req.levelId = (uint)area;
 
-        private static HttpClient HttpClient(string endpoint, string token)
-        {
-            var client = new HttpClient(new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            }) {BaseAddress = new Uri(endpoint)};
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
-            client.DefaultRequestHeaders.AcceptEncoding.Add(
-                new StringWithQualityHeaderValue("gzip"));
-            client.DefaultRequestHeaders.AcceptEncoding.Add(
-                new StringWithQualityHeaderValue("deflate"));
-            if (!string.IsNullOrEmpty(token))
-            {
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
-            }
+            var writer = _pipeClient.StandardInput;
 
-            return client;
-        }
+            var data = ToBytes(req);
+            lock (_pipeRequestLock)
+            {
+                writer.BaseStream.Write(data, 0, data.Length);
+                writer.BaseStream.Flush();
 
-        public void Dispose()
-        {
-            try
-            {
-                DestroySession(_sessionId);
-            }
-            catch (HttpRequestException) // Prevent HttpRequestException if D2MapAPI is closed before this program.
-            {
-                _log.Info("D2MapAPI server was closed, session was already destroyed.");
+                var (length, json) = collection.Take();
+                var rawAreaData = JsonConvert.DeserializeObject<RawAreaData>(json);
+
+                return rawAreaData.ToInternal(area);
             }
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "ReSharper")]
-        private class MapApiSession
+        public static byte[] Combine(byte[] first, byte[] second)
         {
-            public string id;
+            var ret = new byte[first.Length + second.Length];
+            Buffer.BlockCopy(first, 0, ret, 0, first.Length);
+            Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
+            return ret;
+        }
+
+        private static byte[] ToBytes(Req req)
+        {
+            var size = Marshal.SizeOf(req);
+            var arr = new byte[size];
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(req, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+            Marshal.FreeHGlobal(ptr);
+            return arr;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        private struct Req
+        {
+            public uint seed;
             public uint difficulty;
-            public uint mapId;
+            public uint levelId;
+        }
+
+        public static void Dispose()
+        {
+            _pipeReaderThread.Abort();
         }
     }
 }

@@ -39,8 +39,7 @@ namespace MapAssist.Helpers
                     {
                         if (gameData.HasGameChanged(_gameData))
                         {
-                            _mapApi?.Dispose();
-                            _mapApi = new MapApi(MapApi.Client, gameData.Difficulty, gameData.MapSeed);
+                            _mapApi = new MapApi(gameData.Difficulty, gameData.MapSeed);
                         }
 
                         if (gameData.HasMapChanged(_gameData))
@@ -70,7 +69,6 @@ namespace MapAssist.Helpers
         {
             _updateTimer.Stop();
             _updateTimer.Dispose();
-            _mapApi?.Dispose();
         }
     }
 }
