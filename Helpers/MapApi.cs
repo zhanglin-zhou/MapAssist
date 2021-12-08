@@ -20,6 +20,7 @@
 using MapAssist.Properties;
 using MapAssist.Settings;
 using MapAssist.Types;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -31,6 +32,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using Path = System.IO.Path;
 
 #pragma warning disable 649
 
@@ -43,7 +45,7 @@ namespace MapAssist.Helpers
         private static Thread _pipeReaderThread;
         private static object _pipeRequestLock = new object();
         private static BlockingCollection<(uint, string)> collection = new BlockingCollection<(uint, string)>();
-        
+
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private Difficulty _difficulty;
         private uint _mapSeed;
@@ -52,18 +54,21 @@ namespace MapAssist.Helpers
         {
             File.WriteAllBytes("piped.exe", Resources.piped);
 
+            var path = FindD2();
+            
             _pipeClient = new Process();
             _pipeClient.StartInfo.FileName = "piped.exe";
+            _pipeClient.StartInfo.Arguments = path;
             _pipeClient.StartInfo.UseShellExecute = false;
             _pipeClient.StartInfo.RedirectStandardOutput = true;
             _pipeClient.StartInfo.RedirectStandardInput = true;
             _pipeClient.StartInfo.RedirectStandardError = true;
-            
+
             try
             {
                 _pipeClient.Start();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -83,6 +88,7 @@ namespace MapAssist.Helpers
 
                         data = Combine(data, chunk.Take(readLength).ToArray());
                     }
+
                     return data;
                 };
 
@@ -114,6 +120,46 @@ namespace MapAssist.Helpers
             return startupLength == 0;
         }
         
+        private static string FindD2()
+        {
+            var providedPath = MapAssistConfiguration.Loaded.D2Path;
+            if (!string.IsNullOrEmpty(providedPath))
+            {
+                if (Path.HasExtension(providedPath))
+                {
+                    throw new Exception("Provided D2 Path is not set to a directory");
+                }
+
+                if (IsValidD2Path(providedPath))
+                {
+                    _log.Info("User provided D2 path is valid");
+                    return providedPath;
+                }
+
+                _log.Info("User provided D2 path is invalid");
+                throw new Exception("Provided D2 Path is not the correct version");
+            }
+            
+            var retrieved = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Blizzard Entertainment\\Diablo II", "InstallPath", "INVALID");
+            var installPath = retrieved as string;
+            if (installPath == "INVALID" || !IsValidD2Path(installPath))
+            {
+                _log.Info("Registry provided D2 path not found or invalid");
+                throw new Exception("Unable to automatically locate D2 installation. Please provide path manually in the config at `D2Path`.");
+            }
+            
+            _log.Info("Registry provided D2 path is valid");
+            return installPath;
+        }
+
+        private static bool IsValidD2Path(string path)
+        {
+            var gamePath = Path.Combine(path, "game.exe");
+            var version = FileVersionInfo.GetVersionInfo(gamePath);
+            return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
+                   version.FilePrivatePart == 60;
+        }
+
         public MapApi(Difficulty difficulty, uint mapSeed)
         {
             _difficulty = difficulty;

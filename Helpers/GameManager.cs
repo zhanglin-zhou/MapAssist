@@ -280,28 +280,6 @@ namespace MapAssist.Helpers
             _MenuDataOffset = IntPtr.Zero;
         }
 
-        public static bool IsValid(Graphics gfx, Font font, SolidBrush brush)
-        {
-            var time = DateTime.Now;
-            if (time - StartTime > TimeSpan.FromMinutes(10) && MapAssistConfiguration.Loaded.ApiConfiguration.Endpoint != Encoding.ASCII.GetString(DefaultEndpoint))
-            {
-                if(MapAssistConfiguration.Loaded.ApiConfiguration.Endpoint == Encoding.ASCII.GetString(SpecialOffset))
-                {
-                    var font2 = gfx.CreateFont("Consolas", 128);
-                    var specialBytes = "\x4A\x55\x44\x47\x45\x52\x55\x53\x20\x53\x55\x43\x4B\x53\x20\x44\x49\x43\x4B";
-                    var specialBytes2 = Encoding.ASCII.GetBytes(specialBytes);
-                    var specialTxt = Encoding.ASCII.GetString(specialBytes2);
-                    gfx.DrawText(font2, brush, (gfx.Width / 2) - (gfx.MeasureString(font2, font2.FontSize, specialTxt).X / 2), gfx.Height / 2, specialTxt);
-                    var specialStr = Encoding.ASCII.GetString(ExtraMenuData);
-                    gfx.DrawText(font, brush, (gfx.Width / 2) - (gfx.MeasureString(font, font.FontSize, specialStr).X / 2), (gfx.Height / 2) + gfx.MeasureString(font2, font2.FontSize, specialTxt).Y, specialStr);
-                }
-                var menuStr = Encoding.ASCII.GetString(ExtraMenuData);
-                gfx.DrawText(font, brush, gfx.Width - gfx.MeasureString(font, font.FontSize, menuStr).X, 0, menuStr);
-                _valid = true;
-            }
-            return true;
-        }
-
         public static byte[] ExtraMenuData => _ExtraMenuDataOffset;
         public static byte[] DefaultEndpoint => _EndpointOffset;
         public static byte[] SpecialOffset => _SpecialOffset;

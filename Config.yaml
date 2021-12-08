@@ -160,10 +160,10 @@ GameInfo:
 ## HuntingIP - Set an IP address to display in green instead of red
 HuntingIP: 'x.x.x.x'
 
-## ApiConfiguration - Connection to d2mapapi service
-ApiConfiguration:
-  Endpoint: 'http://localhost:8080/'
-  Token: ''
+## Path to D2LOD installation. Optional.
+## Should only need to provide if we are not able to look it up
+## automatically via the registry
+D2Path: ''
 
 ## UpdateTime - Advanced setting for how often to read the game memory in ms
 UpdateTime: 30
