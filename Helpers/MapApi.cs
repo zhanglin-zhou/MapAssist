@@ -278,7 +278,10 @@ namespace MapAssist.Helpers
 
         public static void Dispose()
         {
-            _pipeClient.Close();
+            try { _pipeClient.Kill(); } catch (Exception) { }
+            try { _pipeClient.Close(); } catch (Exception) { }
+            try { _pipeClient.Dispose(); } catch (Exception) { }
+            
             _pipeReaderThread.Abort();
         }
     }

@@ -17,225 +17,46 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using MapAssist.Settings;
+using MapAssist.Structs;
+using MapAssist.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using MapAssist.Types;
-using MapAssist.Settings;
-using MapAssist.Structs;
 using System.Linq;
 
 namespace MapAssist.Helpers
 {
-    public class Compositor
+    public class Compositor : IDisposable
     {
         private readonly AreaData _areaData;
         private readonly PointF _origCenter;
         private readonly PointF _rotatedCenter;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
-        private readonly Dictionary<(string, int), Font> _fontCache = new Dictionary<(string, int), Font>();
-        private readonly int _rotateDegrees = 45;
+        private readonly float _rotateRadians = (float)(45 * Math.PI / 180f);
 
-        private readonly Dictionary<(Shape, int, Color, float, float), Bitmap> _iconCache =
-            new Dictionary<(Shape, int, Color, float, float), Bitmap>();
-
-        private Bitmap background;
-        private Bitmap scaledBackground;
+        private Bitmap gamemap;
+        private SharpDX.Direct2D1.Bitmap gamemapDx;
         private float scaleWidth = 1;
         private float scaleHeight = 1;
-        private float lastZoom = -1;
         private const int WALKABLE = 0;
         private const int UNWALKABLE = 1;
+
 
         public Compositor(AreaData areaData, IReadOnlyList<PointOfInterest> pointsOfInterest)
         {
             _areaData = areaData;
             _pointsOfInterest = pointsOfInterest;
-            (background, _origCenter, _rotatedCenter) = DrawBackground(areaData, pointsOfInterest);
+            (gamemap, _origCenter, _rotatedCenter) = ComposeGamemap(areaData, pointsOfInterest);
         }
 
-        public (Bitmap, PointF) Compose(GameData gameData)
+        private (Bitmap, PointF, PointF) ComposeGamemap(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
         {
-            if (gameData.Area != _areaData.Area)
-            {
-                throw new ApplicationException("Asked to compose an image for a different area." +
-                                               $"Compositor area: {_areaData.Area}, Game data: {gameData.Area}");
-            }
-
-            var image = (Bitmap)background.Clone();
-
-            if (lastZoom != MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel)
-            {
-                (scaleWidth, scaleHeight) = CalcResizeRatios(image);
-
-                image = ImageUtils.ResizeImage(image, (int)(image.Width * scaleWidth), (int)(image.Height * scaleHeight));
-
-                scaledBackground = (Bitmap)image.Clone();
-
-                lastZoom = MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel;
-            }
-            else
-            {
-                image = (Bitmap)scaledBackground.Clone();
-            }
-
-            var localPlayerPosition = AdjustedPoint(gameData.PlayerPosition);
-
-            using (var gfx = Graphics.FromImage(image))
-            {
-                gfx.CompositingQuality = CompositingQuality.HighQuality;
-                gfx.InterpolationMode = InterpolationMode.Bicubic;
-                gfx.SmoothingMode = SmoothingMode.HighQuality;
-                gfx.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                foreach (PointOfInterest poi in _pointsOfInterest)
-                {
-                    var poiIcon = GetIcon(poi.RenderingSettings);
-                    var poiPosition = AdjustedPoint(poi.Position);
-
-                    if (poi.RenderingSettings.CanDrawIcon())
-                    {
-                        gfx.DrawImage(poiIcon, poiPosition.OffsetFrom(GetIconOffset(poi.RenderingSettings)));
-                    }
-
-                    if (poi.RenderingSettings.CanDrawLine())
-                    {
-                        var pen = new Pen(poi.RenderingSettings.LineColor, poi.RenderingSettings.LineThickness);
-
-                        if (poi.RenderingSettings.CanDrawArrowHead())
-                        {
-                            pen.CustomEndCap = new AdjustableArrowCap(poi.RenderingSettings.ArrowHeadSize, poi.RenderingSettings.ArrowHeadSize);
-                        }
-
-                        gfx.DrawLine(pen, localPlayerPosition, poiPosition);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(poi.Label) && poi.RenderingSettings.CanDrawLabel())
-                    {
-                        var poiFont = GetFont(poi.RenderingSettings);
-
-                        var stringSize = gfx.MeasureString(poi.Label, poiFont);
-
-                        gfx.DrawString(poi.Label, poiFont, new SolidBrush(poi.RenderingSettings.LabelColor), poiPosition.OffsetFrom(stringSize.Center()).OffsetFrom(new PointF(0, poiIcon.Height)));
-                    }
-                }
-
-                if (MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon())
-                {
-                    var playerIcon = GetIcon(MapAssistConfiguration.Loaded.MapConfiguration.Player);
-                    var playerPosition = localPlayerPosition.OffsetFrom(GetIconOffset(MapAssistConfiguration.Loaded.MapConfiguration.Player));
-                    gfx.DrawImage(playerIcon, playerPosition);
-                }
-
-                var monsterRenderingOrder = new IconRendering[]
-                {
-                    MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster,
-                    MapAssistConfiguration.Loaded.MapConfiguration.EliteMonster,
-                    MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster,
-                    MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster,
-                };
-
-                foreach (var mobRender in monsterRenderingOrder)
-                {
-                    foreach (var unitAny in gameData.Monsters)
-                    {
-                        if (mobRender == GetMonsterIconRendering(unitAny.MonsterData) && mobRender.CanDrawIcon())
-                        {
-                            var icon = GetIcon(mobRender);
-                            var monsterPosition = AdjustedPoint(unitAny.Position).OffsetFrom(GetIconOffset(mobRender));
-
-                            gfx.DrawImage(icon, monsterPosition);
-                        }
-                    }
-                }
-
-                foreach (var mobRender in monsterRenderingOrder)
-                {
-                    foreach (var unitAny in gameData.Monsters)
-                    {
-                        if (mobRender == GetMonsterIconRendering(unitAny.MonsterData) && mobRender.CanDrawIcon())
-                        {
-                            var icon = GetIcon(mobRender);
-                            var monsterPosition = AdjustedPoint(unitAny.Position).OffsetFrom(GetIconOffset(mobRender));
-
-                            // Draw Monster Immunities on top of monster icon
-                            var iCount = unitAny.Immunities.Count;
-                            if (iCount > 0)
-                            {
-                                var rectSize = mobRender.IconSize / 4f; // Arbirarily made the size set to 1/4rd of the mob icon size. The import point is that it scales with the mob icon consistently.
-                                var dx = rectSize * scaleWidth * 1.5f; // Amount of space each indicator will take up, including spacing (which is the 1.5)
-
-                                var iX = -icon.Width / 2f // Start at the center of the mob icon
-                                    + (rectSize * scaleWidth) / 2f // Make sure the center of the indicator lines up with the center of the mob icon
-                                    - dx * (iCount - 1) / 2f; // Moves the first indicator sufficiently left so that the whole group of indicators will be centered.
-
-                                foreach (var immunity in unitAny.Immunities)
-                                {
-                                    var iPoint = new PointF(iX, icon.Height / 2f - icon.Height / 6f); // 1/6th of the height just helps move the icon a bit vertically to make it look nicer. Purely arbitrary.
-                                    var brush = new SolidBrush(ResistColors.ResistColor[immunity]);
-                                    var rect = new Rectangle(monsterPosition.OffsetFrom(iPoint).ToPoint(), new SizeF(rectSize * scaleWidth, rectSize * scaleWidth).ToSize()); // Scale both by the width since width isn't impacted by depth in overlay mode
-                                    gfx.FillEllipse(brush, rect);
-                                    iX += dx;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (MapAssistConfiguration.Loaded.ItemLog.Enabled)
-                {
-                    var font = new Font(MapAssistConfiguration.Loaded.MapConfiguration.Item.LabelFont, MapAssistConfiguration.Loaded.MapConfiguration.Item.LabelFontSize);
-                    foreach (var item in gameData.Items)
-                    {
-                        if (item.IsDropped())
-                        {
-                            if (!LootFilter.Filter(item))
-                            {
-                                continue;
-                            }
-                            var color = Items.ItemColors[item.ItemData.ItemQuality];
-                            var icon = GetIcon(MapAssistConfiguration.Loaded.MapConfiguration.Item);
-                            var itemPosition = AdjustedPoint(item.Position);
-                            var itemBaseName = Items.ItemNames[item.TxtFileNo];
-
-                            var stringSize = gfx.MeasureString(itemBaseName, font);
-
-                            gfx.DrawImage(icon, itemPosition.OffsetFrom(GetIconOffset(MapAssistConfiguration.Loaded.MapConfiguration.Item)));
-                            gfx.DrawString(itemBaseName, font, new SolidBrush(color), itemPosition.OffsetFrom(stringSize.Center()).OffsetFrom(new Point(0, icon.Height)));
-                        }
-                    }
-                }
-            }
-
-            return (image, localPlayerPosition);
-        }
-
-        private static IconRendering GetMonsterIconRendering(MonsterData monsterData)
-        {
-            if ((monsterData.MonsterType & MonsterTypeFlags.SuperUnique) == MonsterTypeFlags.SuperUnique)
-            {
-                return MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
-            }
-
-            if ((monsterData.MonsterType & MonsterTypeFlags.Unique) == MonsterTypeFlags.Unique)
-            {
-                return MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
-            }
-
-            if (monsterData.MonsterType > 0)
-            {
-                return MapAssistConfiguration.Loaded.MapConfiguration.EliteMonster;
-            }
-
-            return MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
-        }
-
-        private (Bitmap, PointF, PointF) DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
-        {
-            background = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length, PixelFormat.Format32bppArgb);
-            using (var gfx = Graphics.FromImage(background))
+            var gamemap = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length, PixelFormat.Format32bppArgb);
+            
+            using (var gfx = Graphics.FromImage(gamemap))
             {
                 gfx.CompositingQuality = CompositingQuality.HighQuality;
                 gfx.InterpolationMode = InterpolationMode.Bicubic;
@@ -270,7 +91,7 @@ namespace MapAssist.Helpers
 
                             if (type == WALKABLE && maybeWalkableColor != null)
                             {
-                                background.SetPixel(1 + x, 1 + y, walkableColor);
+                                gamemap.SetPixel(x, y, walkableColor);
                             }
 
                             var maxXValue = areaData.CollisionGrid[y].Length;
@@ -278,7 +99,7 @@ namespace MapAssist.Helpers
                             {
                                 var dy = y + offset[0];
                                 var dx = x + offset[1];
-                                
+
                                 var offsetsInBounds =
                                     dy >= 0 && dy < maxYValue &&
                                     dx >= 0 && dx < maxXValue;
@@ -287,7 +108,7 @@ namespace MapAssist.Helpers
 
                                 if (maybeBorderColor != null && nextToWalkable)
                                 {
-                                    background.SetPixel(x, y, borderColor);
+                                    gamemap.SetPixel(x, y, borderColor);
                                     break;
                                 }
                             }
@@ -296,29 +117,519 @@ namespace MapAssist.Helpers
                 }
             }
 
-            var center = background.Center();
-            background = ImageUtils.RotateImage(background, _rotateDegrees, true, false, Color.Transparent);
-            var rotatedCenter = background.Center();
+            var center = gamemap.Center();
+            var newBackground = ImageUtils.RotateImage(gamemap, _rotateRadians, true, false, Color.Transparent);
+            var rotatedCenter = newBackground.Center();
 
-            return (background, center, rotatedCenter);
+            gamemap.Dispose();
+
+            return (newBackground, center, rotatedCenter);
         }
 
-        private PointF AdjustedPoint(PointF p)
+        // Drawing each frame
+        public void DrawGamemap(GameOverlay.Drawing.Graphics gfx, GameData gameData, PointF anchor)
         {
-            var newP = p.OffsetFrom(_areaData.Origin).Rotate(_rotateDegrees, _origCenter)
-                .OffsetFrom(_origCenter.OffsetFrom(_rotatedCenter))
-                .Multiply(scaleWidth, scaleHeight);
+            if (gameData.Area != _areaData.Area)
+            {
+                throw new ApplicationException("Asked to compose an image for a different area." +
+                                               $"Compositor area: {_areaData.Area}, Game data: {gameData.Area}");
+            }
 
-            return newP;
+            if (gamemapDx == null)
+            {
+                SharpDX.Direct2D1.RenderTarget renderTarget = gfx.GetRenderTarget();
+                gamemapDx = gamemap.ToDXBitmap(renderTarget);
+            }
+
+            DrawBitmap(gfx, gamemapDx, anchor, MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity, preventGameBarOverlap: true);
         }
 
-        private (float, float) CalcResizeRatios(Bitmap image)
+        public void DrawGameInfo(GameOverlay.Drawing.Graphics gfx, GameData gameData, PointF anchor, GameOverlay.Windows.DrawGraphicsEventArgs e)
+        {
+            if (gameData.MenuPanelOpen >= 2)
+            {
+                return;
+            }
+
+            // Setup
+            var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+            var fontHeight = (fontSize + fontSize / 2f);
+
+            // Game IP
+            if (MapAssistConfiguration.Loaded.GameInfo.Enabled)
+            {
+                var fontColor = gameData.GameIP == MapAssistConfiguration.Loaded.HuntingIP ? Color.Green : Color.Red;
+
+                var font = CreateFont(gfx, "Consolas", 14);
+                var brush = CreateSolidBrush(gfx, fontColor);
+
+                var ipText = "Game IP: " + gameData.GameIP;
+                gfx.DrawText(font, brush, anchor.ToGameOverlayPoint(), ipText);
+              
+                anchor.Y += fontHeight + 5;
+
+                // Overlay FPS
+                if (MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS)
+                {
+                    brush = CreateSolidBrush(gfx, Color.FromArgb(0, 255, 0));
+                    
+                    var fpsText = "FPS: " + gfx.FPS.ToString();
+                    var renderText = "DeltaTime: " + e.DeltaTime.ToString();
+                    var spaceBetween = 20;
+
+                    var stringSize = gfx.MeasureString(font, fpsText.ToString());
+                    gfx.DrawText(font, brush, anchor.ToGameOverlayPoint(), fpsText.ToString());
+
+                    gfx.DrawText(font, brush, anchor.Add(stringSize.X + spaceBetween, 0).ToGameOverlayPoint(), renderText.ToString());
+                }
+            }
+
+            anchor.Y += fontHeight + 5;
+
+            DrawItemLog(gfx, gameData, anchor);
+        }
+
+        public void DrawItemLog(GameOverlay.Drawing.Graphics gfx, GameData gameData, PointF anchor)
+        {
+            if (gameData.MenuPanelOpen >= 2)
+            {
+                return;
+            }
+
+            // Setup
+            var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+            var fontHeight = (fontSize + fontSize / 2f);
+
+            // Item Log
+            var ItemLog = Items.CurrentItemLog.ToArray();
+            for (var i = 0; i < ItemLog.Length; i++)
+            {
+                var fontColor = Items.ItemColors[ItemLog[i].ItemData.ItemQuality];
+
+                var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
+                
+                var isEth = (ItemLog[i].ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
+                var itemBaseName = Items.ItemNames[ItemLog[i].TxtFileNo];
+                var itemSpecialName = "";
+                var itemLabelExtra = "";
+                
+                if (isEth)
+                {
+                    itemLabelExtra += "[Eth] ";
+                    fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                }
+
+                if (ItemLog[i].Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
+                {
+                    itemLabelExtra += "[" + numSockets + " S] ";
+                    fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                }
+
+                var brush = CreateSolidBrush(gfx, fontColor);
+                
+                switch (ItemLog[i].ItemData.ItemQuality)
+                {
+                    case ItemQuality.UNIQUE:
+                        itemSpecialName = Items.UniqueFromCode[Items.ItemCodes[ItemLog[i].TxtFileNo]] +
+                                          " ";
+                        break;
+                    case ItemQuality.SET:
+                        itemSpecialName = Items.SetFromCode[Items.ItemCodes[ItemLog[i].TxtFileNo]] + " ";
+                        break;
+                }
+
+                gfx.DrawText(font, brush, anchor.Add(0, i * fontHeight).ToGameOverlayPoint(), itemLabelExtra + itemSpecialName + itemBaseName);
+            }
+        }
+
+        public void DrawOverlay(GameOverlay.Drawing.Graphics gfx, GameData gameData, PointF anchor)
+        {
+            var playerPosition = PlayerPosition(gameData).Add(anchor);
+
+            foreach (PointOfInterest poi in _pointsOfInterest)
+            {
+                var poiPosition = AdjustedPoint(poi.Position).Add(anchor);
+
+                if (poi.RenderingSettings.CanDrawIcon())
+                {
+                    DrawIcon(gfx, poi.RenderingSettings, poiPosition);
+                }
+
+                if (poi.RenderingSettings.CanDrawLine())
+                {
+                    DrawLine(gfx, poi.RenderingSettings, playerPosition, poiPosition);
+                }
+
+                if (!string.IsNullOrWhiteSpace(poi.Label) && poi.RenderingSettings.CanDrawLabel())
+                {
+                    var font = CreateFont(gfx, poi.RenderingSettings.LabelFont, poi.RenderingSettings.LabelFontSize);
+                    var brush = CreateSolidBrush(gfx, poi.RenderingSettings.LabelColor);
+                    var iconShape = GetIconShape(poi.RenderingSettings).ToSizeF();
+
+                    var stringSize = gfx.MeasureString(font, poi.Label);
+                    gfx.DrawText(font, brush, poiPosition.Subtract(stringSize.Center()).Subtract(new PointF(0, stringSize.Y / 2 + iconShape.Height)).ToGameOverlayPoint(), poi.Label);
+                }
+            }
+
+            var monsterRenderingOrder = new IconRendering[]
+            {
+                MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster,
+                MapAssistConfiguration.Loaded.MapConfiguration.EliteMonster,
+                MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster,
+                MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster,
+            };
+
+            foreach (var mobRender in monsterRenderingOrder)
+            {
+                foreach (var unitAny in gameData.Monsters)
+                {
+                    if (mobRender == GetMonsterIconRendering(unitAny.MonsterData) && mobRender.CanDrawIcon())
+                    {
+                        var monsterPosition = AdjustedPoint(unitAny.Position).Add(anchor);
+
+                        DrawIcon(gfx, mobRender, monsterPosition);
+                    }
+                }
+            }
+
+            foreach (var mobRender in monsterRenderingOrder)
+            {
+                foreach (var unitAny in gameData.Monsters)
+                {
+                    if (mobRender == GetMonsterIconRendering(unitAny.MonsterData) && mobRender.CanDrawIcon())
+                    {
+                        var monsterPosition = AdjustedPoint(unitAny.Position).Add(anchor);
+
+                        // Draw Monster Immunities on top of monster icon
+                        var iCount = unitAny.Immunities.Count;
+                        if (iCount > 0)
+                        {
+                            var iconShape = GetIconShape(mobRender).ToSizeF();
+
+                            var ellipseSize = iconShape.Height / 10f; // Arbirarily set to be a fraction of the the mob icon size. The important point is that it scales with the mob icon consistently.
+                            var dx = ellipseSize * scaleWidth * 1.5f; // Amount of space each indicator will take up, including spacing (which is the 1.5)
+
+                            var iX = -dx * (iCount - 1) / 2f; // Moves the first indicator sufficiently left so that the whole group of indicators will be centered.
+
+                            foreach (var immunity in unitAny.Immunities)
+                            {
+                                var render = new IconRendering()
+                                {
+                                    IconShape = Shape.Ellipse,
+                                    IconColor = ResistColors.ResistColor[immunity],
+                                    IconSize = ellipseSize
+                                };
+
+                                var iPoint = monsterPosition.Add(new PointF(iX, -iconShape.Height));
+                                DrawIcon(gfx, render, iPoint);
+                                iX += dx;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (MapAssistConfiguration.Loaded.ItemLog.Enabled)
+            {
+                var font = CreateFont(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Item.LabelFont, MapAssistConfiguration.Loaded.MapConfiguration.Item.LabelFontSize);
+
+                foreach (var item in gameData.Items)
+                {
+                    if (item.IsDropped())
+                    {
+                        if (!LootFilter.Filter(item))
+                        {
+                            continue;
+                        }
+
+                        var itemPosition = AdjustedPoint(item.Position).Add(anchor);
+                        var render = MapAssistConfiguration.Loaded.MapConfiguration.Item;
+
+                        DrawIcon(gfx, render, itemPosition);
+
+                        var color = Items.ItemColors[item.ItemData.ItemQuality];
+                        var brush = CreateSolidBrush(gfx, color);
+                        var itemBaseName = Items.ItemNames[item.TxtFileNo];
+                        var iconShape = GetIconShape(render).ToSizeF();
+
+                        var stringSize = gfx.MeasureString(font, itemBaseName);
+                        gfx.DrawText(font, brush, itemPosition.Subtract(stringSize.Center()).Subtract(new PointF(0, stringSize.Y / 2 + iconShape.Height)).ToGameOverlayPoint(), itemBaseName);
+                    }
+                }
+            }
+
+            if (MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon())
+            {
+                DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Player, playerPosition);
+            }
+        }
+
+        public void DrawBuffs(GameOverlay.Drawing.Graphics gfx, GameData gameData)
+        {
+            var stateList = gameData.PlayerUnit.StateList;
+            var buffColors = new List<Color>();
+            var buffImageScale = MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize;
+            var imgDimensions = 48f * buffImageScale;
+
+            var buffAlignment = MapAssistConfiguration.Loaded.RenderingConfiguration.BuffPosition;
+            var buffYPos = 0f;
+            switch (buffAlignment)
+            {
+                case BuffPosition.Player:
+                    buffYPos = (gfx.Height / 2f) - imgDimensions - (gfx.Height * .12f);
+                    break;
+                case BuffPosition.Top:
+                    buffYPos = gfx.Height * .12f;
+                    break;
+                case BuffPosition.Bottom:
+                    buffYPos = gfx.Height * .8f;
+                    break;
+
+            }
+
+            var buffsByColor = new Dictionary<Color, List<SharpDX.Direct2D1.Bitmap>>();
+            var totalBuffs = 0;
+
+            buffsByColor.Add(States.DebuffColor, new List<SharpDX.Direct2D1.Bitmap>());
+            buffsByColor.Add(States.PassiveColor, new List<SharpDX.Direct2D1.Bitmap>());
+            buffsByColor.Add(States.AuraColor, new List<SharpDX.Direct2D1.Bitmap>());
+            buffsByColor.Add(States.BuffColor, new List<SharpDX.Direct2D1.Bitmap>());
+            
+            foreach (var state in stateList)
+            {
+                var stateStr = Enum.GetName(typeof(State), state).Substring(6);
+                var resImg = Properties.Resources.ResourceManager.GetObject(stateStr);
+
+                if (resImg != null)
+                {
+                    Color buffColor = States.StateColor(state);
+                    buffColors.Add(buffColor);
+                    if (buffsByColor.TryGetValue(buffColor, out var _))
+                    {
+                        buffsByColor[buffColor].Add(CreateResourceBitmap(gfx, stateStr));
+                        totalBuffs++;
+                    }
+                }
+            }
+            
+            var buffIndex = 1;
+            foreach (var buff in buffsByColor)
+            {
+                for (var i = 0; i < buff.Value.Count; i++)
+                {
+                    var buffImg = buff.Value[i];
+                    var buffColor = buff.Key;
+                    var drawPoint = new PointF((gfx.Width / 2f) - (buffIndex * imgDimensions) - (buffIndex * buffImageScale) - (totalBuffs * buffImageScale / 2f) + (totalBuffs * imgDimensions / 2f) + (totalBuffs * buffImageScale), buffYPos);
+                    DrawBitmap(gfx, buffImg, drawPoint, 1, size: buffImageScale, zoomScaling: false);
+
+                    var pen = new Pen(buffColor, buffImageScale);
+                    if (buffColor == States.DebuffColor)
+                    {
+                        var size = new SizeF(imgDimensions - buffImageScale + buffImageScale + buffImageScale, imgDimensions - buffImageScale + buffImageScale + buffImageScale);
+                        var rect = new GameOverlay.Drawing.Rectangle(drawPoint.X, drawPoint.Y, drawPoint.X + size.Width, drawPoint.Y + size.Height);
+
+                        var debuffColor = States.DebuffColor;
+                        debuffColor = Color.FromArgb(100, debuffColor.R, debuffColor.G, debuffColor.B);
+                        var brush = CreateSolidBrush(gfx, debuffColor);
+
+                        gfx.FillRectangle(brush, rect);
+                        gfx.DrawRectangle(brush, rect, 1);
+                    }
+                    else
+                    {
+                        var size = new SizeF(imgDimensions - buffImageScale + buffImageScale, imgDimensions - buffImageScale + buffImageScale);
+                        var rect = new GameOverlay.Drawing.Rectangle(drawPoint.X, drawPoint.Y, drawPoint.X + size.Width, drawPoint.Y + size.Height);
+
+                        var brush = CreateSolidBrush(gfx, buffColor);
+                        gfx.DrawRectangle(brush, rect, 1);
+                    }
+
+                    buffIndex++;
+                }
+            }
+        }
+
+        // Utility Functions
+        private void DrawBitmap(GameOverlay.Drawing.Graphics gfx, SharpDX.Direct2D1.Bitmap bitmapDx, PointF anchor, float opacity,
+            float size = 1, bool zoomScaling = true, bool preventGameBarOverlap = false)
+        {
+            var scaling = new PointF((zoomScaling ? scaleWidth : 1) * size, (zoomScaling ? scaleHeight : 1) * size);
+
+            SharpDX.Direct2D1.RenderTarget renderTarget = gfx.GetRenderTarget();
+
+            var sourceRect = new SharpDX.Mathematics.Interop.RawRectangleF(0, 0, bitmapDx.Size.Width, bitmapDx.Size.Height);
+            var destRect = new SharpDX.Mathematics.Interop.RawRectangleF(
+                anchor.X,
+                anchor.Y,
+                anchor.X + bitmapDx.Size.Width * scaling.X,
+                anchor.Y + bitmapDx.Size.Height * scaling.Y);
+
+            if (preventGameBarOverlap)
+            {
+                var extraHeight = Math.Max(destRect.Bottom - gfx.Height * 0.8f, 0);
+
+                if (extraHeight > 0)
+                {
+                    destRect.Bottom -= extraHeight;
+                    sourceRect.Bottom -= extraHeight / scaling.Y;
+                }
+            }
+
+            renderTarget.DrawBitmap(bitmapDx, destRect, opacity, SharpDX.Direct2D1.BitmapInterpolationMode.Linear, sourceRect);
+        }
+
+        private void DrawIcon(GameOverlay.Drawing.Graphics gfx, IconRendering rendering, PointF position)
+        {
+            var fill = !rendering.IconShape.ToString().ToLower().EndsWith("outline");
+            var brush = CreateSolidBrush(gfx, rendering.IconColor);
+
+            var points = GetIconShape(rendering).Select(point => point.Add(position)).ToArray();
+
+            using (var geo = points.ToGeometry(gfx, fill)) { 
+                switch (rendering.IconShape)
+                {
+                    case Shape.Ellipse:
+                    case Shape.EllipseOutline:
+                        if (rendering.IconShape == Shape.Ellipse)
+                        {
+                            gfx.FillEllipse(brush, position.ToGameOverlayPoint(), rendering.IconSize * scaleWidth / 2f, rendering.IconSize * scaleWidth / 2f);
+                        }
+                        else
+                        {
+                            gfx.DrawEllipse(brush, position.ToGameOverlayPoint(), rendering.IconSize * scaleWidth / 2f, rendering.IconSize * scaleWidth / 2f, rendering.IconThickness);
+                        }
+
+                        break;
+                    case Shape.Polygon:
+                        gfx.FillGeometry(geo, brush);
+
+                        break;
+                    case Shape.Cross:
+                        gfx.DrawGeometry(geo, brush, rendering.IconThickness);
+
+                        break;
+                    default:
+                        if (points == null) break;
+
+                        if (fill)
+                        {
+                            gfx.FillGeometry(geo, brush);
+                        }
+                        else
+                        {
+                            gfx.DrawGeometry(geo, brush, rendering.IconThickness);
+                        }
+
+                        break;
+                }
+            }
+        }
+
+        private void DrawLine(GameOverlay.Drawing.Graphics gfx, PointOfInterestRendering rendering, PointF startPosition, PointF endPosition)
+        {
+            var brush = CreateSolidBrush(gfx, rendering.LineColor);
+            var line = new GameOverlay.Drawing.Line(startPosition.ToGameOverlayPoint(), endPosition.ToGameOverlayPoint());
+
+            gfx.DrawLine(brush, line, rendering.LineThickness);
+            
+            if (rendering.CanDrawArrowHead())
+            {
+                var deltaX = endPosition.X >= startPosition.X ? endPosition.X - startPosition.X : startPosition.X - endPosition.X;
+                var deltaY = endPosition.Y >= startPosition.Y ? endPosition.Y - startPosition.Y : startPosition.Y - endPosition.Y;
+
+                var angle = endPosition.Subtract(startPosition).Angle();
+                var height = (float)(Math.Sqrt(3) / 2);
+
+                var points = new PointF[]
+                {
+                    new PointF(-height, 0.5f),
+                    new PointF(-height, -0.5f),
+                    new PointF(0, 0),
+                }.Select(point => point.Multiply(rendering.ArrowHeadSize * scaleWidth).Rotate(angle).Add(endPosition).ToGameOverlayPoint()).ToArray();
+
+                gfx.FillTriangle(brush, points[0], points[1], points[2]);
+            }
+        }
+
+        private PointF[] GetIconShape(IconRendering render)
+        {
+            switch (render.IconShape)
+            {
+                case Shape.Square:
+                case Shape.SquareOutline:
+                    return new PointF[]
+                    {
+                        new PointF(0, 0),
+                        new PointF(render.IconSize, 0),
+                        new PointF(render.IconSize, render.IconSize),
+                        new PointF(0, render.IconSize)
+                    }.Select(point => point.Subtract(render.IconSize / 2f).Rotate(_rotateRadians).Multiply(scaleWidth, scaleHeight)).ToArray();
+                case Shape.Ellipse: 
+                case Shape.EllipseOutline: // Use a rectangle since that's effectively the same size and that's all this function is used for at the moment
+                    return new PointF[]
+                    {
+                        new PointF(0, 0),
+                        new PointF(render.IconSize, 0),
+                        new PointF(render.IconSize, render.IconSize),
+                        new PointF(0, render.IconSize)
+                    }.Select(point => point.Subtract(render.IconSize / 2f).Multiply(scaleWidth)).ToArray();
+                case Shape.Polygon:
+                    var halfSize = render.IconSize / 2f;
+                    var cutSize = render.IconSize / 10f;
+                    
+                    return new PointF[]
+                    {
+                        new PointF(0, halfSize), new PointF(halfSize - cutSize, halfSize - cutSize),
+                        new PointF(halfSize, 0), new PointF(halfSize + cutSize, halfSize - cutSize),
+                        new PointF(render.IconSize, halfSize),
+                        new PointF(halfSize + cutSize, halfSize + cutSize),
+                        new PointF(halfSize, render.IconSize),
+                        new PointF(halfSize - cutSize, halfSize + cutSize)
+                    }.Select(point => point.Subtract(halfSize).Multiply(scaleWidth, scaleHeight)).ToArray();
+                case Shape.Cross:
+                    var a = render.IconSize * 0.25f;
+                    var b = render.IconSize * 0.50f;
+                    var c = render.IconSize * 0.75f;
+                    var d = render.IconSize;
+
+                    return new PointF[]
+                    {
+                        new PointF(0, a), new PointF(a, 0), new PointF(b, a), new PointF(c, 0),
+                        new PointF(d, a), new PointF(c, b), new PointF(d, c), new PointF(c, d),
+                        new PointF(b, c), new PointF(a, d), new PointF(0, c), new PointF(a, b)
+                    }.Select(point => point.Subtract(render.IconSize / 2f).Multiply(scaleWidth, scaleHeight)).ToArray();
+            }
+
+            return null;
+        }
+
+        private IconRendering GetMonsterIconRendering(MonsterData monsterData)
+        {
+            if ((monsterData.MonsterType & MonsterTypeFlags.SuperUnique) == MonsterTypeFlags.SuperUnique)
+            {
+                return MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
+            }
+
+            if ((monsterData.MonsterType & MonsterTypeFlags.Unique) == MonsterTypeFlags.Unique)
+            {
+                return MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
+            }
+
+            if (monsterData.MonsterType > 0)
+            {
+                return MapAssistConfiguration.Loaded.MapConfiguration.EliteMonster;
+            }
+
+            return MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
+        }
+
+        public void CalcResizeRatios()
         {
             var multiplier = 5.5f - MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel; // Hitting +/- should make the map bigger/smaller, respectively, like in overlay = false mode
 
             if (!MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode)
             {
-                float biggestDimension = Math.Max(image.Width, image.Height);
+                float biggestDimension = Math.Max(gamemap.Width, gamemap.Height);
 
                 multiplier = MapAssistConfiguration.Loaded.RenderingConfiguration.Size / biggestDimension;
 
@@ -337,140 +648,73 @@ namespace MapAssist.Helpers
                 var heightShrink = MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode ? 0.5f : 1f;
                 var widthShrink = MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode ? 1f : 1f;
 
-                return (multiplier * widthShrink, multiplier * heightShrink);
+                (scaleWidth, scaleHeight) = (multiplier * widthShrink, multiplier * heightShrink);
             }
-
-            return (multiplier, multiplier);
-        }
-
-        private Font GetFont(PointOfInterestRendering poiSettings)
-        {
-            (string LabelFont, int LabelFontSize) cacheKey = (poiSettings.LabelFont, poiSettings.LabelFontSize);
-            if (!_fontCache.ContainsKey(cacheKey))
+            else
             {
-                var font = new Font(poiSettings.LabelFont,
-                    poiSettings.LabelFontSize);
-                _fontCache[cacheKey] = font;
+                (scaleWidth, scaleHeight) = (multiplier, multiplier);
             }
-
-            return _fontCache[cacheKey];
         }
 
-        private Bitmap GetIcon(IconRendering poiSettings)
+        public SizeF GetMapSize()
         {
-            (Shape IconShape, int IconSize, Color Color, float LineThickness, float ZoomLevel) cacheKey = (
-                poiSettings.IconShape,
-                poiSettings.IconSize,
-                poiSettings.IconColor,
-                poiSettings.IconThickness,
-                MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel
-            );
-            if (!_iconCache.ContainsKey(cacheKey))
+            return new SizeF(gamemap.Width * scaleWidth, gamemap.Height * scaleHeight);
+        }
+
+        public PointF PlayerPosition(GameData gameData)
+        {
+            return AdjustedPoint(gameData.PlayerPosition);
+        }
+
+        private PointF AdjustedPoint(PointF p)
+        {
+            var newP = p.Subtract(_areaData.Origin).Rotate(_rotateRadians, _origCenter)
+                .Subtract(_origCenter.Subtract(_rotatedCenter))
+                .Multiply(scaleWidth, scaleHeight);
+
+            return newP;
+        }
+
+        // Creates and cached resources
+        private Dictionary<string, SharpDX.Direct2D1.Bitmap> cacheBitmaps = new Dictionary<string, SharpDX.Direct2D1.Bitmap>();
+        private SharpDX.Direct2D1.Bitmap CreateResourceBitmap(GameOverlay.Drawing.Graphics gfx, string name)
+        {
+            var key = name;
+
+            if (!cacheBitmaps.ContainsKey(key))
             {
-                var iconPadding = 5; // Some extra padding to make sure nothing get trimmed
-                Bitmap bitmap = null;
-                var pen = new Pen(poiSettings.IconColor, poiSettings.IconThickness);
-                var brush = new SolidBrush(poiSettings.IconColor);
-                
-                switch (poiSettings.IconShape)
-                {
-                    case Shape.Square:
-                    case Shape.SquareOutline:
-                        var squarePoints = new PointF[]
-                        {
-                            new PointF(0, 0),
-                            new PointF(poiSettings.IconSize, 0),
-                            new PointF(poiSettings.IconSize, poiSettings.IconSize),
-                            new PointF(0, poiSettings.IconSize)
-                        }.Select(point => point.Rotate(_rotateDegrees).Multiply(scaleWidth, scaleHeight)).ToArray().MoveToOrigin(iconPadding);
+                var renderTarget = gfx.GetRenderTarget();
 
-                        bitmap = squarePoints.ToBitmap(iconPadding);
-                        using (var g = Graphics.FromImage(bitmap))
-                        {
-                            g.SmoothingMode = SmoothingMode.HighQuality;
-                            if (poiSettings.IconShape == Shape.Square)
-                            {
-                                g.FillPolygon(brush, squarePoints);
-                            }
-                            else
-                            {
-                                g.DrawPolygon(pen, squarePoints);
-                            }
-                        }
-                        break;
-                    case Shape.Ellipse:
-                    case Shape.EllipseOutline:
-                        bitmap = new SizeF(poiSettings.IconSize * scaleWidth + poiSettings.IconThickness, poiSettings.IconSize * scaleWidth + poiSettings.IconThickness).ToBitmap(iconPadding); // Don't distort - use scaleWidth for both
-                        using (var g = Graphics.FromImage(bitmap))
-                        {
-                            g.SmoothingMode = SmoothingMode.HighQuality;
-                            if (poiSettings.IconShape == Shape.Ellipse)
-                            {
-                                g.FillEllipse(brush, iconPadding, iconPadding, poiSettings.IconSize * scaleWidth, poiSettings.IconSize * scaleWidth);
-                            }
-                            else
-                            {
-                                g.DrawEllipse(pen, iconPadding, iconPadding, poiSettings.IconSize * scaleWidth, poiSettings.IconSize * scaleWidth);
-                            }
-                        }
-                        break;
-                    case Shape.Polygon:
-                        var halfSize = poiSettings.IconSize / 2f;
-                        var cutSize = poiSettings.IconSize / 10f;
-                        var polygonPoints = new PointF[]
-                        {
-                                new PointF(0, halfSize), new PointF(halfSize - cutSize, halfSize - cutSize),
-                                new PointF(halfSize, 0), new PointF(halfSize + cutSize, halfSize - cutSize),
-                                new PointF(poiSettings.IconSize, halfSize),
-                                new PointF(halfSize + cutSize, halfSize + cutSize),
-                                new PointF(halfSize, poiSettings.IconSize),
-                                new PointF(halfSize - cutSize, halfSize + cutSize)
-                        }.Select(point => point.Multiply(scaleWidth)).ToArray().MoveToOrigin(iconPadding);
-
-                        bitmap = polygonPoints.ToBitmap(iconPadding);
-                        using (var g = Graphics.FromImage(bitmap))
-                        {
-                            g.SmoothingMode = SmoothingMode.HighQuality;
-                            g.FillPolygon(brush, polygonPoints);
-                        }
-                        break;
-                    case Shape.Cross:
-                        var a = poiSettings.IconSize * 0.25f;
-                        var b = poiSettings.IconSize * 0.50f;
-                        var c = poiSettings.IconSize * 0.75f;
-                        var d = poiSettings.IconSize;
-
-                        var crossPoints = new PointF[]
-                        {
-                                new PointF(0, a), new PointF(a, 0), new PointF(b, a), new PointF(c, 0),
-                                new PointF(d, a), new PointF(c, b), new PointF(d, c), new PointF(c, d),
-                                new PointF(b, c), new PointF(a, d), new PointF(0, c), new PointF(a, b),
-                                new PointF(0, a),
-                        }.Select(point => point.Multiply(scaleWidth, scaleHeight)).ToArray().MoveToOrigin(iconPadding);
-
-                        bitmap = crossPoints.ToBitmap(iconPadding);
-                        using (var g = Graphics.FromImage(bitmap))
-                        {
-                            g.SmoothingMode = SmoothingMode.HighQuality;
-
-                            for (var p = 0; p < crossPoints.Length - 1; p++)
-                            {
-                                g.DrawLine(pen, crossPoints[p], crossPoints[p + 1]);
-                            }
-                        }
-                        break;
-                }
-
-                _iconCache[cacheKey] = bitmap;
+                var resImg = Properties.Resources.ResourceManager.GetObject(name);
+                cacheBitmaps[key] = new Bitmap((Bitmap)resImg).ToDXBitmap(renderTarget);
             }
 
-            return _iconCache[cacheKey];
+            return cacheBitmaps[key];
         }
 
-        private PointF GetIconOffset(IconRendering poiSettings)
+        private Dictionary<(string, float), GameOverlay.Drawing.Font> cacheFonts = new Dictionary<(string, float), GameOverlay.Drawing.Font>();
+        private GameOverlay.Drawing.Font CreateFont(GameOverlay.Drawing.Graphics gfx, string fontFamilyName, float size)
         {
-            var bitmap = GetIcon(poiSettings);
-            return bitmap.Center();
+            var key = (fontFamilyName, size);
+            if (!cacheFonts.ContainsKey(key)) cacheFonts[key] = gfx.CreateFont(fontFamilyName, size);
+            return cacheFonts[key];
+        }
+
+        private Dictionary<Color, GameOverlay.Drawing.SolidBrush> cacheBrushes = new Dictionary<Color, GameOverlay.Drawing.SolidBrush>();
+        private GameOverlay.Drawing.SolidBrush CreateSolidBrush(GameOverlay.Drawing.Graphics gfx, Color color)
+        {
+            var key = color;
+            if (!cacheBrushes.ContainsKey(key)) cacheBrushes[key] = gfx.CreateSolidBrush(color.ToGameOverlayColor());
+            return cacheBrushes[key];
+        }
+
+        public void Dispose()
+        {
+            if (gamemapDx != null) gamemapDx.Dispose();
+
+            foreach (var item in cacheBitmaps.Values) item.Dispose();
+            foreach (var item in cacheFonts.Values) item.Dispose();
+            foreach (var item in cacheBrushes.Values) item.Dispose();
         }
     }
 }

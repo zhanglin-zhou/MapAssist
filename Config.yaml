@@ -38,7 +38,7 @@ RenderingConfiguration:
   Rotate: true
   ## ZoomLevel - Zoom level / can zoom in/out with hotkeys (ZoomInKey, ZoomOutKey)
   ZoomLevel: 1
-  ## BuffPosition - Options are: Center, Bottom
+  ## BuffPosition - Options are: Player, Top, Bottom
   BuffPosition: Bottom
   ## BuffSize - Size of the buff icons (0.8 = 80%, 1 = 100%, 1.2 = 120%)
   BuffSize: 1
@@ -68,25 +68,25 @@ MapConfiguration:
   NextArea:
     IconColor: '237, 107, 0'
     IconShape: Square
-    IconSize: 4
+    IconSize: 5
     LineColor: Chartreuse
     LineThickness: 2
     ArrowHeadSize: 5
     LabelColor: Chartreuse
-    LabelFontSize: 12
+    LabelFontSize: 16
     LabelFont: 'Helvetica'
   PreviousArea:
     IconColor: '255, 0, 149'
     IconShape: Square
-    IconSize: 4
+    IconSize: 5
     LineColor: ''
     LabelColor: Chartreuse
-    LabelFontSize: 12
+    LabelFontSize: 16
     LabelFont: 'Helvetica'
   Waypoint:
     IconColor: '16, 140, 235'
     IconShape: Square
-    IconSize: 6
+    IconSize: 5
   Quest:
     LineColor: Chartreuse
     LineThickness: 2
@@ -117,7 +117,7 @@ MapConfiguration:
     IconShape: Ellipse
     IconSize: 4
     LabelFont: 'Helvetica'
-    LabelFontSize: 12
+    LabelFontSize: 16
 
 ## ItemLog - Alerts for in-game dropped items nearby
 ItemLog:

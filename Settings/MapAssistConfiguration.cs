@@ -135,7 +135,7 @@ namespace MapAssist.Settings
 public class RenderingConfiguration
 {
     [YamlMember(Alias = "Opacity", ApplyNamingConventions = false)]
-    public double Opacity { get; set; }
+    public float Opacity { get; set; }
 
     [YamlMember(Alias = "OverlayMode", ApplyNamingConventions = false)]
     public bool OverlayMode { get; set; }

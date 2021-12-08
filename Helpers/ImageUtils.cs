@@ -27,11 +27,11 @@ namespace MapAssist.Helpers
 {
     public static class ImageUtils
     {
-        public static Bitmap RotateImage(Image inputImage, float angleDegrees, bool upsizeOk, bool clipOk,
-            Color backgroundColor)
+        public static Bitmap RotateImage(Image inputImage, float angleRadians, bool upsizeOk, bool clipOk,
+          Color backgroundColor)
         {
             // Test for zero rotation and return a clone of the input image
-            if (angleDegrees == 0f)
+            if (angleRadians == 0f)
                 return (Bitmap)inputImage.Clone();
 
             // Set up old and new image dimensions, assuming upsizing not wanted and clipping OK
@@ -44,8 +44,6 @@ namespace MapAssist.Helpers
             // If upsizing wanted or clipping not OK calculate the size of the resulting bitmap
             if (upsizeOk || !clipOk)
             {
-                var angleRadians = angleDegrees * Math.PI / 180d;
-
                 var cos = Math.Abs(Math.Cos(angleRadians));
                 var sin = Math.Abs(Math.Sin(angleRadians));
                 newWidth = (int)Math.Round(oldWidth * cos + oldHeight * sin);
@@ -63,7 +61,7 @@ namespace MapAssist.Helpers
             // Create the new bitmap object. If background color is transparent it must be 32-bit, 
             //  otherwise 24-bit is good enough.
             var newBitmap = new Bitmap(newWidth, newHeight,
-                backgroundColor == Color.Transparent ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
+              backgroundColor == Color.Transparent ? PixelFormat.Format32bppArgb : PixelFormat.Format24bppRgb);
             newBitmap.SetResolution(inputImage.HorizontalResolution, inputImage.VerticalResolution);
 
             // Create the Graphics object that does the work
@@ -83,7 +81,7 @@ namespace MapAssist.Helpers
                 if (scaleFactor != 1f)
                     graphicsObject.ScaleTransform(scaleFactor, scaleFactor);
 
-                graphicsObject.RotateTransform(angleDegrees);
+                graphicsObject.RotateTransform((float)(angleRadians * 180f / Math.PI));
                 graphicsObject.TranslateTransform(-oldWidth / 2f, -oldHeight / 2f);
 
                 // Draw the result
@@ -100,10 +98,10 @@ namespace MapAssist.Helpers
         /// <param name="width">The width to resize to.</param>
         /// <param name="height">The height to resize to.</param>
         /// <returns>The resized image.</returns>
-        public static Bitmap ResizeImage(Image image, int width, int height)
+        public static Bitmap ResizeImage(Bitmap image, SizeF size)
         {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
+            var destRect = new RectangleF(0, 0, size.Width, size.Height);
+            var destImage = size.ToBitmap();
 
             destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
@@ -118,31 +116,11 @@ namespace MapAssist.Helpers
                 using (var wrapMode = new ImageAttributes())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                    graphics.DrawImage(image, destRect.ToRectangle(), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
                 }
             }
 
             return destImage;
-        }
-
-        public static Bitmap CreateFilledRectangle(Color color, int width, int height)
-        {
-            var rectangle = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            var graphics = Graphics.FromImage(rectangle);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.FillRectangle(new SolidBrush(color), 0, 0, width, height);
-            graphics.Dispose();
-            return rectangle;
-        }
-
-        public static Bitmap CreateFilledEllipse(Color color, int width, int height)
-        {
-            var ellipse = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            var graphics = Graphics.FromImage(ellipse);
-            graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            graphics.FillEllipse(new SolidBrush(color), 0, 0, width, height);
-            graphics.Dispose();
-            return ellipse;
         }
     }
 }

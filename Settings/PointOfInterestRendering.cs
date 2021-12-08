@@ -31,7 +31,7 @@ namespace MapAssist.Settings
         public Shape IconShape { get; set; }
 
         [YamlMember(Alias = "IconSize", ApplyNamingConventions = false)]
-        public int IconSize { get; set; }
+        public float IconSize { get; set; }
 
         [YamlMember(Alias = "IconThickness", ApplyNamingConventions = false)]
         public float IconThickness;
