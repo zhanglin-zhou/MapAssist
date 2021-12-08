@@ -133,23 +133,8 @@ ItemLog:
 
 ## MapColorConfiguration - Color schema for drawing overlay map
 MapColorConfiguration:
-  MapColors:
-    '0': '50, 50, 50'
-    '2': '10, 51, 23'
-    '3': '255, 255, 255'
-    '4': '0, 255, 255'
-    '6': '50, 50, 50'
-    '7': '0, 0, 0'
-    '16': '50, 50, 50'
-    '17': '50, 50, 50'
-    '19': '100, 100, 100'
-    '20': '40, 40, 40'
-    '21': '50, 50, 50'
-    '23': '120, 120, 120'
-    '33': '0, 0, 0'
-    '37': '0, 0, 0'
-    '39': '0, 0, 0'
-    '53': '0, 0, 0'
+  Walkable:
+  Border: '255, 255, 255'
 
 ## GameInfo - Displaying game server IP address
 GameInfo:

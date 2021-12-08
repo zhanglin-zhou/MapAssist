@@ -78,22 +78,12 @@ namespace MapAssist.Settings
 
     public class MapColorConfiguration
     {
-        [YamlMember(Alias = "MapColors", ApplyNamingConventions = false)]
-        public Dictionary<int, Color?> MapColors { get; set; }
-
-        public Color? LookupMapColor(int type)
-        {
-            if (!MapColors.ContainsKey(type))
-            {
-                MapColors[type] = null;
-            }
-            return MapColors[type];
-        }
-
-        public MapColorConfiguration()
-        {
-            MapColors = new Dictionary<int, Color?>();
-        }
+        
+        [YamlMember(Alias = "Walkable", ApplyNamingConventions = false)]
+        public Color? Walkable { get; set; }
+        
+        [YamlMember(Alias = "Border", ApplyNamingConventions = false)]
+        public Color? Border { get; set; }
     }
 
     public class MapConfiguration

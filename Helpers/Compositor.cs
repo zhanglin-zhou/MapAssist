@@ -47,6 +47,8 @@ namespace MapAssist.Helpers
         private float scaleWidth = 1;
         private float scaleHeight = 1;
         private float lastZoom = -1;
+        private const int WALKABLE = 0;
+        private const int UNWALKABLE = 1;
 
         public Compositor(AreaData areaData, IReadOnlyList<PointOfInterest> pointsOfInterest)
         {
@@ -242,15 +244,60 @@ namespace MapAssist.Helpers
                 gfx.SmoothingMode = SmoothingMode.HighQuality;
                 gfx.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                for (var y = 0; y < areaData.CollisionGrid.Length; y++)
+                
+                var maybeWalkableColor = MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable;
+                if (maybeWalkableColor != null)
                 {
-                    for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
+                    var color = (Color)maybeWalkableColor;
+                    for (var y = 0; y < areaData.CollisionGrid.Length; y++)
                     {
-                        var type = areaData.CollisionGrid[y][x];
-                        var typeColor = MapAssistConfiguration.Loaded.MapColorConfiguration.LookupMapColor(type);
-                        if (typeColor != null)
+                        for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
                         {
-                            background.SetPixel(x, y, (Color)typeColor);
+                            var type = areaData.CollisionGrid[y][x];
+                            if (type == UNWALKABLE) continue;
+                            background.SetPixel(x, y, color);
+                        }
+                    }
+                }
+
+                var maybeBorderColor = MapAssistConfiguration.Loaded.MapColorConfiguration.Border;
+                if (maybeBorderColor != null)
+                    // draw additional borders around walkable tiles (type % 2 == 0)
+                {
+                    var borderColor = (Color)maybeBorderColor;
+                    var lookOffsets = new int[][] {
+                            new int[] { -1, -1 },
+                            new int[] { -1, 0 },
+                            new int[] { -1, 1 },
+                            new int[] { 0, -1 },
+                            new int[] { 0, 1 },
+                            new int[] { 1, -1 },
+                            new int[] { 1, 0 },
+                            new int[] { 1, 1 }
+                        };
+
+                    for (var y = 0; y < areaData.CollisionGrid.Length; y++)
+                    {
+                        var maxYValue = areaData.CollisionGrid.Length;
+                        for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
+                        {
+                            var maxXValue = areaData.CollisionGrid[y].Length;
+                            foreach (var offset in lookOffsets)
+                            {
+                                var offsetsInBounds =
+                                    y + offset[0] >= 0 && y + offset[0] < maxYValue &&
+                                    x + offset[1] >= 0 && x + offset[1] < maxXValue;
+                                var isCurrentPixelWalkable = areaData.CollisionGrid[y][x] == WALKABLE;
+
+                                var checkInterior = offsetsInBounds && !isCurrentPixelWalkable && areaData.CollisionGrid[y + offset[0]][x + offset[1]] == WALKABLE;
+                                var checkEdge = !offsetsInBounds && isCurrentPixelWalkable;
+
+                                if (checkInterior || checkEdge)
+                                {
+                                    background.SetPixel(x, y, borderColor);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
