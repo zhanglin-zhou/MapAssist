@@ -52,12 +52,13 @@ namespace MapAssist.Helpers
 
         public static bool StartPipedChild()
         {
-            File.WriteAllBytes("piped.exe", Resources.piped);
+            var tempFile = Path.GetTempPath() + "piped.exe"; 
+            File.WriteAllBytes(tempFile, Resources.piped);
 
             var path = FindD2();
             
             _pipeClient = new Process();
-            _pipeClient.StartInfo.FileName = "piped.exe";
+            _pipeClient.StartInfo.FileName = tempFile;
             _pipeClient.StartInfo.Arguments = path;
             _pipeClient.StartInfo.UseShellExecute = false;
             _pipeClient.StartInfo.RedirectStandardOutput = true;
