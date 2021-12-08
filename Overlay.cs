@@ -59,6 +59,7 @@ namespace MapAssist
         {
             _gameDataCache = new GameDataCache();
 
+            GameOverlay.TimerService.EnableHighPrecisionTimers();
             var gfx = new Graphics() {MeasureFPS = true};
 
             _brushes = new Dictionary<string, SolidBrush>();

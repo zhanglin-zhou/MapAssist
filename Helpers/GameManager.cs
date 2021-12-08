@@ -20,12 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.Text;
-using MapAssist.Settings;
 using MapAssist.Structs;
-using MapAssist.Types;
-using Font = GameOverlay.Drawing.Font;
-using Graphics = GameOverlay.Drawing.Graphics;
-using SolidBrush = GameOverlay.Drawing.SolidBrush;
 
 namespace MapAssist.Helpers
 {
