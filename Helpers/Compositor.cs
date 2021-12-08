@@ -32,7 +32,6 @@ namespace MapAssist.Helpers
     public class Compositor
     {
         private readonly AreaData _areaData;
-        private readonly PointF _cropOffset;
         private readonly PointF _origCenter;
         private readonly PointF _rotatedCenter;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
@@ -54,7 +53,7 @@ namespace MapAssist.Helpers
         {
             _areaData = areaData;
             _pointsOfInterest = pointsOfInterest;
-            (background, _cropOffset, _origCenter, _rotatedCenter) = DrawBackground(areaData, pointsOfInterest);
+            (background, _origCenter, _rotatedCenter) = DrawBackground(areaData, pointsOfInterest);
         }
 
         public (Bitmap, PointF) Compose(GameData gameData)
@@ -233,9 +232,8 @@ namespace MapAssist.Helpers
             return MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
         }
 
-        private (Bitmap, PointF, PointF, PointF) DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
+        private (Bitmap, PointF, PointF) DrawBackground(AreaData areaData, IReadOnlyList<PointOfInterest> pointOfInterest)
         {
-            var padding = 10;
             background = new Bitmap(areaData.CollisionGrid[0].Length, areaData.CollisionGrid.Length, PixelFormat.Format32bppArgb);
             using (var gfx = Graphics.FromImage(background))
             {
@@ -244,27 +242,13 @@ namespace MapAssist.Helpers
                 gfx.SmoothingMode = SmoothingMode.HighQuality;
                 gfx.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                
                 var maybeWalkableColor = MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable;
-                if (maybeWalkableColor != null)
-                {
-                    var color = (Color)maybeWalkableColor;
-                    for (var y = 0; y < areaData.CollisionGrid.Length; y++)
-                    {
-                        for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
-                        {
-                            var type = areaData.CollisionGrid[y][x];
-                            if (type == UNWALKABLE) continue;
-                            background.SetPixel(x, y, color);
-                        }
-                    }
-                }
-
                 var maybeBorderColor = MapAssistConfiguration.Loaded.MapColorConfiguration.Border;
-                if (maybeBorderColor != null)
-                    // draw additional borders around walkable tiles (type % 2 == 0)
+
+                if (maybeWalkableColor != null || maybeBorderColor != null)
                 {
-                    var borderColor = (Color)maybeBorderColor;
+                    var walkableColor = maybeWalkableColor != null ? (Color)maybeWalkableColor : Color.Transparent;
+                    var borderColor = maybeBorderColor != null ? (Color)maybeBorderColor : Color.Transparent;
                     var lookOffsets = new int[][] {
                             new int[] { -1, -1 },
                             new int[] { -1, 0 },
@@ -281,18 +265,27 @@ namespace MapAssist.Helpers
                         var maxYValue = areaData.CollisionGrid.Length;
                         for (var x = 0; x < areaData.CollisionGrid[y].Length; x++)
                         {
+                            var type = areaData.CollisionGrid[y][x];
+                            var isCurrentPixelWalkable = type == WALKABLE;
+
+                            if (type == WALKABLE && maybeWalkableColor != null)
+                            {
+                                background.SetPixel(1 + x, 1 + y, walkableColor);
+                            }
+
                             var maxXValue = areaData.CollisionGrid[y].Length;
                             foreach (var offset in lookOffsets)
                             {
+                                var dy = y + offset[0];
+                                var dx = x + offset[1];
+                                
                                 var offsetsInBounds =
-                                    y + offset[0] >= 0 && y + offset[0] < maxYValue &&
-                                    x + offset[1] >= 0 && x + offset[1] < maxXValue;
-                                var isCurrentPixelWalkable = areaData.CollisionGrid[y][x] == WALKABLE;
+                                    dy >= 0 && dy < maxYValue &&
+                                    dx >= 0 && dx < maxXValue;
 
-                                var checkInterior = offsetsInBounds && !isCurrentPixelWalkable && areaData.CollisionGrid[y + offset[0]][x + offset[1]] == WALKABLE;
-                                var checkEdge = !offsetsInBounds && isCurrentPixelWalkable;
+                                var nextToWalkable = offsetsInBounds && !isCurrentPixelWalkable && areaData.CollisionGrid[dy][dx] == WALKABLE;
 
-                                if (checkInterior || checkEdge)
+                                if (maybeBorderColor != null && nextToWalkable)
                                 {
                                     background.SetPixel(x, y, borderColor);
                                     break;
@@ -303,21 +296,17 @@ namespace MapAssist.Helpers
                 }
             }
 
-            var center = new PointF(background.Width / 2f, background.Height / 2f);
-
+            var center = background.Center();
             background = ImageUtils.RotateImage(background, _rotateDegrees, true, false, Color.Transparent);
-            var rotatedCenter = new PointF(background.Width / 2f, background.Height / 2f);
+            var rotatedCenter = background.Center();
 
-            var (newBackground, cropOffset) = ImageUtils.CropBitmap(background, padding);
-
-            return (newBackground, cropOffset, center, rotatedCenter);
+            return (background, center, rotatedCenter);
         }
 
         private PointF AdjustedPoint(PointF p)
         {
             var newP = p.OffsetFrom(_areaData.Origin).Rotate(_rotateDegrees, _origCenter)
                 .OffsetFrom(_origCenter.OffsetFrom(_rotatedCenter))
-                .OffsetFrom(_cropOffset)
                 .Multiply(scaleWidth, scaleHeight);
 
             return newP;

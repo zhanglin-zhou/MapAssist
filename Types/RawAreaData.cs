@@ -81,6 +81,8 @@ namespace MapAssist.Types
             if (objects == null) objects = new Dictionary<string, XY[]>();
 
             var mapRows = new int[crop.y1 - crop.y0][];
+            var unwalkableTile = new int[] { 1 };
+            var unwalkableRow = new int[][] { new int[crop.x1 - crop.x0 + 2].Select(_ => 1).ToArray() };
 
             var y = 0;
             var x = 0;
@@ -100,10 +102,14 @@ namespace MapAssist.Types
                 }
                 else
                 {
+                    mapRows[y] = unwalkableTile.Concat(mapRows[y]).Concat(unwalkableTile).ToArray(); // Prepend and append with one unwalkable tile for improved border drawing
+
                     y++;
                     val = 1;
                 }
             }
+
+            mapRows = unwalkableRow.Concat(mapRows).Concat(unwalkableRow).ToArray(); // Prepend and append with one unwalkable row of tiles for improved border drawing
 
             return new AreaData
             {

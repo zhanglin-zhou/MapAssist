@@ -277,6 +277,7 @@ namespace MapAssist.Helpers
 
         public static void Dispose()
         {
+            _pipeClient.Close();
             _pipeReaderThread.Abort();
         }
     }
