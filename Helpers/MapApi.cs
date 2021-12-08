@@ -127,7 +127,7 @@ namespace MapAssist.Helpers
             {
                 if (Path.HasExtension(providedPath))
                 {
-                    throw new Exception("Provided D2 Path is not set to a directory");
+                    throw new Exception("Provided D2 path is not set to a directory");
                 }
 
                 if (IsValidD2Path(providedPath))
@@ -137,7 +137,7 @@ namespace MapAssist.Helpers
                 }
 
                 _log.Info("User provided D2 path is invalid");
-                throw new Exception("Provided D2 Path is not the correct version");
+                throw new Exception("Provided D2 path is not the correct version");
             }
             
             var retrieved = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Blizzard Entertainment\\Diablo II", "InstallPath", "INVALID");
@@ -154,10 +154,17 @@ namespace MapAssist.Helpers
 
         private static bool IsValidD2Path(string path)
         {
-            var gamePath = Path.Combine(path, "game.exe");
-            var version = FileVersionInfo.GetVersionInfo(gamePath);
-            return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
-                   version.FilePrivatePart == 60;
+            try
+            {
+                var gamePath = Path.Combine(path, "game.exe");
+                var version = FileVersionInfo.GetVersionInfo(gamePath);
+                return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
+                       version.FilePrivatePart == 60;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public MapApi(Difficulty difficulty, uint mapSeed)
