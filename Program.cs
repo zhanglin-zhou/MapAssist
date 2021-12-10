@@ -83,7 +83,8 @@ namespace MapAssist
                     catch (Exception e)
                     {
                        _log.Fatal(e, "Unable to start d2mapapi pipe.");
-                       MessageBox.Show("Unable to start d2mapapi pipe.", appName, MessageBoxButtons.OK);
+                       var message = e.Message + Environment.NewLine + Environment.NewLine + e.StackTrace;
+                       MessageBox.Show(message, "Unable to start d2mapapi pipe.", MessageBoxButtons.OK, MessageBoxIcon.Error);
                        return;
                     }
 
