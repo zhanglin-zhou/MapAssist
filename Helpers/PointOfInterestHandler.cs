@@ -28,6 +28,22 @@ namespace MapAssist.Helpers
 {
     public static class PointOfInterestHandler
     {
+        private static readonly Dictionary<Area, Area> AreaPreferredNextArea = new Dictionary<Area, Area>()
+        {
+            [Area.BloodMoor] = Area.ColdPlains,
+            [Area.ColdPlains] = Area.StonyField,
+            [Area.UndergroundPassageLevel1] = Area.DarkWood,
+            [Area.DarkWood] = Area.BlackMarsh,
+            [Area.BlackMarsh] = Area.TamoeHighland,
+        };
+
+        private static readonly Dictionary<Area, Area> AreaPreferredQuestArea = new Dictionary<Area, Area>()
+        {
+            [Area.BloodMoor] = Area.DenOfEvil,
+            [Area.ColdPlains] = Area.BurialGrounds,
+            [Area.BlackMarsh] = Area.ForgottenTower,
+        };
+
         private static readonly Dictionary<Area, Dictionary<GameObject, string>> AreaSpecificQuestObjects = new Dictionary<Area, Dictionary<GameObject, string>>()
         {
             [Area.MatronsDen] = new Dictionary<GameObject, string>()
@@ -58,6 +74,7 @@ namespace MapAssist.Helpers
 
         private static readonly HashSet<GameObject> QuestObjects = new HashSet<GameObject>
         {
+            GameObject.Malus,
             GameObject.HoradricCubeChest,
             GameObject.HoradricScrollChest,
             GameObject.StaffOfKingsChest,
@@ -199,28 +216,64 @@ namespace MapAssist.Helpers
 
                     break;
                 default:
-                    // By default, draw a line to the next highest neighbouring area.
-                    // Also draw labels and previous doors for all other areas.
                     if (areaData.AdjacentLevels.Any())
                     {
-                        Area highestArea = areaData.AdjacentLevels.Keys.Max();
-                        if (highestArea > areaData.Area)
+                        // Next Area Point of Interest
+                        var nextArea = areaData.Area;
+                        if (AreaPreferredNextArea.ContainsKey(areaData.Area))
                         {
-                            if (areaData.AdjacentLevels[highestArea].Exits.Any())
+                            nextArea = AreaPreferredNextArea[areaData.Area];
+                            var nextLevel = areaData.AdjacentLevels[nextArea];
+                            if (nextLevel.Exits.Any())
                             {
                                 pointOfInterest.Add(new PointOfInterest
                                 {
-                                    Label = highestArea.Name(),
-                                    Position = areaData.AdjacentLevels[highestArea].Exits[0],
+                                    Label = nextArea.Name(),
+                                    Position = nextLevel.Exits[0],
                                     RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NextArea
                                 });
                             }
                         }
+                        else
+                        {
+                            nextArea = areaData.AdjacentLevels.Keys.Max();
+                            if (nextArea > areaData.Area)
+                            {
+                                var nextLevel = areaData.AdjacentLevels[nextArea];
+                                if (nextLevel.Exits.Any())
+                                {
+                                    pointOfInterest.Add(new PointOfInterest
+                                    {
+                                        Label = nextArea.Name(),
+                                        Position = nextLevel.Exits[0],
+                                        RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NextArea
+                                    });
+                                }
+                            }
+                        }
 
+                        // Quest Area Point of Interest
+                        var questArea = areaData.Area;
+                        if (AreaPreferredQuestArea.ContainsKey(areaData.Area))
+                        {
+                            questArea = AreaPreferredQuestArea[areaData.Area];
+                            var questLevel = areaData.AdjacentLevels[questArea];
+                            if (questLevel.Exits.Any())
+                            {
+                                pointOfInterest.Add(new PointOfInterest
+                                {
+                                    Label = questArea.Name(),
+                                    Position = questLevel.Exits[0],
+                                    RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
+                                });
+                            }
+                        }
+
+                        // Previous Area Point of Interest
                         foreach (AdjacentLevel level in areaData.AdjacentLevels.Values)
                         {
-                            // Already have something drawn for this.
-                            if (level.Area == highestArea)
+                            // Skip Next Area and Quest Area Points of Interest
+                            if (level.Area == nextArea || level.Area == questArea)
                             {
                                 continue;
                             }
@@ -265,8 +318,8 @@ namespace MapAssist.Helpers
                 {
                     pointOfInterest.Add(new PointOfInterest
                     {
-                        Label = obj.ToString(), 
-                        Position = points[0], 
+                        Label = obj.ToString(),
+                        Position = points[0],
                         RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
                     });
                 }
@@ -303,8 +356,8 @@ namespace MapAssist.Helpers
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
-                            Label = obj.ToString(), 
-                            Position = point, 
+                            Label = obj.ToString(),
+                            Position = point,
                             RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Shrine
                         });
                     }

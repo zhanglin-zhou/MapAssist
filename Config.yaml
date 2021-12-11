@@ -93,7 +93,7 @@ MapConfiguration:
     LineColor: Orange
     LineThickness: 2
     ArrowHeadSize: 5
-    LabelColor: Chartreuse
+    LabelColor: Orange
     LabelFontSize: 16
     LabelFont: 'Helvetica'
   Player:
