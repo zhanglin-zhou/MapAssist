@@ -406,16 +406,126 @@ namespace MapAssist.Helpers
                 }
             }
 
-            if (MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon())
+            if(gameData.Roster.EntriesByUnitId.TryGetValue(GameManager.PlayerUnit.UnitId, out var myPlayerEntry))
             {
-                DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Player, playerPosition);
+                var renderPartyIcon = new PointOfInterestRendering();
+                var renderNonPartyIcon = new PointOfInterestRendering();
+                var partyColor = new Color();
+                var nonPartyColor = new Color();
+                GameOverlay.Drawing.Font partyFont = null;
+                GameOverlay.Drawing.Font nonPartyFont = null;
+                GameOverlay.Drawing.SolidBrush partyBrush = null;
+                GameOverlay.Drawing.SolidBrush nonPartyBrush = null;
+                var canDrawIcon = MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon();
+                var canDrawLabel = MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawLabel();
+                var canDrawNonPartyIcon = MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer.CanDrawIcon();
+                var canDrawNonPartyLabel = MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer.CanDrawLabel();
+                var partyIconShape = new SizeF();
+                var nonPartyIconShape = new SizeF();
+
+                if (canDrawIcon)
+                {
+                    renderPartyIcon = MapAssistConfiguration.Loaded.MapConfiguration.Player;
+                    partyIconShape = GetIconShape(renderPartyIcon).ToSizeF();
+                }
+                if (canDrawNonPartyIcon)
+                {
+                    renderNonPartyIcon = MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer;
+                    nonPartyIconShape = GetIconShape(renderNonPartyIcon).ToSizeF();
+                }
+                if (canDrawLabel)
+                {
+                    partyColor = MapAssistConfiguration.Loaded.MapConfiguration.Player.LabelColor;
+                    partyBrush = CreateSolidBrush(gfx, partyColor, 1);
+                    partyFont = CreateFont(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Player.LabelFont, MapAssistConfiguration.Loaded.MapConfiguration.Player.LabelFontSize);
+                }
+                if (canDrawNonPartyLabel)
+                {
+                    nonPartyColor = MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer.LabelColor;
+                    nonPartyBrush = CreateSolidBrush(gfx, nonPartyColor, 1);
+                    nonPartyFont = CreateFont(gfx, MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer.LabelFont, MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer.LabelFontSize);
+                }
+
+                foreach (var player in gameData.Roster.List)
+                {
+                    var myPlayer = player.UnitId == myPlayerEntry.UnitId;
+                    var inMyParty = player.PartyID == myPlayerEntry.PartyID;
+                    var playerName = player.Name;
+                    var stringSize = new GameOverlay.Drawing.Point(0, 0);
+
+                    if (inMyParty)
+                    {
+                        if (canDrawLabel)
+                        {
+                            stringSize = gfx.MeasureString(partyFont, playerName);
+                        }
+                    } else
+                    {
+                        if (canDrawNonPartyLabel)
+                        {
+                            stringSize = gfx.MeasureString(nonPartyFont, playerName);
+                        }
+                    }
+
+                    if (gameData.Players.TryGetValue(player.UnitId, out var playerUnit))
+                    {
+                        //use data from the unit table if available
+                        var playerUnitPosition = PointPosition(playerUnit.Position).Add(anchor);
+                        if (inMyParty && player.PartyID < ushort.MaxValue) //partyid is max if player is not in a party
+                        {
+                            if (canDrawIcon)
+                            {
+                                DrawIcon(gfx, renderPartyIcon, playerUnitPosition);
+                            }
+                            if (canDrawLabel && !myPlayer)
+                            {
+                                gfx.DrawText(partyFont, partyBrush, playerUnitPosition.Subtract(stringSize.Center()).Subtract(new PointF(0, stringSize.Y / 2 + partyIconShape.Height)).ToGameOverlayPoint(), playerName);
+                            }
+                        } else
+                        {
+                            if (!myPlayer)
+                            {
+                                if (canDrawNonPartyIcon)
+                                {
+                                    DrawIcon(gfx, renderNonPartyIcon, playerUnitPosition);
+                                }
+                            } else
+                            {
+                                if (canDrawIcon)
+                                {
+                                    DrawIcon(gfx, renderPartyIcon, playerUnitPosition);
+                                }
+                            }
+                            if (canDrawNonPartyLabel && !myPlayer)
+                            {
+                                gfx.DrawText(nonPartyFont, nonPartyBrush, playerUnitPosition.Subtract(stringSize.Center()).Subtract(new PointF(0, stringSize.Y / 2 + nonPartyIconShape.Height)).ToGameOverlayPoint(), playerName);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //otherwise use the data from the roster
+                        //only draw if in the same party, otherwise position/area data will not be up to date
+                        if (inMyParty && player.PartyID < ushort.MaxValue)
+                        {
+                            var playerUnitPosition = PointPosition(player.Position).Add(anchor);
+                            if (canDrawIcon)
+                            {
+                                DrawIcon(gfx, renderPartyIcon, playerUnitPosition);
+                            }
+                            if (canDrawLabel && !myPlayer)
+                            {
+                                gfx.DrawText(partyFont, partyBrush, playerUnitPosition.Subtract(stringSize.Center()).Subtract(new PointF(0, stringSize.Y / 2 + partyIconShape.Height)).ToGameOverlayPoint(), playerName);
+                            }
+                        }
+                    }
+                }
             }
         }
 
         public void DrawBuffs(GameOverlay.Drawing.Graphics gfx, GameData gameData)
         {
             var stateList = gameData.PlayerUnit.StateList;
-            var buffColors = new List<Color>();
             var buffImageScale = MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize;
             var imgDimensions = 48f * buffImageScale;
 
@@ -451,7 +561,16 @@ namespace MapAssist.Helpers
                 if (resImg != null)
                 {
                     Color buffColor = States.StateColor(state);
-                    buffColors.Add(buffColor);
+                    if (state == State.STATE_CONVICTION)
+                    {
+                        if (GameManager.PlayerUnit.Skill.RightSkillId == Skills.SKILL_CONVICTION) //add check later for if infinity is equipped
+                        {
+                            buffColor = States.BuffColor;
+                        } else
+                        {
+                            buffColor = States.DebuffColor;
+                        }
+                    }
                     if (buffsByColor.TryGetValue(buffColor, out var _))
                     {
                         buffsByColor[buffColor].Add(CreateResourceBitmap(gfx, stateStr));
@@ -714,6 +833,10 @@ namespace MapAssist.Helpers
         public PointF PlayerPosition(GameData gameData)
         {
             return AdjustedPoint(gameData.PlayerPosition);
+        }
+        public PointF PointPosition(Point point)
+        {
+            return AdjustedPoint(point);
         }
 
         private PointF AdjustedPoint(PointF p)
