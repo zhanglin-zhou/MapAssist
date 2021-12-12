@@ -196,6 +196,10 @@ namespace MapAssist.Helpers
         {
             foreach (var poi in _pointsOfInterest)
             {
+                if (poi.PoiMatchesPortal(_gameData.Objects))
+                {
+                    continue;
+                }
                 if (poi.RenderingSettings.CanDrawIcon())
                 {
                     DrawIcon(gfx, poi.RenderingSettings, poi.Position);
@@ -211,6 +215,10 @@ namespace MapAssist.Helpers
             {
                 if (!string.IsNullOrWhiteSpace(poi.Label) && poi.Type != PoiType.Shrine)
                 {
+                    if (poi.PoiMatchesPortal(_gameData.Objects))
+                    {
+                        continue;
+                    }
                     if (poi.RenderingSettings.CanDrawLine() && poi.RenderingSettings.CanDrawLabel())
                     {
                         DrawText(gfx, poi.RenderingSettings, MovePointInBounds(poi.Position, _gameData.PlayerPosition), poi.Label);
@@ -237,6 +245,24 @@ namespace MapAssist.Helpers
 
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
                     }
+                    continue;
+                }
+                if (gameObject.IsPortal())
+                {
+                    if (MapAssistConfiguration.Loaded.MapConfiguration.Portal.CanDrawIcon())
+                    {
+                        DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position);
+                    }
+                    if (MapAssistConfiguration.Loaded.MapConfiguration.Portal.CanDrawLabel())
+                    {
+                        var label = Enum.GetName(typeof(Area), gameObject.ObjectData.InteractType);
+                        if (gameObject.ObjectOwner.Length > 0)
+                        {
+                            label += "(" + gameObject.ObjectOwner + ")";
+                        }
+                        DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position, label);
+                    }
+                    continue;
                 }
             }
         }
