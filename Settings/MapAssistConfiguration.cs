@@ -123,6 +123,9 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "NormalChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering NormalChest { get; set; }
 
+        [YamlMember(Alias = "LockedChest", ApplyNamingConventions = false)]
+        public PointOfInterestRendering LockedChest { get; set; }
+
         [YamlMember(Alias = "Shrine", ApplyNamingConventions = false)]
         public PointOfInterestRendering Shrine { get; set; }
 
