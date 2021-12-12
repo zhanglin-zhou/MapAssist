@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Timers;
 using MapAssist.Helpers;
-using MapAssist.Properties;
 using MapAssist.Settings;
 using Newtonsoft.Json;
 
@@ -150,44 +148,69 @@ namespace MapAssist.Types
 
         public static string ItemName(uint txtFileNo)
         {
-            try
-            {
-                return LocalizedItems[_ItemCodes[txtFileNo]].enUS;
-            }
-            catch
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
             {
                 return "ItemNotFound";
             }
+
+            LocalizedItemObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "ItemNotFound";
+            }
+
+            return localItem.enUS;
         }
 
         public static string UniqueName(uint txtFileNo)
         {
-            try
-            {
-                return LocalizedItems[_UniqueFromCode[_ItemCodes[txtFileNo]]].enUS;
-            }
-            catch
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
             {
                 return "Unique";
             }
+
+            if (!_UniqueFromCode.TryGetValue(itemCode, out itemCode))
+            {
+                return "Unique";
+            }
+
+            LocalizedItemObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "Unique";
+            }
+
+            return localItem.enUS;
         }
 
         public static string SetName(uint txtFileNo)
         {
-            try
-            {
-                return LocalizedItems[_SetFromCode[_ItemCodes[txtFileNo]]].enUS;
-            }
-            catch
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
             {
                 return "Set";
             }
+
+            if (!_UniqueFromCode.TryGetValue(itemCode, out itemCode))
+            {
+                return "Set";
+            }
+
+            LocalizedItemObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "Set";
+            }
+
+            return localItem.enUS;
         }
 
         public static void LogItem(UnitAny unit, int processId)
         {
             if ((!ItemUnitHashesSeen[processId].Contains(unit.ItemHash()) &&
-                 !ItemUnitIdsSeen[processId].Contains(unit.UnitId)) && LootFilter.Filter(unit))
+                !ItemUnitIdsSeen[processId].Contains(unit.UnitId)) && LootFilter.Filter(unit))
             {
                 if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop)
                 {
@@ -215,14 +238,17 @@ namespace MapAssist.Types
 
         public static void ItemLogTimerElapsed(object sender, ElapsedEventArgs args, Timer self, int procId)
         {
-            if (ItemLog[procId].Count > 0)
+            if (ItemLog.TryGetValue(procId, out var itemLog))
             {
-                ItemLog[procId].RemoveAt(0);
-            }
+                if (itemLog.Count > 0)
+                {
+                    itemLog.RemoveAt(0);
+                }
 
-            if (ItemLogTimers.TryGetValue(procId, out var _))
-            {
-                ItemLogTimers[procId].Remove(self);
+                if (ItemLogTimers.TryGetValue(procId, out var timer))
+                {
+                    timer.Remove(self);
+                }
             }
 
             self.Dispose();

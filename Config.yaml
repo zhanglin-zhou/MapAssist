@@ -24,8 +24,10 @@ HiddenAreas:
 
 ## RenderingConfiguration - Visual settings for the overlay
 RenderingConfiguration:
-  ## Opacity - Overlay trapsparency %
+  ## Opacity - Map transparency %
   Opacity: 0.5
+  ## Opacity - Icon transparency %
+  IconOpacity: 0.9
   ## OverlayMode - Overlay map over in-game map / can be hidden with hotkey (ToggleKey)
   OverlayMode: true
   ## Positions - Options are: Center, TopLeft, TopRight
@@ -35,9 +37,7 @@ RenderingConfiguration:
   ## ToggleViaInGamePanels - Auto-hide overlay when in-game panels/menus are opened
   ToggleViaInGamePanels: true
   ## Size - Overlay map maximum size
-  Size: 450
-  ## Rotate - Transform map image with 45 degree rotation
-  Rotate: true
+  Size: 800
   ## ZoomLevel - Zoom level / can zoom in/out with hotkeys (ZoomInKey, ZoomOutKey)
   ZoomLevel: 1
   ## BuffPosition - Options are: Player, Top, Bottom
@@ -68,32 +68,32 @@ MapConfiguration:
     IconSize: 6
     IconThickness: 2
   NextArea:
-    IconColor: '237, 107, 0'
+    IconColor: SpringGreen
     IconShape: Square
     IconSize: 5
-    LineColor: Chartreuse
+    LineColor: SpringGreen
     LineThickness: 2
     ArrowHeadSize: 5
-    LabelColor: Chartreuse
+    LabelColor: SpringGreen
     LabelFontSize: 16
     LabelFont: 'Helvetica'
   PreviousArea:
-    IconColor: '255, 0, 149'
+    IconColor: Violet
     IconShape: Square
     IconSize: 5
     LineColor: ''
-    LabelColor: Chartreuse
+    LabelColor: Violet
     LabelFontSize: 16
     LabelFont: 'Helvetica'
   Waypoint:
-    IconColor: '16, 140, 235'
+    IconColor: SteelBlue
     IconShape: Square
     IconSize: 5
   Quest:
-    LineColor: Orange
+    LineColor: Tomato
     LineThickness: 2
     ArrowHeadSize: 5
-    LabelColor: Orange
+    LabelColor: Tomato
     LabelFontSize: 16
     LabelFont: 'Helvetica'
   Player:
@@ -132,7 +132,7 @@ MapConfiguration:
     IconShape: Square
     IconSize: 4
   Item: 
-    IconColor: 'DarkOrange'
+    IconColor: DarkOrange
     IconShape: Ellipse
     IconSize: 4
     LabelFont: 'Helvetica'

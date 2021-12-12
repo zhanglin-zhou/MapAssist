@@ -109,7 +109,7 @@
     <Compile Include="Files\ConfigurationParser.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Helpers\AudioPlayer.cs" />
-    <Compile Include="Helpers\GameDataCache.cs" />
+    <Compile Include="Helpers\GameDataReader.cs" />
     <Compile Include="Helpers\GameManager.cs" />
     <Compile Include="Helpers\LootFilter.cs" />
     <Compile Include="Helpers\ProcessContext.cs" />
@@ -117,7 +117,6 @@
     <Compile Include="Interfaces\IUpdatable.cs" />
     <Compile Include="Overlay.cs" />
     <Compile Include="Helpers\Extensions.cs" />
-    <Compile Include="Helpers\ImageUtils.cs" />
     <Compile Include="Helpers\PointOfInterestHandler.cs" />
     <Compile Include="Helpers\MapApi.cs" />
     <Compile Include="Helpers\Compositor.cs" />
