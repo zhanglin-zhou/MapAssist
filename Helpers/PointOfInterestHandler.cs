@@ -35,6 +35,14 @@ namespace MapAssist.Helpers
             [Area.UndergroundPassageLevel1] = Area.DarkWood,
             [Area.DarkWood] = Area.BlackMarsh,
             [Area.BlackMarsh] = Area.TamoeHighland,
+            [Area.RockyWaste] = Area.DryHills,
+            [Area.DryHills] = Area.FarOasis,
+            [Area.FarOasis] = Area.LostCity,
+            [Area.SpiderForest] = Area.GreatMarsh,
+            [Area.FlayerJungle] = Area.LowerKurast,
+            [Area.KurastBazaar] = Area.UpperKurast,
+            [Area.UpperKurast] = Area.KurastCauseway,
+            [Area.KurastCauseway] = Area.Travincal,
         };
 
         private static readonly Dictionary<Area, Area> AreaPreferredQuestArea = new Dictionary<Area, Area>()
@@ -42,6 +50,12 @@ namespace MapAssist.Helpers
             [Area.BloodMoor] = Area.DenOfEvil,
             [Area.ColdPlains] = Area.BurialGrounds,
             [Area.BlackMarsh] = Area.ForgottenTower,
+            [Area.DryHills] = Area.HallsOfTheDeadLevel1,
+            [Area.FarOasis] = Area.MaggotLairLevel1,
+            [Area.LostCity] = Area.ValleyOfSnakes,
+            [Area.SpiderForest] = Area.SpiderCavern,
+            [Area.FlayerJungle] = Area.FlayerDungeonLevel1,
+            [Area.KurastBazaar] = Area.RuinedTemple,
         };
 
         private static readonly Dictionary<Area, Dictionary<GameObject, string>> AreaSpecificQuestObjects = new Dictionary<Area, Dictionary<GameObject, string>>()
@@ -53,6 +67,10 @@ namespace MapAssist.Helpers
             [Area.FurnaceOfPain] = new Dictionary<GameObject, string>()
             {
                 [GameObject.SparklyChest] = "Uber Izual",
+            },
+            [Area.PalaceCellarLevel3] = new Dictionary<GameObject, string>()
+            {
+                [GameObject.ArcaneSanctuaryPortal] = "Arcane Sanctuary",
             },
         };
 
@@ -86,7 +104,11 @@ namespace MapAssist.Helpers
             GameObject.WirtCorpse,
             GameObject.HellForge,
             GameObject.NihlathakWildernessStartPosition,
-            GameObject.DrehyaWildernessStartPosition
+            GameObject.DrehyaWildernessStartPosition,
+            GameObject.GidbinnAltar,
+            GameObject.KhalimChest1,
+            GameObject.KhalimChest2,
+            GameObject.KhalimChest3,
         };
 
         private static readonly HashSet<GameObject> SuperChests = new HashSet<GameObject>
@@ -281,7 +303,7 @@ namespace MapAssist.Helpers
                         foreach (AdjacentLevel level in areaData.AdjacentLevels.Values)
                         {
                             // Skip Next Area and Quest Area Points of Interest
-                            if (level.Area == nextArea || level.Area == questArea)
+                            if (level.Area > nextArea || level.Area == questArea)
                             {
                                 continue;
                             }
