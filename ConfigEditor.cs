@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -14,6 +17,8 @@ namespace MapAssist
         public ConfigEditor()
         {
             InitializeComponent();
+            opacity.Value = (int)(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f);
+            lblOpacity.Text = $"Map Opacity: {opacity.Value}%";
 
             var propertyList = MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperties();
             for (var i = 0; i < propertyList.Length; i++)
@@ -130,6 +135,7 @@ namespace MapAssist
 
         private void opacity_Scroll(object sender, EventArgs e)
         {
+            lblOpacity.Text = $"Map Opacity: {opacity.Value}%";
             if (opacity.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity = (float)Math.Round(opacity.Value * 5 / 100f, 2);
@@ -145,8 +151,14 @@ namespace MapAssist
 
         }
 
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void iconOpacity_Scroll(object sender, EventArgs e)
         {
+            lblIconOpacity.Text = $"Icon Opacity: {iconOpacity.Value}%";
             if (iconOpacity.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity = (float)Math.Round(iconOpacity.Value * 5 / 100f, 2);
@@ -160,6 +172,7 @@ namespace MapAssist
 
         private void mapSize_Scroll(object sender, EventArgs e)
         {
+            lblMapSize.Text = $"Map Size (non-overlay mode): {mapSize.Value}%";
             MapAssistConfiguration.Loaded.RenderingConfiguration.Size = mapSize.Value;
             lblMapSizeValue.Text = (mapSize.Value * 100).ToString();
         }
@@ -186,6 +199,7 @@ namespace MapAssist
 
         private void buffSize_Scroll(object sender, EventArgs e)
         {
+            lblBuffSize.Text = $"Buff Icon Size: {buffSize.Value}%";
             if (buffSize.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize = (float)Math.Round(buffSize.Value / 10f, 2);
