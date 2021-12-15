@@ -1,6 +1,5 @@
 name: Deploy
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -56,7 +55,7 @@ jobs:
             
       - name: Publish stable
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: ${{ github.ref == 'latest' }}
+        if: ${{ github.ref == 'main' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "stable"
