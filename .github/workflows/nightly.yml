@@ -43,7 +43,7 @@ jobs:
 
       - name: Publish beta
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: ${{ github.ref == 'develop' }}
+        if: ${{ github.ref == 'refs/heads/develop' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "beta"
@@ -55,7 +55,7 @@ jobs:
             
       - name: Publish stable
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: ${{ github.ref == 'main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "stable"
