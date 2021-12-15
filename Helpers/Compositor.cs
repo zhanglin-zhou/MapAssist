@@ -174,7 +174,7 @@ namespace MapAssist.Helpers
         {
             foreach (var poi in _pointsOfInterest)
             {
-                if (poi.PoiMatchesPortal(_gameData.Objects, _gameData.Difficulty) || poi.Type == PoiType.NormalChest)
+                if (poi.PoiMatchesPortal(_gameData.Objects, _gameData.Difficulty))
                 {
                     continue;
                 }
