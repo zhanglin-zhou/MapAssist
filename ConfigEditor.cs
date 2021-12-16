@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using MapAssist.Settings;
 using MapAssist.Helpers;
+using WK.Libraries.HotkeyListenerNS;
 
 namespace MapAssist
 {
@@ -18,23 +16,22 @@ namespace MapAssist
         {
             InitializeComponent();
 
-
             foreach (var element in MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperties())
             {
                 if (!(element.Name.Substring(element.Name.Length - 3, 3) == "REF"))
                 {
-                    cboRenderOption.Items.Add(element.Name);
+                    cboRenderOption.Items.Add(element.Name.ToProperCase());
                 }
             }
 
             foreach (var element in Enum.GetNames(typeof(BuffPosition)))
             {
-                cboBuffPosition.Items.Add(element);
+                cboBuffPosition.Items.Add(element.ToProperCase());
             }
 
             foreach (var element in Enum.GetNames(typeof(MapPosition)))
             {
-                cboPosition.Items.Add(element);
+                cboPosition.Items.Add(element.ToProperCase());
             }
 
             foreach (var element in Enum.GetNames(typeof(Shape)))
@@ -49,8 +46,8 @@ namespace MapAssist
 
             cboLanguage.SelectedIndex = MapAssistConfiguration.Loaded.Language;
 
-            opacity.Value = (int)(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f);
-            lblOpacity.Text = $"Map Opacity: {opacity.Value}%";
+            opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
+            lblOpacityValue.Text = (opacity.Value * 5).ToString();
 
             var propertyList = MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperties();
             for (var i = 0; i < propertyList.Length; i++)
@@ -171,7 +168,6 @@ namespace MapAssist
 
         private void opacity_Scroll(object sender, EventArgs e)
         {
-            lblOpacity.Text = $"Map Opacity: {opacity.Value}%";
             if (opacity.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity = (float)Math.Round(opacity.Value * 5 / 100f, 2);
@@ -187,14 +183,8 @@ namespace MapAssist
 
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void iconOpacity_Scroll(object sender, EventArgs e)
         {
-            lblIconOpacity.Text = $"Icon Opacity: {iconOpacity.Value}%";
             if (iconOpacity.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity = (float)Math.Round(iconOpacity.Value * 5 / 100f, 2);
@@ -208,7 +198,6 @@ namespace MapAssist
 
         private void mapSize_Scroll(object sender, EventArgs e)
         {
-            lblMapSize.Text = $"Map Size (non-overlay mode): {mapSize.Value}";
             MapAssistConfiguration.Loaded.RenderingConfiguration.Size = mapSize.Value;
             lblMapSizeValue.Text = (mapSize.Value * 100).ToString();
         }
@@ -235,7 +224,6 @@ namespace MapAssist
 
         private void buffSize_Scroll(object sender, EventArgs e)
         {
-            lblBuffSize.Text = $"Buff Icon Size: {buffSize.Value}%";
             if (buffSize.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize = (float)Math.Round(buffSize.Value / 10f, 2);

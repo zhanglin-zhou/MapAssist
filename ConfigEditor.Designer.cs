@@ -149,8 +149,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.tabPage6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtDisplayForSeconds)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1286,9 +1284,6 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.tabPage6.ResumeLayout(false);
-            this.tabPage6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtDisplayForSeconds)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1301,7 +1296,6 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar opacity;
         private System.Windows.Forms.Label lblOpacity;
         private System.Windows.Forms.Label lblIconOpacity;
@@ -1313,12 +1307,10 @@
         private System.Windows.Forms.CheckBox chkToggleViaMap;
         private System.Windows.Forms.Label lblMapSize;
         private System.Windows.Forms.TrackBar mapSize;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblZoom;
         private System.Windows.Forms.TrackBar mapZoom;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cboBuffPosition;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblBuffSize;
         private System.Windows.Forms.TrackBar buffSize;
         private System.Windows.Forms.TabPage tabPage5;
