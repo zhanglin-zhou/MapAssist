@@ -150,6 +150,8 @@ namespace MapAssist
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtDisplayForSeconds)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1285,6 +1287,9 @@ namespace MapAssist
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtDisplayForSeconds)).EndInit();
             this.ResumeLayout(false);
 
         }

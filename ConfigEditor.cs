@@ -17,6 +17,38 @@ namespace MapAssist
         public ConfigEditor()
         {
             InitializeComponent();
+
+
+            foreach (var element in MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperties())
+            {
+                if (!(element.Name.Substring(element.Name.Length - 3, 3) == "REF"))
+                {
+                    cboRenderOption.Items.Add(element.Name);
+                }
+            }
+
+            foreach (var element in Enum.GetNames(typeof(BuffPosition)))
+            {
+                cboBuffPosition.Items.Add(element);
+            }
+
+            foreach (var element in Enum.GetNames(typeof(MapPosition)))
+            {
+                cboPosition.Items.Add(element);
+            }
+
+            foreach (var element in Enum.GetNames(typeof(Shape)))
+            {
+                cboIconShape.Items.Add(element);
+            }
+
+            foreach (var element in Enum.GetNames(typeof(Languages.Language)))
+            {
+                cboLanguage.Items.Add(element);
+            }
+
+            cboLanguage.SelectedIndex = MapAssistConfiguration.Loaded.Language;
+
             opacity.Value = (int)(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f);
             lblOpacity.Text = $"Map Opacity: {opacity.Value}%";
 
@@ -172,7 +204,7 @@ namespace MapAssist
 
         private void mapSize_Scroll(object sender, EventArgs e)
         {
-            lblMapSize.Text = $"Map Size (non-overlay mode): {mapSize.Value}%";
+            lblMapSize.Text = $"Map Size (non-overlay mode): {mapSize.Value}";
             MapAssistConfiguration.Loaded.RenderingConfiguration.Size = mapSize.Value;
             lblMapSizeValue.Text = (mapSize.Value * 100).ToString();
         }
