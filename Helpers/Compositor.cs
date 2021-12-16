@@ -653,13 +653,19 @@ namespace MapAssist.Helpers
                 if (isEth)
                 {
                     itemLabelExtra += "[Eth] ";
-                    fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    if (fontColor == Color.White)
+                    {
+                        fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    }
                 }
 
                 if (ItemLog[i].Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
                 {
                     itemLabelExtra += "[" + numSockets + " S] ";
-                    fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    if (fontColor == Color.White)
+                    {
+                        fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    }
                 }
 
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
