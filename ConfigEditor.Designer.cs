@@ -1,5 +1,4 @@
-﻿
-namespace MapAssist
+﻿namespace MapAssist
 {
     partial class ConfigEditor
     {
