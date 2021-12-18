@@ -20,7 +20,7 @@ namespace MapAssist.Files.Font
                 InitCustomFont();
                 FontFamilyName = "Exocet Blizzard Mixed Caps";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Failed to load Exocet Font");
             }
