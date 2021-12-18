@@ -52,7 +52,7 @@ namespace MapAssist.Helpers
         public static bool StartPipedChild()
         {
             // We have an exclusive lock on the MA process.
-            // So we can kill off any previously lingering pipe servers
+            // So we can kill off any previously lingering map servers
             // in case we had a weird shutdown that didn't clean up appropriately.
             StopPipeServers();
 
@@ -199,7 +199,7 @@ namespace MapAssist.Helpers
             catch (Exception e)
             {
                 _log.Error(e);
-                _log.Error(e, "Unable to parse JSON data from pipe server.");
+                _log.Error(e, "Unable to parse JSON data from map server.");
                 if (!string.IsNullOrWhiteSpace(json))
                 {
                     _log.Error(json);
@@ -364,22 +364,27 @@ namespace MapAssist.Helpers
 
         private static void DisposePipe()
         {
-            if (_pipeClient != null)
+            if (_pipeClient == null)
             {
-                if (!_pipeClient.HasExited)
-                {
-                    try { _pipeClient.Kill(); } catch (Exception) { }
-                    try { _pipeClient.Close(); } catch (Exception) { }
-                }
-                try { _pipeClient.Dispose(); } catch (Exception) { }
+                return;
             }
+
+            _log.Info("Closing map server");
+            if (!_pipeClient.HasExited)
+            {
+                try { _pipeClient.Kill(); } catch (Exception) { }
+                try { _pipeClient.Close(); } catch (Exception) { }
+            }
+            try { _pipeClient.Dispose(); } catch (Exception) { }
+
+            _pipeClient = null;
         }
 
         private static void StopPipeServers()
         {
             DisposePipe();
 
-            // Shutdown old running versions of the pipe server
+            // Shutdown old running versions of the map server
             var procs = Process.GetProcessesByName(_procName);
             foreach (var proc in procs)
             {
