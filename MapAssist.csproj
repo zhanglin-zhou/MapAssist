@@ -106,6 +106,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfigEditor.Designer.cs">
+      <DependentUpon>ConfigEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Files\ConfigurationParser.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Files\Font\ExocetFont.cs" />
@@ -115,6 +121,8 @@
     <Compile Include="Helpers\AudioPlayer.cs" />
     <Compile Include="Helpers\GameDataReader.cs" />
     <Compile Include="Helpers\GameManager.cs" />
+    <Compile Include="Helpers\Hotkey.cs" />
+    <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\LootFilter.cs" />
     <Compile Include="Helpers\ProcessContext.cs" />
     <Compile Include="Helpers\YamlConverters.cs" />
@@ -219,6 +227,9 @@
     <None Include="Resources\ching.wav" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ConfigEditor.resx">
+      <DependentUpon>ConfigEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
