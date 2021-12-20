@@ -166,7 +166,7 @@ namespace MapAssist
 
         private void mapSize_Scroll(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.RenderingConfiguration.Size = mapSize.Value;
+            MapAssistConfiguration.Loaded.RenderingConfiguration.Size = mapSize.Value * 100;
             lblMapSizeValue.Text = (mapSize.Value * 100).ToString();
         }
 
