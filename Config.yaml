@@ -2,10 +2,10 @@
 
 ## HotkeyConfiguration - Keyboard shortcuts for the overlay
 HotkeyConfiguration:
-  ToggleKey: '\'
-  ZoomInKey: '+'
-  ZoomOutKey: '-'
-  GameInfoKey: '['
+  ToggleKey: '|'
+  ZoomInKey: 'Num +'
+  ZoomOutKey: 'Num -'
+  AreaLevelKey: '['
 
 ## PrefetchAreas - Areas to preload so that they're hot and ready as soon as you go to them
 PrefetchAreas:

@@ -68,7 +68,7 @@ namespace MapAssist.Helpers
             {
                 return false;
             }
-            
+
             _pipeClient = new Process();
             _pipeClient.StartInfo.FileName = procFile;
             _pipeClient.StartInfo.Arguments = "\"" + path + "\"";
@@ -86,14 +86,14 @@ namespace MapAssist.Helpers
 
         private static string FindD2()
         {
-            var config = new ConfigEditor();
             var providedPath = MapAssistConfiguration.Loaded.D2Path;
             if (!string.IsNullOrEmpty(providedPath))
             {
                 if (Path.HasExtension(providedPath))
                 {
+                    var config1 = new ConfigEditor();
                     MessageBox.Show("Provided D2 path is not set to a directory." + Environment.NewLine + "Please provide a path to a D2 LoD 1.13c installation and restart MapAssist.");
-                    config.ShowDialog();
+                    config1.ShowDialog();
                     return null;
                 }
 
@@ -103,6 +103,7 @@ namespace MapAssist.Helpers
                     return providedPath;
                 }
 
+                var config = new ConfigEditor();
                 _log.Info("User provided D2 path is invalid");
                 MessageBox.Show("Provided D2 path is not the correct version." + Environment.NewLine + "Please provide a path to a D2 LoD 1.13c installation and restart MapAssist.");
                 config.ShowDialog();
@@ -114,6 +115,7 @@ namespace MapAssist.Helpers
             {
                 _log.Info("Registry-provided D2 path not found or invalid");
                 MessageBox.Show("Unable to automatically locate D2 installation." + Environment.NewLine + "Please provide a path to a D2 LoD 1.13c installation and restart MapAssist.");
+                var config = new ConfigEditor();
                 config.ShowDialog();
                 return null;
             }

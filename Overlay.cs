@@ -25,7 +25,7 @@ using MapAssist.Settings;
 using MapAssist.Types;
 using System;
 using System.Windows.Forms;
-using WK.Libraries.HotkeyListenerNS;
+//using WK.Libraries.HotkeyListenerNS;
 using Graphics = GameOverlay.Drawing.Graphics;
 
 namespace MapAssist
@@ -142,9 +142,9 @@ namespace MapAssist
                     _show = !_show;
                 }
 
-                if (keys == new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.GameInfoKey))
+                if (keys == new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey))
                 {
-                    MapAssistConfiguration.Loaded.GameInfo.Enabled = !MapAssistConfiguration.Loaded.GameInfo.Enabled;
+                    MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel = !MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel;
                 }
 
                 if (keys == new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomInKey))

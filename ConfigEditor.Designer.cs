@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigEditor));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.chkShowArea = new System.Windows.Forms.CheckBox();
             this.cboLanguage = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lblUpdateTimeValue = new System.Windows.Forms.Label();
@@ -167,6 +168,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.chkShowArea);
             this.tabPage5.Controls.Add(this.cboLanguage);
             this.tabPage5.Controls.Add(this.label1);
             this.tabPage5.Controls.Add(this.lblUpdateTimeValue);
@@ -184,6 +186,17 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Main";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // chkShowArea
+            // 
+            this.chkShowArea.AutoSize = true;
+            this.chkShowArea.Location = new System.Drawing.Point(125, 15);
+            this.chkShowArea.Name = "chkShowArea";
+            this.chkShowArea.Size = new System.Drawing.Size(114, 17);
+            this.chkShowArea.TabIndex = 16;
+            this.chkShowArea.Text = "Display Area Level";
+            this.chkShowArea.UseVisualStyleBackColor = true;
+            this.chkShowArea.CheckedChanged += new System.EventHandler(this.chkShowArea_CheckedChanged);
             // 
             // cboLanguage
             // 
@@ -232,9 +245,9 @@
             this.chkGameInfo.AutoSize = true;
             this.chkGameInfo.Location = new System.Drawing.Point(15, 15);
             this.chkGameInfo.Name = "chkGameInfo";
-            this.chkGameInfo.Size = new System.Drawing.Size(112, 17);
+            this.chkGameInfo.Size = new System.Drawing.Size(104, 17);
             this.chkGameInfo.TabIndex = 6;
-            this.chkGameInfo.Text = "Display Game Info";
+            this.chkGameInfo.Text = "Display Game IP";
             this.chkGameInfo.UseVisualStyleBackColor = true;
             this.chkGameInfo.CheckedChanged += new System.EventHandler(this.chkGameInfo_CheckedChanged);
             // 
@@ -1191,7 +1204,7 @@
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(148, 29);
             this.label13.TabIndex = 1;
-            this.label13.Text = "Toggle Game Info Key";
+            this.label13.Text = "Toggle Area Level Key";
             this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label12
@@ -1385,5 +1398,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblLineThicknessSizeValue;
         private System.Windows.Forms.Label lblLineArrowSizeValue;
+        private System.Windows.Forms.CheckBox chkShowArea;
     }
 }

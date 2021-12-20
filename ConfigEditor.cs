@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using MapAssist.Settings;
 using MapAssist.Helpers;
-using WK.Libraries.HotkeyListenerNS;
+//using WK.Libraries.HotkeyListenerNS;
 
 namespace MapAssist
 {
@@ -70,55 +70,6 @@ namespace MapAssist
             opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
             lblOpacityValue.Text = (opacity.Value * 5).ToString();
 
-            var propertyList = MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperties();
-            for (var i = 0; i < propertyList.Length; i++)
-            {
-                var element = propertyList[i];
-                if (element.Name.Length > 3)
-                {
-                    var lastThree = element.Name.Substring(element.Name.Length - 3, 3);
-                    if (!(lastThree == "REF"))
-                    {
-                        cboRenderOption.Items.Add(element.Name.ToProperCase());
-                        if (i + 1 > propertyList.Length)
-                        {
-                            Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") missing a static REF member after it.");
-                        } else
-                        {
-                            var nextElement = propertyList[i+1];
-                            lastThree = nextElement.Name.Substring(nextElement.Name.Length - 3, 3);
-                            if (!(lastThree == "REF"))
-                            {
-                                Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") missing a static REF member after it.");
-                            }
-                        }
-                    }
-                } else
-                {
-                    Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name +  ") variable names in the MapConfiguration class should be at least 4 characters long");
-                }
-            }
-
-            foreach (var element in Enum.GetNames(typeof(BuffPosition)))
-            {
-                cboBuffPosition.Items.Add(element.ToProperCase());
-            }
-
-            foreach (var element in Enum.GetNames(typeof(MapPosition)))
-            {
-                cboPosition.Items.Add(element.ToProperCase());
-            }
-
-            foreach (var element in Enum.GetNames(typeof(Shape)))
-            {
-                cboIconShape.Items.Add(element);
-            }
-
-            foreach (var element in Enum.GetNames(typeof(Languages.Language)))
-            {
-                cboLanguage.Items.Add(element);
-            }
-
             cboLanguage.SelectedIndex = MapAssistConfiguration.Loaded.Language;
 
             opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
@@ -146,15 +97,16 @@ namespace MapAssist
             lblBuffSizeValue.Text = MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize.ToString();
             cboBuffPosition.SelectedIndex = cboBuffPosition.FindStringExact(MapAssistConfiguration.Loaded.RenderingConfiguration.BuffPosition.ToString().ToProperCase());
 
-            chkGameInfo.Checked = MapAssistConfiguration.Loaded.GameInfo.Enabled;
-            txtHuntIP.Text = MapAssistConfiguration.Loaded.HuntingIP;
+            chkGameInfo.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowGameIP;
+            chkShowArea.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel;
+            txtHuntIP.Text = MapAssistConfiguration.Loaded.GameInfo.HuntingIP;
             txtD2Path.Text = MapAssistConfiguration.Loaded.D2Path;
 
             chkClearPrefetch.Checked = MapAssistConfiguration.Loaded.ClearPrefetchedOnAreaChange;
             chkShowOverlayFPS.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS;
 
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ToggleKey.ToString()).Monitor(txtToggleMapKey);
-            new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.GameInfoKey.ToString()).Monitor(txtGameInfoKey);
+            new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey.ToString()).Monitor(txtGameInfoKey);
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomInKey.ToString()).Monitor(txtZoomInKey);
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomOutKey.ToString()).Monitor(txtZoomOutKey);
 
@@ -171,11 +123,6 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.Save();
             base.OnFormClosing(e);
         }
-        private void IgnoreMouseWheel(object sender, EventArgs e)
-        {
-            ((HandledMouseEventArgs)e).Handled = true;
-        }
-
         private void IgnoreMouseWheel(object sender, EventArgs e)
         {
             ((HandledMouseEventArgs)e).Handled = true;
@@ -288,12 +235,16 @@ namespace MapAssist
 
         private void chkGameInfo_CheckedChanged(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.GameInfo.Enabled = chkGameInfo.Checked;
+            MapAssistConfiguration.Loaded.GameInfo.ShowGameIP = chkGameInfo.Checked;
+        }
+        private void chkShowArea_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel = chkShowArea.Checked;
         }
 
         private void txtHuntIP_TextChanged(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.HuntingIP = txtHuntIP.Text;
+            MapAssistConfiguration.Loaded.GameInfo.HuntingIP = txtHuntIP.Text;
         }
 
         private void txtD2Path_TextChanged(object sender, EventArgs e)
@@ -546,7 +497,7 @@ namespace MapAssist
 
         private void itemDisplayForSeconds_Scroll(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds = (double)itemDisplayForSeconds.Value;
+            MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds = (double)itemDisplayForSeconds.Value * 5;
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
         }
 
@@ -575,7 +526,7 @@ namespace MapAssist
 
         private void txtGameInfoKey_TextChanged(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.HotkeyConfiguration.GameInfoKey = txtGameInfoKey.Text;
+            MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey = txtGameInfoKey.Text;
         }
 
         private void txtZoomInKey_TextChanged(object sender, EventArgs e)
