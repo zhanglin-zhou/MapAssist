@@ -275,7 +275,17 @@ namespace MapAssist.Helpers
 
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
                     {
-                        var label = "Well"; //update this when language changes are ready for merge
+                        var label = "Well";
+
+                        LocalizedObj localItem;
+                        if (!ShrineLabels.LocalizedShrines.TryGetValue("Well", out localItem))
+                        {
+                            label = "WellLabelNotFound";
+                        }
+                        var lang = MapAssistConfiguration.Loaded.Language;
+                        var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+
+                        label = prop.ToString();
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
                     }
                     continue;

@@ -1,6 +1,23 @@
 ﻿{
     "Shrines": [
         {
+            "id": 3258,
+            "Key": "Well",
+            "enUS": "Well",
+            "zhTW": "井",
+            "deDE": "Brunnen",
+            "esES": "Pozo",
+            "frFR": "Puits",
+            "itIT": "Pozzo",
+            "koKR": "우물",
+            "plPL": "Studnia",
+            "esMX": "Pozo",
+            "jaJP": "泉",
+            "ptBR": "Poço",
+            "ruRU": "Колодец",
+            "zhCN": "井"
+        },
+        {
             "id": 10809,
             "Key": "ShrId0",
             "enUS": "Null Shrine",
