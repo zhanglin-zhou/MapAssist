@@ -132,6 +132,7 @@ namespace MapAssist.Settings
 
         [YamlMember(Alias = "HostilePlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering HostilePlayer { get; set; }
+        public static PointOfInterestRendering HostilePlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer;
 
         [YamlMember(Alias = "Portal", ApplyNamingConventions = false)]
         public PortalRendering Portal { get; set; }
@@ -147,9 +148,11 @@ namespace MapAssist.Settings
 
         [YamlMember(Alias = "LockedChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering LockedChest { get; set; }
+        public static PointOfInterestRendering LockedChestREF => MapAssistConfiguration.Loaded.MapConfiguration.LockedChest;
 
         [YamlMember(Alias = "TrappedChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering TrappedChest { get; set; }
+        public static PointOfInterestRendering TrappedChestREF => MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest;
 
         [YamlMember(Alias = "Shrine", ApplyNamingConventions = false)]
         public PointOfInterestRendering Shrine { get; set; }
