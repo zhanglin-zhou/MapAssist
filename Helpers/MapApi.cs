@@ -50,15 +50,19 @@ namespace MapAssist.Helpers
         private Difficulty _difficulty;
         private uint _mapSeed;
 
-        private static readonly List<uint> GameCRC32 = new List<uint> { 0xf44cd0cf, 0x8fd3f392, 0xab566eaa, 0xea2f0e6e, 0xb3d69c47 };
-        private static readonly List<uint> StormCRC32 = new List<uint> { 0x9f06891d, 0xb6390775, 0xe5b0f351, 0x5711a8b4, 0xbdb6784e };
-        private static readonly Dictionary<int, string> GameVersion = new Dictionary<int, string>
-        {
-            {0, "1.11a" },
-            {1, "1.11b" },
-            {2, "1.12a" },
-            {3, "1.13c" },
-            {4, "1.13d" },
+        private static readonly Dictionary<string, uint> GameCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0xf44cd0cf },
+            {"1.11b", 0x8fd3f392 },
+            {"1.12a", 0xab566eaa },
+            {"1.13c", 0xea2f0e6e },
+            {"1.13d", 0xb3d69c47 },
+        };
+        private static readonly Dictionary<string, uint> StormCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0x9f06891d },
+            {"1.11b", 0xb6390775 },
+            {"1.12a", 0xe5b0f351 },
+            {"1.13c", 0x5711a8b4 },
+            {"1.13d", 0xbdb6784e }
         };
 
         public static bool StartPipedChild()
@@ -129,12 +133,12 @@ namespace MapAssist.Helpers
                 if (File.Exists(gamePath))
                 {
                     var fileChecksum = Files.Checksum.FileChecksum(gamePath);
-                    for(var i = 0; i < GameCRC32.Count; i++)
+                    foreach(KeyValuePair<string, uint> kvp in GameCRC32)
                     {
-                        var allowedChecksum = GameCRC32[i];
+                        var allowedChecksum = kvp.Value;
                         if (fileChecksum == allowedChecksum)
                         {
-                            _log.Info("Valid D2 version identified by Game.exe - v" + GameVersion[i]);
+                            _log.Info("Valid D2 version identified by Game.exe - v" + kvp.Key);
                             return true;
                         }
                     }
@@ -144,12 +148,12 @@ namespace MapAssist.Helpers
                     if (File.Exists(gamePath))
                     {
                         var fileChecksum = Files.Checksum.FileChecksum(gamePath);
-                        for (var i = 0; i < StormCRC32.Count; i++)
+                        foreach (KeyValuePair<string, uint> kvp in StormCRC32)
                         {
-                            var allowedChecksum = StormCRC32[i];
+                            var allowedChecksum = kvp.Value;
                             if (fileChecksum == allowedChecksum)
                             {
-                                _log.Info("Valid D2 version identified by Storm.dll - v" + GameVersion[i]);
+                                _log.Info("Valid D2 version identified by Storm.dll - v" + kvp.Key);
                                 return true;
                             }
                         }
