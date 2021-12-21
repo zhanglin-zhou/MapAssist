@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Files\ConfigurationParser.cs" />
+    <Compile Include="Files\CRC32.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Files\Font\ExocetFont.cs" />
     <Compile Include="Files\Font\ResourceFontFileEnumerator.cs" />
