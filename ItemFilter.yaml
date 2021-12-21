@@ -18,7 +18,7 @@ Thresher:
    Sockets: [0, 4]
  - Qualities: unique # The Reaper's Toll
 
-# This mage plate rule will look for any normal/superior mage plate with 3 or 4 sockets
+# This mage plate rule will look for any normal/superior mage plate with 0 or 3 sockets
 Mage Plate:
  - Qualities: 
     - normal
@@ -264,6 +264,8 @@ Akaran Rondache:
 Sacred Targe:
  - *pally-shield-base
 Sacred Rondache:
+ - *pally-shield-base
+Royal Shield:
  - *pally-shield-base
 
 ### Runes
