@@ -463,7 +463,7 @@ namespace MapAssist.Helpers
                         if (canDrawLabel)
                         {
                             var poiPosition = MovePointInBounds(corpse.Position, _gameData.PlayerPosition);
-                            DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Corpse, poiPosition, corpse.Name + "(" + "Corpse" + ")"); //fix label when language is merged in
+                            DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Corpse, poiPosition, corpse.Name + " (" + "Corpse" + ")"); //fix label when language is merged in
                         }
                         if (canDrawLine && corpse.Name == _gameData.PlayerUnit.Name)
                         {
