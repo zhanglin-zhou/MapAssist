@@ -270,18 +270,15 @@ namespace MapAssist.Helpers
 
         public AreaData GetMapData(Area area)
         {
-            _log.Info($"Requesting MapSeed: {_mapSeed} Area: {area} Difficulty: {_difficulty}");
-
             if (!_cache.TryGetValue(area, out AreaData areaData))
             {
-                // Not in the cache, block.
-                _log.Info($"Cache miss on {area}");
+                _log.Info($"Requesting map data for {area} ({_mapSeed} seed, {_difficulty} difficulty)");
                 areaData = GetMapDataInternal(area);
                 _cache[area] = areaData;
             }
             else
             {
-                _log.Info($"Cache found on {area}");
+                _log.Info($"Cache found for {area}");
             }
 
             if (areaData != null)
@@ -297,8 +294,18 @@ namespace MapAssist.Helpers
 
                     foreach (var adjacentArea in adjacentAreas)
                     {
-                        _cache[adjacentArea] = GetMapDataInternal(adjacentArea);
-                        areaData.AdjacentAreas[adjacentArea] = _cache[adjacentArea];
+                        if (!_cache.TryGetValue(adjacentArea, out AreaData adjAreaData))
+                        {
+                            _log.Info($"Requesting map data for {adjacentArea} ({_mapSeed} seed, {_difficulty} difficulty)");
+                            _cache[adjacentArea] = GetMapDataInternal(adjacentArea);
+                            areaData.AdjacentAreas[adjacentArea] = _cache[adjacentArea];
+                        }
+                        else
+                        {
+                            _log.Info($"Cache found for {adjacentArea}");
+                            areaData.AdjacentAreas[adjacentArea] = adjAreaData;
+
+                        }
                     }
                 }
                 else
