@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -48,6 +49,9 @@ namespace MapAssist.Helpers
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private Difficulty _difficulty;
         private uint _mapSeed;
+
+        private static readonly List<uint> GameCRC32 = new List<uint> { 0xf44cd0cf, 0x8fd3f392, 0xab566eaa, 0xea2f0e6e, 0xb3d69c47 };
+        private static readonly List<uint> StormCRC32 = new List<uint> { 0x9f06891d, 0xb6390775, 0xe5b0f351, 0x5711a8b4, 0xbdb6784e };
 
         public static bool StartPipedChild()
         {
@@ -114,9 +118,32 @@ namespace MapAssist.Helpers
             try
             {
                 var gamePath = Path.Combine(path, "game.exe");
-                var version = FileVersionInfo.GetVersionInfo(gamePath);
-                return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
-                       version.FilePrivatePart == 60;
+                if (File.Exists(gamePath))
+                {
+                    var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                    foreach(var allowedChecksum in GameCRC32)
+                    {
+                        if (fileChecksum == allowedChecksum)
+                        {
+                            return true;
+                        }
+                    }
+                } else
+                {
+                    gamePath = Path.Combine(path, "storm.dll");
+                    if (File.Exists(gamePath))
+                    {
+                        var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                        foreach (var allowedChecksum in StormCRC32)
+                        {
+                            if (fileChecksum == allowedChecksum)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
             catch (Exception)
             {
