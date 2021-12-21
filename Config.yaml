@@ -122,6 +122,17 @@ MapConfiguration:
     LineColor: Red
     LineThickness: 2
     ArrowHeadSize: 15
+  Corpse:
+    IconColor: Magenta
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: Magenta
+    LabelFontSize: 16
+    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LineColor: Magenta
+    LineThickness: 2
+    ArrowHeadSize: 15
   Portal:
     IconColor: Yellow
     IconShape: Portal
