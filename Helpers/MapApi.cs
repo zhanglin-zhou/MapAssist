@@ -52,6 +52,14 @@ namespace MapAssist.Helpers
 
         private static readonly List<uint> GameCRC32 = new List<uint> { 0xf44cd0cf, 0x8fd3f392, 0xab566eaa, 0xea2f0e6e, 0xb3d69c47 };
         private static readonly List<uint> StormCRC32 = new List<uint> { 0x9f06891d, 0xb6390775, 0xe5b0f351, 0x5711a8b4, 0xbdb6784e };
+        private static readonly Dictionary<int, string> GameVersion = new Dictionary<int, string>
+        {
+            {0, "1.11a" },
+            {1, "1.11b" },
+            {2, "1.12a" },
+            {3, "1.13c" },
+            {4, "1.13d" },
+        };
 
         public static bool StartPipedChild()
         {
@@ -121,10 +129,12 @@ namespace MapAssist.Helpers
                 if (File.Exists(gamePath))
                 {
                     var fileChecksum = Files.Checksum.FileChecksum(gamePath);
-                    foreach(var allowedChecksum in GameCRC32)
+                    for(var i = 0; i < GameCRC32.Count; i++)
                     {
+                        var allowedChecksum = GameCRC32[i];
                         if (fileChecksum == allowedChecksum)
                         {
+                            _log.Info("Valid D2 version identified by Game.exe - v" + GameVersion[i]);
                             return true;
                         }
                     }
@@ -134,10 +144,12 @@ namespace MapAssist.Helpers
                     if (File.Exists(gamePath))
                     {
                         var fileChecksum = Files.Checksum.FileChecksum(gamePath);
-                        foreach (var allowedChecksum in StormCRC32)
+                        for (var i = 0; i < StormCRC32.Count; i++)
                         {
+                            var allowedChecksum = StormCRC32[i];
                             if (fileChecksum == allowedChecksum)
                             {
+                                _log.Info("Valid D2 version identified by Storm.dll - v" + GameVersion[i]);
                                 return true;
                             }
                         }
