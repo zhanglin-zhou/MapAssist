@@ -51,7 +51,7 @@ namespace MapAssist.Types
         private Roster _rosterData;
         private bool _hostileToPlayer;
         private bool _inPlayerParty;
-        private PlayerClass _playerclass;
+        private PlayerClass _playerClass;
         private Area _initialArea;
 
         public UnitAny(IntPtr pUnit)
@@ -107,7 +107,7 @@ namespace MapAssist.Types
                                     _inventory = processContext.Read<Inventory>(_unitAny.pInventory);
                                     _act = new Act(_unitAny.pAct);
                                     _rosterData = rosterData;
-                                    _playerclass = _unitAny.charClass;
+                                    _playerClass = _unitAny.playerClass;
                                     _initialArea = Path.Room.RoomEx.Level.LevelId;
                                     if (IsPlayerUnit())
                                     {
@@ -203,7 +203,7 @@ namespace MapAssist.Types
         public bool HostileToPlayer => _hostileToPlayer;
         public bool InPlayerParty => _inPlayerParty;
         public bool IsCorpse => _unitAny.isCorpse;
-        public PlayerClass PlayerClass => _playerclass;
+        public PlayerClass PlayerClass => _playerClass;
         public Area InitialArea => _initialArea;
 
         public bool IsMovable()
