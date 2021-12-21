@@ -25,7 +25,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -267,8 +266,6 @@ namespace MapAssist.Helpers
 
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
-
-            Prefetch(MapAssistConfiguration.Loaded.PrefetchAreas);
         }
 
         public AreaData GetMapData(Area area)
@@ -315,35 +312,6 @@ namespace MapAssist.Helpers
             }
 
             return areaData;
-        }
-
-        private void Prefetch(Area[] areas)
-        {
-            var prefetchBackgroundWorker = new BackgroundWorker();
-            prefetchBackgroundWorker.DoWork += (sender, args) =>
-            {
-                if (MapAssistConfiguration.Loaded.ClearPrefetchedOnAreaChange)
-                {
-                    _cache.Clear();
-                }
-
-                // Special value telling us to exit.
-                if (areas.Length == 0)
-                {
-                    _log.Info("Prefetch worker terminating");
-                    return;
-                }
-
-                foreach (Area area in areas)
-                {
-                    if (_cache.ContainsKey(area)) continue;
-
-                    _cache[area] = GetMapDataInternal(area);
-                    _log.Info($"Prefetched {area}");
-                }
-            };
-            prefetchBackgroundWorker.RunWorkerAsync();
-            prefetchBackgroundWorker.Dispose();
         }
 
         private AreaData GetMapDataInternal(Area area)
