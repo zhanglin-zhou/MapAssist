@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigEditor));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.btnBrowseD2Location = new System.Windows.Forms.Button();
             this.chkShowArea = new System.Windows.Forms.CheckBox();
             this.cboLanguage = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -136,6 +137,7 @@
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.chkClearPrefetch = new System.Windows.Forms.CheckBox();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.updateTime)).BeginInit();
@@ -181,6 +183,7 @@
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.btnBrowseD2Location);
             this.tabPage5.Controls.Add(this.chkShowArea);
             this.tabPage5.Controls.Add(this.cboLanguage);
             this.tabPage5.Controls.Add(this.label1);
@@ -199,6 +202,16 @@
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Main";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // btnBrowseD2Location
+            // 
+            this.btnBrowseD2Location.Location = new System.Drawing.Point(236, 124);
+            this.btnBrowseD2Location.Name = "btnBrowseD2Location";
+            this.btnBrowseD2Location.Size = new System.Drawing.Size(75, 23);
+            this.btnBrowseD2Location.TabIndex = 17;
+            this.btnBrowseD2Location.Text = "Browse";
+            this.btnBrowseD2Location.UseVisualStyleBackColor = true;
+            this.btnBrowseD2Location.Click += new System.EventHandler(this.btnBrowseD2Location_Click);
             // 
             // chkShowArea
             // 
@@ -268,7 +281,7 @@
             // 
             this.txtHuntIP.Location = new System.Drawing.Point(114, 181);
             this.txtHuntIP.Name = "txtHuntIP";
-            this.txtHuntIP.Size = new System.Drawing.Size(197, 20);
+            this.txtHuntIP.Size = new System.Drawing.Size(116, 20);
             this.txtHuntIP.TabIndex = 9;
             this.txtHuntIP.TextChanged += new System.EventHandler(this.txtHuntIP_TextChanged);
             // 
@@ -309,9 +322,10 @@
             // 
             // txtD2Path
             // 
+            this.txtD2Path.Enabled = false;
             this.txtD2Path.Location = new System.Drawing.Point(114, 126);
             this.txtD2Path.Name = "txtD2Path";
-            this.txtD2Path.Size = new System.Drawing.Size(197, 20);
+            this.txtD2Path.Size = new System.Drawing.Size(116, 20);
             this.txtD2Path.TabIndex = 7;
             this.txtD2Path.TextChanged += new System.EventHandler(this.txtD2Path_TextChanged);
             // 
@@ -1540,5 +1554,7 @@
         private System.Windows.Forms.Button btnRemoveHidden;
         private System.Windows.Forms.Button btnAddHidden;
         private System.Windows.Forms.ListBox lstHidden;
+        private System.Windows.Forms.Button btnBrowseD2Location;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }

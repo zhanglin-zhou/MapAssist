@@ -631,5 +631,21 @@ namespace MapAssist
                 MapAssistConfiguration.Loaded.PrefetchAreas = prefetchList.ToArray();
             }
         }
+
+        private void btnBrowseD2Location_Click(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    txtD2Path.Text = fbd.SelectedPath;
+                } else
+                {
+                    txtD2Path.Text = "";
+                }
+            }
+        }
     }
 }
