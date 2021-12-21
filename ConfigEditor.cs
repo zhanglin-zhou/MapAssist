@@ -4,7 +4,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using MapAssist.Settings;
 using MapAssist.Helpers;
-//using WK.Libraries.HotkeyListenerNS;
+using MapAssist.Types;
+using System.Collections.Generic;
 
 namespace MapAssist
 {
@@ -116,6 +117,27 @@ namespace MapAssist
             txtSoundFile.Text = MapAssistConfiguration.Loaded.ItemLog.SoundFile;
             itemDisplayForSeconds.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds / 5f);
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
+
+            if (MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable != null)
+            {
+                var walkableColor = (Color)MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable;
+                btnWalkableColor.BackColor = walkableColor;
+                chkWalkableColor.Checked = (walkableColor.A > 0);
+            }
+            if (MapAssistConfiguration.Loaded.MapColorConfiguration.Border != null)
+            {
+                var borderColor = (Color)MapAssistConfiguration.Loaded.MapColorConfiguration.Border;
+                btnBorderColor.BackColor = borderColor;
+            }
+
+            foreach(var area in MapAssistConfiguration.Loaded.HiddenAreas)
+            {
+                lstHidden.Items.Add(AreaExtensions.NameInternal(area));
+            }
+            foreach (var area in MapAssistConfiguration.Loaded.PrefetchAreas)
+            {
+                lstPrefetch.Items.Add(AreaExtensions.NameInternal(area));
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -537,6 +559,77 @@ namespace MapAssist
         private void txtZoomOutKey_TextChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomOutKey = txtZoomOutKey.Text;
+        }
+
+        private void btnWalkableColor_Click(object sender, EventArgs e)
+        {
+            var colorDlg = new ColorDialog();
+            if (colorDlg.ShowDialog() == DialogResult.OK)
+            {
+                MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = colorDlg.Color;
+                btnWalkableColor.BackColor = colorDlg.Color;
+                chkWalkableColor.Checked = (colorDlg.Color.A > 0);
+            }
+        }
+
+        private void chkWalkableColor_Clicked(object sender, EventArgs e)
+        {
+            if (chkWalkableColor.Checked)
+            {
+                MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = btnWalkableColor.BackColor;
+            }
+            else
+            {
+                MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = Color.Empty;
+            }
+        }
+
+        private void btnBorderColor_Click(object sender, EventArgs e)
+        {
+            var colorDlg = new ColorDialog();
+            if (colorDlg.ShowDialog() == DialogResult.OK)
+            {
+                MapAssistConfiguration.Loaded.MapColorConfiguration.Border = colorDlg.Color;
+                btnBorderColor.BackColor = colorDlg.Color;
+            }
+        }
+
+        private void btnAddHidden_Click(object sender, EventArgs e)
+        {
+            var addForm = new AddAreaForm();
+            addForm.listToAddTo = "lstHidden";
+            addForm.ShowDialog(this);
+        }
+
+        private void btnAddPrefetch_Click(object sender, EventArgs e)
+        {
+            var addForm = new AddAreaForm();
+            addForm.listToAddTo = "lstPrefetch";
+            addForm.ShowDialog(this);
+        }
+
+        private void btnRemoveHidden_Click(object sender, EventArgs e)
+        {
+            var indexToRemove = lstHidden.SelectedIndex;
+            if (indexToRemove >= 0)
+            {
+                lstHidden.Items.RemoveAt(indexToRemove);
+                var hiddenList = new List<Area>(MapAssistConfiguration.Loaded.HiddenAreas);
+                hiddenList.RemoveAt(indexToRemove);
+                MapAssistConfiguration.Loaded.HiddenAreas = hiddenList.ToArray();
+            }
+        }
+
+        private void btnRemovePrefetch_Click(object sender, EventArgs e)
+        {
+            var indexToRemove = lstPrefetch.SelectedIndex;
+            if (indexToRemove >= 0)
+            {
+                lstPrefetch.Items.RemoveAt(indexToRemove);
+                var prefetchList = new List<Area>(MapAssistConfiguration.Loaded.PrefetchAreas);
+                prefetchList.RemoveAt(indexToRemove);
+                MapAssistConfiguration.Loaded.PrefetchAreas = prefetchList.ToArray();
+            }
         }
     }
 }

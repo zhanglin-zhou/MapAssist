@@ -52,6 +52,9 @@
             this.cboBuffPosition = new System.Windows.Forms.ComboBox();
             this.buffSize = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkWalkableColor = new System.Windows.Forms.CheckBox();
+            this.btnBorderColor = new System.Windows.Forms.Button();
+            this.btnWalkableColor = new System.Windows.Forms.Button();
             this.chkOverlayMode = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cboPosition = new System.Windows.Forms.ComboBox();
@@ -123,6 +126,14 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnRemovePrefetch = new System.Windows.Forms.Button();
+            this.btnAddPrefetch = new System.Windows.Forms.Button();
+            this.lstPrefetch = new System.Windows.Forms.ListBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnRemoveHidden = new System.Windows.Forms.Button();
+            this.btnAddHidden = new System.Windows.Forms.Button();
+            this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.chkClearPrefetch = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
@@ -150,6 +161,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -329,7 +342,7 @@
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(6, 6);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(301, 353);
+            this.panel1.Size = new System.Drawing.Size(301, 387);
             this.panel1.TabIndex = 0;
             // 
             // groupBox3
@@ -339,7 +352,7 @@
             this.groupBox3.Controls.Add(this.lblBuffSize);
             this.groupBox3.Controls.Add(this.cboBuffPosition);
             this.groupBox3.Controls.Add(this.buffSize);
-            this.groupBox3.Location = new System.Drawing.Point(5, 253);
+            this.groupBox3.Location = new System.Drawing.Point(5, 290);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(290, 91);
             this.groupBox3.TabIndex = 22;
@@ -401,6 +414,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkWalkableColor);
+            this.groupBox1.Controls.Add(this.btnBorderColor);
+            this.groupBox1.Controls.Add(this.btnWalkableColor);
             this.groupBox1.Controls.Add(this.chkOverlayMode);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.cboPosition);
@@ -420,10 +436,40 @@
             this.groupBox1.Controls.Add(this.chkToggleViaPanels);
             this.groupBox1.Location = new System.Drawing.Point(5, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(290, 242);
+            this.groupBox1.Size = new System.Drawing.Size(290, 279);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Map Rendering";
+            // 
+            // chkWalkableColor
+            // 
+            this.chkWalkableColor.AutoSize = true;
+            this.chkWalkableColor.Location = new System.Drawing.Point(26, 248);
+            this.chkWalkableColor.Name = "chkWalkableColor";
+            this.chkWalkableColor.Size = new System.Drawing.Size(15, 14);
+            this.chkWalkableColor.TabIndex = 24;
+            this.chkWalkableColor.UseVisualStyleBackColor = true;
+            this.chkWalkableColor.Click += new System.EventHandler(this.chkWalkableColor_Clicked);
+            // 
+            // btnBorderColor
+            // 
+            this.btnBorderColor.Location = new System.Drawing.Point(144, 241);
+            this.btnBorderColor.Name = "btnBorderColor";
+            this.btnBorderColor.Size = new System.Drawing.Size(91, 26);
+            this.btnBorderColor.TabIndex = 23;
+            this.btnBorderColor.Text = "Border Color";
+            this.btnBorderColor.UseVisualStyleBackColor = true;
+            this.btnBorderColor.Click += new System.EventHandler(this.btnBorderColor_Click);
+            // 
+            // btnWalkableColor
+            // 
+            this.btnWalkableColor.Location = new System.Drawing.Point(47, 241);
+            this.btnWalkableColor.Name = "btnWalkableColor";
+            this.btnWalkableColor.Size = new System.Drawing.Size(91, 26);
+            this.btnWalkableColor.TabIndex = 22;
+            this.btnWalkableColor.Text = "Walkable Color";
+            this.btnWalkableColor.UseVisualStyleBackColor = true;
+            this.btnWalkableColor.Click += new System.EventHandler(this.btnWalkableColor_Click);
             // 
             // chkOverlayMode
             // 
@@ -1218,6 +1264,8 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.groupBox4);
+            this.tabPage4.Controls.Add(this.groupBox2);
             this.tabPage4.Controls.Add(this.chkShowOverlayFPS);
             this.tabPage4.Controls.Add(this.chkClearPrefetch);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
@@ -1226,6 +1274,86 @@
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Advanced";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.btnRemovePrefetch);
+            this.groupBox4.Controls.Add(this.btnAddPrefetch);
+            this.groupBox4.Controls.Add(this.lstPrefetch);
+            this.groupBox4.Location = new System.Drawing.Point(168, 58);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(148, 245);
+            this.groupBox4.TabIndex = 3;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Prefetch Areas";
+            // 
+            // btnRemovePrefetch
+            // 
+            this.btnRemovePrefetch.Location = new System.Drawing.Point(122, 45);
+            this.btnRemovePrefetch.Name = "btnRemovePrefetch";
+            this.btnRemovePrefetch.Size = new System.Drawing.Size(20, 23);
+            this.btnRemovePrefetch.TabIndex = 5;
+            this.btnRemovePrefetch.Text = "-";
+            this.btnRemovePrefetch.UseVisualStyleBackColor = true;
+            this.btnRemovePrefetch.Click += new System.EventHandler(this.btnRemovePrefetch_Click);
+            // 
+            // btnAddPrefetch
+            // 
+            this.btnAddPrefetch.Location = new System.Drawing.Point(122, 16);
+            this.btnAddPrefetch.Name = "btnAddPrefetch";
+            this.btnAddPrefetch.Size = new System.Drawing.Size(20, 23);
+            this.btnAddPrefetch.TabIndex = 4;
+            this.btnAddPrefetch.Text = "+";
+            this.btnAddPrefetch.UseVisualStyleBackColor = true;
+            this.btnAddPrefetch.Click += new System.EventHandler(this.btnAddPrefetch_Click);
+            // 
+            // lstPrefetch
+            // 
+            this.lstPrefetch.FormattingEnabled = true;
+            this.lstPrefetch.Location = new System.Drawing.Point(7, 16);
+            this.lstPrefetch.Name = "lstPrefetch";
+            this.lstPrefetch.Size = new System.Drawing.Size(109, 212);
+            this.lstPrefetch.TabIndex = 3;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.btnRemoveHidden);
+            this.groupBox2.Controls.Add(this.btnAddHidden);
+            this.groupBox2.Controls.Add(this.lstHidden);
+            this.groupBox2.Location = new System.Drawing.Point(14, 58);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(148, 245);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Hidden Areas";
+            // 
+            // btnRemoveHidden
+            // 
+            this.btnRemoveHidden.Location = new System.Drawing.Point(121, 48);
+            this.btnRemoveHidden.Name = "btnRemoveHidden";
+            this.btnRemoveHidden.Size = new System.Drawing.Size(20, 23);
+            this.btnRemoveHidden.TabIndex = 2;
+            this.btnRemoveHidden.Text = "-";
+            this.btnRemoveHidden.UseVisualStyleBackColor = true;
+            this.btnRemoveHidden.Click += new System.EventHandler(this.btnRemoveHidden_Click);
+            // 
+            // btnAddHidden
+            // 
+            this.btnAddHidden.Location = new System.Drawing.Point(121, 19);
+            this.btnAddHidden.Name = "btnAddHidden";
+            this.btnAddHidden.Size = new System.Drawing.Size(20, 23);
+            this.btnAddHidden.TabIndex = 1;
+            this.btnAddHidden.Text = "+";
+            this.btnAddHidden.UseVisualStyleBackColor = true;
+            this.btnAddHidden.Click += new System.EventHandler(this.btnAddHidden_Click);
+            // 
+            // lstHidden
+            // 
+            this.lstHidden.FormattingEnabled = true;
+            this.lstHidden.Location = new System.Drawing.Point(6, 19);
+            this.lstHidden.Name = "lstHidden";
+            this.lstHidden.Size = new System.Drawing.Size(109, 212);
+            this.lstHidden.TabIndex = 0;
             // 
             // chkShowOverlayFPS
             // 
@@ -1297,6 +1425,8 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1322,10 +1452,6 @@
         private System.Windows.Forms.TrackBar mapSize;
         private System.Windows.Forms.Label lblZoom;
         private System.Windows.Forms.TrackBar mapZoom;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.ComboBox cboBuffPosition;
-        private System.Windows.Forms.Label lblBuffSize;
-        private System.Windows.Forms.TrackBar buffSize;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.CheckBox chkGameInfo;
         private System.Windows.Forms.Label label6;
@@ -1386,8 +1512,6 @@
         private System.Windows.Forms.Label lblIconOpacityValue;
         private System.Windows.Forms.Label lblMapSizeValue;
         private System.Windows.Forms.Label lblMapZoomValue;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label lblBuffSizeValue;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblUpdateTimeValue;
         private System.Windows.Forms.Label lblItemDisplayForSecondsValue;
@@ -1399,5 +1523,22 @@
         private System.Windows.Forms.Label lblLineThicknessSizeValue;
         private System.Windows.Forms.Label lblLineArrowSizeValue;
         private System.Windows.Forms.CheckBox chkShowArea;
+        private System.Windows.Forms.Button btnWalkableColor;
+        private System.Windows.Forms.Button btnBorderColor;
+        private System.Windows.Forms.CheckBox chkWalkableColor;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label lblBuffSizeValue;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblBuffSize;
+        private System.Windows.Forms.ComboBox cboBuffPosition;
+        private System.Windows.Forms.TrackBar buffSize;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Button btnRemovePrefetch;
+        private System.Windows.Forms.Button btnAddPrefetch;
+        private System.Windows.Forms.ListBox lstPrefetch;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button btnRemoveHidden;
+        private System.Windows.Forms.Button btnAddHidden;
+        private System.Windows.Forms.ListBox lstHidden;
     }
 }
