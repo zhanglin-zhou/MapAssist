@@ -24,7 +24,10 @@ namespace MapAssist
         {
             lstAreas.Items.Clear();
             foreach(var area in Enum.GetValues(typeof(Area)).Cast<Area>()){
-                lstAreas.Items.Add(AreaExtensions.Name(area));
+                if (area != Area.None)
+                {
+                    lstAreas.Items.Add(AreaExtensions.Name(area));
+                }
             }
         }
 
