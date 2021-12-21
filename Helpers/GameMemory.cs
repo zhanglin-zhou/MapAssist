@@ -31,6 +31,7 @@ namespace MapAssist.Helpers
         private static int _currentProcessId;
 
         public static Dictionary<int, UnitAny> PlayerUnits = new Dictionary<int, UnitAny>();
+        public static Dictionary<uint, UnitAny> Corpses = new Dictionary<uint, UnitAny>();
 
         public static GameData GetGameData()
         {
@@ -211,7 +212,7 @@ namespace MapAssist.Helpers
                                 }
                                 break;
                             case UnitType.Player:
-                                if (!playerList.TryGetValue(unitAny.UnitId, out var _))
+                                if (!playerList.TryGetValue(unitAny.UnitId, out var _) && unitAny.IsPlayer())
                                 {
                                     playerList.Add(unitAny.UnitId, unitAny);
                                 }

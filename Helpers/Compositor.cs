@@ -433,7 +433,55 @@ namespace MapAssist.Helpers
 
         private void DrawPlayers(Graphics gfx)
         {
-            if (_gameData.Roster.EntriesByUnitId.TryGetValue(GameManager.PlayerUnit.UnitId, out var myPlayerEntry))
+            foreach(var player in _gameData.Players.Values)
+            {
+                if (player.IsCorpse && player.UnitId != _gameData.PlayerUnit.UnitId)
+                {
+                    if(!GameMemory.Corpses.TryGetValue(player.UnitId, out var corpse))
+                    {
+                        var unitAny = player.Clone();
+                        GameMemory.Corpses.Add(unitAny.UnitId, unitAny);
+                    }
+                }
+            }
+            if (GameMemory.Corpses.Values.Count > 0)
+            {
+                var canDrawLabel = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawLabel();
+                var canDrawIcon = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawIcon();
+                var canDrawLine = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawLine();
+                var corpses = GameMemory.Corpses.Values.ToArray();
+                foreach (var corpse in corpses)
+                {
+                    var corpseArea = corpse.InitialArea;
+                    var inCurrentOrAdjacentArea = corpseArea == _gameData.Area || _areaData.AdjacentLevels.Keys.Contains(corpseArea);
+                    if (inCurrentOrAdjacentArea)
+                    {
+                        if (canDrawIcon)
+                        {
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Corpse, corpse.Position);
+                        }
+                        if (canDrawLabel)
+                        {
+                            var poiPosition = MovePointInBounds(corpse.Position, _gameData.PlayerPosition);
+                            DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Corpse, poiPosition, corpse.Name + "(" + "Corpse" + ")"); //fix label when language is merged in
+                        }
+                        if (canDrawLine && corpse.Name == _gameData.PlayerUnit.Name)
+                        {
+                            var padding = canDrawLabel ? MapAssistConfiguration.Loaded.MapConfiguration.Corpse.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                            var poiPosition = MovePointInBounds(corpse.Position, _gameData.PlayerPosition, padding);
+                            DrawLine(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Corpse, _gameData.PlayerPosition, poiPosition);
+                        }
+                        if (_gameData.PlayerUnit.DistanceTo(corpse.Position) <= 40)
+                        {
+                            if (!_gameData.Players.TryGetValue(corpse.UnitId, out var player))
+                            {
+                                GameMemory.Corpses.Remove(corpse.UnitId);
+                            }
+                        }
+                    }
+                }
+            }
+            if (_gameData.Roster.EntriesByUnitId.TryGetValue(_gameData.PlayerUnit.UnitId, out var myPlayerEntry))
             {
                 var canDrawIcon = MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon();
                 var canDrawLabel = MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawLabel();
@@ -576,7 +624,7 @@ namespace MapAssist.Helpers
                     Color buffColor = States.StateColor(state);
                     if (state == State.STATE_CONVICTION)
                     {
-                        if (GameManager.PlayerUnit.Skill.RightSkillId == Skills.SKILL_CONVICTION) //add check later for if infinity is equipped
+                        if (_gameData.PlayerUnit.Skill.RightSkillId == Skills.SKILL_CONVICTION) //add check later for if infinity is equipped
                         {
                             buffColor = States.BuffColor;
                         }
