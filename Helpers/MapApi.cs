@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -48,6 +49,21 @@ namespace MapAssist.Helpers
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private Difficulty _difficulty;
         private uint _mapSeed;
+
+        private static readonly Dictionary<string, uint> GameCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0xf44cd0cf },
+            {"1.11b", 0x8fd3f392 },
+            {"1.12a", 0xab566eaa },
+            {"1.13c", 0xea2f0e6e },
+            {"1.13d", 0xb3d69c47 },
+        };
+        private static readonly Dictionary<string, uint> StormCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0x9f06891d },
+            {"1.11b", 0xb6390775 },
+            {"1.12a", 0xe5b0f351 },
+            {"1.13c", 0x5711a8b4 },
+            {"1.13d", 0xbdb6784e }
+        };
 
         public static bool StartPipedChild()
         {
@@ -114,9 +130,36 @@ namespace MapAssist.Helpers
             try
             {
                 var gamePath = Path.Combine(path, "game.exe");
-                var version = FileVersionInfo.GetVersionInfo(gamePath);
-                return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
-                       version.FilePrivatePart == 60;
+                if (File.Exists(gamePath))
+                {
+                    var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                    foreach(KeyValuePair<string, uint> kvp in GameCRC32)
+                    {
+                        var allowedChecksum = kvp.Value;
+                        if (fileChecksum == allowedChecksum)
+                        {
+                            _log.Info("Valid D2 version identified by Game.exe - v" + kvp.Key);
+                            return true;
+                        }
+                    }
+                } else
+                {
+                    gamePath = Path.Combine(path, "storm.dll");
+                    if (File.Exists(gamePath))
+                    {
+                        var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                        foreach (KeyValuePair<string, uint> kvp in StormCRC32)
+                        {
+                            var allowedChecksum = kvp.Value;
+                            if (fileChecksum == allowedChecksum)
+                            {
+                                _log.Info("Valid D2 version identified by Storm.dll - v" + kvp.Key);
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
             catch (Exception)
             {
