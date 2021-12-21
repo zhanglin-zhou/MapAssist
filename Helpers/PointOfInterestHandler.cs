@@ -571,6 +571,7 @@ namespace MapAssist.Helpers
                     {
                         pointsOfInterest.Add(new PointOfInterest
                         {
+                            Area = areaData.Area,
                             Label = AreaExtensions.NameFromKey("Izual"),
                             Position = objAndPoints.Value[0],
                             RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
