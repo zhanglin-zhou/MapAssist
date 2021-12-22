@@ -124,62 +124,8 @@ namespace MapAssist.Helpers
             GameObject.ArcaneLargeChestLeft,
             GameObject.ArcaneLargeChestRight,
             GameObject.ArcaneSmallChestLeft,
-            GameObject.ArcaneSmallChestRight
-        };
-
-        private static readonly HashSet<GameObject> NormalChests = new HashSet<GameObject>
-        {
-            GameObject.LargeChestRight,
-            GameObject.LargeChestLeft,
-            GameObject.TombLargeChestL,
-            GameObject.TombLargeChestR,
-            GameObject.Act1LargeChestRight,
-            GameObject.Act1TallChestRight,
-            GameObject.Act1MediumChestRight,
-            GameObject.Act1LargeChest1,
-            GameObject.Act2MediumChestRight,
-            GameObject.Act2LargeChestRight,
-            GameObject.Act2LargeChestLeft,
-            GameObject.MediumChestLeft,
-            GameObject.LargeChestLeft2,
-            GameObject.JungleChest,
-            GameObject.JungleMediumChestLeft,
-            GameObject.TallChestLeft,
-            GameObject.Gchest1L,
-            GameObject.Gchest2R,
-            GameObject.Gchest3R,
-            GameObject.GLchest3L,
-            GameObject.MafistoLargeChestLeft,
-            GameObject.MafistoLargeChestRight,
-            GameObject.MafistoMediumChestLeft,
-            GameObject.MafistoMediumChestRight,
-            GameObject.SpiderLairLargeChestLeft,
-            GameObject.SpiderLairTallChestLeft,
-            GameObject.SpiderLairMediumChestRight,
-            GameObject.SpiderLairTallChestRight,
-            GameObject.HoradricCubeChest,
-            GameObject.HoradricScrollChest,
-            GameObject.StaffOfKingsChest,
-            GameObject.LargeChestR,
-            GameObject.InnerHellBoneChest,
-            GameObject.KhalimChest1,
-            GameObject.KhalimChest2,
-            GameObject.KhalimChest3,
-            GameObject.ExpansionChestRight,
-            GameObject.ExpansionWoodChestLeft,
-            GameObject.BurialChestLeft,
-            GameObject.BurialChestRight,
-            GameObject.ExpansionChestLeft,
-            GameObject.ExpansionWoodChestRight,
-            GameObject.ExpansionSmallChestLeft,
-            GameObject.ExpansionSmallChestRight,
-            GameObject.ExpansionExplodingChest,
+            GameObject.ArcaneSmallChestRight,
             GameObject.ExpansionSpecialChest,
-            GameObject.ExpansionSnowyWoodChestLeft,
-            GameObject.ExpansionSnowyWoodChestRight,
-            GameObject.ExpansionSnowyWoodChest2Left,
-            GameObject.ExpansionSnowyWoodChest2Right,
-            GameObject.NotSoGoodChest,
         };
 
         private static readonly HashSet<GameObject> ArmorWeapRacks = new HashSet<GameObject>
@@ -271,6 +217,64 @@ namespace MapAssist.Helpers
                             });
                             areaRenderDecided.Add(Area.MonasteryGate);
                         }
+                        else if (areaData.Area == Area.OuterCloister)
+                        {
+                            // Barracks Door is based on waypoint position
+                            var waypoint = areaData.Objects.First(obj => obj.Key == GameObject.WaypointPortal).Value.First();
+                            switch (waypoint.X)
+                            {
+                                case 15129:
+                                    // Waypoint = { X: 15129, Y: 4954 }
+                                    // SE Door = { X: 15280, Y: 4940 }
+                                    pointOfInterest.Add(new PointOfInterest
+                                    {
+                                        Label = Utils.GetAreaLabel(Area.Barracks, gameData.Difficulty),
+                                        Position = new Point(15280, 4940),
+                                        RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NextArea,
+                                        Type = PoiType.NextArea
+                                    });
+                                    areaRenderDecided.Add(Area.OuterCloister);
+                                    break;
+
+                                case 15154:
+                                    // Waypoint = { X: 15154, Y: 4919 }
+                                    // NE Door = { X: 15141, Y: 4802 }
+                                    pointOfInterest.Add(new PointOfInterest
+                                    {
+                                        Label = Utils.GetAreaLabel(Area.Barracks, gameData.Difficulty),
+                                        Position = new Point(15141, 4802),
+                                        RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NextArea,
+                                        Type = PoiType.NextArea
+                                    });
+                                    areaRenderDecided.Add(Area.OuterCloister);
+                                    break;
+
+                                case 15159:
+                                    // Waypoint = { X: 15159, Y: 4934 }
+                                    // NW Door = { X: 15002, Y: 4943 }
+                                    pointOfInterest.Add(new PointOfInterest
+                                    {
+                                        Label = Utils.GetAreaLabel(Area.Barracks, gameData.Difficulty),
+                                        Position = new Point(15002, 4943),
+                                        RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NextArea,
+                                        Type = PoiType.NextArea
+                                    });
+                                    areaRenderDecided.Add(Area.OuterCloister);
+                                    break;
+                            }
+                        }
+                        else if (areaData.Area == Area.InnerCloister)
+                        {
+                            // Cathedral door
+                            pointOfInterest.Add(new PointOfInterest
+                            {
+                                Label = Utils.GetAreaLabel(Area.Cathedral, gameData.Difficulty),
+                                Position = new Point(20053, 5000),
+                                RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NextArea,
+                                Type = PoiType.NextArea
+                            });
+                            areaRenderDecided.Add(Area.InnerCloister);
+                        }
                         else if (AreaPreferredNextArea.TryGetValue(areaData.Area, out var nextArea))
                         {
                             var nextLevel = areaData.AdjacentLevels[nextArea];
@@ -339,7 +343,7 @@ namespace MapAssist.Helpers
                         }
                         else
                         {
-                            foreach (AdjacentLevel level in areaData.AdjacentLevels.Values)
+                            foreach (var level in areaData.AdjacentLevels.Values)
                             {
                                 // Already made render decision for this.
                                 if (areaRenderDecided.Contains(level.Area))
@@ -347,7 +351,7 @@ namespace MapAssist.Helpers
                                     continue;
                                 }
 
-                                foreach (Point position in level.Exits)
+                                foreach (var position in level.Exits)
                                 {
                                     pointOfInterest.Add(new PointOfInterest
                                     {
@@ -363,7 +367,8 @@ namespace MapAssist.Helpers
 
                     break;
             }
-            foreach (KeyValuePair<GameObject, Point[]> objAndPoints in areaData.Objects)
+            
+            foreach (var objAndPoints in areaData.Objects)
             {
                 GameObject obj = objAndPoints.Key;
                 Point[] points = objAndPoints.Value;
@@ -371,6 +376,36 @@ namespace MapAssist.Helpers
                 if (!points.Any())
                 {
                     continue;
+                }
+
+                // Area-specific quest objects
+                if (AreaSpecificQuestObjects.ContainsKey(areaData.Area))
+                {
+                    if (AreaSpecificQuestObjects[areaData.Area].ContainsKey(obj))
+                    {
+                        pointOfInterest.Add(new PointOfInterest
+                        {
+                            Label = AreaSpecificQuestObjects[areaData.Area][obj],
+                            Position = points[0],
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
+                            Type = PoiType.AreaSpecificQuest
+                        });
+                    }
+                }
+
+                // Area-specific landmarks
+                if (AreaPortals.ContainsKey(areaData.Area))
+                {
+                    if (AreaPortals[areaData.Area].ContainsKey(obj))
+                    {
+                        pointOfInterest.Add(new PointOfInterest
+                        {
+                            Label = Utils.GetPortalName(AreaPortals[areaData.Area][obj], gameData.Difficulty),
+                            Position = points[0],
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Portal,
+                            Type = PoiType.AreaPortal
+                        });
+                    }
                 }
 
                 // Waypoints
@@ -400,38 +435,10 @@ namespace MapAssist.Helpers
                         });
                     }
                 }
-                // Area-specific quest objects
-                else if (AreaSpecificQuestObjects.ContainsKey(areaData.Area))
-                {
-                    if (AreaSpecificQuestObjects[areaData.Area].ContainsKey(obj))
-                    {
-                        pointOfInterest.Add(new PointOfInterest
-                        {
-                            Label = AreaSpecificQuestObjects[areaData.Area][obj],
-                            Position = points[0],
-                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
-                            Type = PoiType.AreaSpecificQuest
-                        });
-                    }
-                }
-                // Area-specific landmarks
-                else if (AreaPortals.ContainsKey(areaData.Area))
-                {
-                    if (AreaPortals[areaData.Area].ContainsKey(obj))
-                    {
-                        pointOfInterest.Add(new PointOfInterest
-                        {
-                            Label = Utils.GetPortalName(AreaPortals[areaData.Area][obj], gameData.Difficulty),
-                            Position = points[0],
-                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Portal,
-                            Type = PoiType.AreaPortal
-                        });
-                    }
-                }
                 // Shrines
                 else if (Shrines.Contains(obj))
                 {
-                    foreach (Point point in points)
+                    foreach (var point in points)
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
@@ -445,7 +452,7 @@ namespace MapAssist.Helpers
                 // Super Chest
                 else if (SuperChests.Contains(obj))
                 {
-                    foreach (Point point in points)
+                    foreach (var point in points)
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
@@ -456,24 +463,10 @@ namespace MapAssist.Helpers
                         });
                     }
                 }
-                // Normal Chest
-                else if (NormalChests.Contains(obj))
-                {
-                    foreach (Point point in points)
-                    {
-                        pointOfInterest.Add(new PointOfInterest
-                        {
-                            Label = obj.ToString(),
-                            Position = point,
-                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.NormalChest,
-                            Type = PoiType.NormalChest
-                        });
-                    }
-                }
                 // Armor Stands & Weapon Racks
                 else if (ArmorWeapRacks.Contains(obj))
                 {
-                    foreach (Point point in points)
+                    foreach (var point in points)
                     {
                         pointOfInterest.Add(new PointOfInterest
                         {
@@ -484,6 +477,21 @@ namespace MapAssist.Helpers
                         });
                     }
                 }
+            }
+
+            switch(areaData.Area)
+            {
+                case Area.PlainsOfDespair:
+                    foreach (var objAndPoints in areaData.NPCs)
+                    {
+                        pointOfInterest.Add(new PointOfInterest
+                        {
+                            Label = "Izual",
+                            Position = objAndPoints.Value[0],
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
+                        });
+                    }
+                    break;
             }
 
             return pointOfInterest;

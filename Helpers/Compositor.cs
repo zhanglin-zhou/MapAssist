@@ -19,6 +19,7 @@
 
 using GameOverlay.Drawing;
 using GameOverlay.Windows;
+using MapAssist.Files.Font;
 using MapAssist.Settings;
 using MapAssist.Structs;
 using MapAssist.Types;
@@ -39,6 +40,7 @@ namespace MapAssist.Helpers
         public GameData _gameData;
         public readonly AreaData _areaData;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
+        ExocetFont _exocetFont;
 
         private Matrix3x2 mapTransformMatrix;
         private Matrix3x2 areaTransformMatrix;
@@ -56,6 +58,7 @@ namespace MapAssist.Helpers
             _areaData.CalcViewAreas(_rotateRadians);
 
             _pointsOfInterest = pointsOfInterest;
+            _exocetFont = new ExocetFont();
         }
 
         public void Init(Graphics gfx, GameData gameData, Rectangle drawBounds)
@@ -175,6 +178,7 @@ namespace MapAssist.Helpers
                 {
                     continue;
                 }
+
                 if (poi.RenderingSettings.CanDrawIcon())
                 {
                     DrawIcon(gfx, poi.RenderingSettings, poi.Position);
@@ -242,6 +246,33 @@ namespace MapAssist.Helpers
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position, label);
                     }
                     continue;
+                }
+
+                if (gameObject.IsChest())
+                {
+                    if ((gameObject.ObjectData.InteractType & ((byte)Chest.InteractFlags.Trap)) != ((byte)Chest.InteractFlags.None))
+                    {
+                        if (MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest.CanDrawIcon())
+                        {
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest, gameObject.Position);
+                        }
+                    }
+
+                    if ((gameObject.ObjectData.InteractType & ((byte)Chest.InteractFlags.Locked)) != ((byte)Chest.InteractFlags.None))
+                    {
+                        if (MapAssistConfiguration.Loaded.MapConfiguration.LockedChest.CanDrawIcon())
+                        {
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.LockedChest, gameObject.Position);
+                        }
+                    }
+                    else
+                    {
+                        if (MapAssistConfiguration.Loaded.MapConfiguration.NormalChest.CanDrawIcon())
+                        {
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.NormalChest, gameObject.Position);
+                        }
+                    }
+
                 }
             }
         }
@@ -547,39 +578,44 @@ namespace MapAssist.Helpers
             renderTarget.Transform = Matrix3x2.Identity.ToDXMatrix();
 
             // Setup
-            var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+            var font = MapAssistConfiguration.Loaded.GameInfo.LabelFont;
+            var fontSize = MapAssistConfiguration.Loaded.GameInfo.LabelFontSize;
             var fontHeight = (fontSize + fontSize / 2f);
 
             // Game IP
-            if (MapAssistConfiguration.Loaded.GameInfo.Enabled)
+            if (MapAssistConfiguration.Loaded.GameInfo.ShowGameIP)
             {
-                var fontColor = _gameData.Session.GameIP == MapAssistConfiguration.Loaded.HuntingIP ? Color.Green : Color.Red;
+                var fontColor = _gameData.Session.GameIP == MapAssistConfiguration.Loaded.GameInfo.HuntingIP ? Color.Green : Color.Red;
 
                 var ipText = "Game IP: " + _gameData.Session.GameIP;
-                DrawText(gfx, anchor, ipText, "Consolas", 14, fontColor);
+                DrawText(gfx, anchor, ipText, font, fontSize, fontColor);
 
                 anchor.Y += fontHeight + 5;
+            }
 
+            // Area Level
+            if (MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel)
+            {
                 // Area Label
                 var areaText = "Area: " + Utils.GetAreaLabel(_areaData.Area, _gameData.Difficulty, true);
-                DrawText(gfx, anchor, areaText, "Consolas", 14, Color.FromArgb(255, 218, 100));
+                DrawText(gfx, anchor, areaText, font, fontSize, Color.FromArgb(255, 218, 100));
 
                 anchor.Y += fontHeight + 5;
+            }
 
-                // Overlay FPS
-                if (MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS)
-                {
-                    var fpsText = "FPS: " + gfx.FPS.ToString() + "   " + "DeltaTime: " + e.DeltaTime.ToString();
-                    DrawText(gfx, anchor, fpsText, "Consolas", 14, Color.FromArgb(0, 255, 0));
+            // Overlay FPS
+            if (MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS)
+            {
+                var fpsText = "FPS: " + gfx.FPS.ToString() + "   " + "DeltaTime: " + e.DeltaTime.ToString();
+                DrawText(gfx, anchor, fpsText, font, fontSize, Color.FromArgb(0, 255, 0));
 
-                    anchor.Y += fontHeight + 5;
-                }
+                anchor.Y += fontHeight + 5;
             }
 
             if (errorLoadingAreaData)
             {
-                DrawText(gfx, anchor, "ERROR LOADING GAME MAP!", "Consolas", 20, Color.Orange);
-                anchor.Y += fontHeight + 5;
+                DrawText(gfx, anchor, "ERROR LOADING GAME MAP!", font, (int)Math.Round(fontSize * 1.5), Color.Orange);
+                anchor.Y += (int)Math.Round(fontHeight * 1.5) + 5;
             }
 
             DrawItemLog(gfx, anchor);
@@ -618,13 +654,19 @@ namespace MapAssist.Helpers
                 if (isEth)
                 {
                     itemLabelExtra += "[Eth] ";
-                    fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    if (fontColor == Color.White)
+                    {
+                        fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    }
                 }
 
                 if (ItemLog[i].Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
                 {
                     itemLabelExtra += "[" + numSockets + " S] ";
-                    fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    if (fontColor == Color.White)
+                    {
+                        fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
+                    }
                 }
 
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
@@ -736,20 +778,22 @@ namespace MapAssist.Helpers
 
             var brush = CreateSolidBrush(gfx, rendering.LineColor);
 
-            startPosition = startPosition.Rotate(-angle, startPosition).Add(5 * scaleWidth, 0).Rotate(angle, startPosition); // Add 5a for a little extra spacing from the start point
+            startPosition = startPosition.Rotate(-angle, startPosition).Add(5 * scaleWidth, 0).Rotate(angle, startPosition); // Add 5 for a little extra spacing from the start point
 
             if (length > 60) // Don't render when line is too short
             {
                 if (rendering.CanDrawArrowHead())
                 {
-                    endPosition = endPosition.Rotate(-angle, startPosition).Subtract(rendering.ArrowHeadSize + scaleWidth, 0).Rotate(angle, startPosition); // Add scaleWidth for a little extra spacing from the end point
+                    endPosition = endPosition.Rotate(-angle, startPosition).Subtract(5 * scaleWidth, 0).Rotate(angle, startPosition); // Subtract 5 for a little extra spacing from the end point
 
                     var points = new Point[]
                     {
                         new Point((float)(Math.Sqrt(3) / -2), 0.5f),
                         new Point((float)(Math.Sqrt(3) / -2), -0.5f),
                         new Point(0, 0),
-                    }.Select(point => point.Multiply(rendering.ArrowHeadSize).Add(rendering.ArrowHeadSize / 2f, 0).Rotate(angle).Add(endPosition)).ToArray(); // Divide by 2 to make the line end inside the triangle
+                    }.Select(point => point.Multiply(rendering.ArrowHeadSize).Rotate(angle).Add(endPosition)).ToArray(); // Divide by 2 to make the line end inside the triangle
+
+                    endPosition = endPosition.Rotate(-angle, startPosition).Subtract(rendering.ArrowHeadSize / 2f, 0).Rotate(angle, startPosition); // Make the line end inside the triangle
 
                     gfx.DrawLine(brush, startPosition, endPosition, rendering.LineThickness);
                     gfx.FillTriangle(brush, points[0], points[1], points[2]);
@@ -773,7 +817,7 @@ namespace MapAssist.Helpers
             var playerCoord = Vector2.Transform(_gameData.PlayerPosition.ToVector(), areaTransformMatrix);
             position = Vector2.Transform(position.ToVector(), areaTransformMatrix).ToPoint();
 
-            var useColor = color == null ? rendering.LabelColor : (Color)color;
+            var useColor = color ?? rendering.LabelColor;
 
             var font = CreateFont(gfx, rendering.LabelFont, rendering.LabelFontSize);
             var iconShape = GetIconShape(rendering).ToRectangle();
@@ -1030,7 +1074,18 @@ namespace MapAssist.Helpers
         private Font CreateFont(Graphics gfx, string fontFamilyName, float size)
         {
             var key = (fontFamilyName, size);
-            if (!cacheFonts.ContainsKey(key)) cacheFonts[key] = gfx.CreateFont(fontFamilyName, size);
+            if (!cacheFonts.ContainsKey(key))
+            {
+                if(fontFamilyName.Equals("Exocet Blizzard Mixed Caps"))
+                {
+                    cacheFonts[key] = _exocetFont.CreateFont(size);
+                }
+                else
+                {
+                    cacheFonts[key] = gfx.CreateFont(fontFamilyName, size);
+                }
+            }
+
             return cacheFonts[key];
         }
 

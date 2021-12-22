@@ -108,6 +108,10 @@
   <ItemGroup>
     <Compile Include="Files\ConfigurationParser.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\Font\ExocetFont.cs" />
+    <Compile Include="Files\Font\ResourceFontFileEnumerator.cs" />
+    <Compile Include="Files\Font\ResourceFontFileStream.cs" />
+    <Compile Include="Files\Font\ResourceFontLoader.cs" />
     <Compile Include="Helpers\AudioPlayer.cs" />
     <Compile Include="Helpers\GameDataReader.cs" />
     <Compile Include="Helpers\GameManager.cs" />
@@ -144,6 +148,7 @@
     <Compile Include="Structs\Skills.cs" />
     <Compile Include="Structs\UnitAny.cs" />
     <Compile Include="Structs\UnitHashTable.cs" />
+    <Compile Include="Types\Chest.cs" />
     <Compile Include="Types\Items.cs" />
     <Compile Include="Types\Roster.cs" />
     <Compile Include="Types\Session.cs" />
@@ -172,6 +177,7 @@
     <Compile Include="Settings\Utils.cs" />
     <Compile Include="Types\UnitAny.cs" />
     <Compile Include="Types\UnitType.cs" />
+    <EmbeddedResource Include="Fonts\exocetblizzardot-medium.otf" />
     <None Include="Resources\Icon1.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -522,7 +528,9 @@
     <None Include="Resources\COLD.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\piped" />
+    <Content Include="MAServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
