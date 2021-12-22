@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Files\ConfigurationParser.cs" />
+    <Compile Include="Files\CRC32.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Files\Font\ExocetFont.cs" />
     <Compile Include="Files\Font\ResourceFontFileEnumerator.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Structs\Level.cs" />
     <Compile Include="Structs\MonsterData.cs" />
     <Compile Include="Structs\ObjectData.cs" />
+    <Compile Include="Structs\PlayerInfo.cs" />
     <Compile Include="Structs\RosterMember.cs" />
     <Compile Include="Structs\Path.cs" />
     <Compile Include="Structs\Room.cs" />

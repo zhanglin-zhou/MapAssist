@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -48,7 +49,22 @@ namespace MapAssist.Helpers
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private Difficulty _difficulty;
         private uint _mapSeed;
-        
+
+        private static readonly Dictionary<string, uint> GameCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0xf44cd0cf },
+            {"1.11b", 0x8fd3f392 },
+            {"1.12a", 0xab566eaa },
+            {"1.13c", 0xea2f0e6e },
+            {"1.13d", 0xb3d69c47 },
+        };
+        private static readonly Dictionary<string, uint> StormCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0x9f06891d },
+            {"1.11b", 0xb6390775 },
+            {"1.12a", 0xe5b0f351 },
+            {"1.13c", 0x5711a8b4 },
+            {"1.13d", 0xbdb6784e }
+        };
+
         public static bool StartPipedChild()
         {
             // We have an exclusive lock on the MA process.
@@ -77,7 +93,7 @@ namespace MapAssist.Helpers
 
             return startupLength == 0;
         }
-        
+
         private static string FindD2()
         {
             var providedPath = MapAssistConfiguration.Loaded.D2Path;
@@ -97,14 +113,14 @@ namespace MapAssist.Helpers
                 _log.Info("User provided D2 path is invalid");
                 throw new Exception("Provided D2 path is not the correct version");
             }
-            
+
             var installPath = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Blizzard Entertainment\\Diablo II", "InstallPath", "INVALID") as string;
             if (installPath == "INVALID" || !IsValidD2Path(installPath))
             {
                 _log.Info("Registry-provided D2 path not found or invalid");
                 throw new Exception("Unable to automatically locate D2 installation. Please provide path manually in the config at `D2Path`.");
             }
-            
+
             _log.Info("Registry-provided D2 path is valid");
             return installPath;
         }
@@ -114,9 +130,36 @@ namespace MapAssist.Helpers
             try
             {
                 var gamePath = Path.Combine(path, "game.exe");
-                var version = FileVersionInfo.GetVersionInfo(gamePath);
-                return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
-                       version.FilePrivatePart == 60;
+                if (File.Exists(gamePath))
+                {
+                    var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                    foreach(KeyValuePair<string, uint> kvp in GameCRC32)
+                    {
+                        var allowedChecksum = kvp.Value;
+                        if (fileChecksum == allowedChecksum)
+                        {
+                            _log.Info("Valid D2 version identified by Game.exe - v" + kvp.Key);
+                            return true;
+                        }
+                    }
+                } else
+                {
+                    gamePath = Path.Combine(path, "storm.dll");
+                    if (File.Exists(gamePath))
+                    {
+                        var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                        foreach (KeyValuePair<string, uint> kvp in StormCRC32)
+                        {
+                            var allowedChecksum = kvp.Value;
+                            if (fileChecksum == allowedChecksum)
+                            {
+                                _log.Info("Valid D2 version identified by Storm.dll - v" + kvp.Key);
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
             catch (Exception)
             {
@@ -238,24 +281,35 @@ namespace MapAssist.Helpers
                 _log.Info($"Cache miss on {area}");
                 areaData = GetMapDataInternal(area);
                 _cache[area] = areaData;
-            } else
+            }
+            else
             {
                 _log.Info($"Cache found on {area}");
             }
 
             if (areaData != null)
             {
-                _log.Info($"Prefetching areas adjacent to {area}");
                 Area[] adjacentAreas = areaData.AdjacentLevels.Keys.ToArray();
-                if (adjacentAreas.Any())
+
+                if (areaData.Area == Area.OuterCloister) adjacentAreas = adjacentAreas.Append(Area.Barracks).ToArray(); // Missing adjacent area
+                if (areaData.Area == Area.Barracks) adjacentAreas = adjacentAreas.Append(Area.OuterCloister).ToArray(); // Missing adjacent area
+
+                if (adjacentAreas.Length > 0)
                 {
-                    _log.Info($"Adjacent areas to {area} found");
-                    Prefetch(adjacentAreas);
-                } else
+                    _log.Info($"{adjacentAreas.Length} adjacent areas to {area} found");
+
+                    foreach (var adjacentArea in adjacentAreas)
+                    {
+                        _cache[adjacentArea] = GetMapDataInternal(adjacentArea);
+                        areaData.AdjacentAreas[adjacentArea] = _cache[adjacentArea];
+                    }
+                }
+                else
                 {
                     _log.Info($"No adjacent areas to {area} found");
                 }
-            } else
+            }
+            else
             {
                 _log.Info($"areaData was null on {area}");
             }
@@ -263,7 +317,7 @@ namespace MapAssist.Helpers
             return areaData;
         }
 
-        private void Prefetch(params Area[] areas)
+        private void Prefetch(Area[] areas)
         {
             var prefetchBackgroundWorker = new BackgroundWorker();
             prefetchBackgroundWorker.DoWork += (sender, args) =>

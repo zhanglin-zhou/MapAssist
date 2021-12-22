@@ -114,6 +114,12 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "NonPartyPlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering NonPartyPlayer { get; set; }
 
+        [YamlMember(Alias = "HostilePlayer", ApplyNamingConventions = false)]
+        public PointOfInterestRendering HostilePlayer { get; set; }
+
+        [YamlMember(Alias = "Corpse", ApplyNamingConventions = false)]
+        public PointOfInterestRendering Corpse { get; set; }
+
         [YamlMember(Alias = "Portal", ApplyNamingConventions = false)]
         public PortalRendering Portal { get; set; }
 
