@@ -205,6 +205,3 @@ GameInfo:
 ## Should only need to provide if we are not able to look it up
 ## automatically via the registry
 D2Path: ''
-
-## UpdateTime - Advanced setting for how often to read the game memory in ms
-UpdateTime: 30

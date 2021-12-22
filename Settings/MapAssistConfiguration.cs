@@ -38,9 +38,6 @@ namespace MapAssist.Settings
             new ConfigurationParser<MapAssistConfiguration>().SerializeToFile(this);
         }
 
-        [YamlMember(Alias = "UpdateTime", ApplyNamingConventions = false)]
-        public int UpdateTime { get; set; }
-        
         [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
         public string D2Path { get; set; }
 
