@@ -304,7 +304,6 @@ namespace MapAssist.Helpers
                         {
                             _log.Info($"Cache found for {adjacentArea}");
                             areaData.AdjacentAreas[adjacentArea] = adjAreaData;
-
                         }
                     }
                 }
