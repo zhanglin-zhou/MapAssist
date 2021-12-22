@@ -25,7 +25,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -267,24 +266,19 @@ namespace MapAssist.Helpers
 
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
-
-            Prefetch(MapAssistConfiguration.Loaded.PrefetchAreas);
         }
 
         public AreaData GetMapData(Area area)
         {
-            _log.Info($"Requesting MapSeed: {_mapSeed} Area: {area} Difficulty: {_difficulty}");
-
             if (!_cache.TryGetValue(area, out AreaData areaData))
             {
-                // Not in the cache, block.
-                _log.Info($"Cache miss on {area}");
+                _log.Info($"Requesting map data for {area} ({_mapSeed} seed, {_difficulty} difficulty)");
                 areaData = GetMapDataInternal(area);
                 _cache[area] = areaData;
             }
             else
             {
-                _log.Info($"Cache found on {area}");
+                _log.Info($"Cache found for {area}");
             }
 
             if (areaData != null)
@@ -300,8 +294,17 @@ namespace MapAssist.Helpers
 
                     foreach (var adjacentArea in adjacentAreas)
                     {
-                        _cache[adjacentArea] = GetMapDataInternal(adjacentArea);
-                        areaData.AdjacentAreas[adjacentArea] = _cache[adjacentArea];
+                        if (!_cache.TryGetValue(adjacentArea, out AreaData adjAreaData))
+                        {
+                            _log.Info($"Requesting map data for {adjacentArea} ({_mapSeed} seed, {_difficulty} difficulty)");
+                            _cache[adjacentArea] = GetMapDataInternal(adjacentArea);
+                            areaData.AdjacentAreas[adjacentArea] = _cache[adjacentArea];
+                        }
+                        else
+                        {
+                            _log.Info($"Cache found for {adjacentArea}");
+                            areaData.AdjacentAreas[adjacentArea] = adjAreaData;
+                        }
                     }
                 }
                 else
@@ -315,35 +318,6 @@ namespace MapAssist.Helpers
             }
 
             return areaData;
-        }
-
-        private void Prefetch(Area[] areas)
-        {
-            var prefetchBackgroundWorker = new BackgroundWorker();
-            prefetchBackgroundWorker.DoWork += (sender, args) =>
-            {
-                if (MapAssistConfiguration.Loaded.ClearPrefetchedOnAreaChange)
-                {
-                    _cache.Clear();
-                }
-
-                // Special value telling us to exit.
-                if (areas.Length == 0)
-                {
-                    _log.Info("Prefetch worker terminating");
-                    return;
-                }
-
-                foreach (Area area in areas)
-                {
-                    if (_cache.ContainsKey(area)) continue;
-
-                    _cache[area] = GetMapDataInternal(area);
-                    _log.Info($"Prefetched {area}");
-                }
-            };
-            prefetchBackgroundWorker.RunWorkerAsync();
-            prefetchBackgroundWorker.Dispose();
         }
 
         private AreaData GetMapDataInternal(Area area)
