@@ -1219,6 +1219,8 @@ namespace MapAssist.Helpers
             return cacheBrushes[key];
         }
 
+        ~Compositor() => Dispose();
+
         public void Dispose()
         {
             foreach (var (gamemap, _) in gamemaps)
