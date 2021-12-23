@@ -449,6 +449,7 @@ namespace MapAssist.Helpers
                     }
                 }
             }
+
             if (GameMemory.Corpses.TryGetValue(_gameData.ProcessId, out corpseList) && corpseList.Values.Count > 0)
             {
                 var canDrawLabel = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawLabel();
@@ -486,6 +487,7 @@ namespace MapAssist.Helpers
                     }
                 }
             }
+
             if (_gameData.Roster.EntriesByUnitId.TryGetValue(_gameData.PlayerUnit.UnitId, out var myPlayerEntry))
             {
                 var canDrawIcon = MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon();
@@ -494,11 +496,16 @@ namespace MapAssist.Helpers
                 var canDrawNonPartyLabel = MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer.CanDrawLabel();
                 var canDrawHostileLine = MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.CanDrawLine();
 
+                var areasToRender = (new AreaData[] { _areaData }).Concat(_areaData.AdjacentAreas.Values).ToArray();
+
                 foreach (var player in _gameData.Roster.List)
                 {
                     var myPlayer = player.UnitId == myPlayerEntry.UnitId;
                     var inMyParty = player.PartyID == myPlayerEntry.PartyID;
                     var playerName = player.Name;
+
+                    var foundInArea = areasToRender.FirstOrDefault(area => area.IncludesPoint(player.Position));
+                    if (foundInArea != null && foundInArea.Area != _areaData.Area && !AreaExtensions.RequiresStitching(foundInArea.Area)) continue; // Don't show gamedata objects in another area if areas aren't stitched together
 
                     if (_gameData.Players.TryGetValue(player.UnitId, out var playerUnit))
                     {
@@ -943,10 +950,10 @@ namespace MapAssist.Helpers
             var multiplier = playerCoord.Y < position.Y ? 1 : -1;
             if (rendering.CanDrawIcon())
             {
-                position = position.Add(new Point(0, iconShape.Height / 2 * (!rendering.CanDrawArrowHead() ? 1 : multiplier)));
+                position = position.Add(new Point(0, iconShape.Height / 2 * (!rendering.CanDrawArrowHead() ? -1 : multiplier)));
             }
 
-            position = position.Add(new Point(0, (textSize.Y / 2 + 10) * (!rendering.CanDrawArrowHead() ? 1 : multiplier)));
+            position = position.Add(new Point(0, (textSize.Y / 2 + 5) * (!rendering.CanDrawArrowHead() ? -1 : multiplier)));
             position = MoveTextInBounds(position, text, textSize);
 
             DrawText(gfx, position, text, rendering.LabelFont, rendering.LabelFontSize, useColor,
