@@ -5,22 +5,16 @@ HotkeyConfiguration:
   ToggleKey: '\'
   ZoomInKey: '+'
   ZoomOutKey: '-'
-  GameInfoKey: '['
-
-## PrefetchAreas - Areas to preload so that they're hot and ready as soon as you go to them
-PrefetchAreas:
- - 'Catacombs Level 2'
- - 'Durance Of Hate Level 2'
 
 ## HiddenAreas - Areas where the overlay is not needed and will be hidden
 HiddenAreas:
- - 'Rogue Encampment'
- - 'Lut Gholein'
- - 'Kurast Docks'
- - 'Pandemonium Fortress'
- - 'Harrogath'
- - 'Forgotten Tower'
- - "Nihlathak's Temple"
+  - 'Rogue Encampment'
+  - 'Lut Gholein'
+  - 'Kurast Docks'
+  - 'Pandemonium Fortress'
+  - 'Harrogath'
+  - 'Forgotten Tower'
+  - "Nihlathak's Temple"
 
 ## RenderingConfiguration - Visual settings for the overlay
 RenderingConfiguration:
@@ -76,7 +70,7 @@ MapConfiguration:
     ArrowHeadSize: 15
     LabelColor: SpringGreen
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
   PreviousArea:
     IconColor: Violet
     IconShape: Square
@@ -84,7 +78,7 @@ MapConfiguration:
     LineColor: ''
     LabelColor: Violet
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
   Waypoint:
     IconColor: SteelBlue
     IconShape: Square
@@ -95,7 +89,7 @@ MapConfiguration:
     ArrowHeadSize: 15
     LabelColor: Tomato
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
   Player:
     IconColor: Chartreuse
     IconShape: Cross
@@ -103,7 +97,7 @@ MapConfiguration:
     IconThickness: 2
     LabelColor: Chartreuse
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
   NonPartyPlayer:
     IconColor: Orange
     IconShape: Cross
@@ -111,7 +105,29 @@ MapConfiguration:
     IconThickness: 2
     LabelColor: Orange
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
+  HostilePlayer:
+    IconColor: Red
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: Red
+    LabelFontSize: 16
+    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LineColor: Red
+    LineThickness: 2
+    ArrowHeadSize: 15
+  Corpse:
+    IconColor: Magenta
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: Magenta
+    LabelFontSize: 16
+    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LineColor: Magenta
+    LineThickness: 2
+    ArrowHeadSize: 15
   Portal:
     IconColor: Yellow
     IconShape: Portal
@@ -119,22 +135,31 @@ MapConfiguration:
     IconThickness: 2
     LabelColor: Yellow
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
   SuperChest:
     IconColor: '17, 255, 0'
     IconShape: Square
     IconSize: 4
   NormalChest:
-    IconColor: '96, 96, 96'
+    IconColor: '17, 128, 0'
     IconShape: Square
     IconSize: 3
+  LockedChest:
+    IconColor: '128, 0, 0'
+    IconShape: Square
+    IconSize: 3
+  TrappedChest:
+    IconColor: '255, 0, 0'
+    IconShape: SquareOutline
+    IconSize: 4
+    IconThickness: 1
   Shrine:
     IconColor: '255, 218, 100'
     IconShape: Polygon
     IconSize: 5
     LabelColor: '255, 218, 100'
     LabelFontSize: 16
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
   ArmorWeapRack:
     IconColor: '132, 132, 132'
     IconShape: Square
@@ -143,7 +168,7 @@ MapConfiguration:
     IconColor: DarkOrange
     IconShape: Ellipse
     IconSize: 4
-    LabelFont: 'Helvetica'
+    LabelFont: 'Exocet Blizzard Mixed Caps'
     LabelFontSize: 16
 
 ## ItemLog - Alerts for in-game dropped items nearby
@@ -155,7 +180,7 @@ ItemLog:
   ## SoundFile - Name of .wav file for drop sound (put .wav file in the MapAssist folder)
   SoundFile: ""
   DisplayForSeconds: 45
-  LabelFont: "Helvetica"
+  LabelFont: "Exocet Blizzard Mixed Caps"
   LabelFontSize: 14
 
 ## MapColorConfiguration - Color schema for drawing overlay map
@@ -163,22 +188,20 @@ MapColorConfiguration:
   Walkable:
   Border: '255, 255, 255'
 
-## GameInfo - Displaying game server IP address
+## GameInfo - Display setting for game info
 GameInfo:
-  Enabled: true
+  ## ShowGameIP - Display game server IP address
+  ShowGameIP: true
+  ## HuntingIP - Set an IP address to display in green instead of red
+  HuntingIP: 'x.x.x.x'
+  ## ShowAreaLevel - Display current area and alvl
+  ShowAreaLevel: true
   ## ShowOverlayFPS - Developer setting, probably not useful
   ShowOverlayFPS: false
-
-## HuntingIP - Set an IP address to display in green instead of red
-HuntingIP: 'x.x.x.x'
+  LabelFont: "Exocet Blizzard Mixed Caps"
+  LabelFontSize: 14
 
 ## Path to D2LOD installation. Optional.
 ## Should only need to provide if we are not able to look it up
 ## automatically via the registry
 D2Path: ''
-
-## UpdateTime - Advanced setting for how often to read the game memory in ms
-UpdateTime: 30
-
-## ClearPrefetchedOnAreaChange - Advanced setting for clearing prefetched cache
-ClearPrefetchedOnAreaChange: false

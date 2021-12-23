@@ -48,6 +48,8 @@ namespace MapAssist.Helpers
 
         private static bool _playerNotFoundErrorThrown = false;
 
+        public static bool PlayerFound = false;
+
         public static void MonitorForegroundWindow()
         {
             _eventDelegate = new WindowsExternal.WinEventDelegate(WinEventProc);
@@ -122,7 +124,7 @@ namespace MapAssist.Helpers
                     _processContext = new ProcessContext(_lastGameProcess); // Rarely, the VirtualMemoryRead will cause an error, in that case return a null instead of a runtime error. The next frame will try again.
                     return _processContext;
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                     return null;
                 }
@@ -165,13 +167,14 @@ namespace MapAssist.Helpers
                                 return _PlayerUnit;
                             }
 
-                            unitAny = unitAny.ListNext;
+                            unitAny = unitAny.ListNext(null);
                         }
                     }
                 }
                 else
                 {
                     _playerNotFoundErrorThrown = false;
+                    PlayerFound = true;
                     return _PlayerUnit;
                 }
 
@@ -291,6 +294,7 @@ namespace MapAssist.Helpers
         public static void ResetPlayerUnit()
         {
             _PlayerUnit = default;
+            PlayerFound = false;
             using (var processContext = GetProcessContext())
             {
                 if (processContext == null) { return; }

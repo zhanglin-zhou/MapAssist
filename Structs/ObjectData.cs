@@ -35,6 +35,17 @@ namespace MapAssist.Structs
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x10)]
         public string Owner;
     }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct ObjectTxt
+    {
+        public ushort Id;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x40)]
+        public string ObjectName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x40)]
+        public string ObjectType;
+    }
+
     public enum ShrineType : byte
     {
         None,

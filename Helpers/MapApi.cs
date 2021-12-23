@@ -17,7 +17,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using MapAssist.Properties;
 using MapAssist.Settings;
 using MapAssist.Types;
 using Microsoft.Win32;
@@ -25,7 +24,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -43,132 +42,57 @@ namespace MapAssist.Helpers
     {
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         private static Process _pipeClient;
-        private static Thread _pipeReaderThread;
         private static readonly object _pipeRequestLock = new object();
-        private static BlockingCollection<(uint, string)> collection = new BlockingCollection<(uint, string)>();
+        private const string _procName = "MAServer.exe";
 
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private Difficulty _difficulty;
         private uint _mapSeed;
-        private const string _procName = "MAServer.exe";
+
+        private static readonly Dictionary<string, uint> GameCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0xf44cd0cf },
+            {"1.11b", 0x8fd3f392 },
+            {"1.12a", 0xab566eaa },
+            {"1.13c", 0xea2f0e6e },
+            {"1.13d", 0xb3d69c47 },
+        };
+        private static readonly Dictionary<string, uint> StormCRC32 = new Dictionary<string, uint> {
+            {"1.11a", 0x9f06891d },
+            {"1.11b", 0xb6390775 },
+            {"1.12a", 0xe5b0f351 },
+            {"1.13c", 0x5711a8b4 },
+            {"1.13d", 0xbdb6784e }
+        };
 
         public static bool StartPipedChild()
-        
         {
             // We have an exclusive lock on the MA process.
-            // So we can kill off any previously lingering pipe servers
+            // So we can kill off any previously lingering map servers
             // in case we had a weird shutdown that didn't clean up appropriately.
             StopPipeServers();
-            
-            var tempFile = Path.GetTempPath() + _procName;
-            File.WriteAllBytes(tempFile, Resources.piped);
-            if (!File.Exists(tempFile))
+
+            var procFile = Path.Combine(Environment.CurrentDirectory, _procName);
+            if (!File.Exists(procFile))
             {
                 throw new Exception("Unable to start map server. Check Anti Virus settings.");
             }
 
             var path = FindD2();
-            path = path.Contains(" ") ? "\"" + path + "\"" : path;
-            
             _pipeClient = new Process();
-            _pipeClient.StartInfo.FileName = tempFile;
-            _pipeClient.StartInfo.Arguments = path;
+            _pipeClient.StartInfo.FileName = procFile;
+            _pipeClient.StartInfo.Arguments = "\"" + path + "\"";
             _pipeClient.StartInfo.UseShellExecute = false;
             _pipeClient.StartInfo.RedirectStandardOutput = true;
             _pipeClient.StartInfo.RedirectStandardInput = true;
             _pipeClient.StartInfo.RedirectStandardError = true;
             _pipeClient.Start();
 
-            var streamReader = _pipeClient.StandardOutput;
-
-            async void Start()
-            {
-                Func<int, Task<byte[]>> ReadBytes = async (length) =>
-                {
-                    var data = new byte[0];
-
-                    while (!disposed && !_pipeClient.HasExited && data.Length < length)
-                    {
-                        var tryReadLength = length - data.Length;
-                        var chunk = new byte[tryReadLength];
-                        var readLength = await streamReader.BaseStream.ReadAsync(chunk, 0, tryReadLength);
-
-                        data = Combine(data, chunk.Take(readLength).ToArray());
-                    }
-
-                    return !disposed && !_pipeClient.HasExited ? data : null;
-                };
-
-                _log.Info($"{_procName} has start");
-
-                while (!disposed && !_pipeClient.HasExited)
-                {
-                    var readLength = await ReadBytes(4);
-                    if (readLength == null) break; // null is only returned when pipe has exited
-                    var length = BitConverter.ToUInt32(readLength, 0);
-
-                    if (length == 0)
-                    {
-                        collection.Add((0, null));
-                        continue;
-                    }
-
-                    string json = null;
-                    JObject jsonObj = null;
-                    try
-                    {
-                        var readJson = await ReadBytes((int)length);
-                        if (readJson == null) break; // null is only returned when pipe has exited
-                        json = Encoding.UTF8.GetString(readJson);
-                        if (string.IsNullOrWhiteSpace(json))
-                        {
-                            collection.Add((length, null));
-                            continue;
-                        }
-                        jsonObj = JObject.Parse(json);
-                    }
-                    catch (Exception e)
-                    {
-                        _log.Error(e);
-                        _log.Error(e, "Unable to parse JSON data from pipe server.");
-                        if (!string.IsNullOrWhiteSpace(json))
-                        {
-                            _log.Error(json);
-                        }
-
-                        collection.Add((length, null));
-                        continue;
-                    }
-                    
-                    if (jsonObj.ContainsKey("error"))
-                    {
-                        _log.Error(jsonObj["error"].ToString());
-                        collection.Add((length, null)); // Error occurred, do null check in the outer function
-                        continue;
-                    }
-
-                    collection.Add((length, json));
-                }
-
-                if (disposed)
-                {
-                    _log.Info($"{_procName} has exited");
-                }
-                else
-                {
-                    _log.Info($"{_procName} has exited, restarting");
-                    StartPipedChild();
-                }
-            }
-
-            _pipeReaderThread = new Thread(Start);
-            _pipeReaderThread.Start();
-
-            var (startupLength, _) = collection.Take();
+            var (startupLength, _) = MapApiRequest().Result;
+            _log.Info($"{_procName} has started");
 
             return startupLength == 0;
         }
-        
+
         private static string FindD2()
         {
             var providedPath = MapAssistConfiguration.Loaded.D2Path;
@@ -188,15 +112,14 @@ namespace MapAssist.Helpers
                 _log.Info("User provided D2 path is invalid");
                 throw new Exception("Provided D2 path is not the correct version");
             }
-            
-            var retrieved = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Blizzard Entertainment\\Diablo II", "InstallPath", "INVALID");
-            var installPath = retrieved as string;
+
+            var installPath = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Blizzard Entertainment\\Diablo II", "InstallPath", "INVALID") as string;
             if (installPath == "INVALID" || !IsValidD2Path(installPath))
             {
                 _log.Info("Registry-provided D2 path not found or invalid");
                 throw new Exception("Unable to automatically locate D2 installation. Please provide path manually in the config at `D2Path`.");
             }
-            
+
             _log.Info("Registry-provided D2 path is valid");
             return installPath;
         }
@@ -206,14 +129,134 @@ namespace MapAssist.Helpers
             try
             {
                 var gamePath = Path.Combine(path, "game.exe");
-                var version = FileVersionInfo.GetVersionInfo(gamePath);
-                return version.FileMajorPart == 1 && version.FileMinorPart == 0 && version.FileBuildPart == 13 &&
-                       version.FilePrivatePart == 60;
+                if (File.Exists(gamePath))
+                {
+                    var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                    foreach(KeyValuePair<string, uint> kvp in GameCRC32)
+                    {
+                        var allowedChecksum = kvp.Value;
+                        if (fileChecksum == allowedChecksum)
+                        {
+                            _log.Info("Valid D2 version identified by Game.exe - v" + kvp.Key);
+                            return true;
+                        }
+                    }
+                } else
+                {
+                    gamePath = Path.Combine(path, "storm.dll");
+                    if (File.Exists(gamePath))
+                    {
+                        var fileChecksum = Files.Checksum.FileChecksum(gamePath);
+                        foreach (KeyValuePair<string, uint> kvp in StormCRC32)
+                        {
+                            var allowedChecksum = kvp.Value;
+                            if (fileChecksum == allowedChecksum)
+                            {
+                                _log.Info("Valid D2 version identified by Storm.dll - v" + kvp.Key);
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
             }
             catch (Exception)
             {
                 return false;
             }
+        }
+
+        private static async Task<(uint, string)> MapApiRequest(byte[] writeBytes = null, int timeout = 1000)
+        {
+            if (disposed || _pipeClient.HasExited)
+            {
+                return (0, null);
+            }
+
+            var pipeInput = _pipeClient.StandardInput;
+            var pipeOutput = _pipeClient.StandardOutput;
+
+            Func<int, Task<byte[]>> ReadBytes = async (readBytesLength) =>
+            {
+                var data = new byte[0];
+                var cts = new CancellationTokenSource(timeout);
+
+                while (!disposed && !_pipeClient.HasExited && !cts.IsCancellationRequested && data.Length < readBytesLength)
+                {
+                    var tryReadLength = readBytesLength - data.Length;
+                    var chunk = new byte[tryReadLength];
+                    var dataReadLength = await pipeOutput.BaseStream.ReadAsync(chunk, 0, tryReadLength, cts.Token);
+
+                    data = Combine(data, chunk.Take(dataReadLength).ToArray());
+                }
+
+                var response = !disposed && !_pipeClient.HasExited && !cts.IsCancellationRequested ? data : null;
+                cts.Dispose();
+                return response;
+            };
+
+            Func<int, Task<byte[]>> TryReadBytes = async (readBytesLength) =>
+            {
+                var task = ReadBytes(readBytesLength);
+                var result = await Task.WhenAny(task, Task.Delay(timeout));
+                if (result == task)
+                {
+                    return await task;
+                }
+                else
+                {
+                    return null;
+                }
+            };
+
+            if (writeBytes != null)
+            {
+                pipeInput.BaseStream.Write(writeBytes, 0, writeBytes.Length);
+                pipeInput.BaseStream.Flush();
+            }
+
+            var readLength = await TryReadBytes(4);
+            if (readLength == null) return (0, null);
+            var length = BitConverter.ToUInt32(readLength, 0);
+
+            if (length == 0)
+            {
+                return (0, null);
+            }
+
+            string json = null;
+            JObject jsonObj;
+            try
+            {
+                _log.Info($"Reading {length} bytes from {_procName}");
+                var readJson = await TryReadBytes((int)length);
+                if (readJson == null) return (0, null);
+                json = Encoding.UTF8.GetString(readJson);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    return (length, null);
+                }
+                jsonObj = JObject.Parse(json);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e);
+                _log.Error(e, "Unable to parse JSON data from map server.");
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    _log.Error(json);
+                }
+
+                return (length, null);
+            }
+
+            if (jsonObj.ContainsKey("error"))
+            {
+                _log.Error(jsonObj["error"].ToString());
+                return (length, null);
+            }
+
+            return (length, json);
         }
 
         public MapApi(Difficulty difficulty, uint mapSeed)
@@ -223,72 +266,58 @@ namespace MapAssist.Helpers
 
             // Cache for pre-fetching maps for the surrounding areas.
             _cache = new ConcurrentDictionary<Area, AreaData>();
-
-            Prefetch(MapAssistConfiguration.Loaded.PrefetchAreas);
         }
 
         public AreaData GetMapData(Area area)
         {
-            _log.Info($"Requesting MapSeed: {_mapSeed} Area: {area} Difficulty: {_difficulty}");
-
             if (!_cache.TryGetValue(area, out AreaData areaData))
             {
-                // Not in the cache, block.
-                _log.Info($"Cache miss on {area}");
+                _log.Info($"Requesting map data for {area} ({_mapSeed} seed, {_difficulty} difficulty)");
                 areaData = GetMapDataInternal(area);
                 _cache[area] = areaData;
-            } else
+            }
+            else
             {
-                _log.Info($"Cache found on {area}");
+                _log.Info($"Cache found for {area}");
             }
 
             if (areaData != null)
             {
-                _log.Info($"Prefetching areas adjacent to {area}");
                 Area[] adjacentAreas = areaData.AdjacentLevels.Keys.ToArray();
-                if (adjacentAreas.Any())
+
+                if (areaData.Area == Area.OuterCloister) adjacentAreas = adjacentAreas.Append(Area.Barracks).ToArray(); // Missing adjacent area
+                if (areaData.Area == Area.Barracks) adjacentAreas = adjacentAreas.Append(Area.OuterCloister).ToArray(); // Missing adjacent area
+
+                if (adjacentAreas.Length > 0)
                 {
-                    _log.Info($"Adjacent areas to {area} found");
-                    Prefetch(adjacentAreas);
-                } else
+                    _log.Info($"{adjacentAreas.Length} adjacent areas to {area} found");
+
+                    foreach (var adjacentArea in adjacentAreas)
+                    {
+                        if (!_cache.TryGetValue(adjacentArea, out AreaData adjAreaData))
+                        {
+                            _log.Info($"Requesting map data for {adjacentArea} ({_mapSeed} seed, {_difficulty} difficulty)");
+                            _cache[adjacentArea] = GetMapDataInternal(adjacentArea);
+                            areaData.AdjacentAreas[adjacentArea] = _cache[adjacentArea];
+                        }
+                        else
+                        {
+                            _log.Info($"Cache found for {adjacentArea}");
+                            areaData.AdjacentAreas[adjacentArea] = adjAreaData;
+                        }
+                    }
+                }
+                else
                 {
                     _log.Info($"No adjacent areas to {area} found");
                 }
-            } else
+            }
+            else
             {
                 _log.Info($"areaData was null on {area}");
             }
 
             return areaData;
-        }
-
-        private void Prefetch(params Area[] areas)
-        {
-            var prefetchBackgroundWorker = new BackgroundWorker();
-            prefetchBackgroundWorker.DoWork += (sender, args) =>
-            {
-                if (MapAssistConfiguration.Loaded.ClearPrefetchedOnAreaChange)
-                {
-                    _cache.Clear();
-                }
-
-                // Special value telling us to exit.
-                if (areas.Length == 0)
-                {
-                    _log.Info("Prefetch worker terminating");
-                    return;
-                }
-
-                foreach (Area area in areas)
-                {
-                    if (_cache.ContainsKey(area)) continue;
-
-                    _cache[area] = GetMapDataInternal(area);
-                    _log.Info($"Prefetched {area}");
-                }
-            };
-            prefetchBackgroundWorker.RunWorkerAsync();
-            prefetchBackgroundWorker.Dispose();
         }
 
         private AreaData GetMapDataInternal(Area area)
@@ -298,21 +327,25 @@ namespace MapAssist.Helpers
             req.difficulty = (uint)_difficulty;
             req.levelId = (uint)area;
 
-            var writer = _pipeClient.StandardInput;
-
-            var data = ToBytes(req);
             lock (_pipeRequestLock)
             {
-                writer.BaseStream.Write(data, 0, data.Length);
-                writer.BaseStream.Flush();
+                uint length = 0;
+                string json = null;
+                var retry = false;
 
-                var (length, json) = collection.Take();
-
-                if (json == null)
+                do
                 {
-                    _log.Error("Unable to load data for " + area + " from " + _procName);
-                    return null;
-                }
+                    retry = false;
+
+                    (length, json) = MapApiRequest(ToBytes(req)).Result;
+
+                    if (json == null)
+                    {
+                        _log.Error($"Unable to load data for {area} from {_procName}, retrying after restarting {_procName}");
+                        StartPipedChild();
+                        retry = true;
+                    }
+                } while (retry);
 
                 var rawAreaData = JsonConvert.DeserializeObject<RawAreaData>(json);
                 return rawAreaData.ToInternal(area);
@@ -353,21 +386,33 @@ namespace MapAssist.Helpers
             if (!disposed)
             {
                 disposed = true;
-
-                if (!_pipeClient.HasExited)
-                {
-                    try { _pipeClient.Kill(); } catch (Exception) { }
-                    try { _pipeClient.Close(); } catch (Exception) { }
-                }
-                try { _pipeClient.Dispose(); } catch (Exception) { }
-
-                _pipeReaderThread.Abort();
+                DisposePipe();
             }
+        }
+
+        private static void DisposePipe()
+        {
+            if (_pipeClient == null)
+            {
+                return;
+            }
+
+            _log.Info("Closing map server");
+            if (!_pipeClient.HasExited)
+            {
+                try { _pipeClient.Kill(); } catch (Exception) { }
+                try { _pipeClient.Close(); } catch (Exception) { }
+            }
+            try { _pipeClient.Dispose(); } catch (Exception) { }
+
+            _pipeClient = null;
         }
 
         private static void StopPipeServers()
         {
-            // Shutdown old running versions of the pipe server
+            DisposePipe();
+
+            // Shutdown old running versions of the map server
             var procs = Process.GetProcessesByName(_procName);
             foreach (var proc in procs)
             {

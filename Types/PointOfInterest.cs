@@ -27,6 +27,7 @@ namespace MapAssist.Types
     public class PointOfInterest
     {
         public string Label;
+        public Area Area;
         public Point Position;
         public PointOfInterestRendering RenderingSettings;
         public PoiType Type;
@@ -60,7 +61,6 @@ namespace MapAssist.Types
         AreaPortal,
         Shrine,
         SuperChest,
-        NormalChest,
         ArmorWeapRack
     }
 }

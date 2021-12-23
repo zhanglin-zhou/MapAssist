@@ -31,6 +31,7 @@ namespace MapAssist.Helpers
         private static int _currentProcessId;
 
         public static Dictionary<int, UnitAny> PlayerUnits = new Dictionary<int, UnitAny>();
+        public static Dictionary<int, Dictionary<uint, UnitAny>> Corpses = new Dictionary<int, Dictionary<uint, UnitAny>>();
 
         public static GameData GetGameData()
         {
@@ -51,6 +52,15 @@ namespace MapAssist.Helpers
                 using (processContext)
                 {
                     _currentProcessId = processContext.ProcessId;
+
+                    var menuOpen = processContext.Read<byte>(GameManager.MenuOpenOffset);
+                    var menuData = processContext.Read<Structs.MenuData>(GameManager.MenuDataOffset);
+
+                    if (!menuData.InGame && Corpses.TryGetValue(_currentProcessId, out var _))
+                    {
+                        Corpses[_currentProcessId].Clear();
+                    }
+
                     var playerUnit = GameManager.PlayerUnit;
 
                     if(!PlayerUnits.TryGetValue(_currentProcessId, out var _))
@@ -61,10 +71,6 @@ namespace MapAssist.Helpers
                         PlayerUnits[_currentProcessId] = playerUnit;
                     }
 
-                    if (!Equals(playerUnit, default(UnitAny)))
-                    {
-                        playerUnit = playerUnit.Update();
-                    }
                         
                     if (!Equals(playerUnit, default(UnitAny)))
                     {
@@ -101,12 +107,17 @@ namespace MapAssist.Helpers
                                 Items.ItemUnitIdsSeen[_currentProcessId].Clear();
                                 Items.ItemLog[_currentProcessId].Clear();
                             }
+                            if(!Corpses.TryGetValue(_currentProcessId, out var _))
+                            {
+                                Corpses.Add(_currentProcessId, new Dictionary<uint, UnitAny>());
+                            }
+                            else
+                            {
+                                Corpses[_currentProcessId].Clear();
+                            }
                         }
 
                         var session = new Session(GameManager.GameIPOffset);
-
-                        var menuOpen = processContext.Read<byte>(GameManager.MenuOpenOffset);
-                        var menuData = processContext.Read<Structs.MenuData>(GameManager.MenuDataOffset);
 
                         var actId = playerUnit.Act.ActId;
 
@@ -124,33 +135,39 @@ namespace MapAssist.Helpers
                             throw new Exception("Level id out of bounds.");
                         }
 
-                        var monsterList = new HashSet<UnitAny>();
-                        var itemList = new HashSet<UnitAny>();
-                        var objectList = new HashSet<UnitAny>();
-                        var playerList = new Dictionary<uint, UnitAny>();
-                        GetUnits(ref monsterList, ref itemList, ref playerList, ref objectList);
                         Items.CurrentItemLog = Items.ItemLog[_currentProcessId];
 
-                        var roster = new Roster(GameManager.RosterDataOffset);
+                        var rosterData = new Roster(GameManager.RosterDataOffset);
 
-                        return new GameData
+                        playerUnit = playerUnit.Update(rosterData);
+                        if(!Equals(playerUnit, default(UnitAny)))
                         {
-                            PlayerPosition = playerUnit.Position,
-                            MapSeed = mapSeed,
-                            Area = levelId,
-                            Difficulty = gameDifficulty,
-                            MainWindowHandle = GameManager.MainWindowHandle,
-                            PlayerName = playerUnit.Name,
-                            Monsters = monsterList,
-                            Items = itemList,
-                            Objects = objectList,
-                            Players = playerList,
-                            Session = session,
-                            Roster = roster,
-                            PlayerUnit = playerUnit,
-                            MenuOpen = menuData,
-                            MenuPanelOpen = menuOpen
-                        };
+                            var monsterList = new HashSet<UnitAny>();
+                            var itemList = new HashSet<UnitAny>();
+                            var objectList = new HashSet<UnitAny>();
+                            var playerList = new Dictionary<uint, UnitAny>();
+                            GetUnits(rosterData, ref monsterList, ref itemList, ref playerList, ref objectList);
+
+                            return new GameData
+                            {
+                                PlayerPosition = playerUnit.Position,
+                                MapSeed = mapSeed,
+                                Area = levelId,
+                                Difficulty = gameDifficulty,
+                                MainWindowHandle = GameManager.MainWindowHandle,
+                                PlayerName = playerUnit.Name,
+                                Monsters = monsterList,
+                                Items = itemList,
+                                Objects = objectList,
+                                Players = playerList,
+                                Session = session,
+                                Roster = rosterData,
+                                PlayerUnit = playerUnit,
+                                MenuOpen = menuData,
+                                MenuPanelOpen = menuOpen,
+                                ProcessId = _currentProcessId
+                            };
+                        }
                     }
                 }
             }
@@ -170,7 +187,7 @@ namespace MapAssist.Helpers
             return null;
         }
 
-        private static void GetUnits(ref HashSet<UnitAny> monsterList, ref HashSet<UnitAny> itemList, ref Dictionary<uint, UnitAny> playerList, ref HashSet<UnitAny> objectList)
+        private static void GetUnits(Roster rosterData, ref HashSet<UnitAny> monsterList, ref HashSet<UnitAny> itemList, ref Dictionary<uint, UnitAny> playerList, ref HashSet<UnitAny> objectList)
         {
             for (var i = 0; i <= 4; i++)
             {
@@ -186,7 +203,7 @@ namespace MapAssist.Helpers
                 }
                 foreach (var pUnitAny in unitHashTable.UnitTable)
                 {
-                    var unitAny = new UnitAny(pUnitAny);
+                    var unitAny = new UnitAny(pUnitAny, rosterData);
                     while (unitAny.IsValidUnit())
                     {
                         switch (unitType)
@@ -210,13 +227,13 @@ namespace MapAssist.Helpers
                                 }
                                 break;
                             case UnitType.Player:
-                                if (!playerList.TryGetValue(unitAny.UnitId, out var _))
+                                if (!playerList.TryGetValue(unitAny.UnitId, out var _) && unitAny.IsPlayer())
                                 {
                                     playerList.Add(unitAny.UnitId, unitAny);
                                 }
                                 break;
                         }
-                        unitAny = unitAny.ListNext;
+                        unitAny = unitAny.ListNext(rosterData);
                     }
                 }
             }
