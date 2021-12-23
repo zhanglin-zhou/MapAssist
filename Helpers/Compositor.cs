@@ -434,23 +434,27 @@ namespace MapAssist.Helpers
 
         private void DrawPlayers(Graphics gfx)
         {
+            Dictionary<uint, Types.UnitAny> corpseList;
             foreach(var player in _gameData.Players.Values)
             {
                 if (player.IsCorpse && player.UnitId != _gameData.PlayerUnit.UnitId)
                 {
-                    if(!GameMemory.Corpses.TryGetValue(player.UnitId, out var corpse))
+                    if (GameMemory.Corpses.TryGetValue(_gameData.ProcessId, out corpseList))
                     {
-                        var unitAny = player.Clone();
-                        GameMemory.Corpses.Add(unitAny.UnitId, unitAny);
+                        if (!corpseList.TryGetValue(player.UnitId, out var corpse))
+                        {
+                            var unitAny = player.Clone();
+                            GameMemory.Corpses[_gameData.ProcessId].Add(unitAny.UnitId, unitAny);
+                        }
                     }
                 }
             }
-            if (GameMemory.Corpses.Values.Count > 0)
+            if (GameMemory.Corpses.TryGetValue(_gameData.ProcessId, out corpseList) && corpseList.Values.Count > 0)
             {
                 var canDrawLabel = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawLabel();
                 var canDrawIcon = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawIcon();
                 var canDrawLine = MapAssistConfiguration.Loaded.MapConfiguration.Corpse.CanDrawLine();
-                var corpses = GameMemory.Corpses.Values.ToArray();
+                var corpses = corpseList.Values.ToArray();
                 foreach (var corpse in corpses)
                 {
                     var corpseArea = corpse.InitialArea;
@@ -476,7 +480,7 @@ namespace MapAssist.Helpers
                         {
                             if (!_gameData.Players.TryGetValue(corpse.UnitId, out var player))
                             {
-                                GameMemory.Corpses.Remove(corpse.UnitId);
+                                GameMemory.Corpses[_gameData.ProcessId].Remove(corpse.UnitId);
                             }
                         }
                     }
