@@ -424,7 +424,7 @@ namespace MapAssist.Helpers
                         {
                             var itemBaseName = Items.ItemName(item.TxtFileNo);
 
-                            if (itemBaseName.EndsWith(" Rune"))
+                            if (itemBaseName.EndsWith(" Rune") || itemBaseName.StartsWith("Key of "))
                             {
                                 color = Items.ItemColors[ItemQuality.CRAFT];
                             }
@@ -798,7 +798,7 @@ namespace MapAssist.Helpers
                     }
                 }
 
-                if (itemBaseName.EndsWith(" Rune"))
+                if (itemBaseName.EndsWith(" Rune") || itemBaseName.StartsWith("Key of "))
                 {
                     fontColor = Items.ItemColors[ItemQuality.CRAFT];
                 }
