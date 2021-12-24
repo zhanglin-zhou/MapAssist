@@ -41,20 +41,11 @@ namespace MapAssist.Settings
             new ConfigurationParser<MapAssistConfiguration>().SerializeToFile(this);
         }
 
-        [YamlMember(Alias = "UpdateTime", ApplyNamingConventions = false)]
-        public int UpdateTime { get; set; }
-        
         [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
         public string D2Path { get; set; }
 
-        [YamlMember(Alias = "PrefetchAreas", ApplyNamingConventions = false)]
-        public Area[] PrefetchAreas { get; set; }
-
         [YamlMember(Alias = "HiddenAreas", ApplyNamingConventions = false)]
         public Area[] HiddenAreas { get; set; }
-
-        [YamlMember(Alias = "ClearPrefetchedOnAreaChange", ApplyNamingConventions = false)]
-        public bool ClearPrefetchedOnAreaChange { get; set; }
 
         [YamlMember(Alias = "RenderingConfiguration", ApplyNamingConventions = false)]
         public RenderingConfiguration RenderingConfiguration { get; set; }
@@ -133,6 +124,9 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "HostilePlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering HostilePlayer { get; set; }
         public static PointOfInterestRendering HostilePlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer;
+
+        [YamlMember(Alias = "Corpse", ApplyNamingConventions = false)]
+        public PointOfInterestRendering Corpse { get; set; }
 
         [YamlMember(Alias = "Portal", ApplyNamingConventions = false)]
         public PortalRendering Portal { get; set; }
