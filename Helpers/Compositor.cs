@@ -420,9 +420,14 @@ namespace MapAssist.Helpers
                             continue;
                         }
 
-                        if (Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out var color))
+                        if (item != null && Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out var color))
                         {
                             var itemBaseName = Items.ItemName(item.TxtFileNo);
+
+                            if (itemBaseName.EndsWith(" Rune"))
+                            {
+                                color = Items.ItemColors[ItemQuality.CRAFT];
+                            }
 
                             DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Item, item.Position, itemBaseName,
                                 color: color);
@@ -763,7 +768,7 @@ namespace MapAssist.Helpers
                 var item = ItemLog[i];
 
                 Color fontColor;
-                if (!Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out fontColor))
+                if (item == null || !Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out fontColor))
                 {
                     continue;
                 }
@@ -784,7 +789,7 @@ namespace MapAssist.Helpers
                     }
                 }
 
-                if (ItemLog[i].Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
+                if (item.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
                 {
                     itemLabelExtra += "[" + numSockets + " S] ";
                     if (fontColor == Color.White)
@@ -793,9 +798,14 @@ namespace MapAssist.Helpers
                     }
                 }
 
+                if (itemBaseName.EndsWith(" Rune"))
+                {
+                    fontColor = Items.ItemColors[ItemQuality.CRAFT];
+                }
+
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
 
-                switch (ItemLog[i].ItemData.ItemQuality)
+                switch (item.ItemData.ItemQuality)
                 {
                     case ItemQuality.UNIQUE:
                         itemSpecialName = Items.UniqueName(item.TxtFileNo) + " ";
