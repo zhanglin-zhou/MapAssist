@@ -25,14 +25,14 @@ namespace MapAssist.Settings
 {
     public class IconRendering
     {
-        [YamlMember(Alias = "IconShape", ApplyNamingConventions = false)]
-        public Shape IconShape { get; set; }
-
         [YamlMember(Alias = "IconColor", ApplyNamingConventions = false)]
         public Color IconColor { get; set; }
 
         [YamlMember(Alias = "IconOutlineColor", ApplyNamingConventions = false)]
         public Color IconOutlineColor { get; set; }
+
+        [YamlMember(Alias = "IconShape", ApplyNamingConventions = false)]
+        public Shape IconShape { get; set; }
 
         [YamlMember(Alias = "IconSize", ApplyNamingConventions = false)]
         public float IconSize { get; set; }

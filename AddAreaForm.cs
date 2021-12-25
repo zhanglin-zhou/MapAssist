@@ -45,9 +45,6 @@ namespace MapAssist
                     case "lstHidden":
                         MapAssistConfiguration.Loaded.HiddenAreas = MapAssistConfiguration.Loaded.HiddenAreas.Append(areaToAdd).ToArray();
                         break;
-                    case "lstPrefetch":
-                        MapAssistConfiguration.Loaded.PrefetchAreas = MapAssistConfiguration.Loaded.PrefetchAreas.Append(areaToAdd).ToArray();
-                        break;
                 }
                 Close();
             }
