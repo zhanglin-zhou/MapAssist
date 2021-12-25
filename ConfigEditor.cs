@@ -1,18 +1,18 @@
-﻿using System;
+﻿using MapAssist.Helpers;
+using MapAssist.Settings;
+using MapAssist.Types;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using MapAssist.Settings;
-using MapAssist.Helpers;
-using MapAssist.Types;
-using System.Collections.Generic;
 
 namespace MapAssist
 {
     public partial class ConfigEditor : Form
     {
         private PropertyInfo SelectedProperty;
-        
+
         public ConfigEditor()
         {
             InitializeComponent();
@@ -30,9 +30,10 @@ namespace MapAssist
                         if (i + 1 > propertyList.Length)
                         {
                             Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") missing a static REF member after it.");
-                        } else
+                        }
+                        else
                         {
-                            var nextElement = propertyList[i+1];
+                            var nextElement = propertyList[i + 1];
                             lastThree = nextElement.Name.Substring(nextElement.Name.Length - 3, 3);
                             if (!(lastThree == "REF"))
                             {
@@ -40,9 +41,10 @@ namespace MapAssist
                             }
                         }
                     }
-                } else
+                }
+                else
                 {
-                    Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name +  ") variable names in the MapConfiguration class should be at least 4 characters long");
+                    Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") variable names in the MapConfiguration class should be at least 4 characters long");
                 }
             }
 
@@ -85,9 +87,6 @@ namespace MapAssist
             mapZoom.Value = zoomToTick(MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel);
             lblMapZoomValue.Text = MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel.ToString();
 
-            updateTime.Value = (int)Math.Round(MapAssistConfiguration.Loaded.UpdateTime / 10f);
-            lblUpdateTimeValue.Text = $"{updateTime.Value * 10} ms";
-
             chkOverlayMode.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode;
             chkToggleViaMap.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGameMap;
             chkToggleViaPanels.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGamePanels;
@@ -103,7 +102,6 @@ namespace MapAssist
             txtHuntIP.Text = MapAssistConfiguration.Loaded.GameInfo.HuntingIP;
             txtD2Path.Text = MapAssistConfiguration.Loaded.D2Path;
 
-            chkClearPrefetch.Checked = MapAssistConfiguration.Loaded.ClearPrefetchedOnAreaChange;
             chkShowOverlayFPS.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS;
 
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ToggleKey.ToString()).Monitor(txtToggleMapKey);
@@ -130,13 +128,9 @@ namespace MapAssist
                 btnBorderColor.BackColor = borderColor;
             }
 
-            foreach(var area in MapAssistConfiguration.Loaded.HiddenAreas)
+            foreach (var area in MapAssistConfiguration.Loaded.HiddenAreas)
             {
                 lstHidden.Items.Add(AreaExtensions.NameInternal(area));
-            }
-            foreach (var area in MapAssistConfiguration.Loaded.PrefetchAreas)
-            {
-                lstPrefetch.Items.Add(AreaExtensions.NameInternal(area));
             }
         }
 
@@ -145,6 +139,7 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.Save();
             base.OnFormClosing(e);
         }
+
         private void IgnoreMouseWheel(object sender, EventArgs e)
         {
             ((HandledMouseEventArgs)e).Handled = true;
@@ -152,8 +147,6 @@ namespace MapAssist
 
         private void updateTime_Scroll(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.UpdateTime = updateTime.Value * 10;
-            lblUpdateTimeValue.Text = $"{MapAssistConfiguration.Loaded.UpdateTime} ms";
         }
 
         private void opacity_Scroll(object sender, EventArgs e)
@@ -161,16 +154,12 @@ namespace MapAssist
             if (opacity.Value > 0)
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity = (float)Math.Round(opacity.Value * 5 / 100f, 2);
-            } else
+            }
+            else
             {
                 MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity = 0;
             }
             lblOpacityValue.Text = (opacity.Value * 5).ToString();
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void iconOpacity_Scroll(object sender, EventArgs e)
@@ -230,11 +219,6 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode = chkOverlayMode.Checked;
         }
 
-        private void ConfigEditor_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void cboPosition_SelectedIndexChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.RenderingConfiguration.Position = (MapPosition)cboPosition.SelectedIndex;
@@ -259,6 +243,7 @@ namespace MapAssist
         {
             MapAssistConfiguration.Loaded.GameInfo.ShowGameIP = chkGameInfo.Checked;
         }
+
         private void chkShowArea_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel = chkShowArea.Checked;
@@ -274,11 +259,6 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.D2Path = txtD2Path.Text;
         }
 
-        private void chkClearPrefetch_CheckedChanged(object sender, EventArgs e)
-        {
-            MapAssistConfiguration.Loaded.ClearPrefetchedOnAreaChange = chkClearPrefetch.Checked;
-        }
-
         private void chkShowOverlayFPS_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS = chkShowOverlayFPS.Checked;
@@ -290,7 +270,8 @@ namespace MapAssist
             if (SelectedProperty != null)
             {
                 tabDrawing.Visible = true;
-            } else
+            }
+            else
             {
                 return;
             }
@@ -307,7 +288,8 @@ namespace MapAssist
             {
                 tabDrawing.TabPages.Remove(tabLabel);
                 tabDrawing.TabPages.Remove(tabLine);
-            } else
+            }
+            else
             {
                 tabDrawing.TabPages.Remove(tabLabel);
                 tabDrawing.TabPages.Remove(tabLine);
@@ -390,7 +372,7 @@ namespace MapAssist
 
         private void tabDrawing_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(tabDrawing.SelectedIndex > 0 && (SelectedProperty.PropertyType != typeof(PointOfInterestRendering) && SelectedProperty.PropertyType != typeof(PortalRendering)))
+            if (tabDrawing.SelectedIndex > 0 && (SelectedProperty.PropertyType != typeof(PointOfInterestRendering) && SelectedProperty.PropertyType != typeof(PortalRendering)))
             {
                 tabDrawing.SelectTab(0);
                 MessageBox.Show("This property type does not support Labels or Lines.");
@@ -403,7 +385,8 @@ namespace MapAssist
             if (chkLabel.Checked)
             {
                 labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnLabelColor.BackColor, null);
-            } else
+            }
+            else
             {
                 labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
             }
@@ -440,11 +423,6 @@ namespace MapAssist
                 labelPropFont.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), fontDlg.Font.Name, null);
                 labelPropFontSize.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), fontDlg.Font.Size, null);
             }
-        }
-
-        private void chkLabel_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void chkLine_Clicked(object sender, EventArgs e)
@@ -601,13 +579,6 @@ namespace MapAssist
             addForm.ShowDialog(this);
         }
 
-        private void btnAddPrefetch_Click(object sender, EventArgs e)
-        {
-            var addForm = new AddAreaForm();
-            addForm.listToAddTo = "lstPrefetch";
-            addForm.ShowDialog(this);
-        }
-
         private void btnRemoveHidden_Click(object sender, EventArgs e)
         {
             var indexToRemove = lstHidden.SelectedIndex;
@@ -620,18 +591,6 @@ namespace MapAssist
             }
         }
 
-        private void btnRemovePrefetch_Click(object sender, EventArgs e)
-        {
-            var indexToRemove = lstPrefetch.SelectedIndex;
-            if (indexToRemove >= 0)
-            {
-                lstPrefetch.Items.RemoveAt(indexToRemove);
-                var prefetchList = new List<Area>(MapAssistConfiguration.Loaded.PrefetchAreas);
-                prefetchList.RemoveAt(indexToRemove);
-                MapAssistConfiguration.Loaded.PrefetchAreas = prefetchList.ToArray();
-            }
-        }
-
         private void btnBrowseD2Location_Click(object sender, EventArgs e)
         {
             using (var fbd = new FolderBrowserDialog())
@@ -641,7 +600,8 @@ namespace MapAssist
                 if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
                     txtD2Path.Text = fbd.SelectedPath;
-                } else
+                }
+                else
                 {
                     txtD2Path.Text = "";
                 }

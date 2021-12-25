@@ -35,13 +35,10 @@
             this.chkShowArea = new System.Windows.Forms.CheckBox();
             this.cboLanguage = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.lblUpdateTimeValue = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.chkGameInfo = new System.Windows.Forms.CheckBox();
             this.txtHuntIP = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.lblUpdateTime = new System.Windows.Forms.Label();
-            this.updateTime = new System.Windows.Forms.TrackBar();
             this.txtD2Path = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -127,20 +124,14 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.btnRemovePrefetch = new System.Windows.Forms.Button();
-            this.btnAddPrefetch = new System.Windows.Forms.Button();
-            this.lstPrefetch = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnRemoveHidden = new System.Windows.Forms.Button();
             this.btnAddHidden = new System.Windows.Forms.Button();
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
-            this.chkClearPrefetch = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updateTime)).BeginInit();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -163,7 +154,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -187,13 +177,10 @@
             this.tabPage5.Controls.Add(this.chkShowArea);
             this.tabPage5.Controls.Add(this.cboLanguage);
             this.tabPage5.Controls.Add(this.label1);
-            this.tabPage5.Controls.Add(this.lblUpdateTimeValue);
             this.tabPage5.Controls.Add(this.label11);
             this.tabPage5.Controls.Add(this.chkGameInfo);
             this.tabPage5.Controls.Add(this.txtHuntIP);
             this.tabPage5.Controls.Add(this.label7);
-            this.tabPage5.Controls.Add(this.lblUpdateTime);
-            this.tabPage5.Controls.Add(this.updateTime);
             this.tabPage5.Controls.Add(this.txtD2Path);
             this.tabPage5.Controls.Add(this.label6);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
@@ -205,7 +192,7 @@
             // 
             // btnBrowseD2Location
             // 
-            this.btnBrowseD2Location.Location = new System.Drawing.Point(236, 124);
+            this.btnBrowseD2Location.Location = new System.Drawing.Point(236, 110);
             this.btnBrowseD2Location.Name = "btnBrowseD2Location";
             this.btnBrowseD2Location.Size = new System.Drawing.Size(75, 23);
             this.btnBrowseD2Location.TabIndex = 17;
@@ -239,23 +226,11 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(111, 149);
+            this.label1.Location = new System.Drawing.Point(111, 135);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 13);
             this.label1.TabIndex = 15;
             this.label1.Text = "Leave blank to auto-detect";
-            // 
-            // lblUpdateTimeValue
-            // 
-            this.lblUpdateTimeValue.AutoSize = true;
-            this.lblUpdateTimeValue.BackColor = System.Drawing.Color.Transparent;
-            this.lblUpdateTimeValue.Location = new System.Drawing.Point(264, 46);
-            this.lblUpdateTimeValue.Name = "lblUpdateTimeValue";
-            this.lblUpdateTimeValue.Size = new System.Drawing.Size(47, 13);
-            this.lblUpdateTimeValue.TabIndex = 13;
-            this.lblUpdateTimeValue.Text = "1000 ms";
-            this.lblUpdateTimeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lblUpdateTimeValue.Visible = false;
             // 
             // label11
             // 
@@ -279,7 +254,7 @@
             // 
             // txtHuntIP
             // 
-            this.txtHuntIP.Location = new System.Drawing.Point(114, 181);
+            this.txtHuntIP.Location = new System.Drawing.Point(114, 167);
             this.txtHuntIP.Name = "txtHuntIP";
             this.txtHuntIP.Size = new System.Drawing.Size(116, 20);
             this.txtHuntIP.TabIndex = 9;
@@ -288,42 +263,16 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 184);
+            this.label7.Location = new System.Drawing.Point(12, 170);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(89, 13);
             this.label7.TabIndex = 10;
             this.label7.Text = "Hunt for Game IP";
             // 
-            // lblUpdateTime
-            // 
-            this.lblUpdateTime.AutoSize = true;
-            this.lblUpdateTime.BackColor = System.Drawing.Color.Transparent;
-            this.lblUpdateTime.Location = new System.Drawing.Point(12, 46);
-            this.lblUpdateTime.Name = "lblUpdateTime";
-            this.lblUpdateTime.Size = new System.Drawing.Size(68, 13);
-            this.lblUpdateTime.TabIndex = 12;
-            this.lblUpdateTime.Text = "Update Time";
-            this.lblUpdateTime.Visible = false;
-            // 
-            // updateTime
-            // 
-            this.updateTime.BackColor = System.Drawing.Color.White;
-            this.updateTime.LargeChange = 1;
-            this.updateTime.Location = new System.Drawing.Point(86, 41);
-            this.updateTime.Maximum = 20;
-            this.updateTime.Minimum = 1;
-            this.updateTime.Name = "updateTime";
-            this.updateTime.Size = new System.Drawing.Size(172, 45);
-            this.updateTime.TabIndex = 11;
-            this.updateTime.Value = 1;
-            this.updateTime.Visible = false;
-            this.updateTime.Scroll += new System.EventHandler(this.updateTime_Scroll);
-            this.updateTime.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
-            // 
             // txtD2Path
             // 
             this.txtD2Path.Enabled = false;
-            this.txtD2Path.Location = new System.Drawing.Point(114, 126);
+            this.txtD2Path.Location = new System.Drawing.Point(114, 112);
             this.txtD2Path.Name = "txtD2Path";
             this.txtD2Path.Size = new System.Drawing.Size(116, 20);
             this.txtD2Path.TabIndex = 7;
@@ -332,7 +281,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 129);
+            this.label6.Location = new System.Drawing.Point(12, 115);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(96, 13);
             this.label6.TabIndex = 8;
@@ -458,7 +407,7 @@
             // chkWalkableColor
             // 
             this.chkWalkableColor.AutoSize = true;
-            this.chkWalkableColor.Location = new System.Drawing.Point(26, 248);
+            this.chkWalkableColor.Location = new System.Drawing.Point(10, 248);
             this.chkWalkableColor.Name = "chkWalkableColor";
             this.chkWalkableColor.Size = new System.Drawing.Size(15, 14);
             this.chkWalkableColor.TabIndex = 24;
@@ -467,7 +416,7 @@
             // 
             // btnBorderColor
             // 
-            this.btnBorderColor.Location = new System.Drawing.Point(144, 241);
+            this.btnBorderColor.Location = new System.Drawing.Point(128, 241);
             this.btnBorderColor.Name = "btnBorderColor";
             this.btnBorderColor.Size = new System.Drawing.Size(91, 26);
             this.btnBorderColor.TabIndex = 23;
@@ -477,7 +426,7 @@
             // 
             // btnWalkableColor
             // 
-            this.btnWalkableColor.Location = new System.Drawing.Point(47, 241);
+            this.btnWalkableColor.Location = new System.Drawing.Point(31, 241);
             this.btnWalkableColor.Name = "btnWalkableColor";
             this.btnWalkableColor.Size = new System.Drawing.Size(91, 26);
             this.btnWalkableColor.TabIndex = 22;
@@ -640,7 +589,6 @@
             this.lblOpacity.Size = new System.Drawing.Size(67, 13);
             this.lblOpacity.TabIndex = 2;
             this.lblOpacity.Text = "Map Opacity";
-            this.lblOpacity.Click += new System.EventHandler(this.label2_Click);
             // 
             // chkToggleViaMap
             // 
@@ -887,7 +835,6 @@
             this.chkLabel.TabIndex = 17;
             this.chkLabel.Text = "Show";
             this.chkLabel.UseVisualStyleBackColor = true;
-            this.chkLabel.CheckedChanged += new System.EventHandler(this.chkLabel_CheckedChanged);
             this.chkLabel.Click += new System.EventHandler(this.chkLabel_Clicked);
             // 
             // btnLabelColor
@@ -1278,56 +1225,14 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.groupBox4);
             this.tabPage4.Controls.Add(this.groupBox2);
             this.tabPage4.Controls.Add(this.chkShowOverlayFPS);
-            this.tabPage4.Controls.Add(this.chkClearPrefetch);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(324, 325);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Advanced";
             this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.btnRemovePrefetch);
-            this.groupBox4.Controls.Add(this.btnAddPrefetch);
-            this.groupBox4.Controls.Add(this.lstPrefetch);
-            this.groupBox4.Location = new System.Drawing.Point(168, 58);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(148, 245);
-            this.groupBox4.TabIndex = 3;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Prefetch Areas";
-            // 
-            // btnRemovePrefetch
-            // 
-            this.btnRemovePrefetch.Location = new System.Drawing.Point(122, 45);
-            this.btnRemovePrefetch.Name = "btnRemovePrefetch";
-            this.btnRemovePrefetch.Size = new System.Drawing.Size(20, 23);
-            this.btnRemovePrefetch.TabIndex = 5;
-            this.btnRemovePrefetch.Text = "-";
-            this.btnRemovePrefetch.UseVisualStyleBackColor = true;
-            this.btnRemovePrefetch.Click += new System.EventHandler(this.btnRemovePrefetch_Click);
-            // 
-            // btnAddPrefetch
-            // 
-            this.btnAddPrefetch.Location = new System.Drawing.Point(122, 16);
-            this.btnAddPrefetch.Name = "btnAddPrefetch";
-            this.btnAddPrefetch.Size = new System.Drawing.Size(20, 23);
-            this.btnAddPrefetch.TabIndex = 4;
-            this.btnAddPrefetch.Text = "+";
-            this.btnAddPrefetch.UseVisualStyleBackColor = true;
-            this.btnAddPrefetch.Click += new System.EventHandler(this.btnAddPrefetch_Click);
-            // 
-            // lstPrefetch
-            // 
-            this.lstPrefetch.FormattingEnabled = true;
-            this.lstPrefetch.Location = new System.Drawing.Point(7, 16);
-            this.lstPrefetch.Name = "lstPrefetch";
-            this.lstPrefetch.Size = new System.Drawing.Size(109, 212);
-            this.lstPrefetch.TabIndex = 3;
             // 
             // groupBox2
             // 
@@ -1336,14 +1241,14 @@
             this.groupBox2.Controls.Add(this.lstHidden);
             this.groupBox2.Location = new System.Drawing.Point(14, 58);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(148, 245);
+            this.groupBox2.Size = new System.Drawing.Size(295, 245);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Hidden Areas";
             // 
             // btnRemoveHidden
             // 
-            this.btnRemoveHidden.Location = new System.Drawing.Point(121, 48);
+            this.btnRemoveHidden.Location = new System.Drawing.Point(269, 48);
             this.btnRemoveHidden.Name = "btnRemoveHidden";
             this.btnRemoveHidden.Size = new System.Drawing.Size(20, 23);
             this.btnRemoveHidden.TabIndex = 2;
@@ -1353,7 +1258,7 @@
             // 
             // btnAddHidden
             // 
-            this.btnAddHidden.Location = new System.Drawing.Point(121, 19);
+            this.btnAddHidden.Location = new System.Drawing.Point(269, 19);
             this.btnAddHidden.Name = "btnAddHidden";
             this.btnAddHidden.Size = new System.Drawing.Size(20, 23);
             this.btnAddHidden.TabIndex = 1;
@@ -1366,30 +1271,19 @@
             this.lstHidden.FormattingEnabled = true;
             this.lstHidden.Location = new System.Drawing.Point(6, 19);
             this.lstHidden.Name = "lstHidden";
-            this.lstHidden.Size = new System.Drawing.Size(109, 212);
+            this.lstHidden.Size = new System.Drawing.Size(257, 212);
             this.lstHidden.TabIndex = 0;
             // 
             // chkShowOverlayFPS
             // 
             this.chkShowOverlayFPS.AutoSize = true;
-            this.chkShowOverlayFPS.Location = new System.Drawing.Point(14, 35);
+            this.chkShowOverlayFPS.Location = new System.Drawing.Point(14, 13);
             this.chkShowOverlayFPS.Name = "chkShowOverlayFPS";
             this.chkShowOverlayFPS.Size = new System.Drawing.Size(115, 17);
             this.chkShowOverlayFPS.TabIndex = 1;
             this.chkShowOverlayFPS.Text = "Show Overlay FPS";
             this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
             this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
-            // 
-            // chkClearPrefetch
-            // 
-            this.chkClearPrefetch.AutoSize = true;
-            this.chkClearPrefetch.Location = new System.Drawing.Point(14, 12);
-            this.chkClearPrefetch.Name = "chkClearPrefetch";
-            this.chkClearPrefetch.Size = new System.Drawing.Size(209, 17);
-            this.chkClearPrefetch.TabIndex = 0;
-            this.chkClearPrefetch.Text = "Clear Prefetch Cache On Area Change";
-            this.chkClearPrefetch.UseVisualStyleBackColor = true;
-            this.chkClearPrefetch.CheckedChanged += new System.EventHandler(this.chkClearPrefetch_CheckedChanged);
             // 
             // ConfigEditor
             // 
@@ -1403,11 +1297,9 @@
             this.MinimizeBox = false;
             this.Name = "ConfigEditor";
             this.Text = "ConfigEditor";
-            this.Load += new System.EventHandler(this.ConfigEditor_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.updateTime)).EndInit();
             this.tabPage1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
@@ -1439,7 +1331,6 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1472,9 +1363,6 @@
         private System.Windows.Forms.TextBox txtD2Path;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtHuntIP;
-        private System.Windows.Forms.Label lblUpdateTime;
-        private System.Windows.Forms.TrackBar updateTime;
-        private System.Windows.Forms.CheckBox chkClearPrefetch;
         private System.Windows.Forms.CheckBox chkShowOverlayFPS;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox cboRenderOption;
@@ -1527,7 +1415,6 @@
         private System.Windows.Forms.Label lblMapSizeValue;
         private System.Windows.Forms.Label lblMapZoomValue;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblUpdateTimeValue;
         private System.Windows.Forms.Label lblItemDisplayForSecondsValue;
         private System.Windows.Forms.TrackBar itemDisplayForSeconds;
         private System.Windows.Forms.Button btnIconOutlineColor;
@@ -1546,10 +1433,6 @@
         private System.Windows.Forms.Label lblBuffSize;
         private System.Windows.Forms.ComboBox cboBuffPosition;
         private System.Windows.Forms.TrackBar buffSize;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button btnRemovePrefetch;
-        private System.Windows.Forms.Button btnAddPrefetch;
-        private System.Windows.Forms.ListBox lstPrefetch;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnRemoveHidden;
         private System.Windows.Forms.Button btnAddHidden;

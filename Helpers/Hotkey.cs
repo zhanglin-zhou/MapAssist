@@ -69,6 +69,11 @@ namespace MapAssist.Helpers
             e.Handled = true;
         }
 
+        public override int GetHashCode()
+        {
+            return _hotkey.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is Hotkey)) return false;

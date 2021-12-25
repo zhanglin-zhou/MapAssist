@@ -1,6 +1,7 @@
-﻿using System;
+﻿using MapAssist.Settings;
+using System;
+using System.IO;
 using System.Media;
-using MapAssist.Settings;
 
 namespace MapAssist.Helpers
 {
@@ -8,6 +9,7 @@ namespace MapAssist.Helpers
     {
         private static DateTime _itemAlertLastPlayed = DateTime.MinValue;
         private static SoundPlayer _itemAlertPlayer = null;
+
         public static void PlayItemAlert()
         {
             LoadNewSound();
@@ -26,6 +28,7 @@ namespace MapAssist.Helpers
                 }
             }
         }
+
         public static void LoadNewSound(bool ignoreIfAlreadyLoaded = false)
         {
             if (ignoreIfAlreadyLoaded)
@@ -35,8 +38,8 @@ namespace MapAssist.Helpers
             if ((MapAssistConfiguration.Loaded.ItemLog.SoundFile != null && MapAssistConfiguration.Loaded.ItemLog.SoundFile != "") && (_itemAlertPlayer == null || ignoreIfAlreadyLoaded))
             {
                 var exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                var directory = System.IO.Path.GetDirectoryName(exePath);
-                var soundPath = directory + @"\" + MapAssistConfiguration.Loaded.ItemLog.SoundFile;
+                var directory = Path.GetDirectoryName(exePath);
+                var soundPath = Path.Combine(directory, MapAssistConfiguration.Loaded.ItemLog.SoundFile);
                 _itemAlertPlayer = new SoundPlayer(soundPath);
                 Console.Write("Loaded new sound file");
             }
