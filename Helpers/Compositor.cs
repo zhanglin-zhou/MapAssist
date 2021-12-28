@@ -1,4 +1,4 @@
-﻿/**
+/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -470,6 +470,7 @@ namespace MapAssist.Helpers
 
                 foreach (var corpse in corpses)
                 {
+                    if (corpse.Act.ActId != _gameData.PlayerUnit.Act.ActId) continue; // Don't show corpse if not in the same act
                     if (!areasToRender.Any(area => area.Area == corpse.InitialArea)) continue; // Don't show corpse if not in drawn areas
 
                     if (canDrawIcon)
@@ -516,6 +517,7 @@ namespace MapAssist.Helpers
 
                     if (_gameData.Players.TryGetValue(player.UnitId, out var playerUnit))
                     {
+                        if (!myPlayer && playerUnit.Act.ActId != _gameData.PlayerUnit.Act.ActId) continue; // Don't show player if not in the same act
                         if (!myPlayer && !areasToRender.Any(area => area.IncludesPoint(playerUnit.Position))) continue; // Don't show player if not in drawn areas
 
                         // use data from the unit table if available
@@ -573,7 +575,7 @@ namespace MapAssist.Helpers
                     }
                     else
                     {
-                        if (!myPlayer && !areasToRender.Any(area => area.IncludesPoint(player.Position))) continue; // Don't show player if not in drawn areas
+                        if (!myPlayer && !areasToRender.Select(area => area.Area).Contains(player.Area)) continue; // Don't show player if not in drawn areas
 
                         // otherwise use the data from the roster
                         // only draw if in the same party, otherwise position/area data will not be up to date
