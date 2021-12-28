@@ -245,9 +245,9 @@ namespace MapAssist.Types
                     itemLog.RemoveAt(0);
                 }
 
-                if (ItemLogTimers.TryGetValue(procId, out var timer))
+                if (ItemLogTimers.TryGetValue(procId, out var timer) && timer.Contains(self))
                 {
-                    timer.Remove(self);
+                    try { timer.Remove(self); } catch (Exception) { } // This still randomly errors, even with the proper checks in place, hence the try catch block
                 }
             }
 
