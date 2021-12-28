@@ -30,6 +30,8 @@ RenderingConfiguration:
   ToggleViaInGameMap: false
   ## ToggleViaInGamePanels - Auto-hide overlay when in-game panels/menus are opened
   ToggleViaInGamePanels: true
+  ## StickToLastGameWindow - Keep overlay linked to the last game window even after switching windows
+  StickToLastGameWindow: false
   ## Size - Overlay map maximum size
   Size: 800
   ## ZoomLevel - Zoom level / can zoom in/out with hotkeys (ZoomInKey, ZoomOutKey)
