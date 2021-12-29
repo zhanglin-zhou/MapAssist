@@ -224,10 +224,9 @@ namespace MapAssist
             catch (YamlDotNet.Core.YamlException e)
             {
                 _log.Fatal(e);
-                _log.Fatal("Invalid loot log yaml file");
+                _log.Fatal("Invalid item log yaml file");
 
-                MessageBox.Show(e.Message, $"{messageBoxTitle}: Loop filter yaml parsing error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.Message, $"{messageBoxTitle}: Item filter yaml parsing error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception e)
             {

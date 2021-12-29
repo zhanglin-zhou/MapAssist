@@ -93,6 +93,7 @@ namespace MapAssist.Types
             { 419, Npc.DruidHawk },
             { 420, Npc.DruidSpiritWolf },
             { 421, Npc.DruidFenris },
+            { 423, Npc.HeartOfWolverine },
             { 424, Npc.OakSage },
             { 543, Npc.BaalThrone },
             { 567, Npc.InjuredBarbarian },
