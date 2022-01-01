@@ -12,6 +12,7 @@ namespace MapAssist
     public partial class ConfigEditor : Form
     {
         private PropertyInfo SelectedProperty;
+        private AddAreaForm areaForm;
 
         public ConfigEditor()
         {
@@ -73,11 +74,6 @@ namespace MapAssist
             opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
             lblOpacityValue.Text = (opacity.Value * 5).ToString();
 
-            cboLanguage.SelectedIndex = MapAssistConfiguration.Loaded.Language;
-
-            opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
-            lblOpacityValue.Text = (opacity.Value * 5).ToString();
-
             iconOpacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity * 100f / 5);
             lblIconOpacityValue.Text = (iconOpacity.Value * 5).ToString();
 
@@ -90,7 +86,7 @@ namespace MapAssist
             chkOverlayMode.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode;
             chkToggleViaMap.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGameMap;
             chkToggleViaPanels.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGamePanels;
-            chkOverlayMode.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode;
+            chkStickToLastGameWindow.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow;
             cboPosition.SelectedIndex = cboPosition.FindStringExact(MapAssistConfiguration.Loaded.RenderingConfiguration.Position.ToString().ToProperCase());
 
             buffSize.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize * 10f);
@@ -232,6 +228,11 @@ namespace MapAssist
         private void chkToggleViaPanels_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGamePanels = chkToggleViaPanels.Checked;
+        }
+
+        private void chkStickToLastGameWindow_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow = chkStickToLastGameWindow.Checked;
         }
 
         private void cboBuffPosition_SelectedIndexChanged(object sender, EventArgs e)
@@ -550,18 +551,6 @@ namespace MapAssist
             }
         }
 
-        private void chkWalkableColor_Clicked(object sender, EventArgs e)
-        {
-            if (chkWalkableColor.Checked)
-            {
-                MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = btnWalkableColor.BackColor;
-            }
-            else
-            {
-                MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = Color.Empty;
-            }
-        }
-
         private void btnBorderColor_Click(object sender, EventArgs e)
         {
             var colorDlg = new ColorDialog();
@@ -574,9 +563,21 @@ namespace MapAssist
 
         private void btnAddHidden_Click(object sender, EventArgs e)
         {
-            var addForm = new AddAreaForm();
-            addForm.listToAddTo = "lstHidden";
-            addForm.ShowDialog(this);
+            if (areaForm == null)
+            {
+                areaForm = new AddAreaForm();
+            }
+
+            areaForm.listToAddTo = "lstHidden";
+
+            if (areaForm.Visible)
+            {
+                areaForm.Activate();
+            }
+            else
+            {
+                areaForm.ShowDialog(this);
+            }
         }
 
         private void btnRemoveHidden_Click(object sender, EventArgs e)
@@ -606,6 +607,15 @@ namespace MapAssist
                     txtD2Path.Text = "";
                 }
             }
+        }
+
+        private void chkWalkableColor_CheckedChanged(object sender, EventArgs e)
+        {
+            var newColor = chkWalkableColor.Checked
+                ? btnWalkableColor.BackColor
+                : Color.Empty;
+
+            MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = newColor;
         }
     }
 }

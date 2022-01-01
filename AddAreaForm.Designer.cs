@@ -29,6 +29,7 @@ namespace MapAssist
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddAreaForm));
             this.lstAreas = new System.Windows.Forms.ListBox();
             this.btnAddArea = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -55,11 +56,17 @@ namespace MapAssist
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(311, 224);
             this.Controls.Add(this.btnAddArea);
             this.Controls.Add(this.lstAreas);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "AddAreaForm";
-            this.Text = "Add Area";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Areas - MapAssist";
             this.Load += new System.EventHandler(this.AddAreaForm_Load);
             this.ResumeLayout(false);
 

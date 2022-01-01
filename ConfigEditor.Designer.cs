@@ -50,6 +50,7 @@
             this.cboBuffPosition = new System.Windows.Forms.ComboBox();
             this.buffSize = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkStickToLastGameWindow = new System.Windows.Forms.CheckBox();
             this.chkWalkableColor = new System.Windows.Forms.CheckBox();
             this.btnBorderColor = new System.Windows.Forms.Button();
             this.btnWalkableColor = new System.Windows.Forms.Button();
@@ -305,7 +306,7 @@
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(6, 6);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(301, 387);
+            this.panel1.Size = new System.Drawing.Size(301, 404);
             this.panel1.TabIndex = 0;
             // 
             // groupBox3
@@ -315,9 +316,9 @@
             this.groupBox3.Controls.Add(this.lblBuffSize);
             this.groupBox3.Controls.Add(this.cboBuffPosition);
             this.groupBox3.Controls.Add(this.buffSize);
-            this.groupBox3.Location = new System.Drawing.Point(5, 290);
+            this.groupBox3.Location = new System.Drawing.Point(5, 309);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(290, 91);
+            this.groupBox3.Size = new System.Drawing.Size(290, 93);
             this.groupBox3.TabIndex = 22;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Buffs";
@@ -377,6 +378,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkStickToLastGameWindow);
             this.groupBox1.Controls.Add(this.chkWalkableColor);
             this.groupBox1.Controls.Add(this.btnBorderColor);
             this.groupBox1.Controls.Add(this.btnWalkableColor);
@@ -397,26 +399,36 @@
             this.groupBox1.Controls.Add(this.chkToggleViaMap);
             this.groupBox1.Controls.Add(this.lblIconOpacity);
             this.groupBox1.Controls.Add(this.chkToggleViaPanels);
-            this.groupBox1.Location = new System.Drawing.Point(5, 5);
+            this.groupBox1.Location = new System.Drawing.Point(5, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(290, 279);
+            this.groupBox1.Size = new System.Drawing.Size(290, 300);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Map Rendering";
             // 
+            // chkStickToLastGameWindow
+            // 
+            this.chkStickToLastGameWindow.AutoSize = true;
+            this.chkStickToLastGameWindow.Location = new System.Drawing.Point(10, 241);
+            this.chkStickToLastGameWindow.Name = "chkStickToLastGameWindow";
+            this.chkStickToLastGameWindow.Size = new System.Drawing.Size(225, 17);
+            this.chkStickToLastGameWindow.TabIndex = 25;
+            this.chkStickToLastGameWindow.Text = "Run overlay on last inactive game window";
+            this.chkStickToLastGameWindow.UseVisualStyleBackColor = true;
+            // 
             // chkWalkableColor
             // 
             this.chkWalkableColor.AutoSize = true;
-            this.chkWalkableColor.Location = new System.Drawing.Point(10, 248);
+            this.chkWalkableColor.Location = new System.Drawing.Point(10, 271);
             this.chkWalkableColor.Name = "chkWalkableColor";
             this.chkWalkableColor.Size = new System.Drawing.Size(15, 14);
             this.chkWalkableColor.TabIndex = 24;
             this.chkWalkableColor.UseVisualStyleBackColor = true;
-            this.chkWalkableColor.Click += new System.EventHandler(this.chkWalkableColor_Clicked);
+            this.chkWalkableColor.CheckedChanged += new System.EventHandler(this.chkWalkableColor_CheckedChanged);
             // 
             // btnBorderColor
             // 
-            this.btnBorderColor.Location = new System.Drawing.Point(128, 241);
+            this.btnBorderColor.Location = new System.Drawing.Point(126, 264);
             this.btnBorderColor.Name = "btnBorderColor";
             this.btnBorderColor.Size = new System.Drawing.Size(91, 26);
             this.btnBorderColor.TabIndex = 23;
@@ -426,7 +438,7 @@
             // 
             // btnWalkableColor
             // 
-            this.btnWalkableColor.Location = new System.Drawing.Point(31, 241);
+            this.btnWalkableColor.Location = new System.Drawing.Point(29, 264);
             this.btnWalkableColor.Name = "btnWalkableColor";
             this.btnWalkableColor.Size = new System.Drawing.Size(91, 26);
             this.btnWalkableColor.TabIndex = 22;
@@ -437,7 +449,7 @@
             // chkOverlayMode
             // 
             this.chkOverlayMode.AutoSize = true;
-            this.chkOverlayMode.Location = new System.Drawing.Point(10, 170);
+            this.chkOverlayMode.Location = new System.Drawing.Point(10, 172);
             this.chkOverlayMode.Name = "chkOverlayMode";
             this.chkOverlayMode.Size = new System.Drawing.Size(92, 17);
             this.chkOverlayMode.TabIndex = 5;
@@ -448,7 +460,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(123, 171);
+            this.label2.Location = new System.Drawing.Point(123, 173);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 7;
@@ -1296,7 +1308,8 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ConfigEditor";
-            this.Text = "ConfigEditor";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Configuration - MapAssist";
             this.tabControl1.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
@@ -1439,5 +1452,6 @@
         private System.Windows.Forms.ListBox lstHidden;
         private System.Windows.Forms.Button btnBrowseD2Location;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.CheckBox chkStickToLastGameWindow;
     }
 }
