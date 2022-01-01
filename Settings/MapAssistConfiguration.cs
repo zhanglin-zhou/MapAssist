@@ -32,8 +32,8 @@ namespace MapAssist.Settings
         public static void Load()
         {
             Loaded = ConfigurationParser<MapAssistConfiguration>.ParseConfigurationMain(Properties.Resources.Config, $"./Config.yaml");
-            Languages.LoadAreaLocalization();
-            Languages.LoadShrineLocalization();
+            Localization.LoadAreaLocalization();
+            Localization.LoadShrineLocalization();
         }
 
         public void Save()
@@ -65,8 +65,8 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "ItemLog", ApplyNamingConventions = false)]
         public ItemLogConfiguration ItemLog { get; set; }
 
-        [YamlMember(Alias = "Language", ApplyNamingConventions = false)]
-        public int Language { get; set; }
+        [YamlMember(Alias = "LanguageCode", ApplyNamingConventions = false)]
+        public Locale LanguageCode { get; set; }
     }
 
     public class MapColorConfiguration

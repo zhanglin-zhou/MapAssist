@@ -1,49 +1,14 @@
 ﻿using MapAssist.Structs;
 using MapAssist.Types;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MapAssist.Helpers
 {
-    public static class Languages
+    public static class Localization
     {
-        public enum Language
-        {
-            English,
-            SpanishAL,
-            Portuguese,
-            French,
-            Deutsch,
-            SpanishEU,
-            Italian,
-            Russian,
-            Polish,
-            Korean,
-            Japanese,
-            Chinese
-        }
-        public static Dictionary<int, string> LanguageCode = new Dictionary<int, string>()
-        {
-            { 0, "enUS" },
-            { 1, "esMX" },
-            { 2, "ptBR" },
-            { 3, "frFR" },
-            { 4, "deDE" },
-            { 5, "esES" },
-            { 6, "itIT" },
-            { 7, "ruRU" },
-            { 8, "plPL" },
-            { 9, "koKR" },
-            { 10, "jaJP" },
-            { 11, "zhCN" },
-        };
-
         public static void LoadItemLocalization()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -62,6 +27,7 @@ namespace MapAssist.Helpers
                 }
             }
         }
+
         public static void LoadAreaLocalization()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -80,6 +46,7 @@ namespace MapAssist.Helpers
                 }
             }
         }
+
         public static void LoadShrineLocalization()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -99,14 +66,17 @@ namespace MapAssist.Helpers
             }
         }
     }
+
     public class LocalizedItemList
     {
         public List<LocalizedObj> Items = new List<LocalizedObj>();
     }
+
     public class LocalizedAreaList
     {
         public List<LocalizedObj> Areas = new List<LocalizedObj>();
     }
+
     public class LocalizedShrineList
     {
         public List<LocalizedObj> Shrines = new List<LocalizedObj>();

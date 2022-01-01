@@ -257,8 +257,8 @@ namespace MapAssist.Helpers
                         {
                             label = "ShrineLabelNotFound";
                         }
-                        var lang = MapAssistConfiguration.Loaded.Language;
-                        var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+                        var lang = MapAssistConfiguration.Loaded.LanguageCode;
+                        var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
 
                         label = prop.ToString();
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
@@ -283,8 +283,8 @@ namespace MapAssist.Helpers
                         {
                             label = "WellLabelNotFound";
                         }
-                        var lang = MapAssistConfiguration.Loaded.Language;
-                        var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+                        var lang = MapAssistConfiguration.Loaded.LanguageCode;
+                        var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
 
                         label = prop.ToString();
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);

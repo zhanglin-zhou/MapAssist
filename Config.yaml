@@ -1,13 +1,10 @@
-# IMPORTANT: After changing anything in this file, ensure validity using https://jsonformatter.org/yaml-validator
-
-## HotkeyConfiguration - Keyboard shortcuts for the overlay
+# Changes these settings with the Config GUI provided in MapAssist
+LanguageCode: 'enUS'
 HotkeyConfiguration:
   ToggleKey: '|'
   AreaLevelKey: '['
   ZoomInKey: 'Num +'
   ZoomOutKey: 'Num -'
-
-## HiddenAreas - Areas where the overlay is not needed and will be hidden
 HiddenAreas:
   - 'Rogue Encampment'
   - 'Lut Gholein'
@@ -16,33 +13,18 @@ HiddenAreas:
   - 'Harrogath'
   - 'Forgotten Tower'
   - "Nihlathak's Temple"
-
-## RenderingConfiguration - Visual settings for the overlay
 RenderingConfiguration:
-  ## Opacity - Map transparency %
   Opacity: 0.5
-  ## Opacity - Icon transparency %
   IconOpacity: 0.9
-  ## OverlayMode - Overlay map over in-game map / can be hidden with hotkey (ToggleKey)
   OverlayMode: true
-  ## Positions - Options are: Center, TopLeft, TopRight
   Position: Center
-  ## ToggleViaInGameMap - Auto-hide map overlay when the in-game map is hidden
   ToggleViaInGameMap: false
-  ## ToggleViaInGamePanels - Auto-hide overlay when in-game panels/menus are opened
   ToggleViaInGamePanels: true
-  ## StickToLastGameWindow - Keep overlay linked to the last game window even after switching windows
   StickToLastGameWindow: false
-  ## Size - Overlay map maximum size
   Size: 800
-  ## ZoomLevel - Zoom level / can zoom in/out with hotkeys (ZoomInKey, ZoomOutKey)
   ZoomLevel: 1
-  ## BuffPosition - Options are: Player, Top, Bottom
   BuffPosition: Bottom
-  ## BuffSize - Size of the buff icons (0.8 = 80%, 1 = 100%, 1.2 = 120%)
   BuffSize: 1
-
-## MapConfiguration -- Visual settings for icons, lines and labels
 MapConfiguration:
   SuperUniqueMonster:
     IconOutlineColor: Yellow
@@ -172,40 +154,22 @@ MapConfiguration:
     IconSize: 4
     LabelFont: 'Exocet Blizzard Mixed Caps'
     LabelFontSize: 16
-
-## ItemLog - Alerts for in-game dropped items nearby
 ItemLog:
   Enabled: true
   FilterFileName: "ItemFilter.yaml"
-  ## PlaySoundOnDrop - Play drop sound
   PlaySoundOnDrop: true
-  ## SoundFile - Name of .wav file for drop sound (put .wav file in the MapAssist folder)
   SoundFile: ""
   DisplayForSeconds: 45
   LabelFont: "Exocet Blizzard Mixed Caps"
   LabelFontSize: 14
-
-## MapColorConfiguration - Color schema for drawing overlay map
 MapColorConfiguration:
   Walkable:
   Border: '255, 255, 255'
-
-## GameInfo - Display setting for game info
 GameInfo:
-  ## ShowGameIP - Display game server IP address
   ShowGameIP: true
-  ## HuntingIP - Set an IP address to display in green instead of red
   HuntingIP: '0.0.0.0'
-  ## ShowAreaLevel - Display current area and alvl
   ShowAreaLevel: true
-  ## ShowOverlayFPS - Developer setting, probably not useful
   ShowOverlayFPS: false
   LabelFont: "Exocet Blizzard Mixed Caps"
   LabelFontSize: 14
-
-## Path to D2LOD installation. Optional.
-## Should only need to provide if we are not able to look it up
-## automatically via the registry
 D2Path: ''
-
-Language: 0

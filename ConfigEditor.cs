@@ -64,12 +64,12 @@ namespace MapAssist
                 cboIconShape.Items.Add(element);
             }
 
-            foreach (var element in Enum.GetNames(typeof(Languages.Language)))
+            foreach (Locale element in Enum.GetValues(typeof(Locale)))
             {
-                cboLanguage.Items.Add(element);
+                cboLanguage.Items.Add(LocaleExtensions.Name(element));
             }
 
-            cboLanguage.SelectedIndex = MapAssistConfiguration.Loaded.Language;
+            cboLanguage.SelectedIndex = (int)MapAssistConfiguration.Loaded.LanguageCode;
 
             opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
             lblOpacityValue.Text = (opacity.Value * 5).ToString();
@@ -467,7 +467,7 @@ namespace MapAssist
 
         private void cboLanguage_SelectedIndexChanged(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.Language = cboLanguage.SelectedIndex;
+            MapAssistConfiguration.Loaded.LanguageCode = (Locale)cboLanguage.SelectedIndex;
             PointOfInterestHandler.ReloadNamedPOIs();
         }
 

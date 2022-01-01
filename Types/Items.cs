@@ -123,8 +123,8 @@ namespace MapAssist.Types
                 return "ItemNotFound";
             }
 
-            var lang = MapAssistConfiguration.Loaded.Language;
-            var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
 
             return prop.ToString();
         }
@@ -143,8 +143,8 @@ namespace MapAssist.Types
                 return "ItemNotFound";
             }
 
-            var lang = MapAssistConfiguration.Loaded.Language;
-            var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
 
             return prop.ToString();
         }
@@ -185,8 +185,8 @@ namespace MapAssist.Types
                 return "Unique";
             }
 
-            var lang = MapAssistConfiguration.Loaded.Language;
-            var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
 
             return prop.ToString();
         }
@@ -210,8 +210,8 @@ namespace MapAssist.Types
                 return "Set";
             }
 
-            var lang = MapAssistConfiguration.Loaded.Language;
-            var prop = localItem.GetType().GetProperty(Languages.LanguageCode[lang]).GetValue(localItem, null);
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
 
             return prop.ToString();
         }

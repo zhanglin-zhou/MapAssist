@@ -218,7 +218,7 @@
             this.cboLanguage.FormattingEnabled = true;
             this.cboLanguage.Location = new System.Drawing.Point(76, 286);
             this.cboLanguage.Name = "cboLanguage";
-            this.cboLanguage.Size = new System.Drawing.Size(121, 21);
+            this.cboLanguage.Size = new System.Drawing.Size(132, 21);
             this.cboLanguage.TabIndex = 14;
             this.cboLanguage.SelectedIndexChanged += new System.EventHandler(this.cboLanguage_SelectedIndexChanged);
             // 
@@ -1251,9 +1251,9 @@
             this.groupBox2.Controls.Add(this.btnRemoveHidden);
             this.groupBox2.Controls.Add(this.btnAddHidden);
             this.groupBox2.Controls.Add(this.lstHidden);
-            this.groupBox2.Location = new System.Drawing.Point(14, 58);
+            this.groupBox2.Location = new System.Drawing.Point(14, 48);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(295, 245);
+            this.groupBox2.Size = new System.Drawing.Size(300, 245);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Hidden Areas";
@@ -1281,9 +1281,9 @@
             // lstHidden
             // 
             this.lstHidden.FormattingEnabled = true;
-            this.lstHidden.Location = new System.Drawing.Point(6, 19);
+            this.lstHidden.Location = new System.Drawing.Point(10, 19);
             this.lstHidden.Name = "lstHidden";
-            this.lstHidden.Size = new System.Drawing.Size(257, 212);
+            this.lstHidden.Size = new System.Drawing.Size(253, 212);
             this.lstHidden.TabIndex = 0;
             // 
             // chkShowOverlayFPS
