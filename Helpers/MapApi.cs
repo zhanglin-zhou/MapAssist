@@ -50,6 +50,9 @@ namespace MapAssist.Helpers
         private Difficulty _difficulty;
         private uint _mapSeed;
 
+        private static int trailingSlash = -1; // -1 = Still trying to figure out, 0 = remove trailing slash, 1 = required trailing slash
+        private static int trailingSlashTry = 0; // Which trailing slash preference to try
+
         private static readonly Dictionary<string, uint> GameCRC32 = new Dictionary<string, uint> {
             {"1.11a", 0xf44cd0cf },
             {"1.11b", 0x8fd3f392 },
@@ -79,9 +82,14 @@ namespace MapAssist.Helpers
             }
 
             var path = FindD2();
-            if (path == null)
+
+            if (trailingSlash == 0 || trailingSlashTry == 0) // Remove trailing slash
             {
-                return false;
+                path = path.TrimEnd('\\');
+            }
+            else if (trailingSlash == 1 || trailingSlashTry == 1) // Require trailing slash
+            {
+                path = path.TrimEnd('\\') + "\\";
             }
 
             _pipeClient = new Process();

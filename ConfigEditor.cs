@@ -105,7 +105,7 @@ namespace MapAssist
             chkShowOverlayFPS.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS;
 
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ToggleKey.ToString()).Monitor(txtToggleMapKey);
-            new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey.ToString()).Monitor(txtGameInfoKey);
+            new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey.ToString()).Monitor(txtAreaLevelKey);
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomInKey.ToString()).Monitor(txtZoomInKey);
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ZoomOutKey.ToString()).Monitor(txtZoomOutKey);
 
@@ -524,9 +524,9 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.HotkeyConfiguration.ToggleKey = txtToggleMapKey.Text;
         }
 
-        private void txtGameInfoKey_TextChanged(object sender, EventArgs e)
+        private void txtAreaLevelKey_TextChanged(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey = txtGameInfoKey.Text;
+            MapAssistConfiguration.Loaded.HotkeyConfiguration.AreaLevelKey = txtAreaLevelKey.Text;
         }
 
         private void txtZoomInKey_TextChanged(object sender, EventArgs e)

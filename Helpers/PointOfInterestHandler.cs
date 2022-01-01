@@ -472,7 +472,23 @@ namespace MapAssist.Helpers
                     }
                 }
 
-                // Area-specific landmarks
+                // Area-specific quest objects
+                if (AreaSpecificQuestObjects.ContainsKey(areaData.Area))
+                {
+                    if (AreaSpecificQuestObjects[areaData.Area].ContainsKey(obj))
+                    {
+                        pointsOfInterest.Add(new PointOfInterest
+                        {
+                            Area = areaData.Area,
+                            Label = AreaSpecificQuestObjects[areaData.Area][obj],
+                            Position = points[0],
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
+                            Type = PoiType.AreaSpecificQuest
+                        });
+                    }
+                }
+
+                // Area-specific portals
                 if (AreaPortals.ContainsKey(areaData.Area))
                 {
                     if (AreaPortals[areaData.Area].ContainsKey(obj))

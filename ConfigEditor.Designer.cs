@@ -117,7 +117,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.txtZoomOutKey = new System.Windows.Forms.TextBox();
             this.txtZoomInKey = new System.Windows.Forms.TextBox();
-            this.txtGameInfoKey = new System.Windows.Forms.TextBox();
+            this.txtAreaLevelKey = new System.Windows.Forms.TextBox();
             this.txtToggleMapKey = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -1137,7 +1137,7 @@
             // 
             this.tabPage3.Controls.Add(this.txtZoomOutKey);
             this.tabPage3.Controls.Add(this.txtZoomInKey);
-            this.tabPage3.Controls.Add(this.txtGameInfoKey);
+            this.tabPage3.Controls.Add(this.txtAreaLevelKey);
             this.tabPage3.Controls.Add(this.txtToggleMapKey);
             this.tabPage3.Controls.Add(this.label15);
             this.tabPage3.Controls.Add(this.label14);
@@ -1169,14 +1169,14 @@
             this.txtZoomInKey.TabIndex = 6;
             this.txtZoomInKey.TextChanged += new System.EventHandler(this.txtZoomInKey_TextChanged);
             // 
-            // txtGameInfoKey
+            // txtAreaLevelKey
             // 
-            this.txtGameInfoKey.Location = new System.Drawing.Point(160, 80);
-            this.txtGameInfoKey.MaxLength = 1;
-            this.txtGameInfoKey.Name = "txtGameInfoKey";
-            this.txtGameInfoKey.Size = new System.Drawing.Size(119, 20);
-            this.txtGameInfoKey.TabIndex = 5;
-            this.txtGameInfoKey.TextChanged += new System.EventHandler(this.txtGameInfoKey_TextChanged);
+            this.txtAreaLevelKey.Location = new System.Drawing.Point(160, 80);
+            this.txtAreaLevelKey.MaxLength = 1;
+            this.txtAreaLevelKey.Name = "txtAreaLevelKey";
+            this.txtAreaLevelKey.Size = new System.Drawing.Size(119, 20);
+            this.txtAreaLevelKey.TabIndex = 5;
+            this.txtAreaLevelKey.TextChanged += new System.EventHandler(this.txtAreaLevelKey_TextChanged);
             // 
             // txtToggleMapKey
             // 
@@ -1393,7 +1393,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtZoomOutKey;
         private System.Windows.Forms.TextBox txtZoomInKey;
-        private System.Windows.Forms.TextBox txtGameInfoKey;
+        private System.Windows.Forms.TextBox txtAreaLevelKey;
         private System.Windows.Forms.TextBox txtToggleMapKey;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label14;

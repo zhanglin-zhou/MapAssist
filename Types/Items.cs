@@ -254,9 +254,9 @@ namespace MapAssist.Types
                     itemLog.RemoveAt(0);
                 }
 
-                if (ItemLogTimers.TryGetValue(procId, out var timer))
+                if (ItemLogTimers.TryGetValue(procId, out var timer) && timer.Contains(self))
                 {
-                    timer.Remove(self);
+                    try { timer.Remove(self); } catch (Exception) { } // This still randomly errors, even with the proper checks in place, hence the try catch block
                 }
             }
 
@@ -272,7 +272,7 @@ namespace MapAssist.Types
             {ItemQuality.SET, ColorTranslator.FromHtml("#00FF00")},
             {ItemQuality.RARE, ColorTranslator.FromHtml("#FFFF00")},
             {ItemQuality.UNIQUE, ColorTranslator.FromHtml("#A59263")},
-            {ItemQuality.CRAFT, ColorTranslator.FromHtml("#FFA500")},
+            {ItemQuality.CRAFT, ColorTranslator.FromHtml("#FFAE00")},
         };
 
         public readonly static Dictionary<string, string> _SetFromCode = new Dictionary<string, string>()

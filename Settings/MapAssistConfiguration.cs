@@ -179,6 +179,9 @@ public class RenderingConfiguration
     [YamlMember(Alias = "ToggleViaInGamePanels", ApplyNamingConventions = false)]
     public bool ToggleViaInGamePanels { get; set; }
 
+    [YamlMember(Alias = "StickToLastGameWindow", ApplyNamingConventions = false)]
+    public bool StickToLastGameWindow { get; set; }
+
     [YamlMember(Alias = "Size", ApplyNamingConventions = false)]
     public int Size { get; set; }
     public int InitialSize { get; set; }
