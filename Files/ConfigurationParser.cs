@@ -138,7 +138,7 @@ namespace MapAssist.Files
             var config = MapAssistConfiguration.Loaded;
             using (var streamWriter = new StreamWriter("Config.yaml"))
             {
-                streamWriter.WriteLine("# Changes these settings with the Config GUI provided in MapAssist");
+                streamWriter.WriteLine("# Change these settings from the Config GUI provided in MapAssist");
                 var serializer = new SerializerBuilder()
                     .WithNamingConvention(PascalCaseNamingConvention.Instance)
                     .WithTypeConverter(new AreaArrayYamlTypeConverter())

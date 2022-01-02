@@ -1,4 +1,4 @@
-# Changes these settings with the Config GUI provided in MapAssist
+# Change these settings from the Config GUI provided in MapAssist
 HotkeyConfiguration:
   ToggleKey: '|'
   AreaLevelKey: '['
