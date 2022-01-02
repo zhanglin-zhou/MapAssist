@@ -56,12 +56,12 @@ namespace MapAssist.Helpers
                 using (var reader = new StreamReader(stream))
                 {
                     var jsonString = reader.ReadToEnd();
-                    ShrineLabels._localizedShrineList = JsonConvert.DeserializeObject<LocalizedShrineList>(jsonString);
+                    Shrine._localizedShrineList = JsonConvert.DeserializeObject<LocalizedShrineList>(jsonString);
                 }
 
-                foreach (var item in ShrineLabels._localizedShrineList.Shrines)
+                foreach (var item in Shrine._localizedShrineList.Shrines)
                 {
-                    ShrineLabels.LocalizedShrines.Add(item.Key, item);
+                    Shrine.LocalizedShrines.Add(item.Key, item);
                 }
             }
         }

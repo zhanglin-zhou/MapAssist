@@ -169,6 +169,7 @@
     <Compile Include="Types\Items.cs" />
     <Compile Include="Types\Roster.cs" />
     <Compile Include="Types\Session.cs" />
+    <Compile Include="Types\Shrine.cs" />
     <Compile Include="Types\Skills.cs" />
     <Compile Include="Types\Stats.cs" />
     <Compile Include="Types\RoomEx.cs" />

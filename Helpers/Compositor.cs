@@ -240,7 +240,7 @@ namespace MapAssist.Helpers
                 var foundInArea = areasToRender.FirstOrDefault(area => area.IncludesPoint(gameObject.Position));
                 if (foundInArea != null && foundInArea.Area != _areaData.Area && !AreaExtensions.RequiresStitching(foundInArea.Area)) continue; // Don't show gamedata objects in another area if areas aren't stitched together
 
-                if (gameObject.IsShrine())
+                if (gameObject.IsShrine() || gameObject.IsWell())
                 {
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawIcon())
                     {
@@ -249,62 +249,10 @@ namespace MapAssist.Helpers
 
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
                     {
-                        var shrineId = gameObject.ObjectData.InteractType;
-                        var label = "Shrine";
-
-                        LocalizedObj localItem;
-                        if (!ShrineLabels.LocalizedShrines.TryGetValue("ShrId" + shrineId, out localItem))
-                        {
-                            label = "ShrineLabelNotFound";
-                        }
-                        var lang = MapAssistConfiguration.Loaded.LanguageCode;
-                        var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-
-                        label = prop.ToString();
+                        var label = Shrine.ShrineDisplayName(gameObject);
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
                     }
 
-                    continue;
-                }
-
-                if(gameObject.ObjectTxt.ObjectType == "Well")
-                {
-                    if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawIcon())
-                    {
-                        DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position);
-                    }
-
-                    if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
-                    {
-                        var label = "Well";
-
-                        LocalizedObj localItem;
-                        if (!ShrineLabels.LocalizedShrines.TryGetValue("Well", out localItem))
-                        {
-                            label = "WellLabelNotFound";
-                        }
-                        var lang = MapAssistConfiguration.Loaded.LanguageCode;
-                        var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-
-                        label = prop.ToString();
-                        DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
-                    }
-
-                    continue;
-                }
-
-                if(gameObject.ObjectTxt.ObjectType == "Well")
-                {
-                    if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawIcon())
-                    {
-                        DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position);
-                    }
-
-                    if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
-                    {
-                        var label = "Well"; //update this when language changes are ready for merge
-                        DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
-                    }
                     continue;
                 }
                 
@@ -550,9 +498,6 @@ namespace MapAssist.Helpers
                     var myPlayer = player.UnitId == myPlayerEntry.UnitId;
                     var inMyParty = player.PartyID == myPlayerEntry.PartyID;
                     var playerName = player.Name;
-
-                    var foundInArea = areasToRender.FirstOrDefault(area => area.IncludesPoint(player.Position));
-                    if (foundInArea != null && foundInArea.Area != _areaData.Area && !AreaExtensions.RequiresStitching(foundInArea.Area)) continue; // Don't show gamedata objects in another area if areas aren't stitched together
 
                     if (_gameData.Players.TryGetValue(player.UnitId, out var playerUnit))
                     {
@@ -814,7 +759,7 @@ namespace MapAssist.Helpers
                 Color fontColor;
                 if (item == null || !Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out fontColor))
                 {
-                    _log.Warn("Invalid item quality in ItemLog - Quality " + item.ItemData.ItemQuality + " - UnitId " + item.UnitId);
+                    // Invalid item quality
                     continue;
                 }
 
@@ -852,11 +797,9 @@ namespace MapAssist.Helpers
                 {
                     case ItemQuality.UNIQUE:
                         itemSpecialName = Items.UniqueName(item.TxtFileNo) + " ";
-                        fontColor = Items.ItemColors[ItemQuality.UNIQUE];
                         break;
                     case ItemQuality.SET:
                         itemSpecialName = Items.SetName(item.TxtFileNo) + " ";
-                        fontColor = Items.ItemColors[ItemQuality.SET];
                         break;
                 }
 

@@ -130,6 +130,7 @@ MapConfiguration:
     IconSize: 3
   LockedChest:
     IconColor: '128, 0, 0'
+    IconShape: Square
     IconSize: 3
   TrappedChest:
     IconColor: '255, 0, 0'

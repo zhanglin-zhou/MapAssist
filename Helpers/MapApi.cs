@@ -247,6 +247,15 @@ namespace MapAssist.Helpers
                 return (0, null);
             }
 
+            if (length == uint.MaxValue) // Try a different trailing slash logic
+            {
+                trailingSlashTry++;
+            }
+            else if (length > 0) // Trailing slash attempt worked and keep that logic for future requests
+            {
+                trailingSlash = trailingSlashTry;
+            }
+
             string json = null;
             JObject jsonObj;
             try

@@ -47,36 +47,4 @@ namespace MapAssist.Structs
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x40)]
         public string ObjectType;
     }
-
-    public enum ShrineType : byte
-    {
-        None,
-        Refill,
-        Health,
-        Mana,
-        HPXChange,
-        ManaXChange,
-        Armor,
-        Combat,
-        ResistFire,
-        ResistCold,
-        ResistLight,
-        ResistPoison,
-        Skill,
-        ManaRegen,
-        Stamina,
-        Experience,
-        Shrine,
-        Portal,
-        Gem,
-        Fire,
-        Monster,
-        Explosive,
-        Poison
-    };
-    public static class ShrineLabels
-    {
-        public static LocalizedShrineList _localizedShrineList;
-        public static Dictionary<string, LocalizedObj> LocalizedShrines = new Dictionary<string, LocalizedObj>();
-    }
 }

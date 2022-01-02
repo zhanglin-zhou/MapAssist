@@ -468,7 +468,7 @@ namespace MapAssist
         private void cboLanguage_SelectedIndexChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.LanguageCode = (Locale)cboLanguage.SelectedIndex;
-            PointOfInterestHandler.ReloadNamedPOIs();
+            PointOfInterestHandler.UpdateLocalizationNames();
         }
 
         private void chkItemLogEnabled_CheckedChanged(object sender, EventArgs e)
