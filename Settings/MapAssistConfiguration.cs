@@ -34,6 +34,7 @@ namespace MapAssist.Settings
             Loaded = ConfigurationParser<MapAssistConfiguration>.ParseConfigurationMain(Properties.Resources.Config, $"./Config.yaml");
             Localization.LoadAreaLocalization();
             Localization.LoadShrineLocalization();
+            PointOfInterestHandler.UpdateLocalizationNames();
         }
 
         public void Save()

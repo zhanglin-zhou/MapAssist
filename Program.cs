@@ -78,8 +78,6 @@ namespace MapAssist
                         _log.Info($"Running from commit {githubSha}");
                     }
 
-                    PointOfInterestHandler.UpdateLocalizationNames();
-
                     Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                     Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
                     AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
