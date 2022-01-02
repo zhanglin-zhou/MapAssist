@@ -415,6 +415,7 @@
             this.chkStickToLastGameWindow.TabIndex = 25;
             this.chkStickToLastGameWindow.Text = "Run overlay on last inactive game window";
             this.chkStickToLastGameWindow.UseVisualStyleBackColor = true;
+            this.chkStickToLastGameWindow.CheckedChanged += new System.EventHandler(this.chkStickToLastGameWindow_CheckedChanged);
             // 
             // chkWalkableColor
             // 
