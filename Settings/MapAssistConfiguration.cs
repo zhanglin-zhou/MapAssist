@@ -42,8 +42,8 @@ namespace MapAssist.Settings
             new ConfigurationParser<MapAssistConfiguration>().SerializeToFile(this);
         }
 
-        [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
-        public string D2Path { get; set; }
+        [YamlMember(Alias = "HotkeyConfiguration", ApplyNamingConventions = false)]
+        public HotkeyConfiguration HotkeyConfiguration { get; set; }
 
         [YamlMember(Alias = "HiddenAreas", ApplyNamingConventions = false)]
         public Area[] HiddenAreas { get; set; }
@@ -54,17 +54,17 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "MapConfiguration", ApplyNamingConventions = false)]
         public MapConfiguration MapConfiguration { get; set; }
 
+        [YamlMember(Alias = "ItemLog", ApplyNamingConventions = false)]
+        public ItemLogConfiguration ItemLog { get; set; }
+
         [YamlMember(Alias = "MapColorConfiguration", ApplyNamingConventions = false)]
         public MapColorConfiguration MapColorConfiguration { get; set; }
-
-        [YamlMember(Alias = "HotkeyConfiguration", ApplyNamingConventions = false)]
-        public HotkeyConfiguration HotkeyConfiguration { get; set; }
 
         [YamlMember(Alias = "GameInfo", ApplyNamingConventions = false)]
         public GameInfoConfiguration GameInfo { get; set; }
 
-        [YamlMember(Alias = "ItemLog", ApplyNamingConventions = false)]
-        public ItemLogConfiguration ItemLog { get; set; }
+        [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
+        public string D2Path { get; set; }
 
         [YamlMember(Alias = "LanguageCode", ApplyNamingConventions = false)]
         public Locale LanguageCode { get; set; }
@@ -166,13 +166,16 @@ namespace MapAssist.Settings
 public class RenderingConfiguration
 {
     [YamlMember(Alias = "Opacity", ApplyNamingConventions = false)]
-    public float Opacity { get; set; }
+    public double Opacity { get; set; }
 
     [YamlMember(Alias = "IconOpacity", ApplyNamingConventions = false)]
-    public float IconOpacity { get; set; }
+    public double IconOpacity { get; set; }
 
     [YamlMember(Alias = "OverlayMode", ApplyNamingConventions = false)]
     public bool OverlayMode { get; set; }
+
+    [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
+    public MapPosition Position { get; set; }
 
     [YamlMember(Alias = "ToggleViaInGameMap", ApplyNamingConventions = false)]
     public bool ToggleViaInGameMap { get; set; }
@@ -185,19 +188,16 @@ public class RenderingConfiguration
 
     [YamlMember(Alias = "Size", ApplyNamingConventions = false)]
     public int Size { get; set; }
-    public int InitialSize { get; set; }
+    internal int InitialSize { get; set; }
 
-    [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
-    public MapPosition Position { get; set; }
+    [YamlMember(Alias = "ZoomLevel", ApplyNamingConventions = false)]
+    public double ZoomLevel { get; set; }
 
     [YamlMember(Alias = "BuffPosition", ApplyNamingConventions = false)]
     public BuffPosition BuffPosition { get; set; }
 
     [YamlMember(Alias = "BuffSize", ApplyNamingConventions = false)]
-    public float BuffSize { get; set; }
-
-    [YamlMember(Alias = "ZoomLevel", ApplyNamingConventions = false)]
-    public float ZoomLevel { get; set; }
+    public double BuffSize { get; set; }
 }
 
 public class HotkeyConfiguration
@@ -205,14 +205,14 @@ public class HotkeyConfiguration
     [YamlMember(Alias = "ToggleKey", ApplyNamingConventions = false)]
     public string ToggleKey { get; set; }
 
+    [YamlMember(Alias = "AreaLevelKey", ApplyNamingConventions = false)]
+    public string AreaLevelKey { get; set; }
+
     [YamlMember(Alias = "ZoomInKey", ApplyNamingConventions = false)]
     public string ZoomInKey { get; set; }
 
     [YamlMember(Alias = "ZoomOutKey", ApplyNamingConventions = false)]
     public string ZoomOutKey { get; set; }
-
-    [YamlMember(Alias = "AreaLevelKey", ApplyNamingConventions = false)]
-    public string AreaLevelKey { get; set; }
 }
 
 public class GameInfoConfiguration
@@ -247,14 +247,15 @@ public class ItemLogConfiguration
     [YamlMember(Alias = "PlaySoundOnDrop", ApplyNamingConventions = false)]
     public bool PlaySoundOnDrop { get; set; }
 
-    [YamlMember(Alias = "DisplayForSeconds", ApplyNamingConventions = false)]
-    public double DisplayForSeconds { get; set; }
     [YamlMember(Alias = "SoundFile", ApplyNamingConventions = false)]
     public string SoundFile { get; set; }
+
+    [YamlMember(Alias = "DisplayForSeconds", ApplyNamingConventions = false)]
+    public double DisplayForSeconds { get; set; }
 
     [YamlMember(Alias = "LabelFont", ApplyNamingConventions = false)]
     public string LabelFont { get; set; }
 
     [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
-    public float LabelFontSize { get; set; }
+    public double LabelFontSize { get; set; }
 }

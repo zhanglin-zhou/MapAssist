@@ -10,7 +10,24 @@ using YamlDotNet.Serialization;
 
 namespace MapAssist.Helpers
 {
+    internal sealed class FloatPrecisionConverter : IYamlTypeConverter
+    {
+        public bool Accepts(Type type)
+        {
+            return type == typeof(double);
+        }
 
+        public object ReadYaml(IParser parser, Type type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteYaml(IEmitter emitter, object value, Type type)
+        {
+            emitter.Emit(new Scalar(null, value.ToString())); // Otherwise some bug in the yamlconverter won't have the right precisions on doubles
+        }
+    }
+    
     internal sealed class MapColorConfigurationTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
@@ -60,39 +77,7 @@ namespace MapAssist.Helpers
         {
             emitter.Emit(new MappingStart(null, null, false, MappingStyle.Block));
 
-            var node = (PortalRendering)value;
-            if (node.IconColor != null)
-            {
-                emitter.Emit(new Scalar(null, "IconColor"));
-                emitter.Emit(new Scalar(null, node.IconColor.A + ", " + node.IconColor.R + ", " + node.IconColor.G + ", " + node.IconColor.B));
-                emitter.Emit(new Scalar(null, "IconShape"));
-                emitter.Emit(new Scalar(null, node.IconShape.ToString()));
-                emitter.Emit(new Scalar(null, "IconSize"));
-                emitter.Emit(new Scalar(null, node.IconSize.ToString()));
-                emitter.Emit(new Scalar(null, "IconThickness"));
-                emitter.Emit(new Scalar(null, node.IconThickness.ToString()));
-            }
-            if (node.LineColor != null)
-            {
-                emitter.Emit(new Scalar(null, "LineColor"));
-                emitter.Emit(new Scalar(null, node.LineColor.A + ", " + node.LineColor.R + ", " + node.LineColor.G + ", " + node.LineColor.B));
-                emitter.Emit(new Scalar(null, "LineThickness"));
-                emitter.Emit(new Scalar(null, node.LineThickness.ToString()));
-                emitter.Emit(new Scalar(null, "ArrowHeadSize"));
-                emitter.Emit(new Scalar(null, node.ArrowHeadSize.ToString()));
-            }
-            if (node.LabelColor != null)
-            {
-                emitter.Emit(new Scalar(null, "LabelColor"));
-                emitter.Emit(new Scalar(null, node.LabelColor.A + ", " + node.LabelColor.R + ", " + node.LabelColor.G + ", " + node.LabelColor.B));
-            }
-            if (node.LabelFont != null)
-            {
-                emitter.Emit(new Scalar(null, "LabelFont"));
-                emitter.Emit(new Scalar(null, node.LabelFont.ToString()));
-                emitter.Emit(new Scalar(null, "LabelFontSize"));
-                emitter.Emit(new Scalar(null, node.LabelFontSize.ToString()));
-            }
+            Helpers.WritePOIRendering(emitter, (PortalRendering)value);
 
             emitter.Emit(new MappingEnd());
         }
@@ -113,39 +98,7 @@ namespace MapAssist.Helpers
         {
             emitter.Emit(new MappingStart(null, null, false, MappingStyle.Block));
 
-            var node = (PointOfInterestRendering)value;
-            if (node.IconColor != null)
-            {
-                emitter.Emit(new Scalar(null, "IconColor"));
-                emitter.Emit(new Scalar(null, node.IconColor.A + ", " + node.IconColor.R + ", " + node.IconColor.G + ", " + node.IconColor.B));
-                emitter.Emit(new Scalar(null, "IconShape"));
-                emitter.Emit(new Scalar(null, node.IconShape.ToString()));
-                emitter.Emit(new Scalar(null, "IconSize"));
-                emitter.Emit(new Scalar(null, node.IconSize.ToString()));
-                emitter.Emit(new Scalar(null, "IconThickness"));
-                emitter.Emit(new Scalar(null, node.IconThickness.ToString()));
-            }
-            if (node.LineColor != null)
-            {
-                emitter.Emit(new Scalar(null, "LineColor"));
-                emitter.Emit(new Scalar(null, node.LineColor.A + ", " + node.LineColor.R + ", " + node.LineColor.G + ", " + node.LineColor.B));
-                emitter.Emit(new Scalar(null, "LineThickness"));
-                emitter.Emit(new Scalar(null, node.LineThickness.ToString()));
-                emitter.Emit(new Scalar(null, "ArrowHeadSize"));
-                emitter.Emit(new Scalar(null, node.ArrowHeadSize.ToString()));
-            }
-            if (node.LabelColor != null)
-            {
-                emitter.Emit(new Scalar(null, "LabelColor"));
-                emitter.Emit(new Scalar(null, node.LabelColor.A + ", " + node.LabelColor.R + ", " + node.LabelColor.G + ", " + node.LabelColor.B));
-            }
-            if (node.LabelFont != null)
-            {
-                emitter.Emit(new Scalar(null, "LabelFont"));
-                emitter.Emit(new Scalar(null, node.LabelFont.ToString()));
-                emitter.Emit(new Scalar(null, "LabelFontSize"));
-                emitter.Emit(new Scalar(null, node.LabelFontSize.ToString()));
-            }
+            Helpers.WritePOIRendering(emitter, (PointOfInterestRendering)value);
 
             emitter.Emit(new MappingEnd());
         }
@@ -166,20 +119,7 @@ namespace MapAssist.Helpers
         {
             emitter.Emit(new MappingStart(null, null, false, MappingStyle.Block));
 
-            var node = (IconRendering)value;
-            if (node.IconColor != null)
-            {
-                emitter.Emit(new Scalar(null, "IconShape"));
-                emitter.Emit(new Scalar(null, node.IconShape.ToString()));
-                emitter.Emit(new Scalar(null, "IconColor"));
-                emitter.Emit(new Scalar(null, node.IconColor.A + ", " + node.IconColor.R + ", " + node.IconColor.G + ", " + node.IconColor.B));
-                emitter.Emit(new Scalar(null, "IconOutlineColor"));
-                emitter.Emit(new Scalar(null, node.IconOutlineColor.A + ", " + node.IconOutlineColor.R + ", " + node.IconOutlineColor.G + ", " + node.IconOutlineColor.B));
-                emitter.Emit(new Scalar(null, "IconSize"));
-                emitter.Emit(new Scalar(null, node.IconSize.ToString()));
-                emitter.Emit(new Scalar(null, "IconThickness"));
-                emitter.Emit(new Scalar(null, node.IconThickness.ToString()));
-            }
+            Helpers.WriteIconRendering(emitter, (IconRendering)value);
 
             emitter.Emit(new MappingEnd());
         }
@@ -282,6 +222,86 @@ namespace MapAssist.Helpers
         public void WriteYaml(IEmitter emitter, object value, Type type)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    internal static class Helpers
+    {
+        internal static void WriteIconRendering(IEmitter emitter, IconRendering node)
+        {
+            var isFilled = node.IconColor != null && node.IconColor.A > 0;
+            var isOutline = node.IconOutlineColor != null && node.IconOutlineColor.A > 0;
+
+            if (isFilled)
+            {
+                emitter.Emit(new Scalar(null, "IconColor"));
+                emitter.Emit(new Scalar(null, Helpers.GetColorName(node.IconColor)));
+            }
+
+            if (isOutline)
+            {
+                emitter.Emit(new Scalar(null, "IconOutlineColor"));
+                emitter.Emit(new Scalar(null, Helpers.GetColorName(node.IconOutlineColor)));
+            }
+
+            if (isFilled || isOutline)
+            {
+                emitter.Emit(new Scalar(null, "IconShape"));
+                emitter.Emit(new Scalar(null, node.IconShape.ToString()));
+                emitter.Emit(new Scalar(null, "IconSize"));
+                emitter.Emit(new Scalar(null, node.IconSize.ToString()));
+            }
+
+            if (isOutline)
+            {
+                emitter.Emit(new Scalar(null, "IconThickness"));
+                emitter.Emit(new Scalar(null, node.IconThickness.ToString()));
+            }
+        }
+
+        internal static void WritePOIRendering(IEmitter emitter, PointOfInterestRendering node)
+        {
+            WriteIconRendering(emitter, node);
+            
+            var hasLine = node.LineColor != null && node.LineColor.A > 0 && node.LineThickness > 0;
+            var hasLabelColor = node.LabelColor != null && node.LabelColor.A > 0;
+            var hasLabel = node.LabelFontSize > 0;
+
+            if (hasLine)
+            {
+                emitter.Emit(new Scalar(null, "LineColor"));
+                emitter.Emit(new Scalar(null, Helpers.GetColorName(node.LineColor)));
+                emitter.Emit(new Scalar(null, "LineThickness"));
+                emitter.Emit(new Scalar(null, node.LineThickness.ToString()));
+                emitter.Emit(new Scalar(null, "ArrowHeadSize"));
+                emitter.Emit(new Scalar(null, node.ArrowHeadSize.ToString()));
+            }
+
+            if (hasLabelColor)
+            {
+                emitter.Emit(new Scalar(null, "LabelColor"));
+                emitter.Emit(new Scalar(null, Helpers.GetColorName(node.LabelColor)));
+            }
+
+            if (hasLabel)
+            {
+                emitter.Emit(new Scalar(null, "LabelFontSize"));
+                emitter.Emit(new Scalar(null, node.LabelFontSize.ToString()));
+                emitter.Emit(new Scalar(null, "LabelFont"));
+                emitter.Emit(new Scalar(null, node.LabelFont.ToString()));
+            }
+        }
+
+        internal static string GetColorName(Color color)
+        {
+            if (color.IsNamedColor)
+            {
+                return color.Name;
+            }
+            else
+            {
+                return color.R + ", " + color.G + ", " + color.B;
+            }
         }
     }
 }
