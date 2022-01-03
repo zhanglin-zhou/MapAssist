@@ -9,6 +9,8 @@ using System.Collections;
 using YamlDotNet.Core;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.Drawing;
 
 namespace MapAssist.Files
 {
@@ -133,7 +135,21 @@ namespace MapAssist.Files
 
         public void SerializeToFile(T unserializedConfiguration)
         {
-            throw new System.NotImplementedException();
+            var config = MapAssistConfiguration.Loaded;
+            using (var streamWriter = new StreamWriter("Config.yaml"))
+            {
+                streamWriter.WriteLine("# Change these settings from the Config GUI provided in MapAssist");
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                    .WithTypeConverter(new FloatPrecisionConverter())
+                    .WithTypeConverter(new AreaArrayYamlTypeConverter())
+                    .WithTypeConverter(new IconRenderingTypeConverter())
+                    .WithTypeConverter(new PointOfInterestRenderingTypeConverter())
+                    .WithTypeConverter(new PortalRenderingTypeConverter())
+                    .WithTypeConverter(new MapColorConfigurationTypeConverter())
+                    .Build();
+                serializer.Serialize(streamWriter, config);
+            }
         }
     }
 }

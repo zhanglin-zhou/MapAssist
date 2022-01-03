@@ -19,6 +19,7 @@
 
 using System.Drawing;
 using MapAssist.Files;
+using MapAssist.Helpers;
 using MapAssist.Settings;
 using MapAssist.Types;
 using YamlDotNet.Serialization;
@@ -31,6 +32,9 @@ namespace MapAssist.Settings
         public static void Load()
         {
             Loaded = ConfigurationParser<MapAssistConfiguration>.ParseConfigurationMain(Properties.Resources.Config, $"./Config.yaml");
+            Localization.LoadAreaLocalization();
+            Localization.LoadShrineLocalization();
+            PointOfInterestHandler.UpdateLocalizationNames();
         }
 
         public void Save()
@@ -38,8 +42,8 @@ namespace MapAssist.Settings
             new ConfigurationParser<MapAssistConfiguration>().SerializeToFile(this);
         }
 
-        [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
-        public string D2Path { get; set; }
+        [YamlMember(Alias = "HotkeyConfiguration", ApplyNamingConventions = false)]
+        public HotkeyConfiguration HotkeyConfiguration { get; set; }
 
         [YamlMember(Alias = "HiddenAreas", ApplyNamingConventions = false)]
         public Area[] HiddenAreas { get; set; }
@@ -50,17 +54,20 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "MapConfiguration", ApplyNamingConventions = false)]
         public MapConfiguration MapConfiguration { get; set; }
 
+        [YamlMember(Alias = "ItemLog", ApplyNamingConventions = false)]
+        public ItemLogConfiguration ItemLog { get; set; }
+
         [YamlMember(Alias = "MapColorConfiguration", ApplyNamingConventions = false)]
         public MapColorConfiguration MapColorConfiguration { get; set; }
-
-        [YamlMember(Alias = "HotkeyConfiguration", ApplyNamingConventions = false)]
-        public HotkeyConfiguration HotkeyConfiguration { get; set; }
 
         [YamlMember(Alias = "GameInfo", ApplyNamingConventions = false)]
         public GameInfoConfiguration GameInfo { get; set; }
 
-        [YamlMember(Alias = "ItemLog", ApplyNamingConventions = false)]
-        public ItemLogConfiguration ItemLog { get; set; }
+        [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
+        public string D2Path { get; set; }
+
+        [YamlMember(Alias = "LanguageCode", ApplyNamingConventions = false)]
+        public Locale LanguageCode { get; set; }
     }
 
     public class MapColorConfiguration
@@ -77,76 +84,98 @@ namespace MapAssist.Settings
     {
         [YamlMember(Alias = "SuperUniqueMonster", ApplyNamingConventions = false)]
         public IconRendering SuperUniqueMonster { get; set; }
+        public static IconRendering SuperUniqueMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
 
         [YamlMember(Alias = "UniqueMonster", ApplyNamingConventions = false)]
         public IconRendering UniqueMonster { get; set; }
+        public static IconRendering UniqueMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
 
         [YamlMember(Alias = "EliteMonster", ApplyNamingConventions = false)]
         public IconRendering EliteMonster { get; set; }
+        public static IconRendering EliteMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.EliteMonster;
 
         [YamlMember(Alias = "NormalMonster", ApplyNamingConventions = false)]
         public IconRendering NormalMonster { get; set; }
+        public static IconRendering NormalMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
 
         [YamlMember(Alias = "NextArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering NextArea { get; set; }
+        public static PointOfInterestRendering NextAreaREF => MapAssistConfiguration.Loaded.MapConfiguration.NextArea;
 
         [YamlMember(Alias = "PreviousArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering PreviousArea { get; set; }
+        public static PointOfInterestRendering PreviousAreaREF => MapAssistConfiguration.Loaded.MapConfiguration.PreviousArea;
 
         [YamlMember(Alias = "Waypoint", ApplyNamingConventions = false)]
         public PointOfInterestRendering Waypoint { get; set; }
+        public static PointOfInterestRendering WaypointREF => MapAssistConfiguration.Loaded.MapConfiguration.Waypoint;
 
         [YamlMember(Alias = "Quest", ApplyNamingConventions = false)]
         public PointOfInterestRendering Quest { get; set; }
+        public static PointOfInterestRendering QuestREF => MapAssistConfiguration.Loaded.MapConfiguration.Quest;
 
         [YamlMember(Alias = "Player", ApplyNamingConventions = false)]
         public PointOfInterestRendering Player { get; set; }
+        public static PointOfInterestRendering PlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.Player;
 
         [YamlMember(Alias = "NonPartyPlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering NonPartyPlayer { get; set; }
+        public static PointOfInterestRendering NonPartyPlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer;
 
         [YamlMember(Alias = "HostilePlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering HostilePlayer { get; set; }
+        public static PointOfInterestRendering HostilePlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer;
 
         [YamlMember(Alias = "Corpse", ApplyNamingConventions = false)]
         public PointOfInterestRendering Corpse { get; set; }
 
         [YamlMember(Alias = "Portal", ApplyNamingConventions = false)]
         public PortalRendering Portal { get; set; }
+        public static PortalRendering PortalREF => MapAssistConfiguration.Loaded.MapConfiguration.Portal;
 
         [YamlMember(Alias = "SuperChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering SuperChest { get; set; }
+        public static PointOfInterestRendering SuperChestREF => MapAssistConfiguration.Loaded.MapConfiguration.SuperChest;
 
         [YamlMember(Alias = "NormalChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering NormalChest { get; set; }
+        public static PointOfInterestRendering NormalChestREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalChest;
 
         [YamlMember(Alias = "LockedChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering LockedChest { get; set; }
+        public static PointOfInterestRendering LockedChestREF => MapAssistConfiguration.Loaded.MapConfiguration.LockedChest;
 
         [YamlMember(Alias = "TrappedChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering TrappedChest { get; set; }
+        public static PointOfInterestRendering TrappedChestREF => MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest;
 
         [YamlMember(Alias = "Shrine", ApplyNamingConventions = false)]
         public PointOfInterestRendering Shrine { get; set; }
+        public static PointOfInterestRendering ShrineREF => MapAssistConfiguration.Loaded.MapConfiguration.Shrine;
 
         [YamlMember(Alias = "ArmorWeapRack", ApplyNamingConventions = false)]
         public PointOfInterestRendering ArmorWeapRack { get; set; }
+        public static PointOfInterestRendering ArmorWeapRackREF => MapAssistConfiguration.Loaded.MapConfiguration.ArmorWeapRack;
 
         [YamlMember(Alias = "Item", ApplyNamingConventions = false)]
         public PointOfInterestRendering Item { get; set; }
+        public static PointOfInterestRendering ItemREF => MapAssistConfiguration.Loaded.MapConfiguration.Item;
     }
 }
 
 public class RenderingConfiguration
 {
     [YamlMember(Alias = "Opacity", ApplyNamingConventions = false)]
-    public float Opacity { get; set; }
+    public double Opacity { get; set; }
 
     [YamlMember(Alias = "IconOpacity", ApplyNamingConventions = false)]
-    public float IconOpacity { get; set; }
+    public double IconOpacity { get; set; }
 
     [YamlMember(Alias = "OverlayMode", ApplyNamingConventions = false)]
     public bool OverlayMode { get; set; }
+
+    [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
+    public MapPosition Position { get; set; }
 
     [YamlMember(Alias = "ToggleViaInGameMap", ApplyNamingConventions = false)]
     public bool ToggleViaInGameMap { get; set; }
@@ -159,31 +188,31 @@ public class RenderingConfiguration
 
     [YamlMember(Alias = "Size", ApplyNamingConventions = false)]
     public int Size { get; set; }
-    public int InitialSize { get; set; }
+    internal int InitialSize { get; set; }
 
-    [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
-    public MapPosition Position { get; set; }
+    [YamlMember(Alias = "ZoomLevel", ApplyNamingConventions = false)]
+    public double ZoomLevel { get; set; }
 
     [YamlMember(Alias = "BuffPosition", ApplyNamingConventions = false)]
     public BuffPosition BuffPosition { get; set; }
 
     [YamlMember(Alias = "BuffSize", ApplyNamingConventions = false)]
-    public float BuffSize { get; set; }
-
-    [YamlMember(Alias = "ZoomLevel", ApplyNamingConventions = false)]
-    public float ZoomLevel { get; set; }
+    public double BuffSize { get; set; }
 }
 
 public class HotkeyConfiguration
 {
     [YamlMember(Alias = "ToggleKey", ApplyNamingConventions = false)]
-    public char ToggleKey { get; set; }
+    public string ToggleKey { get; set; }
+
+    [YamlMember(Alias = "AreaLevelKey", ApplyNamingConventions = false)]
+    public string AreaLevelKey { get; set; }
 
     [YamlMember(Alias = "ZoomInKey", ApplyNamingConventions = false)]
-    public char ZoomInKey { get; set; }
+    public string ZoomInKey { get; set; }
 
     [YamlMember(Alias = "ZoomOutKey", ApplyNamingConventions = false)]
-    public char ZoomOutKey { get; set; }
+    public string ZoomOutKey { get; set; }
 }
 
 public class GameInfoConfiguration
@@ -218,14 +247,15 @@ public class ItemLogConfiguration
     [YamlMember(Alias = "PlaySoundOnDrop", ApplyNamingConventions = false)]
     public bool PlaySoundOnDrop { get; set; }
 
-    [YamlMember(Alias = "DisplayForSeconds", ApplyNamingConventions = false)]
-    public double DisplayForSeconds { get; set; }
     [YamlMember(Alias = "SoundFile", ApplyNamingConventions = false)]
     public string SoundFile { get; set; }
+
+    [YamlMember(Alias = "DisplayForSeconds", ApplyNamingConventions = false)]
+    public double DisplayForSeconds { get; set; }
 
     [YamlMember(Alias = "LabelFont", ApplyNamingConventions = false)]
     public string LabelFont { get; set; }
 
     [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
-    public int LabelFontSize { get; set; }
+    public double LabelFontSize { get; set; }
 }

@@ -36,7 +36,7 @@ namespace MapAssist.Helpers
 {
     public class Compositor : IDisposable
     {
-
+        private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         public GameData _gameData;
         public readonly AreaData _areaData;
         private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
@@ -163,7 +163,7 @@ namespace MapAssist.Helpers
 
             foreach (var (gamemap, origin) in gamemaps)
             {
-                DrawBitmap(gfx, gamemap, origin.Subtract(_areaData.Origin).Subtract(_areaData.MapPadding, _areaData.MapPadding), MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity);
+                DrawBitmap(gfx, gamemap, origin.Subtract(_areaData.Origin).Subtract(_areaData.MapPadding, _areaData.MapPadding), (float)MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity);
             }
 
             renderTarget.PopAxisAlignedClip();
@@ -240,7 +240,7 @@ namespace MapAssist.Helpers
                 var foundInArea = areasToRender.FirstOrDefault(area => area.IncludesPoint(gameObject.Position));
                 if (foundInArea != null && foundInArea.Area != _areaData.Area && !AreaExtensions.RequiresStitching(foundInArea.Area)) continue; // Don't show gamedata objects in another area if areas aren't stitched together
 
-                if (gameObject.IsShrine())
+                if (gameObject.IsShrine() || gameObject.IsWell())
                 {
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawIcon())
                     {
@@ -249,26 +249,10 @@ namespace MapAssist.Helpers
 
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
                     {
-                        var label = Enum.GetName(typeof(ShrineType), gameObject.ObjectData.InteractType);
-
+                        var label = Shrine.ShrineDisplayName(gameObject);
                         DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
                     }
 
-                    continue;
-                }
-
-                if(gameObject.ObjectTxt.ObjectType == "Well")
-                {
-                    if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawIcon())
-                    {
-                        DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position);
-                    }
-
-                    if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
-                    {
-                        var label = "Well"; //update this when language changes are ready for merge
-                        DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
-                    }
                     continue;
                 }
                 
@@ -422,7 +406,7 @@ namespace MapAssist.Helpers
 
                         if (item != null && Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out var color))
                         {
-                            var itemBaseName = Items.ItemName(item.TxtFileNo);
+                            var itemBaseName = Items.ItemNameDisplay(item.TxtFileNo);
 
                             if (itemBaseName.EndsWith(" Rune") || itemBaseName.StartsWith("Key of "))
                             {
@@ -602,7 +586,7 @@ namespace MapAssist.Helpers
             RenderTarget renderTarget = gfx.GetRenderTarget();
             renderTarget.Transform = Matrix3x2.Identity.ToDXMatrix();
 
-            var buffImageScale = MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize;
+            var buffImageScale = (float)MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize;
             if (buffImageScale <= 0)
             {
                 return;
@@ -763,7 +747,7 @@ namespace MapAssist.Helpers
             }
 
             // Setup
-            var fontSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+            var fontSize = (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
             var fontHeight = (fontSize + fontSize / 2f);
 
             // Item Log
@@ -775,13 +759,14 @@ namespace MapAssist.Helpers
                 Color fontColor;
                 if (item == null || !Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out fontColor))
                 {
+                    // Invalid item quality
                     continue;
                 }
 
-                var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
+                var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
 
                 var isEth = (item.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
-                var itemBaseName = Items.ItemName(item.TxtFileNo);
+                var itemBaseName = Items.ItemNameDisplay(item.TxtFileNo);
                 var itemSpecialName = "";
                 var itemLabelExtra = "";
 
@@ -808,8 +793,6 @@ namespace MapAssist.Helpers
                     fontColor = Items.ItemColors[ItemQuality.CRAFT];
                 }
 
-                var brush = CreateSolidBrush(gfx, fontColor, 1);
-
                 switch (item.ItemData.ItemQuality)
                 {
                     case ItemQuality.UNIQUE:
@@ -819,6 +802,8 @@ namespace MapAssist.Helpers
                         itemSpecialName = Items.SetName(item.TxtFileNo) + " ";
                         break;
                 }
+
+                var brush = CreateSolidBrush(gfx, fontColor, 1);
 
                 gfx.DrawText(font, brush, anchor.Add(0, i * fontHeight), itemLabelExtra + itemSpecialName + itemBaseName);
             }
@@ -850,7 +835,8 @@ namespace MapAssist.Helpers
             position = Vector2.Transform(position.ToVector(), currentTransform.ToMatrix()).ToPoint();
 
             var fill = !rendering.IconShape.ToString().ToLower().EndsWith("outline");
-            var brush = CreateSolidBrush(gfx, rendering.IconColor);
+            var fillBrush = CreateSolidBrush(gfx, rendering.IconColor);
+            var outlineBrush = CreateSolidBrush(gfx, rendering.IconOutlineColor);
 
             var points = GetIconShape(rendering, equalScaling).Select(point => point.Add(position)).ToArray();
 
@@ -861,39 +847,40 @@ namespace MapAssist.Helpers
                 switch (rendering.IconShape)
                 {
                     case Shape.Ellipse:
-                    case Shape.EllipseOutline:
-                        if (rendering.IconShape == Shape.Ellipse)
+                        if (rendering.IconColor.A > 0)
                         {
-                            gfx.FillEllipse(brush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * _scaleHeight / 2); // Divide by 2 because the parameter requires a radius
+                            gfx.FillEllipse(fillBrush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * _scaleHeight / 2); // Divide by 2 because the parameter requires a radius
                         }
-                        else
+                        
+                        if (rendering.IconOutlineColor.A > 0)
                         {
-                            gfx.DrawEllipse(brush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * _scaleHeight / 2, rendering.IconThickness); // Divide by 2 because the parameter requires a radius
+                            gfx.DrawEllipse(outlineBrush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * _scaleHeight / 2, rendering.IconThickness); // Divide by 2 because the parameter requires a radius
                         }
 
                         break;
                     case Shape.Portal:
-                        gfx.DrawEllipse(brush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * 2 * scaleWidth / 2, rendering.IconThickness); // Use scaleWidth so it doesn't shrink the height in overlay mode, allows portal to look the same in both modes
+                        if (rendering.IconColor.A > 0)
+                        {
+                            gfx.FillEllipse(fillBrush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * 2 * scaleWidth / 2); // Use scaleWidth so it doesn't shrink the height in overlay mode, allows portal to look the same in both modes
+                        }
 
-                        break;
-                    case Shape.Polygon:
-                        gfx.FillGeometry(geo, brush);
-
-                        break;
-                    case Shape.Cross:
-                        gfx.DrawGeometry(geo, brush, rendering.IconThickness);
+                        if (rendering.IconOutlineColor.A > 0)
+                        {
+                            gfx.DrawEllipse(outlineBrush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * 2 * scaleWidth / 2, rendering.IconThickness); // Use scaleWidth so it doesn't shrink the height in overlay mode, allows portal to look the same in both modes
+                        }
 
                         break;
                     default:
                         if (points == null) break;
 
-                        if (fill)
+                        if (rendering.IconColor.A > 0)
                         {
-                            gfx.FillGeometry(geo, brush);
+                            gfx.FillGeometry(geo, fillBrush);
                         }
-                        else
+
+                        if (rendering.IconOutlineColor.A > 0)
                         {
-                            gfx.DrawGeometry(geo, brush, rendering.IconThickness);
+                            gfx.DrawGeometry(geo, outlineBrush, rendering.IconThickness);
                         }
 
                         break;
@@ -1001,7 +988,6 @@ namespace MapAssist.Helpers
             switch (render.IconShape)
             {
                 case Shape.Square:
-                case Shape.SquareOutline:
                     return new Point[]
                     {
                         new Point(0, 0),
@@ -1009,8 +995,7 @@ namespace MapAssist.Helpers
                         new Point(render.IconSize, render.IconSize),
                         new Point(0, render.IconSize)
                     }.Select(point => point.Subtract(render.IconSize / 2f).Rotate(_rotateRadians).Multiply(scaleWidth, _scaleHeight)).ToArray();
-                case Shape.Ellipse:
-                case Shape.EllipseOutline: // Use a rectangle since that's effectively the same size and that's all this function is used for at the moment
+                case Shape.Ellipse: // Use a rectangle since that's effectively the same size and that's all this function is used for at the moment
                     return new Point[]
                     {
                         new Point(0, 0),
@@ -1117,7 +1102,7 @@ namespace MapAssist.Helpers
 
         private (float, float) GetScaleRatios()
         {
-            var multiplier = 5.5f - MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel; // Hitting +/- should make the map bigger/smaller, respectively, like in overlay = false mode
+            var multiplier = 5.5f - (float)MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel; // Hitting +/- should make the map bigger/smaller, respectively, like in overlay = false mode
 
             if (!MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode)
             {
@@ -1234,7 +1219,7 @@ namespace MapAssist.Helpers
         private SolidBrush CreateSolidBrush(Graphics gfx, Color color,
             float? opacity = null)
         {
-            if (opacity == null) opacity = MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity;
+            if (opacity == null) opacity = (float)MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity;
 
             var key = (color, opacity);
             if (!cacheBrushes.ContainsKey(key)) cacheBrushes[key] = gfx.CreateSolidBrush(color.SetOpacity((float)opacity).ToGameOverlayColor());

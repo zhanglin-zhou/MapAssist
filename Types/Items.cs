@@ -1,4 +1,23 @@
-﻿using System;
+﻿/**
+ *   Copyright (C) 2021 okaygo
+ *
+ *   https://github.com/misterokaygo/MapAssist/
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ **/
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -105,18 +124,6 @@ namespace MapAssist.Types
         SOCKETED //Item is Socketed in another Item
     };
 
-    class LocalizedItemList
-    {
-        public List<LocalizedItemObj> Items = new List<LocalizedItemObj>();
-    }
-
-    class LocalizedItemObj
-    {
-        public int ID { get; set; }
-        public string Key { get; set; }
-        public string enUS { get; set; }
-    }
-
     class Items
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
@@ -124,26 +131,41 @@ namespace MapAssist.Types
         public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
         public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
         public static LocalizedItemList _localizedItemList;
-        public static Dictionary<string, LocalizedItemObj> LocalizedItems = new Dictionary<string, LocalizedItemObj>();
+        public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
         public static Dictionary<int, List<Timer>> ItemLogTimers = new Dictionary<int, List<Timer>>();
 
-        public static void LoadLocalization()
+        public static string ItemNameFromKey(string key)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resName = "MapAssist.Resources.items-localization.json";
-            using (Stream stream = assembly.GetManifestResourceStream(resName))
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(key, out localItem))
             {
-                using (var reader = new StreamReader(stream))
-                {
-                    var jsonString = reader.ReadToEnd();
-                    _localizedItemList = JsonConvert.DeserializeObject<LocalizedItemList>(jsonString);
-                }
-
-                foreach (var item in _localizedItemList.Items)
-                {
-                    LocalizedItems.Add(item.Key, item);
-                }
+                return "ItemNotFound";
             }
+
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
+        }
+
+        public static string ItemNameDisplay(uint txtFileNo)
+        {
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
+            {
+                return "ItemNotFound";
+            }
+
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "ItemNotFound";
+            }
+
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
         }
 
         public static string ItemName(uint txtFileNo)
@@ -154,7 +176,7 @@ namespace MapAssist.Types
                 return "ItemNotFound";
             }
 
-            LocalizedItemObj localItem;
+            LocalizedObj localItem;
             if (!LocalizedItems.TryGetValue(itemCode, out localItem))
             {
                 return "ItemNotFound";
@@ -176,13 +198,16 @@ namespace MapAssist.Types
                 return "Unique";
             }
 
-            LocalizedItemObj localItem;
+            LocalizedObj localItem;
             if (!LocalizedItems.TryGetValue(itemCode, out localItem))
             {
                 return "Unique";
             }
 
-            return localItem.enUS;
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
         }
 
         public static string SetName(uint txtFileNo)
@@ -198,13 +223,16 @@ namespace MapAssist.Types
                 return "Set";
             }
 
-            LocalizedItemObj localItem;
+            LocalizedObj localItem;
             if (!LocalizedItems.TryGetValue(itemCode, out localItem))
             {
                 return "Set";
             }
 
-            return localItem.enUS;
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
         }
 
         public static void LogItem(UnitAny unit, int processId)

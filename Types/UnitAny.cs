@@ -287,11 +287,13 @@ namespace MapAssist.Types
         }
         public bool IsShrine()
         {
-            if(UnitType == UnitType.Object && _objectData.pShrineTxt != IntPtr.Zero && _objectData.InteractType <= (byte)ShrineType.Poison)
-            {
-                return true;
-            }
-            return false;
+            return UnitType == UnitType.Object && _objectData.pShrineTxt != IntPtr.Zero &&
+                _objectData.InteractType <= (byte)ShrineType.Poison;
+        }
+        public bool IsWell()
+        {
+            return UnitType == UnitType.Object && _objectData.pObjectTxt != IntPtr.Zero &&
+                _objectTxt.ObjectType == "Well";
         }
         public bool IsChest()
         {
