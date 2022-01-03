@@ -661,7 +661,7 @@ namespace MapAssist.Types
                 Level = new int[] { 37, 68, 87 }
             },
             [Area.NihlathaksTemple] = new AreaLabel() {
-                Text = "Nihlathak's Temple",
+                Text = "Nihlathaks Temple",
                 Level = new int[] { 32, 63, 83 }
             },
             [Area.HallsOfAnguish] = new AreaLabel() {
