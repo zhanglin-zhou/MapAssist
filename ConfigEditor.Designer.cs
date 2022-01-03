@@ -74,6 +74,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabDrawing = new System.Windows.Forms.TabControl();
             this.tabIcon = new System.Windows.Forms.TabPage();
+            this.btnIconColorsClear = new System.Windows.Forms.Button();
             this.lblIconThicknessValue = new System.Windows.Forms.Label();
             this.lblIconSizeValue = new System.Windows.Forms.Label();
             this.btnIconOutlineColor = new System.Windows.Forms.Button();
@@ -206,7 +207,7 @@
             this.chkShowArea.AutoSize = true;
             this.chkShowArea.Location = new System.Drawing.Point(125, 15);
             this.chkShowArea.Name = "chkShowArea";
-            this.chkShowArea.Size = new System.Drawing.Size(114, 17);
+            this.chkShowArea.Size = new System.Drawing.Size(122, 17);
             this.chkShowArea.TabIndex = 16;
             this.chkShowArea.Text = "Display Current Area";
             this.chkShowArea.UseVisualStyleBackColor = true;
@@ -411,7 +412,7 @@
             this.chkStickToLastGameWindow.AutoSize = true;
             this.chkStickToLastGameWindow.Location = new System.Drawing.Point(10, 241);
             this.chkStickToLastGameWindow.Name = "chkStickToLastGameWindow";
-            this.chkStickToLastGameWindow.Size = new System.Drawing.Size(225, 17);
+            this.chkStickToLastGameWindow.Size = new System.Drawing.Size(222, 17);
             this.chkStickToLastGameWindow.TabIndex = 25;
             this.chkStickToLastGameWindow.Text = "Keep overlay active on last game window";
             this.chkStickToLastGameWindow.UseVisualStyleBackColor = true;
@@ -663,6 +664,7 @@
             // 
             // tabIcon
             // 
+            this.tabIcon.Controls.Add(this.btnIconColorsClear);
             this.tabIcon.Controls.Add(this.lblIconThicknessValue);
             this.tabIcon.Controls.Add(this.lblIconSizeValue);
             this.tabIcon.Controls.Add(this.btnIconOutlineColor);
@@ -681,6 +683,19 @@
             this.tabIcon.TabIndex = 0;
             this.tabIcon.Text = "Icon";
             this.tabIcon.UseVisualStyleBackColor = true;
+            // 
+            // btnIconColorsClear
+            // 
+            this.btnIconColorsClear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnIconColorsClear.FlatAppearance.BorderSize = 0;
+            this.btnIconColorsClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnIconColorsClear.Location = new System.Drawing.Point(232, 7);
+            this.btnIconColorsClear.Name = "btnIconColorsClear";
+            this.btnIconColorsClear.Size = new System.Drawing.Size(69, 23);
+            this.btnIconColorsClear.TabIndex = 25;
+            this.btnIconColorsClear.Text = "Clear";
+            this.btnIconColorsClear.UseVisualStyleBackColor = false;
+            this.btnIconColorsClear.Click += new System.EventHandler(this.btnIconColorsClear_Click);
             // 
             // lblIconThicknessValue
             // 
@@ -707,7 +722,7 @@
             // btnIconOutlineColor
             // 
             this.btnIconOutlineColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnIconOutlineColor.Location = new System.Drawing.Point(197, 7);
+            this.btnIconOutlineColor.Location = new System.Drawing.Point(151, 7);
             this.btnIconOutlineColor.Name = "btnIconOutlineColor";
             this.btnIconOutlineColor.Size = new System.Drawing.Size(75, 23);
             this.btnIconOutlineColor.TabIndex = 18;
@@ -796,7 +811,7 @@
             // btnIconColor
             // 
             this.btnIconColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnIconColor.Location = new System.Drawing.Point(89, 7);
+            this.btnIconColor.Location = new System.Drawing.Point(70, 7);
             this.btnIconColor.Name = "btnIconColor";
             this.btnIconColor.Size = new System.Drawing.Size(75, 23);
             this.btnIconColor.TabIndex = 10;
@@ -1454,5 +1469,6 @@
         private System.Windows.Forms.Button btnBrowseD2Location;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.CheckBox chkStickToLastGameWindow;
+        private System.Windows.Forms.Button btnIconColorsClear;
     }
 }

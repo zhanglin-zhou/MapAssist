@@ -336,6 +336,18 @@ namespace MapAssist
             }
         }
 
+        private void btnIconColorsClear_Click(object sender, EventArgs e)
+        {
+            var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
+            var iconOutlineProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
+
+            iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+            iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+
+            btnIconColor.BackColor = Color.Empty;
+            btnIconOutlineColor.BackColor = Color.Empty;
+        }
+
         private void chkIcon_Click(object sender, EventArgs e)
         {
             var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
