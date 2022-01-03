@@ -79,7 +79,18 @@ namespace MapAssist.Types
 
             var lang = MapAssistConfiguration.Loaded.LanguageCode;
             var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-            return prop.ToString();
+            var label = prop.ToString();
+
+            if (lang == Locale.enUS)
+            {
+                var trim = " Shrine";
+                if (label.Contains(trim))
+                {
+                    return label.Replace(trim, "");
+                }
+            }
+
+            return label;
         }
 
         public static string WellDisplayName(UnitAny unitAny)
