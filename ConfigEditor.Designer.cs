@@ -84,7 +84,6 @@
             this.iconSize = new System.Windows.Forms.TrackBar();
             this.label9 = new System.Windows.Forms.Label();
             this.cboIconShape = new System.Windows.Forms.ComboBox();
-            this.chkIcon = new System.Windows.Forms.CheckBox();
             this.btnIconColor = new System.Windows.Forms.Button();
             this.tabLabel = new System.Windows.Forms.TabPage();
             this.label3 = new System.Windows.Forms.Label();
@@ -683,7 +682,6 @@
             this.tabIcon.Controls.Add(this.iconSize);
             this.tabIcon.Controls.Add(this.label9);
             this.tabIcon.Controls.Add(this.cboIconShape);
-            this.tabIcon.Controls.Add(this.chkIcon);
             this.tabIcon.Controls.Add(this.btnIconColor);
             this.tabIcon.Location = new System.Drawing.Point(4, 22);
             this.tabIcon.Name = "tabIcon";
@@ -696,7 +694,6 @@
             // btnIconColorsClear
             // 
             this.btnIconColorsClear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnIconColorsClear.FlatAppearance.BorderSize = 0;
             this.btnIconColorsClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnIconColorsClear.Location = new System.Drawing.Point(232, 7);
             this.btnIconColorsClear.Name = "btnIconColorsClear";
@@ -731,7 +728,7 @@
             // btnIconOutlineColor
             // 
             this.btnIconOutlineColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnIconOutlineColor.Location = new System.Drawing.Point(151, 7);
+            this.btnIconOutlineColor.Location = new System.Drawing.Point(124, 6);
             this.btnIconOutlineColor.Name = "btnIconOutlineColor";
             this.btnIconOutlineColor.Size = new System.Drawing.Size(75, 23);
             this.btnIconOutlineColor.TabIndex = 18;
@@ -806,21 +803,10 @@
             this.cboIconShape.TabIndex = 12;
             this.cboIconShape.SelectedIndexChanged += new System.EventHandler(this.cboIconShape_SelectedIndexChanged);
             // 
-            // chkIcon
-            // 
-            this.chkIcon.AutoSize = true;
-            this.chkIcon.Location = new System.Drawing.Point(11, 11);
-            this.chkIcon.Name = "chkIcon";
-            this.chkIcon.Size = new System.Drawing.Size(53, 17);
-            this.chkIcon.TabIndex = 11;
-            this.chkIcon.Text = "Show";
-            this.chkIcon.UseVisualStyleBackColor = true;
-            this.chkIcon.Click += new System.EventHandler(this.chkIcon_Click);
-            // 
             // btnIconColor
             // 
             this.btnIconColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnIconColor.Location = new System.Drawing.Point(70, 7);
+            this.btnIconColor.Location = new System.Drawing.Point(11, 7);
             this.btnIconColor.Name = "btnIconColor";
             this.btnIconColor.Size = new System.Drawing.Size(75, 23);
             this.btnIconColor.TabIndex = 10;
@@ -1452,7 +1438,6 @@
         private System.Windows.Forms.TrackBar iconSize;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cboIconShape;
-        private System.Windows.Forms.CheckBox chkIcon;
         private System.Windows.Forms.Button btnIconColor;
         private System.Windows.Forms.TabPage tabLabel;
         private System.Windows.Forms.TabPage tabLine;

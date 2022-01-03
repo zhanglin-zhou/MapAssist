@@ -286,7 +286,6 @@ namespace MapAssist
             dynamic iconProp = SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null);
             btnIconColor.BackColor = iconProp.IconColor;
             btnIconOutlineColor.BackColor = iconProp.IconOutlineColor;
-            chkIcon.Checked = (iconProp.IconColor.A > 0 || iconProp.IconOutlineColor.A > 0);
             cboIconShape.SelectedIndex = cboIconShape.FindStringExact(Enum.GetName(typeof(Shape), iconProp.IconShape));
             iconSize.Value = (int)iconProp.IconSize;
             iconThickness.Value = (int)iconProp.IconThickness;
@@ -312,6 +311,8 @@ namespace MapAssist
                 lblLineArrowSizeValue.Text = lineArrowSize.Value.ToString();
                 lblLineThicknessSizeValue.Text = lineThicknessSize.Value.ToString();
             }
+
+            UpdateClearbutton();
         }
 
         private void btnIconColor_Click(object sender, EventArgs e)
@@ -322,8 +323,9 @@ namespace MapAssist
                 var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
                 iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnIconColor.BackColor = colorDlg.Color;
-                chkIcon.Checked = (btnIconOutlineColor.BackColor.A > 0 || colorDlg.Color.A > 0);
             }
+
+            UpdateClearbutton();
         }
 
         private void btnIconOutlineColor_Click(object sender, EventArgs e)
@@ -334,8 +336,9 @@ namespace MapAssist
                 var iconProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
                 iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnIconOutlineColor.BackColor = colorDlg.Color;
-                chkIcon.Checked = (btnIconColor.BackColor.A > 0 || colorDlg.Color.A > 0);
             }
+
+            UpdateClearbutton();
         }
 
         private void btnIconColorsClear_Click(object sender, EventArgs e)
@@ -348,32 +351,23 @@ namespace MapAssist
 
             btnIconColor.BackColor = Color.Empty;
             btnIconOutlineColor.BackColor = Color.Empty;
-        }
 
-        private void chkIcon_Click(object sender, EventArgs e)
-        {
-            var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
-            var iconOutlineProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
+            cboIconShape.SelectedIndex = -1;
 
-            if (chkIcon.Checked)
-            {
-                iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnIconColor.BackColor, null);
-                iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnIconOutlineColor.BackColor, null);
-            }
-            else
-            {
-                iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
-                iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+            iconSize.Value = 0;
+            lblIconSizeValue.Text = "0";
+            iconThickness.Value = 0;
+            lblIconThicknessValue.Text = "0";
 
-                btnIconColor.BackColor = Color.Empty;
-                btnIconOutlineColor.BackColor = Color.Empty;
-            }
+            UpdateClearbutton();
         }
 
         private void cboIconShape_SelectedIndexChanged(object sender, EventArgs e)
         {
             var iconProp = SelectedProperty.PropertyType.GetProperty("IconShape");
             iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), (MapPosition)cboIconShape.SelectedIndex, null);
+
+            UpdateClearbutton();
         }
 
         private void iconSize_Scroll(object sender, EventArgs e)
@@ -381,6 +375,8 @@ namespace MapAssist
             var iconProp = SelectedProperty.PropertyType.GetProperty("IconSize");
             iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), iconSize.Value, null);
             lblIconSizeValue.Text = iconSize.Value.ToString();
+
+            UpdateClearbutton();
         }
 
         private void iconThickness_Scroll(object sender, EventArgs e)
@@ -388,6 +384,28 @@ namespace MapAssist
             var iconProp = SelectedProperty.PropertyType.GetProperty("IconThickness");
             iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), iconThickness.Value, null);
             lblIconThicknessValue.Text = iconThickness.Value.ToString();
+
+            UpdateClearbutton();
+        }
+
+        private void UpdateClearbutton()
+        {
+            var isActive = ((btnIconColor.BackColor.A > 0 && iconSize.Value > 0) ||
+                (btnIconOutlineColor.BackColor.A > 0 && iconThickness.Value > 0)) &&
+                cboIconShape.SelectedIndex > -1;
+
+            if (!isActive)
+            {
+                btnIconColorsClear.Enabled = false;
+                btnIconColorsClear.FlatAppearance.BorderSize = 0;
+                btnIconColorsClear.Text = "Disabled";
+            }
+            else
+            {
+                btnIconColorsClear.Enabled = true;
+                btnIconColorsClear.FlatAppearance.BorderSize = 1;
+                btnIconColorsClear.Text = "Clear";
+            }
         }
 
         private void tabDrawing_SelectedIndexChanged(object sender, EventArgs e)
