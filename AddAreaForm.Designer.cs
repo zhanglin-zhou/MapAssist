@@ -41,6 +41,7 @@ namespace MapAssist
             this.lstAreas.Name = "lstAreas";
             this.lstAreas.Size = new System.Drawing.Size(287, 173);
             this.lstAreas.TabIndex = 0;
+            this.lstAreas.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstAreas_MouseDoubleClick);
             // 
             // btnAddArea
             // 

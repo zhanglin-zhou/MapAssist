@@ -126,7 +126,7 @@ namespace MapAssist
 
             foreach (var area in MapAssistConfiguration.Loaded.HiddenAreas)
             {
-                lstHidden.Items.Add(AreaExtensions.NameInternal(area));
+                lstHidden.Items.Add(AreaExtensions.Name(area));
             }
         }
 

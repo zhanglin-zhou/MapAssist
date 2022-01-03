@@ -7,11 +7,11 @@ HotkeyConfiguration:
 HiddenAreas:
 - Rogue Encampment
 - Lut Gholein
-- Kurast Docks
+- Kurast Docktown
 - Pandemonium Fortress
 - Harrogath
 - Forgotten Tower
-- Nihlathak's Temple
+- Nihlathaks Temple
 RenderingConfiguration:
   Opacity: 0.5
   IconOpacity: 0.9

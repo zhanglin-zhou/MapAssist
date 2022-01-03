@@ -669,7 +669,7 @@ namespace MapAssist.Types
                 Level = new int[] { 33, 63, 83 }
             },
             [Area.HallsOfPain] = new AreaLabel() {
-                Text = "Halls of Pain",
+                Text = "Halls of Death's Calling",
                 Level = new int[] { 34, 64, 84 }
             },
             [Area.HallsOfVaught] = new AreaLabel() {
