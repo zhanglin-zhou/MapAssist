@@ -2,16 +2,16 @@
 HotkeyConfiguration:
   ToggleKey: '|'
   AreaLevelKey: '['
-  ZoomInKey: 'Num +'
-  ZoomOutKey: 'Num -'
+  ZoomInKey: Num +
+  ZoomOutKey: Num -
 HiddenAreas:
-  - 'Rogue Encampment'
-  - 'Lut Gholein'
-  - 'Kurast Docks'
-  - 'Pandemonium Fortress'
-  - 'Harrogath'
-  - 'Forgotten Tower'
-  - "Nihlathak's Temple"
+- Rogue Encampment
+- Lut Gholein
+- Kurast Docks
+- Pandemonium Fortress
+- Harrogath
+- Forgotten Tower
+- Nihlathak's Temple
 RenderingConfiguration:
   Opacity: 0.5
   IconOpacity: 0.9
@@ -54,15 +54,14 @@ MapConfiguration:
     ArrowHeadSize: 15
     LabelColor: SpringGreen
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   PreviousArea:
     IconColor: Violet
     IconShape: Square
     IconSize: 5
-    LineColor: ''
     LabelColor: Violet
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   Waypoint:
     IconColor: SteelBlue
     IconShape: Square
@@ -73,7 +72,7 @@ MapConfiguration:
     ArrowHeadSize: 15
     LabelColor: Tomato
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   Player:
     IconOutlineColor: Chartreuse
     IconShape: Cross
@@ -81,7 +80,7 @@ MapConfiguration:
     IconThickness: 2
     LabelColor: Chartreuse
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   NonPartyPlayer:
     IconOutlineColor: Orange
     IconShape: Cross
@@ -89,29 +88,29 @@ MapConfiguration:
     IconThickness: 2
     LabelColor: Orange
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   HostilePlayer:
-    IconColor: Red
+    IconOutlineColor: Red
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
-    LabelColor: Red
-    LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
     LineColor: Red
     LineThickness: 2
     ArrowHeadSize: 15
+    LabelColor: Red
+    LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
   Corpse:
-    IconColor: Magenta
+    IconOutlineColor: Magenta
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
-    LabelColor: Magenta
-    LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
     LineColor: Magenta
     LineThickness: 2
     ArrowHeadSize: 15
+    LabelColor: Magenta
+    LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
   Portal:
     IconOutlineColor: Yellow
     IconShape: Portal
@@ -119,58 +118,56 @@ MapConfiguration:
     IconThickness: 2
     LabelColor: Yellow
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   SuperChest:
-    IconColor: '17, 255, 0'
+    IconColor: 17, 255, 0
     IconShape: Square
     IconSize: 4
   NormalChest:
-    IconColor: '17, 128, 0'
+    IconColor: 17, 128, 0
     IconShape: Square
     IconSize: 3
   LockedChest:
-    IconColor: '128, 0, 0'
+    IconColor: Maroon
     IconShape: Square
     IconSize: 3
   TrappedChest:
-    IconColor: '255, 0, 0'
+    IconColor: Red
     IconShape: Square
     IconSize: 4
-    IconThickness: 1
   Shrine:
-    IconColor: '255, 218, 100'
+    IconColor: 255, 218, 100
     IconShape: Polygon
     IconSize: 5
-    LabelColor: '255, 218, 100'
+    LabelColor: 255, 218, 100
     LabelFontSize: 16
-    LabelFont: 'Exocet Blizzard Mixed Caps'
+    LabelFont: Exocet Blizzard Mixed Caps
   ArmorWeapRack:
-    IconColor: '132, 132, 132'
+    IconColor: 132, 132, 132
     IconShape: Square
     IconSize: 4
-  Item: 
+  Item:
     IconColor: DarkOrange
     IconShape: Ellipse
     IconSize: 4
-    LabelFont: 'Exocet Blizzard Mixed Caps'
     LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
 ItemLog:
   Enabled: true
-  FilterFileName: "ItemFilter.yaml"
+  FilterFileName: ItemFilter.yaml
   PlaySoundOnDrop: true
-  SoundFile: ""
+  SoundFile: ''
   DisplayForSeconds: 45
-  LabelFont: "Exocet Blizzard Mixed Caps"
+  LabelFont: Exocet Blizzard Mixed Caps
   LabelFontSize: 14
 MapColorConfiguration:
-  Walkable:
-  Border: '255, 255, 255'
+  Border: 255, 255, 255
 GameInfo:
   ShowGameIP: true
-  HuntingIP: '0.0.0.0'
+  HuntingIP: 0.0.0.0
   ShowAreaLevel: true
   ShowOverlayFPS: false
-  LabelFont: "Exocet Blizzard Mixed Caps"
+  LabelFont: Exocet Blizzard Mixed Caps
   LabelFontSize: 14
 D2Path: ''
 LanguageCode: enUS

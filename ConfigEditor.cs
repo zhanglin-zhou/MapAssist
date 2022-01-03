@@ -71,13 +71,13 @@ namespace MapAssist
 
             cboLanguage.SelectedIndex = (int)MapAssistConfiguration.Loaded.LanguageCode;
 
-            opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100f / 5);
+            opacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity * 100d / 5);
             lblOpacityValue.Text = (opacity.Value * 5).ToString();
 
-            iconOpacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity * 100f / 5);
+            iconOpacity.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity * 100d / 5);
             lblIconOpacityValue.Text = (iconOpacity.Value * 5).ToString();
 
-            mapSize.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Size / 100f);
+            mapSize.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.Size / 100d);
             lblMapSizeValue.Text = (mapSize.Value * 100).ToString();
 
             mapZoom.Value = zoomToTick(MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel);
@@ -89,7 +89,7 @@ namespace MapAssist
             chkStickToLastGameWindow.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow;
             cboPosition.SelectedIndex = cboPosition.FindStringExact(MapAssistConfiguration.Loaded.RenderingConfiguration.Position.ToString().ToProperCase());
 
-            buffSize.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize * 10f);
+            buffSize.Value = (int)Math.Round(MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize * 10d);
             lblBuffSizeValue.Text = MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize.ToString();
             cboBuffPosition.SelectedIndex = cboBuffPosition.FindStringExact(MapAssistConfiguration.Loaded.RenderingConfiguration.BuffPosition.ToString().ToProperCase());
 
@@ -109,7 +109,7 @@ namespace MapAssist
             chkPlaySound.Checked = MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop;
             txtFilterFile.Text = MapAssistConfiguration.Loaded.ItemLog.FilterFileName;
             txtSoundFile.Text = MapAssistConfiguration.Loaded.ItemLog.SoundFile;
-            itemDisplayForSeconds.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds / 5f);
+            itemDisplayForSeconds.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds / 5d);
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
 
             if (MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable != null)
@@ -149,7 +149,7 @@ namespace MapAssist
         {
             if (opacity.Value > 0)
             {
-                MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity = (float)Math.Round(opacity.Value * 5 / 100f, 2);
+                MapAssistConfiguration.Loaded.RenderingConfiguration.Opacity = Math.Round(opacity.Value * 5 / 100d, 2);
             }
             else
             {
@@ -162,7 +162,7 @@ namespace MapAssist
         {
             if (iconOpacity.Value > 0)
             {
-                MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity = (float)Math.Round(iconOpacity.Value * 5 / 100f, 2);
+                MapAssistConfiguration.Loaded.RenderingConfiguration.IconOpacity = Math.Round(iconOpacity.Value * 5 / 100d, 2);
             }
             else
             {
@@ -183,25 +183,25 @@ namespace MapAssist
             lblMapZoomValue.Text = MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel.ToString();
         }
 
-        private int zoomToTick(float zoom)
+        private int zoomToTick(double zoom)
         {
             if (zoom == 1) return 10;
             else if (zoom < 1) return (int)Math.Max(Math.Round((1 - zoom) * 10), 1); // Minimum zoom = 0.1 translates to tick = 1
             else return (int)Math.Min(Math.Round((zoom - 1) * 5) + 10, 25); // Maximum zoom = 4 translates to tick = 25
         }
 
-        private float tickToZoom(int tick)
+        private double tickToZoom(int tick)
         {
             if (tick == 10) return 1;
-            else if (tick < 10) return Math.Max(tick / 10f, 0.1f); // Minimum zoom = 0.1 translates to tick = 1
-            else return Math.Min((tick - 10) / 5f + 1, 4); // Maximum zoom = 4 translates to tick = 25
+            else if (tick < 10) return Math.Max(tick / 10d, 0.1d); // Minimum zoom = 0.1 translates to tick = 1
+            else return Math.Min((tick - 10) / 5d + 1, 4); // Maximum zoom = 4 translates to tick = 25
         }
 
         private void buffSize_Scroll(object sender, EventArgs e)
         {
             if (buffSize.Value > 0)
             {
-                MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize = (float)Math.Round(buffSize.Value / 10f, 2);
+                MapAssistConfiguration.Loaded.RenderingConfiguration.BuffSize = Math.Round(buffSize.Value / 10d, 2);
             }
             else
             {
@@ -231,6 +231,11 @@ namespace MapAssist
         }
 
         private void chkStickToLastGameWindow_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow = chkStickToLastGameWindow.Checked;
+        }
+
+        private void chkStickToLastGameWindow_CheckedChanged_1(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow = chkStickToLastGameWindow.Checked;
         }
@@ -505,7 +510,7 @@ namespace MapAssist
         private void btnLogFont_Click(object sender, EventArgs e)
         {
             var labelFont = MapAssistConfiguration.Loaded.ItemLog.LabelFont;
-            var labelSize = MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+            var labelSize = (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
             if (labelFont == null)
             {
                 labelFont = "Helvetica";
