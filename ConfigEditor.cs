@@ -109,6 +109,8 @@ namespace MapAssist
             chkPlaySound.Checked = MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop;
             txtFilterFile.Text = MapAssistConfiguration.Loaded.ItemLog.FilterFileName;
             txtSoundFile.Text = MapAssistConfiguration.Loaded.ItemLog.SoundFile;
+            soundVolume.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.SoundVolume / 5d);
+            lblSoundVolumeValue.Text = $"{soundVolume.Value * 5}";
             itemDisplayForSeconds.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds / 5d);
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
 
@@ -511,6 +513,12 @@ namespace MapAssist
         private void txtSoundFile_LostFocus(object sender, EventArgs e)
         {
             AudioPlayer.LoadNewSound(true);
+        }
+
+        private void soundVolume_Scroll(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.ItemLog.SoundVolume = soundVolume.Value * 5;
+            lblSoundVolumeValue.Text = $"{soundVolume.Value * 5}";
         }
 
         private void itemDisplayForSeconds_Scroll(object sender, EventArgs e)

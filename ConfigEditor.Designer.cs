@@ -103,6 +103,9 @@
             this.label8 = new System.Windows.Forms.Label();
             this.cboRenderOption = new System.Windows.Forms.ComboBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.lblSoundVolumeValue = new System.Windows.Forms.Label();
+            this.soundVolume = new System.Windows.Forms.TrackBar();
+            this.label10 = new System.Windows.Forms.Label();
             this.lblItemDisplayForSecondsValue = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.itemDisplayForSeconds = new System.Windows.Forms.TrackBar();
@@ -153,6 +156,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.lineThicknessSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.lineArrowSize)).BeginInit();
             this.tabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.soundVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).BeginInit();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -367,12 +371,13 @@
             // 
             // buffSize
             // 
+            this.buffSize.AutoSize = false;
             this.buffSize.BackColor = System.Drawing.Color.White;
             this.buffSize.LargeChange = 1;
             this.buffSize.Location = new System.Drawing.Point(79, 19);
             this.buffSize.Maximum = 20;
             this.buffSize.Name = "buffSize";
-            this.buffSize.Size = new System.Drawing.Size(170, 45);
+            this.buffSize.Size = new System.Drawing.Size(170, 27);
             this.buffSize.TabIndex = 15;
             this.buffSize.Scroll += new System.EventHandler(this.buffSize_Scroll);
             this.buffSize.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
@@ -481,13 +486,14 @@
             // 
             // mapZoom
             // 
+            this.mapZoom.AutoSize = false;
             this.mapZoom.BackColor = System.Drawing.Color.White;
             this.mapZoom.LargeChange = 1;
             this.mapZoom.Location = new System.Drawing.Point(79, 132);
             this.mapZoom.Maximum = 25;
             this.mapZoom.Minimum = 1;
             this.mapZoom.Name = "mapZoom";
-            this.mapZoom.Size = new System.Drawing.Size(170, 45);
+            this.mapZoom.Size = new System.Drawing.Size(170, 27);
             this.mapZoom.TabIndex = 13;
             this.mapZoom.Value = 1;
             this.mapZoom.Scroll += new System.EventHandler(this.mapZoom_Scroll);
@@ -495,12 +501,13 @@
             // 
             // mapSize
             // 
+            this.mapSize.AutoSize = false;
             this.mapSize.BackColor = System.Drawing.Color.White;
             this.mapSize.LargeChange = 1;
             this.mapSize.Location = new System.Drawing.Point(79, 95);
             this.mapSize.Maximum = 16;
             this.mapSize.Name = "mapSize";
-            this.mapSize.Size = new System.Drawing.Size(170, 45);
+            this.mapSize.Size = new System.Drawing.Size(170, 27);
             this.mapSize.SmallChange = 25;
             this.mapSize.TabIndex = 10;
             this.mapSize.Scroll += new System.EventHandler(this.mapSize_Scroll);
@@ -540,12 +547,13 @@
             // 
             // iconOpacity
             // 
+            this.iconOpacity.AutoSize = false;
             this.iconOpacity.BackColor = System.Drawing.Color.White;
             this.iconOpacity.LargeChange = 1;
             this.iconOpacity.Location = new System.Drawing.Point(79, 58);
             this.iconOpacity.Maximum = 20;
             this.iconOpacity.Name = "iconOpacity";
-            this.iconOpacity.Size = new System.Drawing.Size(170, 45);
+            this.iconOpacity.Size = new System.Drawing.Size(170, 27);
             this.iconOpacity.TabIndex = 3;
             this.iconOpacity.Scroll += new System.EventHandler(this.iconOpacity_Scroll);
             this.iconOpacity.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
@@ -584,12 +592,13 @@
             // 
             // opacity
             // 
+            this.opacity.AutoSize = false;
             this.opacity.BackColor = System.Drawing.Color.White;
             this.opacity.LargeChange = 1;
             this.opacity.Location = new System.Drawing.Point(79, 19);
             this.opacity.Maximum = 20;
             this.opacity.Name = "opacity";
-            this.opacity.Size = new System.Drawing.Size(170, 45);
+            this.opacity.Size = new System.Drawing.Size(170, 27);
             this.opacity.TabIndex = 1;
             this.opacity.Scroll += new System.EventHandler(this.opacity_Scroll);
             this.opacity.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
@@ -1006,6 +1015,9 @@
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.lblSoundVolumeValue);
+            this.tabPage6.Controls.Add(this.soundVolume);
+            this.tabPage6.Controls.Add(this.label10);
             this.tabPage6.Controls.Add(this.lblItemDisplayForSecondsValue);
             this.tabPage6.Controls.Add(this.label19);
             this.tabPage6.Controls.Add(this.itemDisplayForSeconds);
@@ -1026,11 +1038,46 @@
             this.tabPage6.Text = "Item Log";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
+            // lblSoundVolumeValue
+            // 
+            this.lblSoundVolumeValue.AutoSize = true;
+            this.lblSoundVolumeValue.BackColor = System.Drawing.Color.Transparent;
+            this.lblSoundVolumeValue.Location = new System.Drawing.Point(279, 152);
+            this.lblSoundVolumeValue.Name = "lblSoundVolumeValue";
+            this.lblSoundVolumeValue.Size = new System.Drawing.Size(25, 13);
+            this.lblSoundVolumeValue.TabIndex = 29;
+            this.lblSoundVolumeValue.Text = "100";
+            this.lblSoundVolumeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // soundVolume
+            // 
+            this.soundVolume.AutoSize = false;
+            this.soundVolume.BackColor = System.Drawing.Color.White;
+            this.soundVolume.Cursor = System.Windows.Forms.Cursors.Default;
+            this.soundVolume.LargeChange = 1;
+            this.soundVolume.Location = new System.Drawing.Point(85, 152);
+            this.soundVolume.Maximum = 20;
+            this.soundVolume.Name = "soundVolume";
+            this.soundVolume.Size = new System.Drawing.Size(188, 27);
+            this.soundVolume.SmallChange = 25;
+            this.soundVolume.TabIndex = 28;
+            this.soundVolume.Scroll += new System.EventHandler(this.soundVolume_Scroll);
+            this.soundVolume.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(11, 155);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(42, 13);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "Volume";
+            // 
             // lblItemDisplayForSecondsValue
             // 
             this.lblItemDisplayForSecondsValue.AutoSize = true;
             this.lblItemDisplayForSecondsValue.BackColor = System.Drawing.Color.Transparent;
-            this.lblItemDisplayForSecondsValue.Location = new System.Drawing.Point(279, 198);
+            this.lblItemDisplayForSecondsValue.Location = new System.Drawing.Point(279, 213);
             this.lblItemDisplayForSecondsValue.Name = "lblItemDisplayForSecondsValue";
             this.lblItemDisplayForSecondsValue.Size = new System.Drawing.Size(33, 13);
             this.lblItemDisplayForSecondsValue.TabIndex = 25;
@@ -1049,13 +1096,14 @@
             // 
             // itemDisplayForSeconds
             // 
+            this.itemDisplayForSeconds.AutoSize = false;
             this.itemDisplayForSeconds.BackColor = System.Drawing.Color.White;
             this.itemDisplayForSeconds.LargeChange = 1;
-            this.itemDisplayForSeconds.Location = new System.Drawing.Point(92, 198);
+            this.itemDisplayForSeconds.Location = new System.Drawing.Point(85, 213);
             this.itemDisplayForSeconds.Maximum = 24;
             this.itemDisplayForSeconds.Minimum = 1;
             this.itemDisplayForSeconds.Name = "itemDisplayForSeconds";
-            this.itemDisplayForSeconds.Size = new System.Drawing.Size(181, 45);
+            this.itemDisplayForSeconds.Size = new System.Drawing.Size(188, 27);
             this.itemDisplayForSeconds.SmallChange = 25;
             this.itemDisplayForSeconds.TabIndex = 11;
             this.itemDisplayForSeconds.Value = 1;
@@ -1089,7 +1137,7 @@
             this.label20.AutoSize = true;
             this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
             this.label20.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label20.Location = new System.Drawing.Point(82, 151);
+            this.label20.Location = new System.Drawing.Point(82, 134);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(115, 13);
             this.label20.TabIndex = 25;
@@ -1098,7 +1146,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(11, 201);
+            this.label18.Location = new System.Drawing.Point(11, 216);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(75, 13);
             this.label18.TabIndex = 6;
@@ -1106,7 +1154,7 @@
             // 
             // txtSoundFile
             // 
-            this.txtSoundFile.Location = new System.Drawing.Point(85, 128);
+            this.txtSoundFile.Location = new System.Drawing.Point(85, 111);
             this.txtSoundFile.Name = "txtSoundFile";
             this.txtSoundFile.Size = new System.Drawing.Size(227, 20);
             this.txtSoundFile.TabIndex = 5;
@@ -1116,7 +1164,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(11, 131);
+            this.label17.Location = new System.Drawing.Point(11, 114);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(60, 13);
             this.label17.TabIndex = 4;
@@ -1125,7 +1173,7 @@
             // chkPlaySound
             // 
             this.chkPlaySound.AutoSize = true;
-            this.chkPlaySound.Location = new System.Drawing.Point(14, 105);
+            this.chkPlaySound.Location = new System.Drawing.Point(14, 88);
             this.chkPlaySound.Name = "chkPlaySound";
             this.chkPlaySound.Size = new System.Drawing.Size(121, 17);
             this.chkPlaySound.TabIndex = 3;
@@ -1355,6 +1403,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.lineArrowSize)).EndInit();
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.soundVolume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).EndInit();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
@@ -1470,5 +1519,8 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.CheckBox chkStickToLastGameWindow;
         private System.Windows.Forms.Button btnIconColorsClear;
+        private System.Windows.Forms.Label lblSoundVolumeValue;
+        private System.Windows.Forms.TrackBar soundVolume;
+        private System.Windows.Forms.Label label10;
     }
 }
