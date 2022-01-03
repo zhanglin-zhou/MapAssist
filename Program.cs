@@ -219,7 +219,6 @@ namespace MapAssist
             try
             {
                 LootLogConfiguration.Load();
-                Localization.LoadItemLocalization();
                 configurationOk = true;
             }
             catch (YamlDotNet.Core.YamlException e)
