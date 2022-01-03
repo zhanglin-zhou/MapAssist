@@ -317,8 +317,8 @@ namespace MapAssist.Helpers
             {
                 Area[] adjacentAreas = areaData.AdjacentLevels.Keys.ToArray();
 
-                if (areaData.Area == Area.OuterCloister) adjacentAreas = adjacentAreas.Append(Area.Barracks).ToArray(); // Missing adjacent area
-                if (areaData.Area == Area.Barracks) adjacentAreas = adjacentAreas.Append(Area.OuterCloister).ToArray(); // Missing adjacent area
+                var additionalAreas = GetAdjacentLevelsForWideArea(areaData.Area);
+                adjacentAreas = adjacentAreas.Concat(additionalAreas).ToArray();
 
                 if (adjacentAreas.Length > 0)
                 {
@@ -350,6 +350,84 @@ namespace MapAssist.Helpers
             }
 
             return areaData;
+        }
+
+        private Area[] GetAdjacentLevelsForWideArea(Area area)
+        {
+            // Improve stitching by rendering more areas than directly adjacent levels
+            // Sometimes render areas 2 maps away to get a better picture
+            switch (area)
+            {
+                case Area.BlackMarsh:
+                    return new Area[] {
+                        Area.MonasteryGate,
+                        Area.OuterCloister,
+                    };
+                case Area.TamoeHighland:
+                    return new Area[] {
+                        Area.OuterCloister,
+                        Area.Barracks,
+                    };
+                case Area.MonasteryGate:
+                    return new Area[] {
+                        Area.BlackMarsh,
+                        Area.Barracks,
+                    };
+                case Area.OuterCloister:
+                    return new Area[] {
+                        Area.BlackMarsh,
+                        Area.TamoeHighland,
+                        Area.Barracks, // Missing adjacent area
+                    };
+                case Area.Barracks:
+                    return new Area[] {
+                        Area.TamoeHighland,
+                        Area.MonasteryGate,
+                        Area.OuterCloister, // Missing adjacent area
+                    };
+                case Area.InnerCloister:
+                    return new Area[] {
+                        Area.Cathedral, // Missing adjacent area
+                    };
+                case Area.Cathedral:
+                    return new Area[] {
+                        Area.InnerCloister, // Missing adjacent area
+                    };
+                case Area.DryHills:
+                    return new Area[] {
+                        Area.LostCity,
+                    };
+                case Area.RockyWaste:
+                    return new Area[] {
+                        Area.FarOasis,
+                    };
+                case Area.LostCity:
+                    return new Area[] {
+                        Area.DryHills,
+                    };
+                case Area.FarOasis:
+                    return new Area[] {
+                        Area.RockyWaste,
+                    };
+                case Area.GreatMarsh:
+                    return new Area[] {
+                        Area.FlayerJungle,
+                    };
+                case Area.FlayerJungle:
+                    return new Area[] {
+                        Area.GreatMarsh,
+                    };
+                case Area.UpperKurast:
+                    return new Area[] {
+                        Area.Travincal,
+                    };
+                case Area.Travincal:
+                    return new Area[] {
+                        Area.UpperKurast,
+                    };
+                default:
+                    return new Area[] { };
+            }
         }
 
         private AreaData GetMapDataInternal(Area area)
