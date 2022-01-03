@@ -35,8 +35,13 @@ MapConfiguration:
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
-  EliteMonster:
-    IconOutlineColor: DarkRed
+  ChampionMonster:
+    IconOutlineColor: '33, 154, 253'
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+  MinionMonster:
+    IconOutlineColor: '196, 196, 196'
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
@@ -45,6 +50,14 @@ MapConfiguration:
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
+  Npc:
+    IconOutlineColor: '196, 196, 196'
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: '199, 179, 119'
+    LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
   NextArea:
     IconColor: SpringGreen
     IconShape: Square
@@ -74,6 +87,14 @@ MapConfiguration:
     LabelFontSize: 16
     LabelFont: Exocet Blizzard Mixed Caps
   Player:
+    IconOutlineColor: '33, 136, 253'
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: Chartreuse
+    LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
+  PartyPlayer:
     IconOutlineColor: Chartreuse
     IconShape: Cross
     IconSize: 6
