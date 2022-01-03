@@ -411,7 +411,7 @@ namespace MapAssist.Helpers
 
                             var iconShape = GetIconShape(mobRender).ToRectangle();
 
-                            var ellipseSize = Math.Max(iconShape.Height / 25, 5 / scaleWidth); // Arbirarily set to be a fraction of the the mob icon size. The important point is that it scales with the mob icon consistently.
+                            var ellipseSize = Math.Max(iconShape.Height / 12, 3 / scaleWidth); // Arbirarily set to be a fraction of the the mob icon size. The important point is that it scales with the mob icon consistently.
                             var dx = ellipseSize * scaleWidth * 1.5f; // Amount of space each indicator will take up, including spacing
 
                             var iX = -dx * (iCount - 1) / 2f; // Moves the first indicator sufficiently left so that the whole group of indicators will be centered.
@@ -556,7 +556,7 @@ namespace MapAssist.Helpers
                     }
                     if (canDrawLine && corpse.Name == _gameData.PlayerUnit.Name)
                     {
-                        var padding = canDrawLabel ? rendering.LabelFontSize * 1.44f / 2 : 0; // 1.44f is the line height adjustment
+                        var padding = canDrawLabel ? rendering.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                         var poiPosition = MovePointInBounds(corpse.Position, _gameData.PlayerPosition, padding);
                         DrawLine(gfx, rendering, _gameData.PlayerPosition, poiPosition);
                     }
@@ -627,7 +627,7 @@ namespace MapAssist.Helpers
 
                             if (rendering.CanDrawLine() && playerUnit.HostileToPlayer)
                             {
-                                var padding = rendering.CanDrawLabel() ? MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize * 1.44f / 2 : 0; // 1.44f is the line height adjustment
+                                var padding = rendering.CanDrawLabel() ? MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                                 var poiPosition = MovePointInBounds(playerUnit.Position, _gameData.PlayerPosition, padding);
                                 DrawLine(gfx, MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer, _gameData.PlayerPosition, poiPosition);
                             }
