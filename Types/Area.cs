@@ -469,7 +469,7 @@ namespace MapAssist.Types
                 Level = new int[] { 17, 49, 80 }
             },
             [Area.DurielsLair] = new AreaLabel() {
-                Text = "Tal Rasha's Chamber",
+                Text = "Duriel's Lair",
                 Level = new int[] { 17, 49, 80 }
             },
             [Area.ArcaneSanctuary] = new AreaLabel() {
@@ -477,7 +477,7 @@ namespace MapAssist.Types
                 Level = new int[] { 14, 48, 79 }
             },
             [Area.KurastDocks] = new AreaLabel() {
-                Text = "Kurast Docks",
+                Text = "Kurast Docktown",
                 Level = new int[] { 0, 0, 0 }
             },
             [Area.SpiderForest] = new AreaLabel() {
