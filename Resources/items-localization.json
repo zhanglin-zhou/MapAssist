@@ -531,7 +531,7 @@
         },
         {
             "id": 788,
-            "Key": "Cow Level",
+            "Key": "Moo Moo Farm",
             "enUS": "The Secret Cow Level",
             "zhTW": "秘密乳牛關",
             "deDE": "Das Geheime Kuhlevel",
@@ -4441,7 +4441,7 @@
         },
         {
             "id": 11155,
-            "Key": "Matron's Den",
+            "Key": "Pandemonium Run 1",
             "enUS": "Matron's Den",
             "zhTW": "魔母巢穴",
             "deDE": "Matronenhöhle",
@@ -4458,7 +4458,7 @@
         },
         {
             "id": 11156,
-            "Key": "Forgotten Sands",
+            "Key": "Pandemonium Run 2",
             "enUS": "Forgotten Sands",
             "zhTW": "遺忘沙漠",
             "deDE": "Die Vergessenen Sande",
@@ -4475,7 +4475,7 @@
         },
         {
             "id": 11157,
-            "Key": "Furnace of Pain",
+            "Key": "Pandemonium Run 3",
             "enUS": "Furnace of Pain",
             "zhTW": "苦痛熔爐",
             "deDE": "Glutofen der Pein",

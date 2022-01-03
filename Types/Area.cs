@@ -721,7 +721,7 @@ namespace MapAssist.Types
                 Level = new int[] { 0, 0, 83 }
             },
             [Area.UberTristram] = new AreaLabel() {
-                Text = "Tristram",
+                Text = "Uber Tristram",
                 Level = new int[] { 0, 0, 83 }
             },
         };
