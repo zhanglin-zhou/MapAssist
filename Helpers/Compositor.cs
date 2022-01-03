@@ -374,23 +374,7 @@ namespace MapAssist.Helpers
             {
                 var mobRender = GetMonsterIconRendering(unitAny.MonsterData);
 
-                if (AreaExtensions.IsTown(_areaData.Area))
-                {
-                    var npc = (Npc)unitAny.TxtFileNo;
-                    if (NpcExtensions.IsTownsfolk(npc))
-                    {
-                        var rendering = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
-                        if (rendering.CanDrawIcon())
-                        {
-                            drawMonsterIcons.Add((rendering, unitAny));
-                            if (rendering.CanDrawLabel())
-                            {
-                                drawMonsterLabels.Add((rendering, unitAny.Position, NpcExtensions.Name(npc), rendering.LabelColor));
-                            }
-                        }
-                    }
-                }
-                else if (mobRender.CanDrawIcon())
+                if (mobRender.CanDrawIcon())
                 {
                     drawMonsterIcons.Add((mobRender, unitAny));
                 }
@@ -399,7 +383,6 @@ namespace MapAssist.Helpers
             // All Monster icons must be listed here for rendering
             var monsterRenderingOrder = new IconRendering[]
             {
-                MapAssistConfiguration.Loaded.MapConfiguration.Npc,
                 MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster,
                 MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster,
                 MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster,

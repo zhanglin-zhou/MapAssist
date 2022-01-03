@@ -103,10 +103,6 @@ namespace MapAssist.Settings
         public IconRendering NormalMonster { get; set; }
         public static IconRendering NormalMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
 
-        [YamlMember(Alias = "Npc", ApplyNamingConventions = false)]
-        public PointOfInterestRendering Npc { get; set; }
-        public static IconRendering NpcREF => MapAssistConfiguration.Loaded.MapConfiguration.Npc;
-
         [YamlMember(Alias = "NextArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering NextArea { get; set; }
         public static PointOfInterestRendering NextAreaREF => MapAssistConfiguration.Loaded.MapConfiguration.NextArea;
@@ -127,7 +123,7 @@ namespace MapAssist.Settings
         public PointOfInterestRendering Player { get; set; }
         public static PointOfInterestRendering PlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.Player;
 
-        [YamlMember(Alias = "NonPartyPlayer", ApplyNamingConventions = false)]
+        [YamlMember(Alias = "PartyPlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering PartyPlayer { get; set; }
         public static PointOfInterestRendering PartyPlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.PartyPlayer;
 
