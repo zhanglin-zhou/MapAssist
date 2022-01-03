@@ -191,6 +191,11 @@ namespace MapAssist.Helpers
 
         private static async Task<(uint, string)> MapApiRequest(byte[] writeBytes = null, int timeout = 1000)
         {
+            if (_pipeClient.HasExited)
+            {
+                _log.Warn($"{_procName} has exited unexpectedly");
+            }
+
             if (disposed || _pipeClient.HasExited)
             {
                 return (0, null);
@@ -228,6 +233,7 @@ namespace MapAssist.Helpers
                 }
                 else
                 {
+                    _log.Warn($"Request timed out after {timeout} ms");
                     return null;
                 }
             };
