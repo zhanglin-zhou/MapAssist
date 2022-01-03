@@ -22,21 +22,26 @@ namespace MapAssist
 
         private void AddAreaForm_Load(object sender, EventArgs e)
         {
-            lstAreas.Items.Clear();
-            foreach(var area in Enum.GetValues(typeof(Area)).Cast<Area>()){
-                if (area != Area.None)
+            var areas = new Dictionary<Area, string>();
+
+            foreach (var area in Enum.GetValues(typeof(Area)).Cast<Area>()){
+                if (area != Area.None && AreaExtensions.IsValid(area) && !MapAssistConfiguration.Loaded.HiddenAreas.Contains(area))
                 {
-                    lstAreas.Items.Add(AreaExtensions.Name(area));
+                    areas.Add(area, AreaExtensions.Name(area));
                 }
             }
+
+            lstAreas.DataSource = new BindingSource(areas, null);
+            lstAreas.ValueMember = "Key";
+            lstAreas.DisplayMember = "Value";
         }
 
-        private void btnAddArea_Click(object sender, EventArgs e)
+        private void AddSelectedArea(Area areaToAdd)
         {
+            var areaName = areaToAdd.NameInternal();
+
             var formParent = (ConfigEditor)Owner;
             var list = formParent.Controls.Find(listToAddTo, true).FirstOrDefault() as ListBox;
-            var areaToAdd = (Area)lstAreas.SelectedIndex;
-            var areaName = areaToAdd.NameInternal();
             if (!list.Items.Contains(areaName))
             {
                 list.Items.Add(areaName);
@@ -48,6 +53,18 @@ namespace MapAssist
                 }
                 Close();
             }
+        }
+
+        private void btnAddArea_Click(object sender, EventArgs e)
+        {
+            var areaToAdd = (Area)lstAreas.SelectedValue;
+            AddSelectedArea(areaToAdd);
+        }
+
+        private void lstAreas_MouseDoubleClick(object sender, EventArgs e)
+        {
+            var areaToAdd = (Area)lstAreas.SelectedValue;
+            AddSelectedArea(areaToAdd);
         }
     }
 }
