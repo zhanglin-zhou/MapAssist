@@ -333,7 +333,7 @@ namespace MapAssist.Types
                 Level = new int[] { 6, 39, 76 }
             },
             [Area.MooMooFarm] = new AreaLabel() {
-                Text = "Cow Level",
+                Text = "Moo Moo Farm",
                 Level = new int[] { 28, 64, 81 }
             },
             [Area.LutGholein] = new AreaLabel() {
@@ -709,19 +709,19 @@ namespace MapAssist.Types
                 Level = new int[] { 43, 66, 85 }
             },
             [Area.MatronsDen] = new AreaLabel() {
-                Text = "Matron's Den",
+                Text = "Pandemonium Run 1",
                 Level = new int[] { 0, 0, 83 }
             },
             [Area.ForgottenSands] = new AreaLabel() {
-                Text = "Forgotten Sands",
+                Text = "Pandemonium Run 2",
                 Level = new int[] { 0, 0, 83 }
             },
             [Area.FurnaceOfPain] = new AreaLabel() {
-                Text = "Furnace of Pain",
+                Text = "Pandemonium Run 3",
                 Level = new int[] { 0, 0, 83 }
             },
             [Area.UberTristram] = new AreaLabel() {
-                Text = "Uber Tristram",
+                Text = "Tristram",
                 Level = new int[] { 0, 0, 83 }
             },
         };
