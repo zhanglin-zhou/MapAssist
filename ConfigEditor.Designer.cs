@@ -208,7 +208,7 @@
             this.chkShowArea.Name = "chkShowArea";
             this.chkShowArea.Size = new System.Drawing.Size(114, 17);
             this.chkShowArea.TabIndex = 16;
-            this.chkShowArea.Text = "Display Area Level";
+            this.chkShowArea.Text = "Display Current Area";
             this.chkShowArea.UseVisualStyleBackColor = true;
             this.chkShowArea.CheckedChanged += new System.EventHandler(this.chkShowArea_CheckedChanged);
             // 
@@ -318,7 +318,7 @@
             this.groupBox3.Controls.Add(this.buffSize);
             this.groupBox3.Location = new System.Drawing.Point(5, 309);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(290, 93);
+            this.groupBox3.Size = new System.Drawing.Size(290, 89);
             this.groupBox3.TabIndex = 22;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Buffs";
@@ -413,7 +413,7 @@
             this.chkStickToLastGameWindow.Name = "chkStickToLastGameWindow";
             this.chkStickToLastGameWindow.Size = new System.Drawing.Size(225, 17);
             this.chkStickToLastGameWindow.TabIndex = 25;
-            this.chkStickToLastGameWindow.Text = "Run overlay on last inactive game window";
+            this.chkStickToLastGameWindow.Text = "Keep overlay active on last game window";
             this.chkStickToLastGameWindow.UseVisualStyleBackColor = true;
             this.chkStickToLastGameWindow.CheckedChanged += new System.EventHandler(this.chkStickToLastGameWindow_CheckedChanged);
             // 

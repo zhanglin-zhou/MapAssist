@@ -141,6 +141,7 @@ namespace MapAssist.Files
                 streamWriter.WriteLine("# Change these settings from the Config GUI provided in MapAssist");
                 var serializer = new SerializerBuilder()
                     .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                    .WithTypeConverter(new FloatPrecisionConverter())
                     .WithTypeConverter(new AreaArrayYamlTypeConverter())
                     .WithTypeConverter(new IconRenderingTypeConverter())
                     .WithTypeConverter(new PointOfInterestRenderingTypeConverter())
