@@ -664,7 +664,7 @@ namespace MapAssist.Properties {
         /// </summary>
         internal static byte[] items_localization {
             get {
-                object obj = ResourceManager.GetObject("items-localization", resourceCulture);
+                object obj = ResourceManager.GetObject("items_localization", resourceCulture);
                 return ((byte[])(obj));
             }
         }
