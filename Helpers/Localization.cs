@@ -13,35 +13,35 @@ namespace MapAssist.Helpers
 
         public static void LoadLocalizationFile()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resName = "MapAssist.Resources.items-localization.json";
-            using (Stream stream = assembly.GetManifestResourceStream(resName))
+            var resString = Properties.Resources.items_localization;
+
+            using (var Stream = new MemoryStream(resString))
             {
-                using (var reader = new StreamReader(stream))
+                using (var streamReader = new StreamReader(Stream))
                 {
-                    var jsonString = reader.ReadToEnd();
+                    var jsonString = streamReader.ReadToEnd();
                     _localization = JsonConvert.DeserializeObject<LocalizationFileObj>(jsonString);
                 }
+            }
 
-                foreach (var item in _localization.Areas)
-                {
-                    AreaExtensions.LocalizedAreas.Add(item.Key, item);
-                }
+            foreach (var item in _localization.Areas)
+            {
+                AreaExtensions.LocalizedAreas.Add(item.Key, item);
+            }
 
-                foreach (var item in _localization.Items)
-                {
-                    Items.LocalizedItems.Add(item.Key, item);
-                }
+            foreach (var item in _localization.Items)
+            {
+                Items.LocalizedItems.Add(item.Key, item);
+            }
 
-                foreach (var item in _localization.Npcs)
-                {
-                    NpcExtensions.LocalizedNpcs.Add(item.Key, item);
-                }
+            foreach (var item in _localization.Npcs)
+            {
+                NpcExtensions.LocalizedNpcs.Add(item.Key, item);
+            }
 
-                foreach (var item in _localization.Shrines)
-                {
-                    Shrine.LocalizedShrines.Add(item.Key, item);
-                }
+            foreach (var item in _localization.Shrines)
+            {
+                Shrine.LocalizedShrines.Add(item.Key, item);
             }
         }
     }
