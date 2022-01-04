@@ -74,21 +74,21 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabDrawing = new System.Windows.Forms.TabControl();
             this.tabIcon = new System.Windows.Forms.TabPage();
-            this.btnIconColorsClear = new System.Windows.Forms.Button();
+            this.btnIconColor = new System.Windows.Forms.Button();
+            this.btnIconOutlineColor = new System.Windows.Forms.Button();
+            this.btnClearOutlineColor = new System.Windows.Forms.Button();
+            this.btnClearFillColor = new System.Windows.Forms.Button();
             this.lblIconThicknessValue = new System.Windows.Forms.Label();
             this.lblIconSizeValue = new System.Windows.Forms.Label();
-            this.btnIconOutlineColor = new System.Windows.Forms.Button();
             this.lblIconThickness = new System.Windows.Forms.Label();
             this.iconThickness = new System.Windows.Forms.TrackBar();
             this.lblIconSize = new System.Windows.Forms.Label();
             this.iconSize = new System.Windows.Forms.TrackBar();
             this.label9 = new System.Windows.Forms.Label();
             this.cboIconShape = new System.Windows.Forms.ComboBox();
-            this.btnIconColor = new System.Windows.Forms.Button();
             this.tabLabel = new System.Windows.Forms.TabPage();
             this.label3 = new System.Windows.Forms.Label();
             this.btnFont = new System.Windows.Forms.Button();
-            this.chkLabel = new System.Windows.Forms.CheckBox();
             this.btnLabelColor = new System.Windows.Forms.Button();
             this.tabLine = new System.Windows.Forms.TabPage();
             this.lblLineThicknessSizeValue = new System.Windows.Forms.Label();
@@ -97,7 +97,6 @@
             this.lineThicknessSize = new System.Windows.Forms.TrackBar();
             this.lblLineArrow = new System.Windows.Forms.Label();
             this.lineArrowSize = new System.Windows.Forms.TrackBar();
-            this.chkLine = new System.Windows.Forms.CheckBox();
             this.btnLineColor = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.cboRenderOption = new System.Windows.Forms.ComboBox();
@@ -134,6 +133,8 @@
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnClearLabelColor = new System.Windows.Forms.Button();
+            this.btnClearLineColor = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -672,17 +673,18 @@
             // 
             // tabIcon
             // 
-            this.tabIcon.Controls.Add(this.btnIconColorsClear);
+            this.tabIcon.Controls.Add(this.btnIconColor);
+            this.tabIcon.Controls.Add(this.btnIconOutlineColor);
+            this.tabIcon.Controls.Add(this.btnClearOutlineColor);
+            this.tabIcon.Controls.Add(this.btnClearFillColor);
             this.tabIcon.Controls.Add(this.lblIconThicknessValue);
             this.tabIcon.Controls.Add(this.lblIconSizeValue);
-            this.tabIcon.Controls.Add(this.btnIconOutlineColor);
             this.tabIcon.Controls.Add(this.lblIconThickness);
             this.tabIcon.Controls.Add(this.iconThickness);
             this.tabIcon.Controls.Add(this.lblIconSize);
             this.tabIcon.Controls.Add(this.iconSize);
             this.tabIcon.Controls.Add(this.label9);
             this.tabIcon.Controls.Add(this.cboIconShape);
-            this.tabIcon.Controls.Add(this.btnIconColor);
             this.tabIcon.Location = new System.Drawing.Point(4, 22);
             this.tabIcon.Name = "tabIcon";
             this.tabIcon.Padding = new System.Windows.Forms.Padding(3);
@@ -691,17 +693,53 @@
             this.tabIcon.Text = "Icon";
             this.tabIcon.UseVisualStyleBackColor = true;
             // 
-            // btnIconColorsClear
+            // btnIconColor
             // 
-            this.btnIconColorsClear.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnIconColorsClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnIconColorsClear.Location = new System.Drawing.Point(232, 7);
-            this.btnIconColorsClear.Name = "btnIconColorsClear";
-            this.btnIconColorsClear.Size = new System.Drawing.Size(69, 23);
-            this.btnIconColorsClear.TabIndex = 25;
-            this.btnIconColorsClear.Text = "Clear";
-            this.btnIconColorsClear.UseVisualStyleBackColor = false;
-            this.btnIconColorsClear.Click += new System.EventHandler(this.btnIconColorsClear_Click);
+            this.btnIconColor.BackColor = System.Drawing.Color.Transparent;
+            this.btnIconColor.Location = new System.Drawing.Point(11, 7);
+            this.btnIconColor.Name = "btnIconColor";
+            this.btnIconColor.Size = new System.Drawing.Size(75, 23);
+            this.btnIconColor.TabIndex = 10;
+            this.btnIconColor.Text = "Fill Color";
+            this.btnIconColor.UseVisualStyleBackColor = false;
+            this.btnIconColor.Click += new System.EventHandler(this.btnIconColor_Click);
+            // 
+            // btnIconOutlineColor
+            // 
+            this.btnIconOutlineColor.BackColor = System.Drawing.Color.Transparent;
+            this.btnIconOutlineColor.Location = new System.Drawing.Point(142, 7);
+            this.btnIconOutlineColor.Name = "btnIconOutlineColor";
+            this.btnIconOutlineColor.Size = new System.Drawing.Size(75, 23);
+            this.btnIconOutlineColor.TabIndex = 18;
+            this.btnIconOutlineColor.Text = "Outline Color";
+            this.btnIconOutlineColor.UseVisualStyleBackColor = false;
+            this.btnIconOutlineColor.Click += new System.EventHandler(this.btnIconOutlineColor_Click);
+            // 
+            // btnClearOutlineColor
+            // 
+            this.btnClearOutlineColor.FlatAppearance.BorderSize = 0;
+            this.btnClearOutlineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearOutlineColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearOutlineColor.Location = new System.Drawing.Point(217, 7);
+            this.btnClearOutlineColor.Name = "btnClearOutlineColor";
+            this.btnClearOutlineColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearOutlineColor.TabIndex = 26;
+            this.btnClearOutlineColor.Text = "X";
+            this.btnClearOutlineColor.UseVisualStyleBackColor = true;
+            this.btnClearOutlineColor.Click += new System.EventHandler(this.btnClearOutlineColor_Click);
+            // 
+            // btnClearFillColor
+            // 
+            this.btnClearFillColor.FlatAppearance.BorderSize = 0;
+            this.btnClearFillColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearFillColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearFillColor.Location = new System.Drawing.Point(86, 7);
+            this.btnClearFillColor.Name = "btnClearFillColor";
+            this.btnClearFillColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearFillColor.TabIndex = 25;
+            this.btnClearFillColor.Text = "X";
+            this.btnClearFillColor.UseVisualStyleBackColor = true;
+            this.btnClearFillColor.Click += new System.EventHandler(this.btnClearFillColor_Click);
             // 
             // lblIconThicknessValue
             // 
@@ -724,17 +762,6 @@
             this.lblIconSizeValue.TabIndex = 23;
             this.lblIconSizeValue.Text = "1000";
             this.lblIconSizeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // btnIconOutlineColor
-            // 
-            this.btnIconOutlineColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnIconOutlineColor.Location = new System.Drawing.Point(124, 6);
-            this.btnIconOutlineColor.Name = "btnIconOutlineColor";
-            this.btnIconOutlineColor.Size = new System.Drawing.Size(75, 23);
-            this.btnIconOutlineColor.TabIndex = 18;
-            this.btnIconOutlineColor.Text = "Outline Color";
-            this.btnIconOutlineColor.UseVisualStyleBackColor = false;
-            this.btnIconOutlineColor.Click += new System.EventHandler(this.btnIconOutlineColor_Click);
             // 
             // lblIconThickness
             // 
@@ -803,22 +830,11 @@
             this.cboIconShape.TabIndex = 12;
             this.cboIconShape.SelectedIndexChanged += new System.EventHandler(this.cboIconShape_SelectedIndexChanged);
             // 
-            // btnIconColor
-            // 
-            this.btnIconColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnIconColor.Location = new System.Drawing.Point(11, 7);
-            this.btnIconColor.Name = "btnIconColor";
-            this.btnIconColor.Size = new System.Drawing.Size(75, 23);
-            this.btnIconColor.TabIndex = 10;
-            this.btnIconColor.Text = "Fill Color";
-            this.btnIconColor.UseVisualStyleBackColor = false;
-            this.btnIconColor.Click += new System.EventHandler(this.btnIconColor_Click);
-            // 
             // tabLabel
             // 
+            this.tabLabel.Controls.Add(this.btnClearLabelColor);
             this.tabLabel.Controls.Add(this.label3);
             this.tabLabel.Controls.Add(this.btnFont);
-            this.tabLabel.Controls.Add(this.chkLabel);
             this.tabLabel.Controls.Add(this.btnLabelColor);
             this.tabLabel.Location = new System.Drawing.Point(4, 22);
             this.tabLabel.Name = "tabLabel";
@@ -849,21 +865,10 @@
             this.btnFont.UseVisualStyleBackColor = false;
             this.btnFont.Click += new System.EventHandler(this.btnFont_Click);
             // 
-            // chkLabel
-            // 
-            this.chkLabel.AutoSize = true;
-            this.chkLabel.Location = new System.Drawing.Point(11, 11);
-            this.chkLabel.Name = "chkLabel";
-            this.chkLabel.Size = new System.Drawing.Size(53, 17);
-            this.chkLabel.TabIndex = 17;
-            this.chkLabel.Text = "Show";
-            this.chkLabel.UseVisualStyleBackColor = true;
-            this.chkLabel.Click += new System.EventHandler(this.chkLabel_Clicked);
-            // 
             // btnLabelColor
             // 
             this.btnLabelColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnLabelColor.Location = new System.Drawing.Point(89, 7);
+            this.btnLabelColor.Location = new System.Drawing.Point(11, 7);
             this.btnLabelColor.Name = "btnLabelColor";
             this.btnLabelColor.Size = new System.Drawing.Size(75, 23);
             this.btnLabelColor.TabIndex = 16;
@@ -873,13 +878,13 @@
             // 
             // tabLine
             // 
+            this.tabLine.Controls.Add(this.btnClearLineColor);
             this.tabLine.Controls.Add(this.lblLineThicknessSizeValue);
             this.tabLine.Controls.Add(this.lblLineArrowSizeValue);
             this.tabLine.Controls.Add(this.lblLineThickness);
             this.tabLine.Controls.Add(this.lineThicknessSize);
             this.tabLine.Controls.Add(this.lblLineArrow);
             this.tabLine.Controls.Add(this.lineArrowSize);
-            this.tabLine.Controls.Add(this.chkLine);
             this.tabLine.Controls.Add(this.btnLineColor);
             this.tabLine.Location = new System.Drawing.Point(4, 22);
             this.tabLine.Name = "tabLine";
@@ -958,21 +963,10 @@
             this.lineArrowSize.Scroll += new System.EventHandler(this.lineArrowSize_Scroll);
             this.lineArrowSize.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
             // 
-            // chkLine
-            // 
-            this.chkLine.AutoSize = true;
-            this.chkLine.Location = new System.Drawing.Point(11, 11);
-            this.chkLine.Name = "chkLine";
-            this.chkLine.Size = new System.Drawing.Size(53, 17);
-            this.chkLine.TabIndex = 19;
-            this.chkLine.Text = "Show";
-            this.chkLine.UseVisualStyleBackColor = true;
-            this.chkLine.Click += new System.EventHandler(this.chkLine_Clicked);
-            // 
             // btnLineColor
             // 
             this.btnLineColor.BackColor = System.Drawing.Color.Transparent;
-            this.btnLineColor.Location = new System.Drawing.Point(89, 7);
+            this.btnLineColor.Location = new System.Drawing.Point(11, 7);
             this.btnLineColor.Name = "btnLineColor";
             this.btnLineColor.Size = new System.Drawing.Size(75, 23);
             this.btnLineColor.TabIndex = 18;
@@ -1347,6 +1341,32 @@
             this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
             this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
             // 
+            // btnClearLabelColor
+            // 
+            this.btnClearLabelColor.FlatAppearance.BorderSize = 0;
+            this.btnClearLabelColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLabelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLabelColor.Location = new System.Drawing.Point(86, 7);
+            this.btnClearLabelColor.Name = "btnClearLabelColor";
+            this.btnClearLabelColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLabelColor.TabIndex = 26;
+            this.btnClearLabelColor.Text = "X";
+            this.btnClearLabelColor.UseVisualStyleBackColor = true;
+            this.btnClearLabelColor.Click += new System.EventHandler(this.btnClearLabelColor_Click);
+            // 
+            // btnClearLineColor
+            // 
+            this.btnClearLineColor.FlatAppearance.BorderSize = 0;
+            this.btnClearLineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLineColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLineColor.Location = new System.Drawing.Point(86, 7);
+            this.btnClearLineColor.Name = "btnClearLineColor";
+            this.btnClearLineColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLineColor.TabIndex = 28;
+            this.btnClearLineColor.Text = "X";
+            this.btnClearLineColor.UseVisualStyleBackColor = true;
+            this.btnClearLineColor.Click += new System.EventHandler(this.btnClearLineColor_Click);
+            // 
             // ConfigEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1382,7 +1402,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.iconThickness)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconSize)).EndInit();
             this.tabLabel.ResumeLayout(false);
-            this.tabLabel.PerformLayout();
             this.tabLine.ResumeLayout(false);
             this.tabLine.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lineThicknessSize)).EndInit();
@@ -1442,13 +1461,11 @@
         private System.Windows.Forms.TabPage tabLabel;
         private System.Windows.Forms.TabPage tabLine;
         private System.Windows.Forms.Button btnFont;
-        private System.Windows.Forms.CheckBox chkLabel;
         private System.Windows.Forms.Button btnLabelColor;
         private System.Windows.Forms.Label lblLineThickness;
         private System.Windows.Forms.TrackBar lineThicknessSize;
         private System.Windows.Forms.Label lblLineArrow;
         private System.Windows.Forms.TrackBar lineArrowSize;
-        private System.Windows.Forms.CheckBox chkLine;
         private System.Windows.Forms.Button btnLineColor;
         private System.Windows.Forms.ComboBox cboLanguage;
         private System.Windows.Forms.Label label11;
@@ -1503,9 +1520,12 @@
         private System.Windows.Forms.Button btnBrowseD2Location;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.CheckBox chkStickToLastGameWindow;
-        private System.Windows.Forms.Button btnIconColorsClear;
         private System.Windows.Forms.Label lblSoundVolumeValue;
         private System.Windows.Forms.TrackBar soundVolume;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button btnClearFillColor;
+        private System.Windows.Forms.Button btnClearOutlineColor;
+        private System.Windows.Forms.Button btnClearLabelColor;
+        private System.Windows.Forms.Button btnClearLineColor;
     }
 }
