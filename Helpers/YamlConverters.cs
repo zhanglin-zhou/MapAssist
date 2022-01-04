@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using MapAssist.Settings;
 using MapAssist.Types;
@@ -24,7 +25,7 @@ namespace MapAssist.Helpers
 
         public void WriteYaml(IEmitter emitter, object value, Type type)
         {
-            emitter.Emit(new Scalar(null, value.ToString())); // Otherwise some bug in the yamlconverter won't have the right precisions on doubles
+            emitter.Emit(new Scalar(null, ((double)value).ToString(new CultureInfo("en-US")))); // Otherwise some bug in the yamlconverter won't have the right precisions on doubles
         }
     }
     
