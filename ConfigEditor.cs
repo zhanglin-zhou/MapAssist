@@ -19,34 +19,9 @@ namespace MapAssist
             InitializeComponent();
 
             var propertyList = MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperties();
-            for (var i = 0; i < propertyList.Length; i++)
+            foreach (var property in propertyList)
             {
-                var element = propertyList[i];
-                if (element.Name.Length >= 3)
-                {
-                    var lastThree = element.Name.Substring(element.Name.Length - 3, 3);
-                    if (!(lastThree == "REF"))
-                    {
-                        cboRenderOption.Items.Add(element.Name.ToProperCase());
-                        if (i + 1 > propertyList.Length)
-                        {
-                            Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") missing a static REF member after it.");
-                        }
-                        else
-                        {
-                            var nextElement = propertyList[i + 1];
-                            lastThree = nextElement.Name.Substring(nextElement.Name.Length - 3, 3);
-                            if (!(lastThree == "REF"))
-                            {
-                                Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") missing a static REF member after it.");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("CONFIG ERROR - (MapConfiguration." + element.Name + ") variable names in the MapConfiguration class should be at least 4 characters long");
-                }
+                cboRenderOption.Items.Add(property.Name.ToProperCase());
             }
 
             foreach (var element in Enum.GetNames(typeof(BuffPosition)))
@@ -271,7 +246,7 @@ namespace MapAssist
 
         private void cboRenderOption_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedProperty = MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperty(cboRenderOption.Text.ToPascalCase() + "REF");
+            SelectedProperty = MapAssistConfiguration.Loaded.MapConfiguration.GetType().GetProperty(cboRenderOption.Text.ToPascalCase());
             if (SelectedProperty != null)
             {
                 tabDrawing.Visible = true;

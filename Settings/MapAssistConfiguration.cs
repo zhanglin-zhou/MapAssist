@@ -85,95 +85,72 @@ namespace MapAssist.Settings
     {
         [YamlMember(Alias = "SuperUniqueMonster", ApplyNamingConventions = false)]
         public IconRendering SuperUniqueMonster { get; set; }
-        public static IconRendering SuperUniqueMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
 
         [YamlMember(Alias = "UniqueMonster", ApplyNamingConventions = false)]
         public IconRendering UniqueMonster { get; set; }
-        public static IconRendering UniqueMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
 
         [YamlMember(Alias = "ChampionMonster", ApplyNamingConventions = false)]
         public IconRendering ChampionMonster { get; set; }
-        public static IconRendering ChampionMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster;
 
         [YamlMember(Alias = "MinionMonster", ApplyNamingConventions = false)]
         public IconRendering MinionMonster { get; set; }
-        public static IconRendering MinionMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster;
 
         [YamlMember(Alias = "NormalMonster", ApplyNamingConventions = false)]
         public IconRendering NormalMonster { get; set; }
-        public static IconRendering NormalMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
 
         [YamlMember(Alias = "Npc", ApplyNamingConventions = false)]
         public PointOfInterestRendering Npc { get; set; }
-        public static PointOfInterestRendering NpcREF => MapAssistConfiguration.Loaded.MapConfiguration.Npc;
 
         [YamlMember(Alias = "NextArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering NextArea { get; set; }
-        public static PointOfInterestRendering NextAreaREF => MapAssistConfiguration.Loaded.MapConfiguration.NextArea;
 
         [YamlMember(Alias = "PreviousArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering PreviousArea { get; set; }
-        public static PointOfInterestRendering PreviousAreaREF => MapAssistConfiguration.Loaded.MapConfiguration.PreviousArea;
 
         [YamlMember(Alias = "Waypoint", ApplyNamingConventions = false)]
         public PointOfInterestRendering Waypoint { get; set; }
-        public static PointOfInterestRendering WaypointREF => MapAssistConfiguration.Loaded.MapConfiguration.Waypoint;
 
         [YamlMember(Alias = "Quest", ApplyNamingConventions = false)]
         public PointOfInterestRendering Quest { get; set; }
-        public static PointOfInterestRendering QuestREF => MapAssistConfiguration.Loaded.MapConfiguration.Quest;
 
         [YamlMember(Alias = "Player", ApplyNamingConventions = false)]
         public PointOfInterestRendering Player { get; set; }
-        public static PointOfInterestRendering PlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.Player;
 
         [YamlMember(Alias = "PartyPlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering PartyPlayer { get; set; }
-        public static PointOfInterestRendering PartyPlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.PartyPlayer;
 
         [YamlMember(Alias = "NonPartyPlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering NonPartyPlayer { get; set; }
-        public static PointOfInterestRendering NonPartyPlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer;
 
         [YamlMember(Alias = "HostilePlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering HostilePlayer { get; set; }
-        public static PointOfInterestRendering HostilePlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer;
 
         [YamlMember(Alias = "Corpse", ApplyNamingConventions = false)]
         public PointOfInterestRendering Corpse { get; set; }
-        public static PointOfInterestRendering CorpseREF => MapAssistConfiguration.Loaded.MapConfiguration.Corpse;
 
         [YamlMember(Alias = "Portal", ApplyNamingConventions = false)]
         public PortalRendering Portal { get; set; }
-        public static PortalRendering PortalREF => MapAssistConfiguration.Loaded.MapConfiguration.Portal;
 
         [YamlMember(Alias = "SuperChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering SuperChest { get; set; }
-        public static PointOfInterestRendering SuperChestREF => MapAssistConfiguration.Loaded.MapConfiguration.SuperChest;
 
         [YamlMember(Alias = "NormalChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering NormalChest { get; set; }
-        public static PointOfInterestRendering NormalChestREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalChest;
 
         [YamlMember(Alias = "LockedChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering LockedChest { get; set; }
-        public static PointOfInterestRendering LockedChestREF => MapAssistConfiguration.Loaded.MapConfiguration.LockedChest;
 
         [YamlMember(Alias = "TrappedChest", ApplyNamingConventions = false)]
         public PointOfInterestRendering TrappedChest { get; set; }
-        public static PointOfInterestRendering TrappedChestREF => MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest;
 
         [YamlMember(Alias = "Shrine", ApplyNamingConventions = false)]
         public PointOfInterestRendering Shrine { get; set; }
-        public static PointOfInterestRendering ShrineREF => MapAssistConfiguration.Loaded.MapConfiguration.Shrine;
 
         [YamlMember(Alias = "ArmorWeapRack", ApplyNamingConventions = false)]
         public PointOfInterestRendering ArmorWeapRack { get; set; }
-        public static PointOfInterestRendering ArmorWeapRackREF => MapAssistConfiguration.Loaded.MapConfiguration.ArmorWeapRack;
 
         [YamlMember(Alias = "Item", ApplyNamingConventions = false)]
         public PointOfInterestRendering Item { get; set; }
-        public static PointOfInterestRendering ItemREF => MapAssistConfiguration.Loaded.MapConfiguration.Item;
     }
 }
 
