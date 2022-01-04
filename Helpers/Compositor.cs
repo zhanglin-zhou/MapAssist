@@ -188,9 +188,6 @@ namespace MapAssist.Helpers
 
         private void DrawPointsOfInterest(Graphics gfx)
         {
-            var drawPoiIcons = new HashSet<(IconRendering, Point)>();
-            var drawPoiLabels = new HashSet<(PointOfInterestRendering, Point, string, Color?)>();
-
             foreach (var poi in _pointsOfInterest)
             {
                 if (poi.PoiMatchesPortal(_gameData.Objects, _gameData.Difficulty))
@@ -200,7 +197,7 @@ namespace MapAssist.Helpers
 
                 if (poi.RenderingSettings.CanDrawIcon())
                 {
-                    drawPoiIcons.Add((poi.RenderingSettings, poi.Position));
+                    DrawIcon(gfx, poi.RenderingSettings, poi.Position);
                 }
             }
 
@@ -228,11 +225,11 @@ namespace MapAssist.Helpers
                     if (poi.RenderingSettings.CanDrawLine() && poi.RenderingSettings.CanDrawLabel())
                     {
                         var poiPosition = MovePointInBounds(poi.Position, _gameData.PlayerPosition);
-                        drawPoiLabels.Add((poi.RenderingSettings, poiPosition, poi.Label, null));
+                        DrawText(gfx, poi.RenderingSettings, poiPosition, poi.Label);
                     }
                     else if (poi.RenderingSettings.CanDrawLabel())
                     {
-                        drawPoiLabels.Add((poi.RenderingSettings, poi.Position, poi.Label, null));
+                        DrawText(gfx, poi.RenderingSettings, poi.Position, poi.Label);
                     }
                 }
             }
@@ -247,25 +244,25 @@ namespace MapAssist.Helpers
                 {
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawIcon())
                     {
-                        drawPoiIcons.Add((MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position));
+                        DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position);
                     }
 
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Shrine.CanDrawLabel())
                     {
                         var label = Shrine.ShrineDisplayName(gameObject);
-                        drawPoiLabels.Add((MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label, null));
+                        DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Shrine, gameObject.Position, label);
                     }
 
                     continue;
                 }
-                
+
                 if (gameObject.IsPortal())
                 {
                     var destinationArea = (Area)Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
 
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Portal.CanDrawIcon())
                     {
-                        drawPoiIcons.Add((MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position));
+                        DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position);
                     }
 
                     if (MapAssistConfiguration.Loaded.MapConfiguration.Portal.CanDrawLabel(destinationArea))
@@ -274,7 +271,7 @@ namespace MapAssist.Helpers
                         var label = Utils.GetPortalName(destinationArea, _gameData.Difficulty, playerName);
 
                         if (string.IsNullOrWhiteSpace(label) || label == "None") continue;
-                        drawPoiLabels.Add((MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position, label, null));
+                        DrawText(gfx, MapAssistConfiguration.Loaded.MapConfiguration.Portal, gameObject.Position, label);
                     }
 
                     continue;
@@ -286,7 +283,7 @@ namespace MapAssist.Helpers
                     {
                         if (MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest.CanDrawIcon())
                         {
-                            drawPoiIcons.Add((MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest, gameObject.Position));
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest, gameObject.Position);
                         }
                     }
 
@@ -294,70 +291,15 @@ namespace MapAssist.Helpers
                     {
                         if (MapAssistConfiguration.Loaded.MapConfiguration.LockedChest.CanDrawIcon())
                         {
-                            drawPoiIcons.Add((MapAssistConfiguration.Loaded.MapConfiguration.LockedChest, gameObject.Position));
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.LockedChest, gameObject.Position);
                         }
                     }
                     else
                     {
                         if (MapAssistConfiguration.Loaded.MapConfiguration.NormalChest.CanDrawIcon())
                         {
-                            drawPoiIcons.Add((MapAssistConfiguration.Loaded.MapConfiguration.NormalChest, gameObject.Position));
+                            DrawIcon(gfx, MapAssistConfiguration.Loaded.MapConfiguration.NormalChest, gameObject.Position);
                         }
-                    }
-                }
-            }
-
-            // POI icons rendering order (draws after unlisted)
-            var poiRenderingOrder = new IconRendering[]
-            {
-                MapAssistConfiguration.Loaded.MapConfiguration.SuperChest,
-                MapAssistConfiguration.Loaded.MapConfiguration.NormalChest,
-                MapAssistConfiguration.Loaded.MapConfiguration.LockedChest,
-                MapAssistConfiguration.Loaded.MapConfiguration.TrappedChest,
-                MapAssistConfiguration.Loaded.MapConfiguration.ArmorWeapRack,
-                MapAssistConfiguration.Loaded.MapConfiguration.Shrine,
-                MapAssistConfiguration.Loaded.MapConfiguration.Waypoint,
-                MapAssistConfiguration.Loaded.MapConfiguration.Portal,
-            };
-
-            // Draw POI icons (not listed in poiRenderingOrder)
-            foreach ((var rendering, var position) in drawPoiIcons)
-            {
-                if (!poiRenderingOrder.Contains(rendering))
-                {
-                    DrawIcon(gfx, rendering, position);
-                }
-            }
-
-            // Draw POI icons (order by poiRenderingOrder list)
-            foreach (var poiRender in poiRenderingOrder)
-            {
-                foreach ((var rendering, var position) in drawPoiIcons)
-                {
-                    if (poiRender == rendering)
-                    {
-                        DrawIcon(gfx, rendering, position);
-                    }
-                }
-            }
-
-            // Draw POI labels (not listed in poiRenderingOrder)
-            foreach ((var rendering, var position, var text, Color? color) in drawPoiLabels)
-            {
-                if (!poiRenderingOrder.Contains(rendering))
-                {
-                    DrawText(gfx, rendering, position, text, color);
-                }
-            }
-
-            // Draw POI labels (order by poiRenderingOrder list)
-            foreach (var poiRender in poiRenderingOrder)
-            {
-                foreach ((var rendering, var position, var text, Color? color) in drawPoiLabels)
-                {
-                    if (poiRender == rendering)
-                    {
-                        DrawText(gfx, rendering, position, text, color);
                     }
                 }
             }
