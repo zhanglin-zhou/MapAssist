@@ -91,9 +91,13 @@ namespace MapAssist.Settings
         public IconRendering UniqueMonster { get; set; }
         public static IconRendering UniqueMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
 
-        [YamlMember(Alias = "EliteMonster", ApplyNamingConventions = false)]
-        public IconRendering EliteMonster { get; set; }
-        public static IconRendering EliteMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.EliteMonster;
+        [YamlMember(Alias = "ChampionMonster", ApplyNamingConventions = false)]
+        public IconRendering ChampionMonster { get; set; }
+        public static IconRendering ChampionMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster;
+
+        [YamlMember(Alias = "MinionMonster", ApplyNamingConventions = false)]
+        public IconRendering MinionMonster { get; set; }
+        public static IconRendering MinionMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster;
 
         [YamlMember(Alias = "NormalMonster", ApplyNamingConventions = false)]
         public IconRendering NormalMonster { get; set; }
@@ -118,6 +122,10 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "Player", ApplyNamingConventions = false)]
         public PointOfInterestRendering Player { get; set; }
         public static PointOfInterestRendering PlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.Player;
+
+        [YamlMember(Alias = "PartyPlayer", ApplyNamingConventions = false)]
+        public PointOfInterestRendering PartyPlayer { get; set; }
+        public static PointOfInterestRendering PartyPlayerREF => MapAssistConfiguration.Loaded.MapConfiguration.PartyPlayer;
 
         [YamlMember(Alias = "NonPartyPlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering NonPartyPlayer { get; set; }
