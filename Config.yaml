@@ -36,20 +36,20 @@ MapConfiguration:
     IconSize: 6
     IconThickness: 2
   ChampionMonster:
-    IconOutlineColor: 33, 154, 253
+    IconOutlineColor: DarkRed
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
   MinionMonster:
-    IconOutlineColor: 196, 196, 196
+    IconOutlineColor: 255, 150, 150
     IconShape: Cross
     IconSize: 6
-    IconThickness: 2
+    IconThickness: 1
   NormalMonster:
     IconOutlineColor: Gray
     IconShape: Cross
     IconSize: 6
-    IconThickness: 2
+    IconThickness: 1
   NextArea:
     IconColor: SpringGreen
     IconShape: Square
