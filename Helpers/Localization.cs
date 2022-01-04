@@ -14,7 +14,7 @@ namespace MapAssist.Helpers
         public static void LoadLocalizationFile()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resName = "MapAssist.Resources.localization.json";
+            var resName = "MapAssist.Resources.items-localization.json";
             using (Stream stream = assembly.GetManifestResourceStream(resName))
             {
                 using (var reader = new StreamReader(stream))
