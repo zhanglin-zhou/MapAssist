@@ -159,7 +159,7 @@ namespace MapAssist.Helpers
 
             foreach (var child in node)
             {
-                emitter.Emit(new Scalar(null, child.NameInternal()));
+                emitter.Emit(new Scalar(null, child.LocalizeKey()));
             }
 
             emitter.Emit(new SequenceEnd());
@@ -175,7 +175,7 @@ namespace MapAssist.Helpers
 
         private Area LookupAreaByName(string name)
         {
-            return Enum.GetValues(typeof(Area)).Cast<Area>().FirstOrDefault(area => area.NameInternal().ToLower() == name.ToLower());
+            return Enum.GetValues(typeof(Area)).Cast<Area>().FirstOrDefault(area => area.LocalizeKey().ToLower() == name.ToLower());
         }
     }
 

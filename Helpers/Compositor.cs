@@ -323,9 +323,27 @@ namespace MapAssist.Helpers
                 {
                     if (mobRender == GetMonsterIconRendering(unitAny.MonsterData) && mobRender.CanDrawIcon())
                     {
-                        var monsterPosition = unitAny.Position;
+                        if (AreaExtensions.IsTown(_areaData.Area))
+                        {
+                            var npc = (Npc)unitAny.TxtFileNo;
+                            if (NpcExtensions.IsTownsfolk(npc))
+                            {
+                                var rendering = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
+                                if (rendering.CanDrawIcon())
+                                {
+                                    DrawIcon(gfx, rendering, unitAny.Position);
 
-                        DrawIcon(gfx, mobRender, monsterPosition);
+                                    if (rendering.CanDrawLabel())
+                                    {
+                                        DrawText(gfx, rendering, unitAny.Position, NpcExtensions.Name(npc));
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            DrawIcon(gfx, mobRender, unitAny.Position);
+                        }
                     }
                 }
             }

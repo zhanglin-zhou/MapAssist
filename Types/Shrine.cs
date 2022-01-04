@@ -77,8 +77,7 @@ namespace MapAssist.Types
             }
 
             var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-            var label = prop.ToString();
+            var label = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null).ToString();
 
             if (lang == Locale.enUS)
             {
@@ -101,9 +100,8 @@ namespace MapAssist.Types
                 return itemCode;
             }
 
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-            return prop.ToString();
+            var lang = MapAssistConfiguration.Loaded.LanguageCode.ToString();
+            return localItem.GetType().GetProperty(lang).GetValue(localItem, null).ToString();
         }
     }
 

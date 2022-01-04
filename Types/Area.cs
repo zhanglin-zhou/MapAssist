@@ -768,33 +768,24 @@ namespace MapAssist.Types
             Area.ArreatPlateau,
         };
 
-        public static string NameFromKey(string key)
+        public static string Name(this Area area)
+        {
+            var key = LocalizeKey(area);
+            return LocalizeName(key);
+        }
+
+        public static string LocalizeName(string key)
         {
             LocalizedObj localItem;
             if (!LocalizedAreas.TryGetValue(key, out localItem))
             {
-                return "AreaNameNotFound";
+                return key;
             }
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-            return prop.ToString();
+            var lang = MapAssistConfiguration.Loaded.LanguageCode.ToString();
+            return localItem.GetType().GetProperty(lang).GetValue(localItem, null).ToString();
         }
 
-        public static string Name(this Area area)
-        {
-            var areaLabel = _areaLabels.TryGetValue(area, out var label) ? label.Text : area.ToString();
-
-            LocalizedObj localItem;
-            if (!LocalizedAreas.TryGetValue(areaLabel, out localItem))
-            {
-                return area.ToString();
-            }
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-            return prop.ToString();
-        }
-
-        public static string NameInternal(this Area area)
+        public static string LocalizeKey(this Area area)
         {
             return _areaLabels.TryGetValue(area, out var label) ? label.Text : area.ToString();
         }
@@ -807,6 +798,15 @@ namespace MapAssist.Types
         public static bool IsValid(this Area area)
         {
             return (uint)area >= 1 && (uint)area <= 136;
+        }
+
+        public static bool IsTown(this Area area)
+        {
+            return area == Area.RogueEncampment ||
+                area == Area.LutGholein ||
+                area == Area.KurastDocks ||
+                area == Area.ThePandemoniumFortress ||
+                area == Area.Harrogath;
         }
 
         public static bool RequiresStitching(this Area area)

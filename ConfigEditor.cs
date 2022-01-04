@@ -22,7 +22,7 @@ namespace MapAssist
             for (var i = 0; i < propertyList.Length; i++)
             {
                 var element = propertyList[i];
-                if (element.Name.Length > 3)
+                if (element.Name.Length >= 3)
                 {
                     var lastThree = element.Name.Substring(element.Name.Length - 3, 3);
                     if (!(lastThree == "REF"))

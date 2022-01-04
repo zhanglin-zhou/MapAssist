@@ -97,6 +97,10 @@ namespace MapAssist.Settings
         public IconRendering NormalMonster { get; set; }
         public static IconRendering NormalMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
 
+        [YamlMember(Alias = "Npc", ApplyNamingConventions = false)]
+        public PointOfInterestRendering Npc { get; set; }
+        public static PointOfInterestRendering NpcREF => MapAssistConfiguration.Loaded.MapConfiguration.Npc;
+
         [YamlMember(Alias = "NextArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering NextArea { get; set; }
         public static PointOfInterestRendering NextAreaREF => MapAssistConfiguration.Loaded.MapConfiguration.NextArea;

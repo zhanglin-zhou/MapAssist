@@ -131,30 +131,30 @@ namespace MapAssist.Helpers
                 [GameObject.HoradricScrollChest] = Items.ItemNameFromKey("tr1"),
                 [GameObject.HoradricCubeChest] = Items.ItemNameFromKey("box"),
                 [GameObject.StaffOfKingsChest] = Items.ItemNameFromKey("Staff of Kings"),
-                [GameObject.YetAnotherTome] = AreaExtensions.NameFromKey("The Summoner"),
+                [GameObject.YetAnotherTome] = AreaExtensions.LocalizeName("The Summoner"),
                 [GameObject.HoradricOrifice] = Items.ItemNameFromKey("orifice"),
                 [GameObject.KhalimChest1] = Items.ItemNameFromKey("qhr"),
                 [GameObject.KhalimChest2] = Items.ItemNameFromKey("qbr"),
                 [GameObject.KhalimChest3] = Items.ItemNameFromKey("qey"),
                 [GameObject.GidbinnAltarDecoy] = Items.ItemNameFromKey("gidbinn"),
                 [GameObject.HellForge] = Items.ItemNameFromKey("Hellforge"),
-                [GameObject.DrehyaWildernessStartPosition] = AreaExtensions.NameFromKey("Drehya"), //anya
-                [GameObject.NihlathakWildernessStartPosition] = AreaExtensions.NameFromKey("Nihlathak"),
-                [GameObject.CagedWussie] = AreaExtensions.NameFromKey("cagedwussie1"),
+                [GameObject.DrehyaWildernessStartPosition] = AreaExtensions.LocalizeName("Drehya"), //anya
+                [GameObject.NihlathakWildernessStartPosition] = AreaExtensions.LocalizeName("Nihlathak"),
+                [GameObject.CagedWussie] = AreaExtensions.LocalizeName("cagedwussie1"),
             };
             AreaSpecificQuestObjects = new Dictionary<Area, Dictionary<GameObject, string>>()
             {
                 [Area.MatronsDen] = new Dictionary<GameObject, string>()
                 {
-                    [GameObject.SparklyChest] = AreaExtensions.NameFromKey("Lilith"),
+                    [GameObject.SparklyChest] = AreaExtensions.LocalizeName("Lilith"),
                 },
                 [Area.FurnaceOfPain] = new Dictionary<GameObject, string>()
                 {
-                    [GameObject.SparklyChest] = AreaExtensions.NameFromKey("Izual"),
+                    [GameObject.SparklyChest] = AreaExtensions.LocalizeName("Izual"),
                 },
                 [Area.PalaceCellarLevel3] = new Dictionary<GameObject, string>()
                 {
-                    [GameObject.ArcaneSanctuaryPortal] = AreaExtensions.NameFromKey("Arcane Sanctuary"),
+                    [GameObject.ArcaneSanctuaryPortal] = AreaExtensions.LocalizeName("Arcane Sanctuary"),
                 },
             };
         }
@@ -556,7 +556,7 @@ namespace MapAssist.Helpers
                         pointsOfInterest.Add(new PointOfInterest
                         {
                             Area = areaData.Area,
-                            Label = AreaExtensions.NameFromKey("Izual"),
+                            Label = AreaExtensions.LocalizeName("Izual"),
                             Position = objAndPoints.Value[0],
                             RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
                         });

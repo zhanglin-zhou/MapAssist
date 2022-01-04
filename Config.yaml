@@ -45,6 +45,14 @@ MapConfiguration:
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
+  Npc:
+    IconOutlineColor: '196, 196, 196'
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: '199, 179, 119'
+    LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
   NextArea:
     IconColor: SpringGreen
     IconShape: Square

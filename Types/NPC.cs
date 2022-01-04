@@ -872,7 +872,7 @@ namespace MapAssist.Types
             [Npc.DeckardCain5] = "DeckardCain",
             [Npc.DeckardCain6] = "DeckardCain",
             [Npc.Warriv] = "Wariv",
-            [Npc.Warriv2] = "Warri",
+            [Npc.Warriv2] = "Wariv",
             [Npc.Meshif2] = "Meshif",
             [Npc.Drehya] = "Drehya",
             [Npc.Drehya2] = "Drehya",
@@ -931,11 +931,11 @@ namespace MapAssist.Types
 
         public static string Name(this Npc npc)
         {
-            var key = LocalizationKey(npc);
-            return LocalizedName(key);
+            var key = LocalizeKey(npc);
+            return LocalizeName(key);
         }
 
-        public static string LocalizedName(string key)
+        public static string LocalizeName(string key)
         {
             LocalizedObj localItem;
             if (!LocalizedNpcs.TryGetValue(key, out localItem))
@@ -946,7 +946,7 @@ namespace MapAssist.Types
             return localItem.GetType().GetProperty(lang).GetValue(localItem, null).ToString();
         }
 
-        public static string LocalizationKey(this Npc npc)
+        public static string LocalizeKey(this Npc npc)
         {
             return _npcLocalizationKeys.TryGetValue(npc, out var label) ? label : npc.ToString();
         }
