@@ -130,7 +130,6 @@ namespace MapAssist.Types
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
         public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
-        public static LocalizedItemList _localizedItemList;
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
         public static Dictionary<int, List<Timer>> ItemLogTimers = new Dictionary<int, List<Timer>>();
 

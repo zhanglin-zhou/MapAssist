@@ -16,7 +16,11 @@
 *  You should have received a copy of the GNU General Public License
 *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 **/
+
 using System.Collections.Generic;
+using MapAssist.Helpers;
+using MapAssist.Settings;
+
 namespace MapAssist.Types
 {
     public static class NPC
@@ -103,6 +107,7 @@ namespace MapAssist.Types
             { 711, Npc.DemonHole },
         };
     }
+
     public enum Npc
     {
         Skeleton = 0,
@@ -843,5 +848,112 @@ namespace MapAssist.Types
         BurningSoul3 = 733,
         Invalid,
         NpcNotApplicable = 0xFFFF
+    }
+
+    public static class NpcExtensions
+    {
+        public static Dictionary<string, LocalizedObj> LocalizedNpcs = new Dictionary<string, LocalizedObj>();
+
+        public static readonly Dictionary<Npc, string> _npcLocalizationKeys = new Dictionary<Npc, string>()
+        {
+            // List of NPCs with Localization "Key" not matching npc.ToString()
+            [Npc.Asheara] = "asheara",
+            [Npc.Hratli] = "hratli",
+            [Npc.Alkor] = "alkor",
+            [Npc.Ormus] = "ormus",
+            [Npc.Tyrael] = "tyrael",
+            [Npc.Tyrael2] = "tyrael",
+            [Npc.Tyrael3] = "tyrael",
+            [Npc.Halbu] = "halbu",
+            [Npc.DeckardCain] = "DeckardCain",
+            [Npc.DeckardCain2] = "DeckardCain",
+            [Npc.DeckardCain3] = "DeckardCain",
+            [Npc.DeckardCain4] = "DeckardCain",
+            [Npc.DeckardCain5] = "DeckardCain",
+            [Npc.DeckardCain6] = "DeckardCain",
+            [Npc.Warriv] = "Wariv",
+            [Npc.Warriv2] = "Warri",
+            [Npc.Meshif2] = "Meshif",
+            [Npc.Drehya] = "Drehya",
+            [Npc.Drehya2] = "Drehya",
+            [Npc.QualKehk] = "Qual-Kehk",
+            [Npc.NihlathakTown] = "Nihlathak Town"
+        };
+
+        public static readonly HashSet<Npc> _npcTownsfolk = new HashSet<Npc>()
+        {
+            // Act 1 Npcs
+            Npc.DeckardCain,
+            Npc.Charsi,
+            Npc.Gheed,
+            Npc.Kashya,
+            Npc.Warriv,
+            Npc.Akara,
+            // Act 2 Npcs
+            Npc.DeckardCain2,
+            Npc.Meshif,
+            Npc.Warriv2,
+            Npc.Elzix,
+            Npc.Greiz,
+            Npc.Drognan,
+            Npc.Fara,
+            Npc.Lysander,
+            Npc.Atma,
+            Npc.Geglash,
+            Npc.Kaelan,
+            // Act 3 Npcs
+            Npc.DeckardCain3,
+            Npc.Meshif2,
+            Npc.Ormus,
+            Npc.Atma,
+            Npc.Asheara,
+            Npc.Alkor,
+            Npc.Hratli,
+            Npc.Natalya,
+            // Act 4 Npcs
+            Npc.DeckardCain4,
+            Npc.Tyrael,
+            Npc.Tyrael2,
+            Npc.Tyrael3,
+            Npc.Halbu,
+            Npc.Jamella,
+            Npc.Izual2,
+            // Act 5 Npcs
+            Npc.DeckardCain5,
+            Npc.DeckardCain6,
+            Npc.Drehya,
+            Npc.Drehya2,
+            Npc.QualKehk,
+            Npc.Malah,
+            Npc.Larzuk,
+            Npc.NihlathakTown,
+        };
+
+        public static string Name(this Npc npc)
+        {
+            var key = LocalizationKey(npc);
+            return LocalizedName(key);
+        }
+
+        public static string LocalizedName(string key)
+        {
+            LocalizedObj localItem;
+            if (!LocalizedNpcs.TryGetValue(key, out localItem))
+            {
+                return key;
+            }
+            var lang = MapAssistConfiguration.Loaded.LanguageCode.ToString();
+            return localItem.GetType().GetProperty(lang).GetValue(localItem, null).ToString();
+        }
+
+        public static string LocalizationKey(this Npc npc)
+        {
+            return _npcLocalizationKeys.TryGetValue(npc, out var label) ? label : npc.ToString();
+        }
+
+        public static bool IsTownsfolk(this Npc npc)
+        {
+            return _npcTownsfolk.TryGetValue(npc, out _);
+        }
     }
 }

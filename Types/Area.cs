@@ -172,7 +172,6 @@ namespace MapAssist.Types
 
     public static class AreaExtensions
     {
-        public static LocalizedAreaList _localizedAreaList;
         public static Dictionary<string, LocalizedObj> LocalizedAreas = new Dictionary<string, LocalizedObj>();
         private static readonly Dictionary<Area, AreaLabel> _areaLabels = new Dictionary<Area, AreaLabel>()
         {
