@@ -38,7 +38,7 @@ namespace MapAssist
 
         private void AddSelectedArea(Area areaToAdd)
         {
-            var areaName = areaToAdd.LocalizeKey();
+            var areaName = areaToAdd.NameInternal();
 
             var formParent = (ConfigEditor)Owner;
             var list = formParent.Controls.Find(listToAddTo, true).FirstOrDefault() as ListBox;

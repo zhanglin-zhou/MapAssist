@@ -929,12 +929,8 @@ namespace MapAssist.Types
 
         public static string Name(this Npc npc)
         {
-            var key = LocalizeKey(npc);
-            return LocalizeName(key);
-        }
+            var key = _npcLocalizationKeys.TryGetValue(npc, out var label) ? label : npc.ToString();
 
-        public static string LocalizeName(string key)
-        {
             LocalizedObj localItem;
             if (!LocalizedNpcs.TryGetValue(key, out localItem))
             {
@@ -942,11 +938,6 @@ namespace MapAssist.Types
             }
             var lang = MapAssistConfiguration.Loaded.LanguageCode.ToString();
             return localItem.GetType().GetProperty(lang).GetValue(localItem, null).ToString();
-        }
-
-        public static string LocalizeKey(this Npc npc)
-        {
-            return _npcLocalizationKeys.TryGetValue(npc, out var label) ? label : npc.ToString();
         }
 
         public static bool IsTownsfolk(this Npc npc)
