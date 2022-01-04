@@ -323,6 +323,7 @@ namespace MapAssist.Helpers
         private void DrawMonsters(Graphics gfx)
         {
             var drawMonsterIcons = new List<(IconRendering, Types.UnitAny)>();
+            var drawMonsterLabels = new List<(PointOfInterestRendering, Point, string, Color?)>();
 
             RenderTarget renderTarget = gfx.GetRenderTarget();
 
@@ -330,7 +331,23 @@ namespace MapAssist.Helpers
             {
                 var mobRender = GetMonsterIconRendering(unitAny.MonsterData);
 
-                if (mobRender.CanDrawIcon())
+                if (AreaExtensions.IsTown(_areaData.Area))
+                {
+                    var npc = (Npc)unitAny.TxtFileNo;
+                    if (NpcExtensions.IsTownsfolk(npc))
+                    {
+                        var npcRender = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
+                        if (npcRender.CanDrawIcon())
+                        {
+                            drawMonsterIcons.Add((npcRender, unitAny));
+                            if (npcRender.CanDrawLabel())
+                            {
+                                drawMonsterLabels.Add((npcRender, unitAny.Position, NpcExtensions.Name(npc), npcRender.LabelColor));
+                            }
+                        }
+                    }
+                }
+                else if (mobRender.CanDrawIcon())
                 {
                     drawMonsterIcons.Add((mobRender, unitAny));
                 }
@@ -339,6 +356,7 @@ namespace MapAssist.Helpers
             // All Monster icons must be listed here for rendering
             var monsterRenderingOrder = new IconRendering[]
             {
+                MapAssistConfiguration.Loaded.MapConfiguration.Npc,
                 MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster,
                 MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster,
                 MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster,
@@ -388,6 +406,17 @@ namespace MapAssist.Helpers
 
                             renderTarget.Transform = currentTransform;
                         }
+                    }
+                }
+            }
+
+            foreach (var mobRender in monsterRenderingOrder)
+            {
+                foreach ((var rendering, var position, var text, Color? color) in drawMonsterLabels)
+                {
+                    if (mobRender == rendering)
+                    {
+                        DrawText(gfx, rendering, position, text, color);
                     }
                 }
             }

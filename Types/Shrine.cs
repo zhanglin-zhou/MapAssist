@@ -58,7 +58,6 @@ namespace MapAssist.Types
 
     public static class Shrine
     {
-        public static LocalizedShrineList _localizedShrineList;
         public static Dictionary<string, LocalizedObj> LocalizedShrines = new Dictionary<string, LocalizedObj>();
 
         public static string ShrineDisplayName(UnitAny unitAny)

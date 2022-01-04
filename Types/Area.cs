@@ -172,7 +172,6 @@ namespace MapAssist.Types
 
     public static class AreaExtensions
     {
-        public static LocalizedAreaList _localizedAreaList;
         public static Dictionary<string, LocalizedObj> LocalizedAreas = new Dictionary<string, LocalizedObj>();
         private static readonly Dictionary<Area, AreaLabel> _areaLabels = new Dictionary<Area, AreaLabel>()
         {
@@ -740,7 +739,7 @@ namespace MapAssist.Types
             Area.OuterCloister,
             Area.Barracks,
             Area.InnerCloister,
-            Area.Cathedral, 
+            Area.Cathedral,
             Area.LutGholein,
             Area.RockyWaste,
             Area.DryHills,
@@ -813,6 +812,14 @@ namespace MapAssist.Types
         public static bool RequiresStitching(this Area area)
         {
             return StitchedAreas.Contains(area);
+        }
+        public static bool IsTown(this Area area)
+        {
+            return area == Area.RogueEncampment ||
+                area == Area.LutGholein ||
+                area == Area.KurastDocks ||
+                area == Area.ThePandemoniumFortress ||
+                area == Area.Harrogath;
         }
     }
 }

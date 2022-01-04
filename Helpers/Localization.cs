@@ -9,76 +9,48 @@ namespace MapAssist.Helpers
 {
     public static class Localization
     {
-        public static void LoadItemLocalization()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resName = "MapAssist.Resources.items-localization.json";
-            using (Stream stream = assembly.GetManifestResourceStream(resName))
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    var jsonString = reader.ReadToEnd();
-                    Items._localizedItemList = JsonConvert.DeserializeObject<LocalizedItemList>(jsonString);
-                }
+        public static LocalizationFileObj _localization;
 
-                foreach (var item in Items._localizedItemList.Items)
+        public static void LoadLocalizationFile()
+        {
+            var resString = Properties.Resources.items_localization;
+
+            using (var Stream = new MemoryStream(resString))
+            {
+                using (var streamReader = new StreamReader(Stream))
                 {
-                    Items.LocalizedItems.Add(item.Key, item);
+                    var jsonString = streamReader.ReadToEnd();
+                    _localization = JsonConvert.DeserializeObject<LocalizationFileObj>(jsonString);
                 }
             }
-        }
 
-        public static void LoadAreaLocalization()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resName = "MapAssist.Resources.items-localization.json";
-            using (Stream stream = assembly.GetManifestResourceStream(resName))
+            foreach (var item in _localization.Areas)
             {
-                using (var reader = new StreamReader(stream))
-                {
-                    var jsonString = reader.ReadToEnd();
-                    AreaExtensions._localizedAreaList = JsonConvert.DeserializeObject<LocalizedAreaList>(jsonString);
-                }
-
-                foreach (var item in AreaExtensions._localizedAreaList.Areas)
-                {
-                    AreaExtensions.LocalizedAreas.Add(item.Key, item);
-                }
+                AreaExtensions.LocalizedAreas.Add(item.Key, item);
             }
-        }
 
-        public static void LoadShrineLocalization()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resName = "MapAssist.Resources.items-localization.json";
-            using (Stream stream = assembly.GetManifestResourceStream(resName))
+            foreach (var item in _localization.Items)
             {
-                using (var reader = new StreamReader(stream))
-                {
-                    var jsonString = reader.ReadToEnd();
-                    Shrine._localizedShrineList = JsonConvert.DeserializeObject<LocalizedShrineList>(jsonString);
-                }
+                Items.LocalizedItems.Add(item.Key, item);
+            }
 
-                foreach (var item in Shrine._localizedShrineList.Shrines)
-                {
-                    Shrine.LocalizedShrines.Add(item.Key, item);
-                }
+            foreach (var item in _localization.Npcs)
+            {
+                NpcExtensions.LocalizedNpcs.Add(item.Key, item);
+            }
+
+            foreach (var item in _localization.Shrines)
+            {
+                Shrine.LocalizedShrines.Add(item.Key, item);
             }
         }
     }
 
-    public class LocalizedItemList
-    {
-        public List<LocalizedObj> Items = new List<LocalizedObj>();
-    }
-
-    public class LocalizedAreaList
+    public class LocalizationFileObj
     {
         public List<LocalizedObj> Areas = new List<LocalizedObj>();
-    }
-
-    public class LocalizedShrineList
-    {
+        public List<LocalizedObj> Items = new List<LocalizedObj>();
+        public List<LocalizedObj> Npcs = new List<LocalizedObj>();
         public List<LocalizedObj> Shrines = new List<LocalizedObj>();
     }
 

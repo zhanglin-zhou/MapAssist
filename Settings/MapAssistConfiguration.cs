@@ -32,9 +32,7 @@ namespace MapAssist.Settings
         public static void Load()
         {
             Loaded = ConfigurationParser<MapAssistConfiguration>.ParseConfigurationMain(Properties.Resources.Config, $"./Config.yaml");
-            Localization.LoadAreaLocalization();
-            Localization.LoadItemLocalization();
-            Localization.LoadShrineLocalization();
+            Localization.LoadLocalizationFile();
             PointOfInterestHandler.UpdateLocalizationNames();
         }
 
@@ -102,6 +100,10 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "NormalMonster", ApplyNamingConventions = false)]
         public IconRendering NormalMonster { get; set; }
         public static IconRendering NormalMonsterREF => MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
+
+        [YamlMember(Alias = "Npc", ApplyNamingConventions = false)]
+        public PointOfInterestRendering Npc { get; set; }
+        public static PointOfInterestRendering NpcREF => MapAssistConfiguration.Loaded.MapConfiguration.Npc;
 
         [YamlMember(Alias = "NextArea", ApplyNamingConventions = false)]
         public PointOfInterestRendering NextArea { get; set; }
