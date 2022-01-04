@@ -87,10 +87,12 @@
             this.label9 = new System.Windows.Forms.Label();
             this.cboIconShape = new System.Windows.Forms.ComboBox();
             this.tabLabel = new System.Windows.Forms.TabPage();
+            this.btnClearLabelColor = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnFont = new System.Windows.Forms.Button();
             this.btnLabelColor = new System.Windows.Forms.Button();
             this.tabLine = new System.Windows.Forms.TabPage();
+            this.btnClearLineColor = new System.Windows.Forms.Button();
             this.lblLineThicknessSizeValue = new System.Windows.Forms.Label();
             this.lblLineArrowSizeValue = new System.Windows.Forms.Label();
             this.lblLineThickness = new System.Windows.Forms.Label();
@@ -133,8 +135,6 @@
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.btnClearLabelColor = new System.Windows.Forms.Button();
-            this.btnClearLineColor = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -696,6 +696,7 @@
             // btnIconColor
             // 
             this.btnIconColor.BackColor = System.Drawing.Color.Transparent;
+            this.btnIconColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnIconColor.Location = new System.Drawing.Point(11, 7);
             this.btnIconColor.Name = "btnIconColor";
             this.btnIconColor.Size = new System.Drawing.Size(75, 23);
@@ -707,9 +708,10 @@
             // btnIconOutlineColor
             // 
             this.btnIconOutlineColor.BackColor = System.Drawing.Color.Transparent;
+            this.btnIconOutlineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnIconOutlineColor.Location = new System.Drawing.Point(142, 7);
             this.btnIconOutlineColor.Name = "btnIconOutlineColor";
-            this.btnIconOutlineColor.Size = new System.Drawing.Size(75, 23);
+            this.btnIconOutlineColor.Size = new System.Drawing.Size(85, 23);
             this.btnIconOutlineColor.TabIndex = 18;
             this.btnIconOutlineColor.Text = "Outline Color";
             this.btnIconOutlineColor.UseVisualStyleBackColor = false;
@@ -720,7 +722,7 @@
             this.btnClearOutlineColor.FlatAppearance.BorderSize = 0;
             this.btnClearOutlineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearOutlineColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearOutlineColor.Location = new System.Drawing.Point(217, 7);
+            this.btnClearOutlineColor.Location = new System.Drawing.Point(227, 7);
             this.btnClearOutlineColor.Name = "btnClearOutlineColor";
             this.btnClearOutlineColor.Size = new System.Drawing.Size(23, 23);
             this.btnClearOutlineColor.TabIndex = 26;
@@ -844,6 +846,19 @@
             this.tabLabel.Text = "Label";
             this.tabLabel.UseVisualStyleBackColor = true;
             // 
+            // btnClearLabelColor
+            // 
+            this.btnClearLabelColor.FlatAppearance.BorderSize = 0;
+            this.btnClearLabelColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLabelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLabelColor.Location = new System.Drawing.Point(86, 7);
+            this.btnClearLabelColor.Name = "btnClearLabelColor";
+            this.btnClearLabelColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLabelColor.TabIndex = 26;
+            this.btnClearLabelColor.Text = "X";
+            this.btnClearLabelColor.UseVisualStyleBackColor = true;
+            this.btnClearLabelColor.Click += new System.EventHandler(this.btnClearLabelColor_Click);
+            // 
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
@@ -868,6 +883,7 @@
             // btnLabelColor
             // 
             this.btnLabelColor.BackColor = System.Drawing.Color.Transparent;
+            this.btnLabelColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLabelColor.Location = new System.Drawing.Point(11, 7);
             this.btnLabelColor.Name = "btnLabelColor";
             this.btnLabelColor.Size = new System.Drawing.Size(75, 23);
@@ -892,6 +908,19 @@
             this.tabLine.TabIndex = 2;
             this.tabLine.Text = "Line";
             this.tabLine.UseVisualStyleBackColor = true;
+            // 
+            // btnClearLineColor
+            // 
+            this.btnClearLineColor.FlatAppearance.BorderSize = 0;
+            this.btnClearLineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLineColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLineColor.Location = new System.Drawing.Point(86, 7);
+            this.btnClearLineColor.Name = "btnClearLineColor";
+            this.btnClearLineColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLineColor.TabIndex = 28;
+            this.btnClearLineColor.Text = "X";
+            this.btnClearLineColor.UseVisualStyleBackColor = true;
+            this.btnClearLineColor.Click += new System.EventHandler(this.btnClearLineColor_Click);
             // 
             // lblLineThicknessSizeValue
             // 
@@ -966,6 +995,7 @@
             // btnLineColor
             // 
             this.btnLineColor.BackColor = System.Drawing.Color.Transparent;
+            this.btnLineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLineColor.Location = new System.Drawing.Point(11, 7);
             this.btnLineColor.Name = "btnLineColor";
             this.btnLineColor.Size = new System.Drawing.Size(75, 23);
@@ -1340,32 +1370,6 @@
             this.chkShowOverlayFPS.Text = "Show Overlay FPS";
             this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
             this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
-            // 
-            // btnClearLabelColor
-            // 
-            this.btnClearLabelColor.FlatAppearance.BorderSize = 0;
-            this.btnClearLabelColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearLabelColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearLabelColor.Location = new System.Drawing.Point(86, 7);
-            this.btnClearLabelColor.Name = "btnClearLabelColor";
-            this.btnClearLabelColor.Size = new System.Drawing.Size(23, 23);
-            this.btnClearLabelColor.TabIndex = 26;
-            this.btnClearLabelColor.Text = "X";
-            this.btnClearLabelColor.UseVisualStyleBackColor = true;
-            this.btnClearLabelColor.Click += new System.EventHandler(this.btnClearLabelColor_Click);
-            // 
-            // btnClearLineColor
-            // 
-            this.btnClearLineColor.FlatAppearance.BorderSize = 0;
-            this.btnClearLineColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearLineColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearLineColor.Location = new System.Drawing.Point(86, 7);
-            this.btnClearLineColor.Name = "btnClearLineColor";
-            this.btnClearLineColor.Size = new System.Drawing.Size(23, 23);
-            this.btnClearLineColor.TabIndex = 28;
-            this.btnClearLineColor.Text = "X";
-            this.btnClearLineColor.UseVisualStyleBackColor = true;
-            this.btnClearLineColor.Click += new System.EventHandler(this.btnClearLineColor_Click);
             // 
             // ConfigEditor
             // 
