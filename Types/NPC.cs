@@ -865,7 +865,6 @@ namespace MapAssist.Types
             [Npc.Tyrael2] = "tyrael",
             [Npc.Tyrael3] = "tyrael",
             [Npc.Halbu] = "halbu",
-            [Npc.DeckardCain] = "DeckardCain",
             [Npc.DeckardCain2] = "DeckardCain",
             [Npc.DeckardCain3] = "DeckardCain",
             [Npc.DeckardCain4] = "DeckardCain",
@@ -874,7 +873,6 @@ namespace MapAssist.Types
             [Npc.Warriv] = "Wariv",
             [Npc.Warriv2] = "Wariv",
             [Npc.Meshif2] = "Meshif",
-            [Npc.Drehya] = "Drehya",
             [Npc.Drehya2] = "Drehya",
             [Npc.QualKehk] = "Qual-Kehk",
             [Npc.NihlathakTown] = "Nihlathak Town"
