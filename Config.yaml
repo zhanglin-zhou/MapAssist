@@ -35,22 +35,27 @@ MapConfiguration:
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
-  EliteMonster:
+  ChampionMonster:
     IconOutlineColor: DarkRed
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
+  MinionMonster:
+    IconOutlineColor: 255, 150, 150
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 1
   NormalMonster:
     IconOutlineColor: Gray
     IconShape: Cross
     IconSize: 6
-    IconThickness: 2
+    IconThickness: 1
   Npc:
-    IconOutlineColor: '196, 196, 196'
+    IconOutlineColor: 196, 196, 196
     IconShape: Cross
     IconSize: 6
-    IconThickness: 2
-    LabelColor: '199, 179, 119'
+    IconThickness: 1
+    LabelColor: 199, 179, 119
     LabelFontSize: 16
     LabelFont: Exocet Blizzard Mixed Caps
   NextArea:
@@ -82,6 +87,14 @@ MapConfiguration:
     LabelFontSize: 16
     LabelFont: Exocet Blizzard Mixed Caps
   Player:
+    IconOutlineColor: 33, 136, 253
+    IconShape: Cross
+    IconSize: 6
+    IconThickness: 2
+    LabelColor: Chartreuse
+    LabelFontSize: 16
+    LabelFont: Exocet Blizzard Mixed Caps
+  PartyPlayer:
     IconOutlineColor: Chartreuse
     IconShape: Cross
     IconSize: 6
@@ -165,6 +178,7 @@ ItemLog:
   FilterFileName: ItemFilter.yaml
   PlaySoundOnDrop: true
   SoundFile: ''
+  SoundVolume: 100
   DisplayForSeconds: 45
   LabelFont: Exocet Blizzard Mixed Caps
   LabelFontSize: 14
