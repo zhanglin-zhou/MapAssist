@@ -36,12 +36,12 @@ MapConfiguration:
     IconSize: 6
     IconThickness: 2
   ChampionMonster:
-    IconOutlineColor: '33, 154, 253'
+    IconOutlineColor: 33, 154, 253
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
   MinionMonster:
-    IconOutlineColor: '196, 196, 196'
+    IconOutlineColor: 196, 196, 196
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
@@ -79,7 +79,7 @@ MapConfiguration:
     LabelFontSize: 16
     LabelFont: Exocet Blizzard Mixed Caps
   Player:
-    IconOutlineColor: '33, 136, 253'
+    IconOutlineColor: 33, 136, 253
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
