@@ -113,6 +113,8 @@ namespace MapAssist
             lblSoundVolumeValue.Text = $"{soundVolume.Value * 5}";
             itemDisplayForSeconds.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds / 5d);
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
+            btnClearLogFont.Visible = MapAssistConfiguration.Loaded.ItemLog.LabelFont != MapAssistConfiguration.Default.ItemLog.LabelFont ||
+                MapAssistConfiguration.Loaded.ItemLog.LabelFontSize != MapAssistConfiguration.Default.ItemLog.LabelFontSize;
 
             if (MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable != null)
             {
@@ -303,6 +305,9 @@ namespace MapAssist
                 btnLabelColor.BackColor = iconProp.LabelColor;
                 btnClearLabelColor.Visible = btnLabelColor.BackColor.A > 0;
 
+                dynamic defaultlabelProp = MapAssistConfiguration.Default.MapConfiguration.GetType().GetProperty(cboRenderOption.Text.ToPascalCase()).GetValue(MapAssistConfiguration.Default.MapConfiguration, null);
+                btnClearLabelFont.Visible = iconProp.LabelFont != defaultlabelProp.LabelFont || iconProp.LabelFontSize != defaultlabelProp.LabelFontSize;
+
                 btnLineColor.BackColor = iconProp.LineColor;
                 btnClearLineColor.Visible = btnLineColor.BackColor.A > 0;
                 
@@ -425,7 +430,22 @@ namespace MapAssist
                 var labelPropFontSize = SelectedProperty.PropertyType.GetProperty("LabelFontSize");
                 labelPropFont.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), fontDlg.Font.Name, null);
                 labelPropFontSize.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), fontDlg.Font.Size, null);
+
+                btnClearLabelFont.Visible = true;
             }
+        }
+
+        private void btnClearLabelFont_Click(object sender, EventArgs e)
+        {
+            dynamic defaultlabelProp = MapAssistConfiguration.Default.MapConfiguration.GetType().GetProperty(cboRenderOption.Text.ToPascalCase()).GetValue(MapAssistConfiguration.Default.MapConfiguration, null);
+
+            var labelPropFont = SelectedProperty.PropertyType.GetProperty("LabelFont");
+            var labelPropFontSize = SelectedProperty.PropertyType.GetProperty("LabelFontSize");
+
+            labelPropFont.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), defaultlabelProp.LabelFont, null);
+            labelPropFontSize.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), defaultlabelProp.LabelFontSize, null);
+
+            btnClearLabelFont.Visible = false;
         }
 
         private void btnLineColor_Click(object sender, EventArgs e)
@@ -522,7 +542,17 @@ namespace MapAssist
             {
                 MapAssistConfiguration.Loaded.ItemLog.LabelFont = fontDlg.Font.Name;
                 MapAssistConfiguration.Loaded.ItemLog.LabelFontSize = fontDlg.Font.Size;
+
+                btnClearLogFont.Visible = true;
             }
+        }
+
+        private void btnClearLogFont_Click(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.ItemLog.LabelFont = MapAssistConfiguration.Default.ItemLog.LabelFont;
+            MapAssistConfiguration.Loaded.ItemLog.LabelFontSize = MapAssistConfiguration.Default.ItemLog.LabelFontSize;
+
+            btnClearLogFont.Visible = false;
         }
 
         private void txtToggleMapKey_TextChanged(object sender, EventArgs e)

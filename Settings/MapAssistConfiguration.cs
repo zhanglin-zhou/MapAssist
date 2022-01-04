@@ -28,9 +28,11 @@ namespace MapAssist.Settings
 {
     public class MapAssistConfiguration
     {
+        public static MapAssistConfiguration Default { get; set; }
         public static MapAssistConfiguration Loaded { get; set; }
         public static void Load()
         {
+            Default = ConfigurationParser<MapAssistConfiguration>.ParseConfigurationMain(Properties.Resources.Config);
             Loaded = ConfigurationParser<MapAssistConfiguration>.ParseConfigurationMain(Properties.Resources.Config, $"./Config.yaml");
             Localization.LoadLocalizationFile();
             PointOfInterestHandler.UpdateLocalizationNames();

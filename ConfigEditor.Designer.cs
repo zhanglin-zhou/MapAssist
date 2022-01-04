@@ -87,6 +87,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.cboIconShape = new System.Windows.Forms.ComboBox();
             this.tabLabel = new System.Windows.Forms.TabPage();
+            this.btnClearLabelFont = new System.Windows.Forms.Button();
             this.btnClearLabelColor = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnFont = new System.Windows.Forms.Button();
@@ -135,6 +136,7 @@
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnClearLogFont = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -834,6 +836,7 @@
             // 
             // tabLabel
             // 
+            this.tabLabel.Controls.Add(this.btnClearLabelFont);
             this.tabLabel.Controls.Add(this.btnClearLabelColor);
             this.tabLabel.Controls.Add(this.label3);
             this.tabLabel.Controls.Add(this.btnFont);
@@ -845,6 +848,19 @@
             this.tabLabel.TabIndex = 1;
             this.tabLabel.Text = "Label";
             this.tabLabel.UseVisualStyleBackColor = true;
+            // 
+            // btnClearLabelFont
+            // 
+            this.btnClearLabelFont.FlatAppearance.BorderSize = 0;
+            this.btnClearLabelFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLabelFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLabelFont.Location = new System.Drawing.Point(86, 61);
+            this.btnClearLabelFont.Name = "btnClearLabelFont";
+            this.btnClearLabelFont.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLabelFont.TabIndex = 27;
+            this.btnClearLabelFont.Text = "X";
+            this.btnClearLabelFont.UseVisualStyleBackColor = true;
+            this.btnClearLabelFont.Click += new System.EventHandler(this.btnClearLabelFont_Click);
             // 
             // btnClearLabelColor
             // 
@@ -1025,6 +1041,7 @@
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.btnClearLogFont);
             this.tabPage6.Controls.Add(this.lblSoundVolumeValue);
             this.tabPage6.Controls.Add(this.soundVolume);
             this.tabPage6.Controls.Add(this.label10);
@@ -1371,6 +1388,19 @@
             this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
             this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
             // 
+            // btnClearLogFont
+            // 
+            this.btnClearLogFont.FlatAppearance.BorderSize = 0;
+            this.btnClearLogFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLogFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLogFont.Location = new System.Drawing.Point(89, 270);
+            this.btnClearLogFont.Name = "btnClearLogFont";
+            this.btnClearLogFont.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLogFont.TabIndex = 30;
+            this.btnClearLogFont.Text = "X";
+            this.btnClearLogFont.UseVisualStyleBackColor = true;
+            this.btnClearLogFont.Click += new System.EventHandler(this.btnClearLogFont_Click);
+            // 
             // ConfigEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1531,5 +1561,7 @@
         private System.Windows.Forms.Button btnClearOutlineColor;
         private System.Windows.Forms.Button btnClearLabelColor;
         private System.Windows.Forms.Button btnClearLineColor;
+        private System.Windows.Forms.Button btnClearLabelFont;
+        private System.Windows.Forms.Button btnClearLogFont;
     }
 }
