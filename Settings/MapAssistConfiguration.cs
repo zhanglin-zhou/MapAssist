@@ -129,6 +129,7 @@ namespace MapAssist.Settings
 
         [YamlMember(Alias = "Corpse", ApplyNamingConventions = false)]
         public PointOfInterestRendering Corpse { get; set; }
+        public static PointOfInterestRendering CorpseREF => MapAssistConfiguration.Loaded.MapConfiguration.Corpse;
 
         [YamlMember(Alias = "Portal", ApplyNamingConventions = false)]
         public PortalRendering Portal { get; set; }
