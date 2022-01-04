@@ -251,6 +251,9 @@ public class ItemLogConfiguration
     [YamlMember(Alias = "SoundFile", ApplyNamingConventions = false)]
     public string SoundFile { get; set; }
 
+    [YamlMember(Alias = "SoundVolume", ApplyNamingConventions = false)]
+    public int SoundVolume { get; set; }
+
     [YamlMember(Alias = "DisplayForSeconds", ApplyNamingConventions = false)]
     public double DisplayForSeconds { get; set; }
 

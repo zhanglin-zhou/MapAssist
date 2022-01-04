@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Media;
+using System.Runtime.InteropServices;
 
 namespace MapAssist.Helpers
 {
@@ -16,6 +17,7 @@ namespace MapAssist.Helpers
             var now = DateTime.Now;
             if (now - _itemAlertLastPlayed >= TimeSpan.FromSeconds(1))
             {
+                SetSoundVolume();
                 _itemAlertLastPlayed = now;
                 try
                 {
@@ -46,5 +48,15 @@ namespace MapAssist.Helpers
             }
             if (_itemAlertPlayer == null) { _itemAlertPlayer = new SoundPlayer(Properties.Resources.ching); }
         }
+
+        private static void SetSoundVolume()
+        {
+            var NewVolume = (ushort.MaxValue * Math.Max(Math.Min(MapAssistConfiguration.Loaded.ItemLog.SoundVolume, 100), 0) / 100);
+            var NewVolumeAllChannels = (((uint)NewVolume & 0x0000ffff) | ((uint)NewVolume << 16));
+            waveOutSetVolume(IntPtr.Zero, NewVolumeAllChannels);
+        }
+
+        [DllImport("winmm.dll")]
+        public static extern int waveOutSetVolume(IntPtr hwo, uint dwVolume);
     }
 }

@@ -157,6 +157,7 @@ ItemLog:
   FilterFileName: ItemFilter.yaml
   PlaySoundOnDrop: true
   SoundFile: ''
+  SoundVolume: 100
   DisplayForSeconds: 45
   LabelFont: Exocet Blizzard Mixed Caps
   LabelFontSize: 14

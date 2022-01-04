@@ -109,6 +109,8 @@ namespace MapAssist
             chkPlaySound.Checked = MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop;
             txtFilterFile.Text = MapAssistConfiguration.Loaded.ItemLog.FilterFileName;
             txtSoundFile.Text = MapAssistConfiguration.Loaded.ItemLog.SoundFile;
+            soundVolume.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.SoundVolume / 5d);
+            lblSoundVolumeValue.Text = $"{soundVolume.Value * 5}";
             itemDisplayForSeconds.Value = (int)Math.Round(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds / 5d);
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
 
@@ -235,11 +237,6 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow = chkStickToLastGameWindow.Checked;
         }
 
-        private void chkStickToLastGameWindow_CheckedChanged_1(object sender, EventArgs e)
-        {
-            MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow = chkStickToLastGameWindow.Checked;
-        }
-
         private void cboBuffPosition_SelectedIndexChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.RenderingConfiguration.BuffPosition = (BuffPosition)cboBuffPosition.SelectedIndex;
@@ -283,8 +280,9 @@ namespace MapAssist
             }
             dynamic iconProp = SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null);
             btnIconColor.BackColor = iconProp.IconColor;
+            btnClearFillColor.Visible = btnIconColor.BackColor.A > 0;
             btnIconOutlineColor.BackColor = iconProp.IconOutlineColor;
-            chkIcon.Checked = (iconProp.IconColor.A > 0 || iconProp.IconOutlineColor.A > 0);
+            btnClearOutlineColor.Visible = btnIconOutlineColor.BackColor.A > 0;
             cboIconShape.SelectedIndex = cboIconShape.FindStringExact(Enum.GetName(typeof(Shape), iconProp.IconShape));
             iconSize.Value = (int)iconProp.IconSize;
             iconThickness.Value = (int)iconProp.IconThickness;
@@ -301,11 +299,13 @@ namespace MapAssist
                 tabDrawing.TabPages.Remove(tabLine);
                 tabDrawing.TabPages.Insert(1, tabLabel);
                 tabDrawing.TabPages.Insert(2, tabLine);
+
                 btnLabelColor.BackColor = iconProp.LabelColor;
-                chkLabel.Checked = (iconProp.LabelColor.A > 0);
+                btnClearLabelColor.Visible = btnLabelColor.BackColor.A > 0;
 
                 btnLineColor.BackColor = iconProp.LineColor;
-                chkLine.Checked = (iconProp.LineColor.A > 0);
+                btnClearLineColor.Visible = btnLineColor.BackColor.A > 0;
+                
                 lineArrowSize.Value = iconProp.ArrowHeadSize;
                 lblLineArrowSizeValue.Text = lineArrowSize.Value.ToString();
                 lblLineThicknessSizeValue.Text = lineThicknessSize.Value.ToString();
@@ -320,8 +320,18 @@ namespace MapAssist
                 var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
                 iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnIconColor.BackColor = colorDlg.Color;
-                chkIcon.Checked = (btnIconOutlineColor.BackColor.A > 0 || colorDlg.Color.A > 0);
+
+                btnClearFillColor.Visible = true;
             }
+        }
+
+        private void btnClearFillColor_Click(object sender, EventArgs e)
+        {
+            var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
+            iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+            btnIconColor.BackColor = Color.Empty;
+
+            btnClearFillColor.Visible = false;
         }
 
         private void btnIconOutlineColor_Click(object sender, EventArgs e)
@@ -332,28 +342,18 @@ namespace MapAssist
                 var iconProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
                 iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnIconOutlineColor.BackColor = colorDlg.Color;
-                chkIcon.Checked = (btnIconColor.BackColor.A > 0 || colorDlg.Color.A > 0);
+
+                btnClearOutlineColor.Visible = true;
             }
         }
 
-        private void chkIcon_Click(object sender, EventArgs e)
+        private void btnClearOutlineColor_Click(object sender, EventArgs e)
         {
-            var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
             var iconOutlineProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
+            iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+            btnIconOutlineColor.BackColor = Color.Empty;
 
-            if (chkIcon.Checked)
-            {
-                iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnIconColor.BackColor, null);
-                iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnIconOutlineColor.BackColor, null);
-            }
-            else
-            {
-                iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
-                iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
-
-                btnIconColor.BackColor = Color.Empty;
-                btnIconOutlineColor.BackColor = Color.Empty;
-            }
+            btnClearOutlineColor.Visible = false;
         }
 
         private void cboIconShape_SelectedIndexChanged(object sender, EventArgs e)
@@ -385,19 +385,6 @@ namespace MapAssist
             }
         }
 
-        private void chkLabel_Clicked(object sender, EventArgs e)
-        {
-            var labelPropColor = SelectedProperty.PropertyType.GetProperty("LabelColor");
-            if (chkLabel.Checked)
-            {
-                labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnLabelColor.BackColor, null);
-            }
-            else
-            {
-                labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
-            }
-        }
-
         private void btnLabelColor_Click(object sender, EventArgs e)
         {
             var colorDlg = new ColorDialog();
@@ -406,8 +393,18 @@ namespace MapAssist
                 var labelPropColor = SelectedProperty.PropertyType.GetProperty("LabelColor");
                 labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnLabelColor.BackColor = colorDlg.Color;
-                chkLabel.Checked = (colorDlg.Color.A > 0);
+
+                btnClearLabelColor.Visible = true;
             }
+        }
+
+        private void btnClearLabelColor_Click(object sender, EventArgs e)
+        {
+            var labelPropColor = SelectedProperty.PropertyType.GetProperty("LabelColor");
+            labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+            btnLabelColor.BackColor = Color.Empty;
+
+            btnClearLabelColor.Visible = false;
         }
 
         private void btnFont_Click(object sender, EventArgs e)
@@ -431,19 +428,6 @@ namespace MapAssist
             }
         }
 
-        private void chkLine_Clicked(object sender, EventArgs e)
-        {
-            var lineProp = SelectedProperty.PropertyType.GetProperty("LineColor");
-            if (chkLine.Checked)
-            {
-                lineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), btnLineColor.BackColor, null);
-            }
-            else
-            {
-                lineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
-            }
-        }
-
         private void btnLineColor_Click(object sender, EventArgs e)
         {
             var colorDlg = new ColorDialog();
@@ -452,8 +436,18 @@ namespace MapAssist
                 var linePropColor = SelectedProperty.PropertyType.GetProperty("LineColor");
                 linePropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnLineColor.BackColor = colorDlg.Color;
-                chkLine.Checked = (colorDlg.Color.A > 0);
+
+                btnClearLineColor.Visible = true;
             }
+        }
+
+        private void btnClearLineColor_Click(object sender, EventArgs e)
+        {
+            var linePropColor = SelectedProperty.PropertyType.GetProperty("LineColor");
+            linePropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
+            btnLineColor.BackColor = Color.Empty;
+
+            btnClearLineColor.Visible = false;
         }
 
         private void lineArrowSize_Scroll(object sender, EventArgs e)
@@ -499,6 +493,12 @@ namespace MapAssist
         private void txtSoundFile_LostFocus(object sender, EventArgs e)
         {
             AudioPlayer.LoadNewSound(true);
+        }
+
+        private void soundVolume_Scroll(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.ItemLog.SoundVolume = soundVolume.Value * 5;
+            lblSoundVolumeValue.Text = $"{soundVolume.Value * 5}";
         }
 
         private void itemDisplayForSeconds_Scroll(object sender, EventArgs e)
