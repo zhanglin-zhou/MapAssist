@@ -188,8 +188,8 @@ namespace MapAssist.Helpers
 
         private void DrawPointsOfInterest(Graphics gfx)
         {
-            var drawPoiIcons = new List<(IconRendering, Point)>() { };
-            var drawPoiLabels = new List<(PointOfInterestRendering, Point, string, Color?)>() { };
+            var drawPoiIcons = new List<(IconRendering, Point)>();
+            var drawPoiLabels = new List<(PointOfInterestRendering, Point, string, Color?)>();
 
             foreach (var poi in _pointsOfInterest)
             {
@@ -322,7 +322,7 @@ namespace MapAssist.Helpers
 
         private void DrawMonsters(Graphics gfx)
         {
-            var drawMonsterIcons = new List<(IconRendering, Types.UnitAny)>() { };
+            var drawMonsterIcons = new List<(IconRendering, Types.UnitAny)>();
 
             RenderTarget renderTarget = gfx.GetRenderTarget();
 
@@ -395,8 +395,8 @@ namespace MapAssist.Helpers
 
         private void DrawItems(Graphics gfx)
         {
-            var drawItemIcons = new List<(IconRendering, Point)>() { };
-            var drawItemLabels = new List<(PointOfInterestRendering, Point, string, Color?)>() { };
+            var drawItemIcons = new List<(IconRendering, Point)>();
+            var drawItemLabels = new List<(PointOfInterestRendering, Point, string, Color?)>();
 
             if (MapAssistConfiguration.Loaded.ItemLog.Enabled)
             {
@@ -453,8 +453,8 @@ namespace MapAssist.Helpers
 
         private void DrawPlayers(Graphics gfx)
         {
-            var drawPlayerIcons = new List<(IconRendering rendering, Point position)>() { };
-            var drawPlayerLabels = new List<(PointOfInterestRendering rendering, Point position, string label, Color? color)>() { };
+            var drawPlayerIcons = new List<(IconRendering, Point)>();
+            var drawPlayerLabels = new List<(PointOfInterestRendering, Point, string, Color?)>();
 
             var areasToRender = new AreaData[] { _areaData };
             if (AreaExtensions.RequiresStitching(_areaData.Area))
