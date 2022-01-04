@@ -248,6 +248,7 @@ namespace MapAssist
                 var logfile = new NLog.Targets.FileTarget("logfile")
                 {
                     FileName = "logs\\log.txt",
+                    CreateDirs = true,
                     ArchiveNumbering = NLog.Targets.ArchiveNumberingMode.DateAndSequence,
                     ArchiveOldFileOnStartup = true,
                     MaxArchiveFiles = 5
