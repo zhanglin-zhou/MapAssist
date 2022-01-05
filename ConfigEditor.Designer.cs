@@ -421,7 +421,7 @@
             this.btnClearBorderColor.FlatAppearance.BorderSize = 0;
             this.btnClearBorderColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearBorderColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearBorderColor.Location = new System.Drawing.Point(233, 262);
+            this.btnClearBorderColor.Location = new System.Drawing.Point(233, 264);
             this.btnClearBorderColor.Name = "btnClearBorderColor";
             this.btnClearBorderColor.Size = new System.Drawing.Size(23, 23);
             this.btnClearBorderColor.TabIndex = 23;
@@ -456,7 +456,7 @@
             // btnBorderColor
             // 
             this.btnBorderColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBorderColor.Location = new System.Drawing.Point(141, 262);
+            this.btnBorderColor.Location = new System.Drawing.Point(141, 264);
             this.btnBorderColor.Name = "btnBorderColor";
             this.btnBorderColor.Size = new System.Drawing.Size(91, 23);
             this.btnBorderColor.TabIndex = 23;
