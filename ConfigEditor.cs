@@ -95,6 +95,7 @@ namespace MapAssist
             {
                 var walkableColor = (Color)MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable;
                 btnWalkableColor.BackColor = walkableColor;
+                btnWalkableColor.ForeColor = ContrastTextColor(btnWalkableColor.BackColor);
                 btnClearWalkableColor.Visible = walkableColor.A > 0;
             }
             else
@@ -106,6 +107,7 @@ namespace MapAssist
             {
                 var borderColor = (Color)MapAssistConfiguration.Loaded.MapColorConfiguration.Border;
                 btnBorderColor.BackColor = borderColor;
+                btnBorderColor.ForeColor = ContrastTextColor(btnBorderColor.BackColor);
                 btnClearBorderColor.Visible = borderColor.A > 0;
             }
             else
@@ -267,8 +269,10 @@ namespace MapAssist
             }
             dynamic iconProp = SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null);
             btnIconColor.BackColor = iconProp.IconColor;
+            btnIconColor.ForeColor = ContrastTextColor(btnIconColor.BackColor);
             btnClearFillColor.Visible = btnIconColor.BackColor.A > 0;
             btnIconOutlineColor.BackColor = iconProp.IconOutlineColor;
+            btnIconOutlineColor.ForeColor = ContrastTextColor(btnIconOutlineColor.BackColor);
             btnClearOutlineColor.Visible = btnIconOutlineColor.BackColor.A > 0;
             cboIconShape.SelectedIndex = cboIconShape.FindStringExact(Enum.GetName(typeof(Shape), iconProp.IconShape));
             iconSize.Value = (int)iconProp.IconSize;
@@ -288,12 +292,14 @@ namespace MapAssist
                 tabDrawing.TabPages.Insert(2, tabLine);
 
                 btnLabelColor.BackColor = iconProp.LabelColor;
+                btnLabelColor.ForeColor = ContrastTextColor(btnLabelColor.BackColor);
                 btnClearLabelColor.Visible = btnLabelColor.BackColor.A > 0;
 
                 dynamic defaultlabelProp = MapAssistConfiguration.Default.MapConfiguration.GetType().GetProperty(cboRenderOption.Text.ToPascalCase()).GetValue(MapAssistConfiguration.Default.MapConfiguration, null);
                 btnClearLabelFont.Visible = iconProp.LabelFont != defaultlabelProp.LabelFont || iconProp.LabelFontSize != defaultlabelProp.LabelFontSize;
 
                 btnLineColor.BackColor = iconProp.LineColor;
+                btnLineColor.ForeColor = ContrastTextColor(btnLineColor.BackColor);
                 btnClearLineColor.Visible = btnLineColor.BackColor.A > 0;
                 
                 lineArrowSize.Value = iconProp.ArrowHeadSize;
@@ -310,6 +316,7 @@ namespace MapAssist
                 var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
                 iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnIconColor.BackColor = colorDlg.Color;
+                btnIconColor.ForeColor = ContrastTextColor(btnIconColor.BackColor);
 
                 btnClearFillColor.Visible = true;
             }
@@ -320,6 +327,7 @@ namespace MapAssist
             var iconProp = SelectedProperty.PropertyType.GetProperty("IconColor");
             iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
             btnIconColor.BackColor = Color.Empty;
+            btnIconColor.ForeColor = ContrastTextColor(btnIconColor.BackColor);
 
             btnClearFillColor.Visible = false;
         }
@@ -332,6 +340,7 @@ namespace MapAssist
                 var iconProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
                 iconProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnIconOutlineColor.BackColor = colorDlg.Color;
+                btnIconOutlineColor.ForeColor = ContrastTextColor(btnIconOutlineColor.BackColor);
 
                 btnClearOutlineColor.Visible = true;
             }
@@ -342,6 +351,7 @@ namespace MapAssist
             var iconOutlineProp = SelectedProperty.PropertyType.GetProperty("IconOutlineColor");
             iconOutlineProp.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
             btnIconOutlineColor.BackColor = Color.Empty;
+            btnIconOutlineColor.ForeColor = ContrastTextColor(btnIconOutlineColor.BackColor);
 
             btnClearOutlineColor.Visible = false;
         }
@@ -383,6 +393,7 @@ namespace MapAssist
                 var labelPropColor = SelectedProperty.PropertyType.GetProperty("LabelColor");
                 labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnLabelColor.BackColor = colorDlg.Color;
+                btnLabelColor.ForeColor = ContrastTextColor(btnLabelColor.BackColor);
 
                 btnClearLabelColor.Visible = true;
             }
@@ -393,6 +404,7 @@ namespace MapAssist
             var labelPropColor = SelectedProperty.PropertyType.GetProperty("LabelColor");
             labelPropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
             btnLabelColor.BackColor = Color.Empty;
+            btnLabelColor.ForeColor = ContrastTextColor(btnLabelColor.BackColor);
 
             btnClearLabelColor.Visible = false;
         }
@@ -441,6 +453,7 @@ namespace MapAssist
                 var linePropColor = SelectedProperty.PropertyType.GetProperty("LineColor");
                 linePropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), colorDlg.Color, null);
                 btnLineColor.BackColor = colorDlg.Color;
+                btnLineColor.ForeColor = ContrastTextColor(btnLineColor.BackColor);
 
                 btnClearLineColor.Visible = true;
             }
@@ -451,6 +464,7 @@ namespace MapAssist
             var linePropColor = SelectedProperty.PropertyType.GetProperty("LineColor");
             linePropColor.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), Color.Empty, null);
             btnLineColor.BackColor = Color.Empty;
+            btnLineColor.ForeColor = ContrastTextColor(btnLineColor.BackColor);
 
             btnClearLineColor.Visible = false;
         }
@@ -567,6 +581,7 @@ namespace MapAssist
             {
                 MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = colorDlg.Color;
                 btnWalkableColor.BackColor = colorDlg.Color;
+                btnWalkableColor.ForeColor = ContrastTextColor(btnWalkableColor.BackColor);
 
                 btnClearWalkableColor.Visible = true;
             }
@@ -576,6 +591,7 @@ namespace MapAssist
         {
             MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = Color.Empty;
             btnWalkableColor.BackColor = Color.Empty;
+            btnWalkableColor.ForeColor = ContrastTextColor(btnWalkableColor.BackColor);
 
             btnClearWalkableColor.Visible = false;
         }
@@ -587,6 +603,7 @@ namespace MapAssist
             {
                 MapAssistConfiguration.Loaded.MapColorConfiguration.Border = colorDlg.Color;
                 btnBorderColor.BackColor = colorDlg.Color;
+                btnBorderColor.ForeColor = ContrastTextColor(btnBorderColor.BackColor);
 
                 btnClearBorderColor.Visible = true;
             }
@@ -596,6 +613,7 @@ namespace MapAssist
         {
             MapAssistConfiguration.Loaded.MapColorConfiguration.Border = Color.Empty;
             btnBorderColor.BackColor = Color.Empty;
+            btnBorderColor.ForeColor = ContrastTextColor(btnBorderColor.BackColor);
 
             btnClearBorderColor.Visible = false;
         }
@@ -646,6 +664,18 @@ namespace MapAssist
                     txtD2Path.Text = "";
                 }
             }
+        }
+
+        private Color ContrastTextColor(Color backgroundColor)
+        {
+            // https://en.wikipedia.org/wiki/Luma_%28video%29#Rec._601_luma_versus_Rec._709_luma_coefficients
+
+            var brightness = (int)Math.Sqrt(
+                backgroundColor.R * backgroundColor.R * .299 +
+                backgroundColor.G * backgroundColor.G * .587 +
+                backgroundColor.B * backgroundColor.B * .114);
+
+            return brightness > 128 ? Color.Black : Color.White;
         }
     }
 }

@@ -424,7 +424,7 @@
             this.btnClearBorderColor.Location = new System.Drawing.Point(233, 262);
             this.btnClearBorderColor.Name = "btnClearBorderColor";
             this.btnClearBorderColor.Size = new System.Drawing.Size(23, 23);
-            this.btnClearBorderColor.TabIndex = 27;
+            this.btnClearBorderColor.TabIndex = 23;
             this.btnClearBorderColor.Text = "X";
             this.btnClearBorderColor.UseVisualStyleBackColor = true;
             this.btnClearBorderColor.Click += new System.EventHandler(this.btnClearBorderColor_Click);
@@ -437,7 +437,7 @@
             this.btnClearWalkableColor.Location = new System.Drawing.Point(103, 264);
             this.btnClearWalkableColor.Name = "btnClearWalkableColor";
             this.btnClearWalkableColor.Size = new System.Drawing.Size(23, 23);
-            this.btnClearWalkableColor.TabIndex = 26;
+            this.btnClearWalkableColor.TabIndex = 22;
             this.btnClearWalkableColor.Text = "X";
             this.btnClearWalkableColor.UseVisualStyleBackColor = true;
             this.btnClearWalkableColor.Click += new System.EventHandler(this.btnClearWalkableColor_Click);
