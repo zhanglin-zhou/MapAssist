@@ -56,8 +56,8 @@ MapConfiguration:
     IconSize: 6
     IconThickness: 1
     LabelColor: 199, 179, 119
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   NextArea:
     IconColor: SpringGreen
     IconShape: Square
@@ -66,15 +66,15 @@ MapConfiguration:
     LineThickness: 2
     ArrowHeadSize: 15
     LabelColor: SpringGreen
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   PreviousArea:
     IconColor: Violet
     IconShape: Square
     IconSize: 5
     LabelColor: Violet
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   Waypoint:
     IconColor: SteelBlue
     IconShape: Square
@@ -84,32 +84,32 @@ MapConfiguration:
     LineThickness: 2
     ArrowHeadSize: 15
     LabelColor: Tomato
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   Player:
     IconOutlineColor: 33, 136, 253
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
     LabelColor: Chartreuse
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   PartyPlayer:
     IconOutlineColor: Chartreuse
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
     LabelColor: Chartreuse
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   NonPartyPlayer:
     IconOutlineColor: Orange
     IconShape: Cross
     IconSize: 6
     IconThickness: 2
     LabelColor: Orange
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   HostilePlayer:
     IconOutlineColor: Red
     IconShape: Cross
@@ -119,8 +119,8 @@ MapConfiguration:
     LineThickness: 2
     ArrowHeadSize: 15
     LabelColor: Red
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   Corpse:
     IconOutlineColor: Magenta
     IconShape: Cross
@@ -130,16 +130,16 @@ MapConfiguration:
     LineThickness: 2
     ArrowHeadSize: 15
     LabelColor: Magenta
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   Portal:
     IconOutlineColor: Yellow
     IconShape: Portal
     IconSize: 3
     IconThickness: 2
     LabelColor: Yellow
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   SuperChest:
     IconColor: 17, 255, 0
     IconShape: Square
@@ -161,8 +161,8 @@ MapConfiguration:
     IconShape: Polygon
     IconSize: 5
     LabelColor: 255, 218, 100
-    LabelFontSize: 16
-    LabelFont: Exocet Blizzard Mixed Caps
+    LabelFontSize: 14
+    LabelFont: Formal 436
   ArmorWeapRack:
     IconColor: 132, 132, 132
     IconShape: Square

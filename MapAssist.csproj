@@ -121,6 +121,7 @@
     <Compile Include="Files\ConfigurationParser.cs" />
     <Compile Include="Files\CRC32.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\Font\FormalFont.cs" />
     <Compile Include="Files\Font\ExocetFont.cs" />
     <Compile Include="Files\Font\ResourceFontFileEnumerator.cs" />
     <Compile Include="Files\Font\ResourceFontFileStream.cs" />
@@ -199,6 +200,7 @@
       <DependentUpon>AddAreaForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Fonts\exocetblizzardot-medium.otf" />
+    <EmbeddedResource Include="Fonts\formal436bt-regular.otf" />
     <None Include="Resources\Icon1.ico" />
   </ItemGroup>
   <ItemGroup>
