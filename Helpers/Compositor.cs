@@ -695,7 +695,6 @@ namespace MapAssist.Helpers
                 case BuffPosition.Bottom:
                     buffYPos = gfx.Height * .8f;
                     break;
-
             }
 
             var buffsByColor = new Dictionary<Color, List<Bitmap>>();
@@ -730,6 +729,24 @@ namespace MapAssist.Helpers
                         buffsByColor[buffColor].Add(CreateResourceBitmap(gfx, stateStr));
                         totalBuffs++;
                     }
+                }
+            }
+
+            if (buffAlignment == BuffPosition.Bottom && _gameData.MenuOpen.PotionBelt)
+            {
+                var potionTopLeft = new Point(
+                    0.5f * gfx.Width + 0.113f * gfx.Height + 1.17f,
+                    0.785f * gfx.Height - 4
+                );
+
+                var buffsBottomRight = new Point(
+                    gfx.Width / 2f + totalBuffs * imgDimensions / 2f,
+                    buffYPos + imgDimensions
+                );
+
+                if (potionTopLeft.X < buffsBottomRight.X && potionTopLeft.Y < buffsBottomRight.Y)
+                {
+                    return;
                 }
             }
 
