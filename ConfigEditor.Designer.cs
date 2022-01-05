@@ -50,8 +50,9 @@
             this.cboBuffPosition = new System.Windows.Forms.ComboBox();
             this.buffSize = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnClearBorderColor = new System.Windows.Forms.Button();
+            this.btnClearWalkableColor = new System.Windows.Forms.Button();
             this.chkStickToLastGameWindow = new System.Windows.Forms.CheckBox();
-            this.chkWalkableColor = new System.Windows.Forms.CheckBox();
             this.btnBorderColor = new System.Windows.Forms.Button();
             this.btnWalkableColor = new System.Windows.Forms.Button();
             this.chkOverlayMode = new System.Windows.Forms.CheckBox();
@@ -104,6 +105,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.cboRenderOption = new System.Windows.Forms.ComboBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.btnClearLogFont = new System.Windows.Forms.Button();
             this.lblSoundVolumeValue = new System.Windows.Forms.Label();
             this.soundVolume = new System.Windows.Forms.TrackBar();
             this.label10 = new System.Windows.Forms.Label();
@@ -136,7 +138,6 @@
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.btnClearLogFont = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -386,8 +387,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnClearBorderColor);
+            this.groupBox1.Controls.Add(this.btnClearWalkableColor);
             this.groupBox1.Controls.Add(this.chkStickToLastGameWindow);
-            this.groupBox1.Controls.Add(this.chkWalkableColor);
             this.groupBox1.Controls.Add(this.btnBorderColor);
             this.groupBox1.Controls.Add(this.btnWalkableColor);
             this.groupBox1.Controls.Add(this.chkOverlayMode);
@@ -414,6 +416,32 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Map Rendering";
             // 
+            // btnClearBorderColor
+            // 
+            this.btnClearBorderColor.FlatAppearance.BorderSize = 0;
+            this.btnClearBorderColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearBorderColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearBorderColor.Location = new System.Drawing.Point(233, 262);
+            this.btnClearBorderColor.Name = "btnClearBorderColor";
+            this.btnClearBorderColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearBorderColor.TabIndex = 27;
+            this.btnClearBorderColor.Text = "X";
+            this.btnClearBorderColor.UseVisualStyleBackColor = true;
+            this.btnClearBorderColor.Click += new System.EventHandler(this.btnClearBorderColor_Click);
+            // 
+            // btnClearWalkableColor
+            // 
+            this.btnClearWalkableColor.FlatAppearance.BorderSize = 0;
+            this.btnClearWalkableColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearWalkableColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearWalkableColor.Location = new System.Drawing.Point(103, 264);
+            this.btnClearWalkableColor.Name = "btnClearWalkableColor";
+            this.btnClearWalkableColor.Size = new System.Drawing.Size(23, 23);
+            this.btnClearWalkableColor.TabIndex = 26;
+            this.btnClearWalkableColor.Text = "X";
+            this.btnClearWalkableColor.UseVisualStyleBackColor = true;
+            this.btnClearWalkableColor.Click += new System.EventHandler(this.btnClearWalkableColor_Click);
+            // 
             // chkStickToLastGameWindow
             // 
             this.chkStickToLastGameWindow.AutoSize = true;
@@ -425,21 +453,12 @@
             this.chkStickToLastGameWindow.UseVisualStyleBackColor = true;
             this.chkStickToLastGameWindow.CheckedChanged += new System.EventHandler(this.chkStickToLastGameWindow_CheckedChanged);
             // 
-            // chkWalkableColor
-            // 
-            this.chkWalkableColor.AutoSize = true;
-            this.chkWalkableColor.Location = new System.Drawing.Point(10, 271);
-            this.chkWalkableColor.Name = "chkWalkableColor";
-            this.chkWalkableColor.Size = new System.Drawing.Size(15, 14);
-            this.chkWalkableColor.TabIndex = 24;
-            this.chkWalkableColor.UseVisualStyleBackColor = true;
-            this.chkWalkableColor.CheckedChanged += new System.EventHandler(this.chkWalkableColor_CheckedChanged);
-            // 
             // btnBorderColor
             // 
-            this.btnBorderColor.Location = new System.Drawing.Point(126, 264);
+            this.btnBorderColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnBorderColor.Location = new System.Drawing.Point(141, 262);
             this.btnBorderColor.Name = "btnBorderColor";
-            this.btnBorderColor.Size = new System.Drawing.Size(91, 26);
+            this.btnBorderColor.Size = new System.Drawing.Size(91, 23);
             this.btnBorderColor.TabIndex = 23;
             this.btnBorderColor.Text = "Border Color";
             this.btnBorderColor.UseVisualStyleBackColor = true;
@@ -447,9 +466,10 @@
             // 
             // btnWalkableColor
             // 
-            this.btnWalkableColor.Location = new System.Drawing.Point(29, 264);
+            this.btnWalkableColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnWalkableColor.Location = new System.Drawing.Point(11, 264);
             this.btnWalkableColor.Name = "btnWalkableColor";
-            this.btnWalkableColor.Size = new System.Drawing.Size(91, 26);
+            this.btnWalkableColor.Size = new System.Drawing.Size(91, 23);
             this.btnWalkableColor.TabIndex = 22;
             this.btnWalkableColor.Text = "Walkable Color";
             this.btnWalkableColor.UseVisualStyleBackColor = true;
@@ -1065,6 +1085,19 @@
             this.tabPage6.Text = "Item Log";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
+            // btnClearLogFont
+            // 
+            this.btnClearLogFont.FlatAppearance.BorderSize = 0;
+            this.btnClearLogFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearLogFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearLogFont.Location = new System.Drawing.Point(89, 270);
+            this.btnClearLogFont.Name = "btnClearLogFont";
+            this.btnClearLogFont.Size = new System.Drawing.Size(23, 23);
+            this.btnClearLogFont.TabIndex = 30;
+            this.btnClearLogFont.Text = "X";
+            this.btnClearLogFont.UseVisualStyleBackColor = true;
+            this.btnClearLogFont.Click += new System.EventHandler(this.btnClearLogFont_Click);
+            // 
             // lblSoundVolumeValue
             // 
             this.lblSoundVolumeValue.AutoSize = true;
@@ -1388,19 +1421,6 @@
             this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
             this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
             // 
-            // btnClearLogFont
-            // 
-            this.btnClearLogFont.FlatAppearance.BorderSize = 0;
-            this.btnClearLogFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearLogFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearLogFont.Location = new System.Drawing.Point(89, 270);
-            this.btnClearLogFont.Name = "btnClearLogFont";
-            this.btnClearLogFont.Size = new System.Drawing.Size(23, 23);
-            this.btnClearLogFont.TabIndex = 30;
-            this.btnClearLogFont.Text = "X";
-            this.btnClearLogFont.UseVisualStyleBackColor = true;
-            this.btnClearLogFont.Click += new System.EventHandler(this.btnClearLogFont_Click);
-            // 
             // ConfigEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1540,7 +1560,6 @@
         private System.Windows.Forms.CheckBox chkShowArea;
         private System.Windows.Forms.Button btnWalkableColor;
         private System.Windows.Forms.Button btnBorderColor;
-        private System.Windows.Forms.CheckBox chkWalkableColor;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label lblBuffSizeValue;
         private System.Windows.Forms.Label label5;
@@ -1563,5 +1582,7 @@
         private System.Windows.Forms.Button btnClearLineColor;
         private System.Windows.Forms.Button btnClearLabelFont;
         private System.Windows.Forms.Button btnClearLogFont;
+        private System.Windows.Forms.Button btnClearBorderColor;
+        private System.Windows.Forms.Button btnClearWalkableColor;
     }
 }

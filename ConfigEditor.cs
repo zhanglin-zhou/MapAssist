@@ -95,12 +95,22 @@ namespace MapAssist
             {
                 var walkableColor = (Color)MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable;
                 btnWalkableColor.BackColor = walkableColor;
-                chkWalkableColor.Checked = (walkableColor.A > 0);
+                btnClearWalkableColor.Visible = walkableColor.A > 0;
             }
+            else
+            {
+                btnClearWalkableColor.Visible = false;
+            }
+
             if (MapAssistConfiguration.Loaded.MapColorConfiguration.Border != null)
             {
                 var borderColor = (Color)MapAssistConfiguration.Loaded.MapColorConfiguration.Border;
                 btnBorderColor.BackColor = borderColor;
+                btnClearBorderColor.Visible = borderColor.A > 0;
+            }
+            else
+            {
+                btnClearBorderColor.Visible = false;
             }
 
             foreach (var area in MapAssistConfiguration.Loaded.HiddenAreas)
@@ -557,8 +567,17 @@ namespace MapAssist
             {
                 MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = colorDlg.Color;
                 btnWalkableColor.BackColor = colorDlg.Color;
-                chkWalkableColor.Checked = (colorDlg.Color.A > 0);
+
+                btnClearWalkableColor.Visible = true;
             }
+        }
+
+        private void btnClearWalkableColor_Click(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = Color.Empty;
+            btnWalkableColor.BackColor = Color.Empty;
+
+            btnClearWalkableColor.Visible = false;
         }
 
         private void btnBorderColor_Click(object sender, EventArgs e)
@@ -568,7 +587,17 @@ namespace MapAssist
             {
                 MapAssistConfiguration.Loaded.MapColorConfiguration.Border = colorDlg.Color;
                 btnBorderColor.BackColor = colorDlg.Color;
+
+                btnClearBorderColor.Visible = true;
             }
+        }
+
+        private void btnClearBorderColor_Click(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.MapColorConfiguration.Border = Color.Empty;
+            btnBorderColor.BackColor = Color.Empty;
+
+            btnClearBorderColor.Visible = false;
         }
 
         private void btnAddHidden_Click(object sender, EventArgs e)
@@ -617,15 +646,6 @@ namespace MapAssist
                     txtD2Path.Text = "";
                 }
             }
-        }
-
-        private void chkWalkableColor_CheckedChanged(object sender, EventArgs e)
-        {
-            var newColor = chkWalkableColor.Checked
-                ? btnWalkableColor.BackColor
-                : Color.Empty;
-
-            MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = newColor;
         }
     }
 }
