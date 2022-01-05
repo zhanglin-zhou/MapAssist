@@ -333,19 +333,16 @@ namespace MapAssist.Helpers
             {
                 var mobRender = GetMonsterIconRendering(unitAny.MonsterData);
 
-                if (AreaExtensions.IsTown(_areaData.Area))
+                var npc = (Npc)unitAny.TxtFileNo;
+                if (NpcExtensions.IsTownsfolk(npc))
                 {
-                    var npc = (Npc)unitAny.TxtFileNo;
-                    if (NpcExtensions.IsTownsfolk(npc))
+                    var npcRender = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
+                    if (npcRender.CanDrawIcon())
                     {
-                        var npcRender = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
-                        if (npcRender.CanDrawIcon())
+                        drawMonsterIcons.Add((npcRender, unitAny));
+                        if (npcRender.CanDrawLabel())
                         {
-                            drawMonsterIcons.Add((npcRender, unitAny));
-                            if (npcRender.CanDrawLabel())
-                            {
-                                drawMonsterLabels.Add((npcRender, unitAny.Position, NpcExtensions.Name(npc), npcRender.LabelColor));
-                            }
+                            drawMonsterLabels.Add((npcRender, unitAny.Position, NpcExtensions.Name(npc), npcRender.LabelColor));
                         }
                     }
                 }
