@@ -589,7 +589,7 @@ namespace MapAssist
 
         private void btnClearWalkableColor_Click(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = Color.Empty;
+            MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable = null;
             btnWalkableColor.BackColor = Color.Empty;
             btnWalkableColor.ForeColor = ContrastTextColor(btnWalkableColor.BackColor);
 
@@ -611,7 +611,7 @@ namespace MapAssist
 
         private void btnClearBorderColor_Click(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.MapColorConfiguration.Border = Color.Empty;
+            MapAssistConfiguration.Loaded.MapColorConfiguration.Border = null;
             btnBorderColor.BackColor = Color.Empty;
             btnBorderColor.ForeColor = ContrastTextColor(btnBorderColor.BackColor);
 
