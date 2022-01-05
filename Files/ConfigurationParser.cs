@@ -99,6 +99,12 @@ namespace MapAssist.Files
                 }
                 else
                 {
+                    if (tuple.Key.ToString() == "MapConfiguration") // Don't merge this object, simply take the user provided one
+                    {
+                        primary[tuple.Key] = secondary[tuple.Key];
+                        continue;
+                    }
+
                     /**
                      * Don't allow an override to try and use a null dict
                      * This allows things like below to exist in overrides without breaking anything
