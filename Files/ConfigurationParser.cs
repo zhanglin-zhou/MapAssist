@@ -48,9 +48,14 @@ namespace MapAssist.Files
          * a recursive merge on a field by field basis. The result of this merging is then serialized back to yaml, 
          * then deserialized again into our MapAssistConfiguration POCO.
          */
-        public static MapAssistConfiguration ParseConfigurationMain(byte[] resourcePrimary, string fileNameOverride)
+        public static MapAssistConfiguration ParseConfigurationMain(byte[] resourcePrimary, string fileNameOverride = null)
         {
             var yamlPrimary = Encoding.Default.GetString(resourcePrimary);
+
+            if (fileNameOverride == null)
+            {
+                return TryDeserialize<MapAssistConfiguration>(yamlPrimary);
+            }
 
             var fileManagerOverride = new FileManager(fileNameOverride);
             if (!fileManagerOverride.FileExists())
