@@ -299,10 +299,10 @@ namespace MapAssist
         {
             _log.Info("Disposing");
 
+            overlay.Dispose();
             GameManager.Dispose();
             MapApi.Dispose();
             globalHook.Dispose();
-            overlay.Dispose();
             trayIcon.Dispose();
 
             if (backWorkOverlay.IsBusy)
