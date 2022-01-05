@@ -76,21 +76,15 @@ namespace MapAssist.Settings
         
         [YamlMember(Alias = "Walkable", ApplyNamingConventions = false)]
         public Color? Walkable { get; set; }
-
+        
         [YamlMember(Alias = "Border", ApplyNamingConventions = false)]
-        public Color? Border { get; set; } = Color.FromArgb(255, 255, 255);
+        public Color? Border { get; set; }
     }
 
     public class MapConfiguration
     {
         [YamlMember(Alias = "SuperUniqueMonster", ApplyNamingConventions = false)]
-        public IconRendering SuperUniqueMonster { get; set; } = new IconRendering()
-        {
-            IconOutlineColor = Color.Yellow,
-            IconShape = Shape.Cross,
-            IconSize = 6,
-            IconThickness = 2
-        };
+        public IconRendering SuperUniqueMonster { get; set; }
 
         [YamlMember(Alias = "UniqueMonster", ApplyNamingConventions = false)]
         public IconRendering UniqueMonster { get; set; }
