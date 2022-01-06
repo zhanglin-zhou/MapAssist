@@ -64,10 +64,10 @@ namespace MapAssist.Settings
         public string LabelFont { get; set; }
 
         [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
-        public float LabelFontSize { get; set; }
+        public double LabelFontSize { get; set; }
 
-        [YamlMember(Alias = "LabelFontShadow", ApplyNamingConventions = false)]
-        public bool LabelFontShadow { get; set; }
+        [YamlMember(Alias = "LabelTextShadow", ApplyNamingConventions = false)]
+        public bool LabelTextShadow { get; set; }
 
         public bool CanDrawLine()
         {

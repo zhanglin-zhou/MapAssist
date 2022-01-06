@@ -189,9 +189,6 @@ public class RenderingConfiguration
 
     [YamlMember(Alias = "BuffSize", ApplyNamingConventions = false)]
     public double BuffSize { get; set; }
-
-    [YamlMember(Alias = "TextShadow", ApplyNamingConventions = false)]
-    public bool TextShadow { get; set; }
 }
 
 public class HotkeyConfiguration
@@ -229,8 +226,8 @@ public class GameInfoConfiguration
     [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
     public double LabelFontSize { get; set; }
 
-    [YamlMember(Alias = "LabelFontShadow", ApplyNamingConventions = false)]
-    public bool LabelFontShadow { get; set; }
+    [YamlMember(Alias = "LabelTextShadow", ApplyNamingConventions = false)]
+    public bool LabelTextShadow { get; set; }
 }
 
 public class ItemLogConfiguration
@@ -259,6 +256,6 @@ public class ItemLogConfiguration
     [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
     public double LabelFontSize { get; set; }
 
-    [YamlMember(Alias = "LabelFontShadow", ApplyNamingConventions = false)]
-    public bool LabelFontShadow { get; set; }
+    [YamlMember(Alias = "LabelTextShadow", ApplyNamingConventions = false)]
+    public bool LabelTextShadow { get; set; }
 }
