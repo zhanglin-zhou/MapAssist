@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Timers;
 using MapAssist.Helpers;
@@ -261,6 +262,113 @@ namespace MapAssist.Types
                     ItemLogTimers[processId].Add(timer);
                 }
             }
+        }
+
+        public static string ItemLogDisplayName(UnitAny unit)
+        {
+            var itemBaseName = Items.ItemName(unit.TxtFileNo);
+            var itemSpecialName = "";
+            var itemPrefix = "";
+            var itemSuffix = "";
+
+            var isEth = (unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
+            if (isEth)
+            {
+                itemPrefix += "[Eth] ";
+            }
+
+            if (unit.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
+            {
+                itemPrefix += "[" + numSockets + " S] ";
+            }
+
+            if (unit.ItemData.ItemQuality == ItemQuality.NORMAL || unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
+            {
+                if (unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
+                {
+                    itemPrefix += "Sup. ";
+                }
+
+                var itemArmorDefense = Items.GetArmorDefense(unit);
+                if (itemArmorDefense > 0)
+                {
+                    itemSuffix += $" ({itemArmorDefense} def)";
+                }
+
+                var itemAllRes = Items.GetItemStatAllResist(unit);
+                if (itemAllRes > 0)
+                {
+                    itemSuffix += $" ({itemAllRes} all res)";
+                }
+            }
+
+            switch (unit.ItemData.ItemQuality)
+            {
+                case ItemQuality.UNIQUE:
+                    itemSpecialName = Items.UniqueName(unit.TxtFileNo) + " ";
+                    break;
+                case ItemQuality.SET:
+                    itemSpecialName = Items.SetName(unit.TxtFileNo) + " ";
+                    break;
+            }
+
+            return itemPrefix + itemSpecialName + itemBaseName + itemSuffix;
+        }
+
+        public static Color ItemNameColor(UnitAny unit)
+        {
+            Color fontColor;
+            if (unit == null || !Items.ItemColors.TryGetValue(unit.ItemData.ItemQuality, out fontColor))
+            {
+                // Invalid item quality
+                return Color.Empty;
+            }
+
+            var isEth = (unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
+            if (isEth && fontColor == Color.White)
+            {
+                return Items.ItemColors[ItemQuality.SUPERIOR];
+            }
+
+            if (unit.Stats.ContainsKey(Stat.STAT_ITEM_NUMSOCKETS) && fontColor == Color.White)
+            {
+                return Items.ItemColors[ItemQuality.SUPERIOR];
+            }
+
+            if (unit.TxtFileNo >= 610 && unit.TxtFileNo <= 642)
+            {
+                // Runes
+                return Items.ItemColors[ItemQuality.CRAFT];
+            }
+
+            switch (unit.TxtFileNo)
+            {
+                case 647: // Key of Terror
+                case 648: // Key of Hate
+                case 649: // Key of Destruction
+                case 653: // Token of Absolution
+                case 654: // Twisted Essence of Suffering
+                case 655: // Charged Essense of Hatred
+                case 656: // Burning Essence of Terror
+                case 657: // Festering Essence of Destruction
+                    return Items.ItemColors[ItemQuality.CRAFT];
+            }
+
+            return fontColor;
+        }
+
+        public static int GetArmorDefense(UnitAny unitAny)
+        {
+            return unitAny.Stats.TryGetValue(Stat.STAT_ARMORCLASS, out var statArmor) ? statArmor : 0;
+        }
+
+        public static int GetItemStatAllResist(UnitAny unitAny)
+        {
+            var fireRes = unitAny.Stats.TryGetValue(Stat.STAT_FIRERESIST, out var fireResValue) ? fireResValue : 0;
+            var lightRes = unitAny.Stats.TryGetValue(Stat.STAT_LIGHTRESIST, out var lightResValue) ? lightResValue : 0;
+            var coldRes = unitAny.Stats.TryGetValue(Stat.STAT_COLDRESIST, out var coldResValue) ? coldResValue : 0;
+            var psnRes = unitAny.Stats.TryGetValue(Stat.STAT_POISONRESIST, out var psnResValue) ? psnResValue : 0;
+            return new[] { fireRes, lightRes, coldRes, psnRes }.Min();
         }
 
         public static void ItemLogTimerElapsed(object sender, ElapsedEventArgs args, Timer self, int procId)

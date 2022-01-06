@@ -27,27 +27,14 @@ namespace MapAssist.Helpers
     {
         public static bool Filter(UnitAny unitAny)
         {
-            var baseName = Items.ItemName(unitAny.TxtFileNo);
-            var itemQuality = unitAny.ItemData.ItemQuality;
-            var isEth = (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
+            //skip low quality items
             var lowQuality = (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_LOWQUALITY) == ItemFlags.IFLAG_LOWQUALITY;
-            var hasSockets = unitAny.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets);
-            if (!hasSockets)
-            {
-                numSockets = 0;
-            }
-
-            return Filter(baseName, itemQuality, isEth, numSockets, lowQuality);
-        }
-
-        private static bool Filter(string baseName, ItemQuality itemQuality, bool isEth, int numSockets,
-            bool lowQuality)
-        {
             if (lowQuality)
             {
                 return false;
             }
 
+            var baseName = Items.ItemName(unitAny.TxtFileNo);
             //populate a list of filter rules by combining rules from "Any" and the item base name
             //use only one list or the other depending on if "Any" exists
             var matches =
@@ -62,16 +49,33 @@ namespace MapAssist.Helpers
                 return true;
             }
 
-            //scan the list of rules
-            foreach (var item in matches.SelectMany(kv => kv.Value))
-            {
-                var qualityReqMet = item.Qualities == null || item.Qualities.Length == 0 ||
-                                    item.Qualities.Contains(itemQuality);
-                var socketReqMet = item.Sockets == null || item.Sockets.Length == 0 ||
-                                   item.Sockets.Contains(numSockets);
+            //get other item stats to use for filtering
+            var itemQuality = unitAny.ItemData.ItemQuality;
+            var isEth = (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
+            var numSockets = unitAny.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var socketCount) ? socketCount : 0;
 
-                var ethReqMet = (item.Ethereal == null || item.Ethereal == isEth);
-                if (qualityReqMet && socketReqMet && ethReqMet) { return true; }
+            //scan the list of rules
+            foreach (var rule in matches.SelectMany(kv => kv.Value))
+            {
+                var qualityReqMet = rule.Qualities == null || rule.Qualities.Length == 0 || rule.Qualities.Contains(itemQuality);
+                if (!qualityReqMet) { continue; }
+
+                var socketReqMet = rule.Sockets == null || rule.Sockets.Length == 0 || rule.Sockets.Contains(numSockets);
+                if (!socketReqMet) { continue; }
+
+                var defenseReqMet = rule.Defense == null || rule.Defense == 0 || Items.GetArmorDefense(unitAny) >= rule.Defense;
+                if (!defenseReqMet) { continue; }
+
+                var allResReqMet = rule.AllResist == null || rule.AllResist == 0 || Items.GetItemStatAllResist(unitAny) >= rule.AllResist;
+                if (!allResReqMet) { continue; }
+
+                var ethReqMet = (rule.Ethereal == null || rule.Ethereal == isEth);
+                if (!ethReqMet) { continue; }
+
+                if (qualityReqMet && socketReqMet && defenseReqMet && allResReqMet && ethReqMet)
+                {
+                    return true;
+                }
             }
 
             return false;

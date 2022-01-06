@@ -20,5 +20,7 @@ namespace MapAssist.Settings
         public ItemQuality[] Qualities { get; set; }
         public bool? Ethereal { get; set; }
         public int[] Sockets { get; set; }
+        public int? Defense { get; set; }
+        public int? AllResist { get; set; }
     }
 }
