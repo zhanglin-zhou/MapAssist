@@ -58,6 +58,7 @@ MapConfiguration:
     LabelColor: 199, 179, 119
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   NextArea:
     IconColor: SpringGreen
     IconShape: Square
@@ -68,6 +69,7 @@ MapConfiguration:
     LabelColor: SpringGreen
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   PreviousArea:
     IconColor: Violet
     IconShape: Square
@@ -75,6 +77,7 @@ MapConfiguration:
     LabelColor: Violet
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   Waypoint:
     IconColor: SteelBlue
     IconShape: Square
@@ -86,6 +89,7 @@ MapConfiguration:
     LabelColor: Tomato
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   Player:
     IconOutlineColor: 33, 136, 253
     IconShape: Cross
@@ -94,6 +98,7 @@ MapConfiguration:
     LabelColor: Chartreuse
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   PartyPlayer:
     IconOutlineColor: Chartreuse
     IconShape: Cross
@@ -102,6 +107,7 @@ MapConfiguration:
     LabelColor: Chartreuse
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   NonPartyPlayer:
     IconOutlineColor: Orange
     IconShape: Cross
@@ -110,6 +116,7 @@ MapConfiguration:
     LabelColor: Orange
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   HostilePlayer:
     IconOutlineColor: Red
     IconShape: Cross
@@ -121,6 +128,7 @@ MapConfiguration:
     LabelColor: Red
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   Corpse:
     IconOutlineColor: Magenta
     IconShape: Cross
@@ -132,6 +140,7 @@ MapConfiguration:
     LabelColor: Magenta
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   Portal:
     IconOutlineColor: Yellow
     IconShape: Portal
@@ -140,6 +149,7 @@ MapConfiguration:
     LabelColor: Yellow
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   SuperChest:
     IconColor: 17, 255, 0
     IconShape: Square
@@ -163,6 +173,7 @@ MapConfiguration:
     LabelColor: 255, 218, 100
     LabelFontSize: 14
     LabelFont: Formal 436
+    LabelTextShadow: true
   ArmorWeapRack:
     IconColor: 132, 132, 132
     IconShape: Square
@@ -173,6 +184,7 @@ MapConfiguration:
     IconSize: 4
     LabelFontSize: 16
     LabelFont: Exocet Blizzard Mixed Caps
+    LabelTextShadow: true
 ItemLog:
   Enabled: true
   FilterFileName: ItemFilter.yaml
@@ -182,6 +194,7 @@ ItemLog:
   DisplayForSeconds: 45
   LabelFont: Exocet Blizzard Mixed Caps
   LabelFontSize: 14
+  LabelTextShadow: true
 MapColorConfiguration:
   Border: 255, 255, 255
 GameInfo:
@@ -191,5 +204,6 @@ GameInfo:
   ShowOverlayFPS: false
   LabelFont: Exocet Blizzard Mixed Caps
   LabelFontSize: 14
+  LabelTextShadow: true
 D2Path: ''
 LanguageCode: enUS

@@ -224,7 +224,10 @@ public class GameInfoConfiguration
     public string LabelFont { get; set; }
 
     [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
-    public int LabelFontSize { get; set; }
+    public double LabelFontSize { get; set; }
+
+    [YamlMember(Alias = "LabelTextShadow", ApplyNamingConventions = false)]
+    public bool LabelTextShadow { get; set; }
 }
 
 public class ItemLogConfiguration
@@ -252,4 +255,7 @@ public class ItemLogConfiguration
 
     [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
     public double LabelFontSize { get; set; }
+
+    [YamlMember(Alias = "LabelTextShadow", ApplyNamingConventions = false)]
+    public bool LabelTextShadow { get; set; }
 }

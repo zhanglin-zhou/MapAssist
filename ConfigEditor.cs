@@ -70,9 +70,12 @@ namespace MapAssist
 
             chkGameInfo.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowGameIP;
             chkShowArea.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel;
+            txtHuntIP.ReadOnly = !MapAssistConfiguration.Loaded.GameInfo.ShowGameIP;
             txtHuntIP.Text = MapAssistConfiguration.Loaded.GameInfo.HuntingIP;
             txtD2Path.Text = MapAssistConfiguration.Loaded.D2Path;
-
+            chkGameInfoTextShadow.Checked = MapAssistConfiguration.Loaded.GameInfo.LabelTextShadow;
+            btnClearGameInfoFont.Visible = MapAssistConfiguration.Loaded.GameInfo.LabelFont != MapAssistConfiguration.Default.GameInfo.LabelFont ||
+                MapAssistConfiguration.Loaded.GameInfo.LabelFontSize != MapAssistConfiguration.Default.GameInfo.LabelFontSize;
             chkShowOverlayFPS.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS;
 
             new Hotkey(MapAssistConfiguration.Loaded.HotkeyConfiguration.ToggleKey.ToString()).Monitor(txtToggleMapKey);
@@ -90,6 +93,7 @@ namespace MapAssist
             lblItemDisplayForSecondsValue.Text = $"{itemDisplayForSeconds.Value * 5} s";
             btnClearLogFont.Visible = MapAssistConfiguration.Loaded.ItemLog.LabelFont != MapAssistConfiguration.Default.ItemLog.LabelFont ||
                 MapAssistConfiguration.Loaded.ItemLog.LabelFontSize != MapAssistConfiguration.Default.ItemLog.LabelFontSize;
+            chkLogTextShadow.Checked = MapAssistConfiguration.Loaded.ItemLog.LabelTextShadow;
 
             if (MapAssistConfiguration.Loaded.MapColorConfiguration.Walkable != null)
             {
@@ -234,6 +238,7 @@ namespace MapAssist
         private void chkGameInfo_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.GameInfo.ShowGameIP = chkGameInfo.Checked;
+            txtHuntIP.ReadOnly = !MapAssistConfiguration.Loaded.GameInfo.ShowGameIP;
         }
 
         private void chkShowArea_CheckedChanged(object sender, EventArgs e)
@@ -254,6 +259,44 @@ namespace MapAssist
         private void chkShowOverlayFPS_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS = chkShowOverlayFPS.Checked;
+        }
+
+        private void btnGameInfoFont_Click(object sender, EventArgs e)
+        {
+            var labelFont = MapAssistConfiguration.Loaded.GameInfo.LabelFont;
+            var labelSize = (float)MapAssistConfiguration.Loaded.GameInfo.LabelFontSize;
+            if (labelFont == null)
+            {
+                labelFont = "Helvetica";
+                labelSize = 16;
+            }
+            var fontDlg = new FontDialog();
+            fontDlg.Font = new Font(labelFont, labelSize, FontStyle.Regular);
+            fontDlg.ShowEffects = false;
+            if (fontDlg.ShowDialog() == DialogResult.OK)
+            {
+                MapAssistConfiguration.Loaded.GameInfo.LabelFont = fontDlg.Font.Name;
+                MapAssistConfiguration.Loaded.GameInfo.LabelFontSize = fontDlg.Font.Size;
+
+                btnClearGameInfoFont.Visible = true;
+                fontDlg.Dispose();
+            } else
+            {
+                fontDlg.Dispose();
+            }
+        }
+
+        private void btnClearGameInfoFont_Click(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.GameInfo.LabelFont = MapAssistConfiguration.Default.GameInfo.LabelFont;
+            MapAssistConfiguration.Loaded.GameInfo.LabelFontSize = MapAssistConfiguration.Default.GameInfo.LabelFontSize;
+
+            btnClearGameInfoFont.Visible = false;
+        }
+
+        private void chkGameInfoTextShadow_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.GameInfo.LabelTextShadow = chkGameInfoTextShadow.Checked;
         }
 
         private void cboRenderOption_SelectedIndexChanged(object sender, EventArgs e)
@@ -297,6 +340,7 @@ namespace MapAssist
 
                 dynamic defaultlabelProp = MapAssistConfiguration.Default.MapConfiguration.GetType().GetProperty(cboRenderOption.Text.ToPascalCase()).GetValue(MapAssistConfiguration.Default.MapConfiguration, null);
                 btnClearLabelFont.Visible = iconProp.LabelFont != defaultlabelProp.LabelFont || iconProp.LabelFontSize != defaultlabelProp.LabelFontSize;
+                chkTextShadow.Checked = iconProp.LabelTextShadow;
 
                 btnLineColor.BackColor = iconProp.LineColor;
                 btnLineColor.ForeColor = ContrastTextColor(btnLineColor.BackColor);
@@ -421,6 +465,7 @@ namespace MapAssist
             }
             var fontDlg = new FontDialog();
             fontDlg.Font = new Font(labelFont, labelSize, FontStyle.Regular);
+            fontDlg.ShowEffects = false;
             if (fontDlg.ShowDialog() == DialogResult.OK)
             {
                 var labelPropFont = SelectedProperty.PropertyType.GetProperty("LabelFont");
@@ -483,6 +528,12 @@ namespace MapAssist
             lblLineThicknessSizeValue.Text = lineThicknessSize.Value.ToString();
         }
 
+        private void chkTextShadow_CheckedChanged(object sender, EventArgs e)
+        {
+            var LabelTextShadow = SelectedProperty.PropertyType.GetProperty("LabelTextShadow");
+            LabelTextShadow.SetValue(SelectedProperty.GetValue(MapAssistConfiguration.Loaded.MapConfiguration, null), chkTextShadow.Checked, null);
+        }
+
         private void cboLanguage_SelectedIndexChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.LanguageCode = (Locale)cboLanguage.SelectedIndex;
@@ -537,6 +588,7 @@ namespace MapAssist
             }
             var fontDlg = new FontDialog();
             fontDlg.Font = new Font(labelFont, labelSize, FontStyle.Regular);
+            fontDlg.ShowEffects = false;
             if (fontDlg.ShowDialog() == DialogResult.OK)
             {
                 MapAssistConfiguration.Loaded.ItemLog.LabelFont = fontDlg.Font.Name;
@@ -552,6 +604,11 @@ namespace MapAssist
             MapAssistConfiguration.Loaded.ItemLog.LabelFontSize = MapAssistConfiguration.Default.ItemLog.LabelFontSize;
 
             btnClearLogFont.Visible = false;
+        }
+
+        private void chkLogTextShadow_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.ItemLog.LabelTextShadow = chkLogTextShadow.Checked;
         }
 
         private void txtToggleMapKey_TextChanged(object sender, EventArgs e)

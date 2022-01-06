@@ -215,7 +215,7 @@ namespace MapAssist.Helpers
 
                 if (poi.RenderingSettings.CanDrawLine())
                 {
-                    var padding = poi.RenderingSettings.CanDrawLabel() ? poi.RenderingSettings.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                    var padding = poi.RenderingSettings.CanDrawLabel() ? (float)poi.RenderingSettings.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                     var poiPosition = MovePointInBounds(poi.Position, _gameData.PlayerPosition, padding);
                     DrawLine(gfx, poi.RenderingSettings, _gameData.PlayerPosition, poiPosition);
                 }
@@ -529,7 +529,7 @@ namespace MapAssist.Helpers
                     }
                     if (canDrawLine && corpse.Name == _gameData.PlayerUnit.Name)
                     {
-                        var padding = canDrawLabel ? rendering.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                        var padding = canDrawLabel ? (float)rendering.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                         var poiPosition = MovePointInBounds(corpse.Position, _gameData.PlayerPosition, padding);
                         DrawLine(gfx, rendering, _gameData.PlayerPosition, poiPosition);
                     }
@@ -600,7 +600,7 @@ namespace MapAssist.Helpers
 
                             if (rendering.CanDrawLine() && playerUnit.HostileToPlayer)
                             {
-                                var padding = rendering.CanDrawLabel() ? MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                                var padding = rendering.CanDrawLabel() ? (float)MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                                 var poiPosition = MovePointInBounds(playerUnit.Position, _gameData.PlayerPosition, padding);
                                 DrawLine(gfx, MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer, _gameData.PlayerPosition, poiPosition);
                             }
@@ -800,8 +800,9 @@ namespace MapAssist.Helpers
 
             // Setup
             var font = MapAssistConfiguration.Loaded.GameInfo.LabelFont;
-            var fontSize = MapAssistConfiguration.Loaded.GameInfo.LabelFontSize;
+            var fontSize = (float)MapAssistConfiguration.Loaded.GameInfo.LabelFontSize;
             var fontHeight = (fontSize + fontSize / 2f);
+            var textShadow = MapAssistConfiguration.Loaded.GameInfo.LabelTextShadow;
 
             // Game IP
             if (MapAssistConfiguration.Loaded.GameInfo.ShowGameIP)
@@ -809,7 +810,7 @@ namespace MapAssist.Helpers
                 var fontColor = _gameData.Session.GameIP == MapAssistConfiguration.Loaded.GameInfo.HuntingIP ? Color.Green : Color.Red;
 
                 var ipText = "Game IP: " + _gameData.Session.GameIP;
-                DrawText(gfx, anchor, ipText, font, fontSize, fontColor);
+                DrawText(gfx, anchor, ipText, font, fontSize, fontColor, textShadow);
 
                 anchor.Y += fontHeight + 5;
             }
@@ -819,7 +820,7 @@ namespace MapAssist.Helpers
             {
                 // Area Label
                 var areaText = "Area: " + Utils.GetAreaLabel(_areaData.Area, _gameData.Difficulty, true);
-                DrawText(gfx, anchor, areaText, font, fontSize, Color.FromArgb(255, 218, 100));
+                DrawText(gfx, anchor, areaText, font, fontSize, Color.FromArgb(255, 218, 100), textShadow);
 
                 anchor.Y += fontHeight + 5;
             }
@@ -828,14 +829,14 @@ namespace MapAssist.Helpers
             if (MapAssistConfiguration.Loaded.GameInfo.ShowOverlayFPS)
             {
                 var fpsText = "FPS: " + gfx.FPS.ToString() + "   " + "DeltaTime: " + e.DeltaTime.ToString();
-                DrawText(gfx, anchor, fpsText, font, fontSize, Color.FromArgb(0, 255, 0));
+                DrawText(gfx, anchor, fpsText, font, fontSize, Color.FromArgb(0, 255, 0), textShadow);
 
                 anchor.Y += fontHeight + 5;
             }
 
             if (errorLoadingAreaData)
             {
-                DrawText(gfx, anchor, "ERROR LOADING GAME MAP!", font, (int)Math.Round(fontSize * 1.5), Color.Orange);
+                DrawText(gfx, anchor, "ERROR LOADING GAME MAP!", font, (int)Math.Round(fontSize * 1.5), Color.Orange, textShadow);
                 anchor.Y += (int)Math.Round(fontHeight * 1.5) + 5;
             }
 
@@ -852,6 +853,9 @@ namespace MapAssist.Helpers
             // Setup
             var fontSize = (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
             var fontHeight = (fontSize + fontSize / 2f);
+            var textShadow = MapAssistConfiguration.Loaded.ItemLog.LabelTextShadow;
+            var shadowBrush = CreateSolidBrush(gfx, Color.Black, 0.6f);
+            var shadowOffset = fontSize * 0.0625f; // 1/16th
 
             // Item Log
             var ItemLog = Items.CurrentItemLog.ToArray();
@@ -906,9 +910,16 @@ namespace MapAssist.Helpers
                         break;
                 }
 
+                var position = anchor.Add(0, i * fontHeight);
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
+                var text = itemLabelExtra + itemSpecialName + itemBaseName;
 
-                gfx.DrawText(font, brush, anchor.Add(0, i * fontHeight), itemLabelExtra + itemSpecialName + itemBaseName);
+                if (textShadow)
+                {
+                    gfx.DrawText(font, shadowBrush, position.X + shadowOffset, position.Y + shadowOffset, text);
+                }
+
+                gfx.DrawText(font, brush, position, text);
             }
         }
 
@@ -1048,9 +1059,10 @@ namespace MapAssist.Helpers
 
             var useColor = color ?? rendering.LabelColor;
 
-            var font = CreateFont(gfx, rendering.LabelFont, rendering.LabelFontSize);
+            var font = CreateFont(gfx, rendering.LabelFont, (float)rendering.LabelFontSize);
             var iconShape = GetIconShape(rendering).ToRectangle();
             var textSize = gfx.MeasureString(font, text);
+            var textShadow = rendering.LabelTextShadow;
 
             var multiplier = playerCoord.Y < position.Y ? 1 : -1;
             if (rendering.CanDrawIcon())
@@ -1061,13 +1073,13 @@ namespace MapAssist.Helpers
             position = position.Add(new Point(0, (textSize.Y / 2 + 5) * (!rendering.CanDrawArrowHead() ? -1 : multiplier)));
             position = MoveTextInBounds(position, text, textSize);
 
-            DrawText(gfx, position, text, rendering.LabelFont, rendering.LabelFontSize, useColor,
+            DrawText(gfx, position, text, rendering.LabelFont, (float)rendering.LabelFontSize, useColor, textShadow,
                 centerText: true);
 
             renderTarget.Transform = currentTransform;
         }
 
-        private void DrawText(Graphics gfx, Point position, string text, string fontFamily, float fontSize, Color color,
+        private void DrawText(Graphics gfx, Point position, string text, string fontFamily, float fontSize, Color color, bool textShadow,
             bool centerText = false)
         {
             var font = CreateFont(gfx, fontFamily, fontSize);
@@ -1077,6 +1089,13 @@ namespace MapAssist.Helpers
             {
                 var stringSize = gfx.MeasureString(font, text);
                 position = position.Subtract(stringSize.X / 2, stringSize.Y / 2);
+            }
+
+            if (textShadow)
+            {
+                var shadowBrush = CreateSolidBrush(gfx, Color.Black, 0.6f);
+                var shadowOffset = fontSize * 0.0625f;
+                gfx.DrawText(font, shadowBrush, position.X + shadowOffset, position.Y + shadowOffset, text);
             }
 
             gfx.DrawText(font, brush, position, text);

@@ -290,6 +290,8 @@ namespace MapAssist.Helpers
                 emitter.Emit(new Scalar(null, node.LabelFontSize.ToString()));
                 emitter.Emit(new Scalar(null, "LabelFont"));
                 emitter.Emit(new Scalar(null, node.LabelFont.ToString()));
+                emitter.Emit(new Scalar(null, "LabelTextShadow"));
+                emitter.Emit(new Scalar(null, node.LabelTextShadow.ToString().ToLower()));
             }
         }
 

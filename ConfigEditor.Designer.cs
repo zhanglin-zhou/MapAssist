@@ -31,16 +31,22 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigEditor));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.btnBrowseD2Location = new System.Windows.Forms.Button();
-            this.chkShowArea = new System.Windows.Forms.CheckBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.cboLanguage = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtD2Path = new System.Windows.Forms.TextBox();
+            this.btnBrowseD2Location = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.grpGameInfo = new System.Windows.Forms.GroupBox();
+            this.chkGameInfoTextShadow = new System.Windows.Forms.CheckBox();
+            this.btnClearGameInfoFont = new System.Windows.Forms.Button();
+            this.btnGameInfoFont = new System.Windows.Forms.Button();
+            this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.chkGameInfo = new System.Windows.Forms.CheckBox();
+            this.chkShowArea = new System.Windows.Forms.CheckBox();
             this.txtHuntIP = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.txtD2Path = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -88,9 +94,9 @@
             this.label9 = new System.Windows.Forms.Label();
             this.cboIconShape = new System.Windows.Forms.ComboBox();
             this.tabLabel = new System.Windows.Forms.TabPage();
+            this.chkTextShadow = new System.Windows.Forms.CheckBox();
             this.btnClearLabelFont = new System.Windows.Forms.Button();
             this.btnClearLabelColor = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.btnFont = new System.Windows.Forms.Button();
             this.btnLabelColor = new System.Windows.Forms.Button();
             this.tabLine = new System.Windows.Forms.TabPage();
@@ -105,12 +111,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.cboRenderOption = new System.Windows.Forms.ComboBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.chkLogTextShadow = new System.Windows.Forms.CheckBox();
             this.btnClearLogFont = new System.Windows.Forms.Button();
             this.lblSoundVolumeValue = new System.Windows.Forms.Label();
             this.soundVolume = new System.Windows.Forms.TrackBar();
             this.label10 = new System.Windows.Forms.Label();
             this.lblItemDisplayForSecondsValue = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
             this.itemDisplayForSeconds = new System.Windows.Forms.TrackBar();
             this.btnLogFont = new System.Windows.Forms.Button();
             this.label21 = new System.Windows.Forms.Label();
@@ -136,10 +142,12 @@
             this.btnRemoveHidden = new System.Windows.Forms.Button();
             this.btnAddHidden = new System.Windows.Forms.Button();
             this.lstHidden = new System.Windows.Forms.ListBox();
-            this.chkShowOverlayFPS = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.grpGameInfo.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -182,16 +190,9 @@
             // 
             // tabPage5
             // 
-            this.tabPage5.Controls.Add(this.btnBrowseD2Location);
-            this.tabPage5.Controls.Add(this.chkShowArea);
-            this.tabPage5.Controls.Add(this.cboLanguage);
-            this.tabPage5.Controls.Add(this.label1);
-            this.tabPage5.Controls.Add(this.label11);
-            this.tabPage5.Controls.Add(this.chkGameInfo);
-            this.tabPage5.Controls.Add(this.txtHuntIP);
-            this.tabPage5.Controls.Add(this.label7);
-            this.tabPage5.Controls.Add(this.txtD2Path);
-            this.tabPage5.Controls.Add(this.label6);
+            this.tabPage5.Controls.Add(this.groupBox5);
+            this.tabPage5.Controls.Add(this.groupBox4);
+            this.tabPage5.Controls.Add(this.grpGameInfo);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(324, 325);
@@ -199,9 +200,62 @@
             this.tabPage5.Text = "Main";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // groupBox5
+            // 
+            this.groupBox5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox5.Controls.Add(this.cboLanguage);
+            this.groupBox5.Controls.Add(this.label11);
+            this.groupBox5.Location = new System.Drawing.Point(11, 256);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(300, 57);
+            this.groupBox5.TabIndex = 25;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Translation";
+            // 
+            // cboLanguage
+            // 
+            this.cboLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboLanguage.FormattingEnabled = true;
+            this.cboLanguage.Location = new System.Drawing.Point(71, 22);
+            this.cboLanguage.Name = "cboLanguage";
+            this.cboLanguage.Size = new System.Drawing.Size(146, 21);
+            this.cboLanguage.TabIndex = 14;
+            this.cboLanguage.SelectedIndexChanged += new System.EventHandler(this.cboLanguage_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(7, 25);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(58, 13);
+            this.label11.TabIndex = 13;
+            this.label11.Text = "Language:";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox4.Controls.Add(this.txtD2Path);
+            this.groupBox4.Controls.Add(this.btnBrowseD2Location);
+            this.groupBox4.Controls.Add(this.label1);
+            this.groupBox4.Location = new System.Drawing.Point(11, 151);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(300, 69);
+            this.groupBox4.TabIndex = 24;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "D2LoD 1.13c Path";
+            // 
+            // txtD2Path
+            // 
+            this.txtD2Path.Enabled = false;
+            this.txtD2Path.Location = new System.Drawing.Point(10, 23);
+            this.txtD2Path.Name = "txtD2Path";
+            this.txtD2Path.Size = new System.Drawing.Size(201, 20);
+            this.txtD2Path.TabIndex = 7;
+            this.txtD2Path.TextChanged += new System.EventHandler(this.txtD2Path_TextChanged);
+            // 
             // btnBrowseD2Location
             // 
-            this.btnBrowseD2Location.Location = new System.Drawing.Point(236, 110);
+            this.btnBrowseD2Location.Location = new System.Drawing.Point(217, 21);
             this.btnBrowseD2Location.Name = "btnBrowseD2Location";
             this.btnBrowseD2Location.Size = new System.Drawing.Size(75, 23);
             this.btnBrowseD2Location.TabIndex = 17;
@@ -209,51 +263,85 @@
             this.btnBrowseD2Location.UseVisualStyleBackColor = true;
             this.btnBrowseD2Location.Click += new System.EventHandler(this.btnBrowseD2Location_Click);
             // 
-            // chkShowArea
-            // 
-            this.chkShowArea.AutoSize = true;
-            this.chkShowArea.Location = new System.Drawing.Point(125, 15);
-            this.chkShowArea.Name = "chkShowArea";
-            this.chkShowArea.Size = new System.Drawing.Size(122, 17);
-            this.chkShowArea.TabIndex = 16;
-            this.chkShowArea.Text = "Display Current Area";
-            this.chkShowArea.UseVisualStyleBackColor = true;
-            this.chkShowArea.CheckedChanged += new System.EventHandler(this.chkShowArea_CheckedChanged);
-            // 
-            // cboLanguage
-            // 
-            this.cboLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboLanguage.FormattingEnabled = true;
-            this.cboLanguage.Location = new System.Drawing.Point(76, 286);
-            this.cboLanguage.Name = "cboLanguage";
-            this.cboLanguage.Size = new System.Drawing.Size(132, 21);
-            this.cboLanguage.TabIndex = 14;
-            this.cboLanguage.SelectedIndexChanged += new System.EventHandler(this.cboLanguage_SelectedIndexChanged);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
             this.label1.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label1.Location = new System.Drawing.Point(111, 135);
+            this.label1.Location = new System.Drawing.Point(7, 46);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 13);
             this.label1.TabIndex = 15;
             this.label1.Text = "Leave blank to auto-detect";
             // 
-            // label11
+            // grpGameInfo
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 289);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(58, 13);
-            this.label11.TabIndex = 13;
-            this.label11.Text = "Language:";
+            this.grpGameInfo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.grpGameInfo.Controls.Add(this.chkGameInfoTextShadow);
+            this.grpGameInfo.Controls.Add(this.btnClearGameInfoFont);
+            this.grpGameInfo.Controls.Add(this.btnGameInfoFont);
+            this.grpGameInfo.Controls.Add(this.chkShowOverlayFPS);
+            this.grpGameInfo.Controls.Add(this.chkGameInfo);
+            this.grpGameInfo.Controls.Add(this.chkShowArea);
+            this.grpGameInfo.Controls.Add(this.txtHuntIP);
+            this.grpGameInfo.Controls.Add(this.label7);
+            this.grpGameInfo.Location = new System.Drawing.Point(11, 9);
+            this.grpGameInfo.Name = "grpGameInfo";
+            this.grpGameInfo.Size = new System.Drawing.Size(300, 103);
+            this.grpGameInfo.TabIndex = 23;
+            this.grpGameInfo.TabStop = false;
+            this.grpGameInfo.Text = "Game Info";
+            // 
+            // chkGameInfoTextShadow
+            // 
+            this.chkGameInfoTextShadow.AutoSize = true;
+            this.chkGameInfoTextShadow.Location = new System.Drawing.Point(170, 69);
+            this.chkGameInfoTextShadow.Name = "chkGameInfoTextShadow";
+            this.chkGameInfoTextShadow.Size = new System.Drawing.Size(89, 17);
+            this.chkGameInfoTextShadow.TabIndex = 34;
+            this.chkGameInfoTextShadow.Text = "Text Shadow";
+            this.chkGameInfoTextShadow.UseVisualStyleBackColor = true;
+            this.chkGameInfoTextShadow.CheckedChanged += new System.EventHandler(this.chkGameInfoTextShadow_CheckedChanged);
+            // 
+            // btnClearGameInfoFont
+            // 
+            this.btnClearGameInfoFont.FlatAppearance.BorderSize = 0;
+            this.btnClearGameInfoFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearGameInfoFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
+            this.btnClearGameInfoFont.Location = new System.Drawing.Point(85, 69);
+            this.btnClearGameInfoFont.Name = "btnClearGameInfoFont";
+            this.btnClearGameInfoFont.Size = new System.Drawing.Size(23, 23);
+            this.btnClearGameInfoFont.TabIndex = 33;
+            this.btnClearGameInfoFont.Text = "X";
+            this.btnClearGameInfoFont.UseVisualStyleBackColor = true;
+            this.btnClearGameInfoFont.Click += new System.EventHandler(this.btnClearGameInfoFont_Click);
+            // 
+            // btnGameInfoFont
+            // 
+            this.btnGameInfoFont.BackColor = System.Drawing.Color.Transparent;
+            this.btnGameInfoFont.Location = new System.Drawing.Point(10, 69);
+            this.btnGameInfoFont.Name = "btnGameInfoFont";
+            this.btnGameInfoFont.Size = new System.Drawing.Size(75, 23);
+            this.btnGameInfoFont.TabIndex = 32;
+            this.btnGameInfoFont.Text = "Font";
+            this.btnGameInfoFont.UseVisualStyleBackColor = false;
+            this.btnGameInfoFont.Click += new System.EventHandler(this.btnGameInfoFont_Click);
+            // 
+            // chkShowOverlayFPS
+            // 
+            this.chkShowOverlayFPS.AutoSize = true;
+            this.chkShowOverlayFPS.Location = new System.Drawing.Point(170, 44);
+            this.chkShowOverlayFPS.Name = "chkShowOverlayFPS";
+            this.chkShowOverlayFPS.Size = new System.Drawing.Size(115, 17);
+            this.chkShowOverlayFPS.TabIndex = 2;
+            this.chkShowOverlayFPS.Text = "Show Overlay FPS";
+            this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
+            this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
             // 
             // chkGameInfo
             // 
             this.chkGameInfo.AutoSize = true;
-            this.chkGameInfo.Location = new System.Drawing.Point(15, 15);
+            this.chkGameInfo.Location = new System.Drawing.Point(10, 19);
             this.chkGameInfo.Name = "chkGameInfo";
             this.chkGameInfo.Size = new System.Drawing.Size(104, 17);
             this.chkGameInfo.TabIndex = 6;
@@ -261,40 +349,33 @@
             this.chkGameInfo.UseVisualStyleBackColor = true;
             this.chkGameInfo.CheckedChanged += new System.EventHandler(this.chkGameInfo_CheckedChanged);
             // 
+            // chkShowArea
+            // 
+            this.chkShowArea.AutoSize = true;
+            this.chkShowArea.Location = new System.Drawing.Point(170, 19);
+            this.chkShowArea.Name = "chkShowArea";
+            this.chkShowArea.Size = new System.Drawing.Size(122, 17);
+            this.chkShowArea.TabIndex = 16;
+            this.chkShowArea.Text = "Display Current Area";
+            this.chkShowArea.UseVisualStyleBackColor = true;
+            this.chkShowArea.CheckedChanged += new System.EventHandler(this.chkShowArea_CheckedChanged);
+            // 
             // txtHuntIP
             // 
-            this.txtHuntIP.Location = new System.Drawing.Point(114, 167);
+            this.txtHuntIP.Location = new System.Drawing.Point(56, 42);
             this.txtHuntIP.Name = "txtHuntIP";
-            this.txtHuntIP.Size = new System.Drawing.Size(116, 20);
+            this.txtHuntIP.Size = new System.Drawing.Size(87, 20);
             this.txtHuntIP.TabIndex = 9;
             this.txtHuntIP.TextChanged += new System.EventHandler(this.txtHuntIP_TextChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(12, 170);
+            this.label7.Location = new System.Drawing.Point(7, 45);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(89, 13);
+            this.label7.Size = new System.Drawing.Size(43, 13);
             this.label7.TabIndex = 10;
-            this.label7.Text = "Hunt for Game IP";
-            // 
-            // txtD2Path
-            // 
-            this.txtD2Path.Enabled = false;
-            this.txtD2Path.Location = new System.Drawing.Point(114, 112);
-            this.txtD2Path.Name = "txtD2Path";
-            this.txtD2Path.Size = new System.Drawing.Size(116, 20);
-            this.txtD2Path.TabIndex = 7;
-            this.txtD2Path.TextChanged += new System.EventHandler(this.txtD2Path_TextChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 115);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(96, 13);
-            this.label6.TabIndex = 8;
-            this.label6.Text = "D2LoD 1.13c Path";
+            this.label7.Text = "Hunt IP";
             // 
             // tabPage1
             // 
@@ -856,9 +937,9 @@
             // 
             // tabLabel
             // 
+            this.tabLabel.Controls.Add(this.chkTextShadow);
             this.tabLabel.Controls.Add(this.btnClearLabelFont);
             this.tabLabel.Controls.Add(this.btnClearLabelColor);
-            this.tabLabel.Controls.Add(this.label3);
             this.tabLabel.Controls.Add(this.btnFont);
             this.tabLabel.Controls.Add(this.btnLabelColor);
             this.tabLabel.Location = new System.Drawing.Point(4, 22);
@@ -868,6 +949,18 @@
             this.tabLabel.TabIndex = 1;
             this.tabLabel.Text = "Label";
             this.tabLabel.UseVisualStyleBackColor = true;
+            // 
+            // chkTextShadow
+            // 
+            this.chkTextShadow.AutoSize = true;
+            this.chkTextShadow.Location = new System.Drawing.Point(142, 65);
+            this.chkTextShadow.Name = "chkTextShadow";
+            this.chkTextShadow.Size = new System.Drawing.Size(89, 17);
+            this.chkTextShadow.TabIndex = 32;
+            this.chkTextShadow.Text = "Text Shadow";
+            this.chkTextShadow.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkTextShadow.UseVisualStyleBackColor = true;
+            this.chkTextShadow.CheckedChanged += new System.EventHandler(this.chkTextShadow_CheckedChanged);
             // 
             // btnClearLabelFont
             // 
@@ -894,16 +987,6 @@
             this.btnClearLabelColor.Text = "X";
             this.btnClearLabelColor.UseVisualStyleBackColor = true;
             this.btnClearLabelColor.Click += new System.EventHandler(this.btnClearLabelColor_Click);
-            // 
-            // label3
-            // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
-            this.label3.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label3.Location = new System.Drawing.Point(8, 87);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(250, 19);
-            this.label3.TabIndex = 24;
-            this.label3.Text = "(font styles - bold, italic, etc... not yet implemented)";
             // 
             // btnFont
             // 
@@ -1061,12 +1144,12 @@
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.chkLogTextShadow);
             this.tabPage6.Controls.Add(this.btnClearLogFont);
             this.tabPage6.Controls.Add(this.lblSoundVolumeValue);
             this.tabPage6.Controls.Add(this.soundVolume);
             this.tabPage6.Controls.Add(this.label10);
             this.tabPage6.Controls.Add(this.lblItemDisplayForSecondsValue);
-            this.tabPage6.Controls.Add(this.label19);
             this.tabPage6.Controls.Add(this.itemDisplayForSeconds);
             this.tabPage6.Controls.Add(this.btnLogFont);
             this.tabPage6.Controls.Add(this.label21);
@@ -1084,6 +1167,17 @@
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Item Log";
             this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // chkLogTextShadow
+            // 
+            this.chkLogTextShadow.AutoSize = true;
+            this.chkLogTextShadow.Location = new System.Drawing.Point(142, 273);
+            this.chkLogTextShadow.Name = "chkLogTextShadow";
+            this.chkLogTextShadow.Size = new System.Drawing.Size(89, 17);
+            this.chkLogTextShadow.TabIndex = 31;
+            this.chkLogTextShadow.Text = "Text Shadow";
+            this.chkLogTextShadow.UseVisualStyleBackColor = true;
+            this.chkLogTextShadow.CheckedChanged += new System.EventHandler(this.chkLogTextShadow_CheckedChanged);
             // 
             // btnClearLogFont
             // 
@@ -1143,16 +1237,6 @@
             this.lblItemDisplayForSecondsValue.TabIndex = 25;
             this.lblItemDisplayForSecondsValue.Text = "100 s";
             this.lblItemDisplayForSecondsValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label19
-            // 
-            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F);
-            this.label19.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label19.Location = new System.Drawing.Point(11, 296);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(250, 19);
-            this.label19.TabIndex = 23;
-            this.label19.Text = "(font styles - bold, italic, etc... not yet implemented)";
             // 
             // itemDisplayForSeconds
             // 
@@ -1362,7 +1446,6 @@
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.groupBox2);
-            this.tabPage4.Controls.Add(this.chkShowOverlayFPS);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(324, 325);
@@ -1375,9 +1458,9 @@
             this.groupBox2.Controls.Add(this.btnRemoveHidden);
             this.groupBox2.Controls.Add(this.btnAddHidden);
             this.groupBox2.Controls.Add(this.lstHidden);
-            this.groupBox2.Location = new System.Drawing.Point(14, 48);
+            this.groupBox2.Location = new System.Drawing.Point(11, 9);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(300, 245);
+            this.groupBox2.Size = new System.Drawing.Size(300, 189);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Hidden Areas";
@@ -1407,19 +1490,8 @@
             this.lstHidden.FormattingEnabled = true;
             this.lstHidden.Location = new System.Drawing.Point(10, 19);
             this.lstHidden.Name = "lstHidden";
-            this.lstHidden.Size = new System.Drawing.Size(253, 212);
+            this.lstHidden.Size = new System.Drawing.Size(253, 160);
             this.lstHidden.TabIndex = 0;
-            // 
-            // chkShowOverlayFPS
-            // 
-            this.chkShowOverlayFPS.AutoSize = true;
-            this.chkShowOverlayFPS.Location = new System.Drawing.Point(14, 13);
-            this.chkShowOverlayFPS.Name = "chkShowOverlayFPS";
-            this.chkShowOverlayFPS.Size = new System.Drawing.Size(115, 17);
-            this.chkShowOverlayFPS.TabIndex = 1;
-            this.chkShowOverlayFPS.Text = "Show Overlay FPS";
-            this.chkShowOverlayFPS.UseVisualStyleBackColor = true;
-            this.chkShowOverlayFPS.CheckedChanged += new System.EventHandler(this.chkShowOverlayFPS_CheckedChanged);
             // 
             // ConfigEditor
             // 
@@ -1436,7 +1508,12 @@
             this.Text = "Configuration - MapAssist";
             this.tabControl1.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.grpGameInfo.ResumeLayout(false);
+            this.grpGameInfo.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
@@ -1456,6 +1533,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.iconThickness)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconSize)).EndInit();
             this.tabLabel.ResumeLayout(false);
+            this.tabLabel.PerformLayout();
             this.tabLine.ResumeLayout(false);
             this.tabLine.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.lineThicknessSize)).EndInit();
@@ -1467,7 +1545,6 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1496,11 +1573,9 @@
         private System.Windows.Forms.TrackBar mapZoom;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.CheckBox chkGameInfo;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtD2Path;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtHuntIP;
-        private System.Windows.Forms.CheckBox chkShowOverlayFPS;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox cboRenderOption;
         private System.Windows.Forms.TabControl tabDrawing;
@@ -1521,8 +1596,6 @@
         private System.Windows.Forms.Label lblLineArrow;
         private System.Windows.Forms.TrackBar lineArrowSize;
         private System.Windows.Forms.Button btnLineColor;
-        private System.Windows.Forms.ComboBox cboLanguage;
-        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtZoomOutKey;
@@ -1532,7 +1605,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.TabPage tabPage6;
-        private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Button btnLogFont;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox txtSoundFile;
@@ -1554,18 +1626,11 @@
         private System.Windows.Forms.Button btnIconOutlineColor;
         private System.Windows.Forms.Label lblIconThicknessValue;
         private System.Windows.Forms.Label lblIconSizeValue;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblLineThicknessSizeValue;
         private System.Windows.Forms.Label lblLineArrowSizeValue;
         private System.Windows.Forms.CheckBox chkShowArea;
         private System.Windows.Forms.Button btnWalkableColor;
         private System.Windows.Forms.Button btnBorderColor;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label lblBuffSizeValue;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label lblBuffSize;
-        private System.Windows.Forms.ComboBox cboBuffPosition;
-        private System.Windows.Forms.TrackBar buffSize;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnRemoveHidden;
         private System.Windows.Forms.Button btnAddHidden;
@@ -1584,5 +1649,22 @@
         private System.Windows.Forms.Button btnClearLogFont;
         private System.Windows.Forms.Button btnClearBorderColor;
         private System.Windows.Forms.Button btnClearWalkableColor;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox grpGameInfo;
+        private System.Windows.Forms.CheckBox chkShowOverlayFPS;
+        private System.Windows.Forms.CheckBox chkTextShadow;
+        private System.Windows.Forms.CheckBox chkLogTextShadow;
+        private System.Windows.Forms.CheckBox chkGameInfoTextShadow;
+        private System.Windows.Forms.Button btnClearGameInfoFont;
+        private System.Windows.Forms.Button btnGameInfoFont;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.ComboBox cboLanguage;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label lblBuffSizeValue;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblBuffSize;
+        private System.Windows.Forms.ComboBox cboBuffPosition;
+        private System.Windows.Forms.TrackBar buffSize;
     }
 }
