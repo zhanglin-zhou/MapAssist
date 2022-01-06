@@ -72,10 +72,7 @@ namespace MapAssist.Helpers
                 var ethReqMet = (rule.Ethereal == null || rule.Ethereal == isEth);
                 if (!ethReqMet) { continue; }
 
-                if (qualityReqMet && socketReqMet && defenseReqMet && allResReqMet && ethReqMet)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;
