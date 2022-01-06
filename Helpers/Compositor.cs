@@ -693,6 +693,11 @@ namespace MapAssist.Helpers
                     buffYPos = gfx.Height * .12f;
                     break;
                 case BuffPosition.Bottom:
+                    if (_gameData.MenuOpen.SkillSelect)
+                    {
+                        return;
+                    }
+
                     buffYPos = gfx.Height * .8f;
                     break;
             }
