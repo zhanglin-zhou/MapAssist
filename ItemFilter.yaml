@@ -53,6 +53,7 @@ x-bases:
   - &merc-arm-base
     Ethereal: true
     Qualities: [normal, superior]
+    Defense: 680
     Sockets: [0, 3, 4]
   - &player-arm-base
     Ethereal: false
@@ -65,6 +66,7 @@ x-bases:
   - &pally-shield-base
     # Ethereal: true # Uncomment this if you need an ethereal shield base, or flip it to false for non-ethereal
     Qualities: [normal, superior]
+    AllResist: 25
     Sockets: [0, 4]
 
 # This ring rule will show all magic, rare, and unique rings
