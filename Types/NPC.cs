@@ -875,7 +875,9 @@ namespace MapAssist.Types
             [Npc.Meshif2] = "Meshif",
             [Npc.Drehya2] = "Drehya",
             [Npc.QualKehk] = "Qual-Kehk",
-            [Npc.NihlathakTown] = "Nihlathak Town"
+            [Npc.NihlathakTown] = "Nihlathak Town",
+            [Npc.Navi] = "navi",
+            [Npc.Izual2] = "Izual",
         };
 
         public static readonly HashSet<Npc> _npcTownsfolk = new HashSet<Npc>()
@@ -915,7 +917,6 @@ namespace MapAssist.Types
             Npc.Tyrael3,
             Npc.Halbu,
             Npc.Jamella,
-            Npc.Izual2,
             // Act 5 Npcs
             Npc.DeckardCain5,
             Npc.DeckardCain6,
@@ -925,6 +926,10 @@ namespace MapAssist.Types
             Npc.Malah,
             Npc.Larzuk,
             Npc.NihlathakTown,
+
+            Npc.Navi, // Flavie - the most useful NPC in the game
+            Npc.Malachai, // Hadriel
+            Npc.Izual2, // Izual's spirit after quest
         };
 
         public static string Name(this Npc npc)
@@ -942,7 +947,7 @@ namespace MapAssist.Types
 
         public static bool IsTownsfolk(this Npc npc)
         {
-            return _npcTownsfolk.TryGetValue(npc, out _);
+            return _npcTownsfolk.Contains(npc);
         }
     }
 }

@@ -333,19 +333,16 @@ namespace MapAssist.Helpers
             {
                 var mobRender = GetMonsterIconRendering(unitAny.MonsterData);
 
-                if (AreaExtensions.IsTown(_areaData.Area))
+                var npc = (Npc)unitAny.TxtFileNo;
+                if (NpcExtensions.IsTownsfolk(npc))
                 {
-                    var npc = (Npc)unitAny.TxtFileNo;
-                    if (NpcExtensions.IsTownsfolk(npc))
+                    var npcRender = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
+                    if (npcRender.CanDrawIcon())
                     {
-                        var npcRender = MapAssistConfiguration.Loaded.MapConfiguration.Npc;
-                        if (npcRender.CanDrawIcon())
+                        drawMonsterIcons.Add((npcRender, unitAny));
+                        if (npcRender.CanDrawLabel())
                         {
-                            drawMonsterIcons.Add((npcRender, unitAny));
-                            if (npcRender.CanDrawLabel())
-                            {
-                                drawMonsterLabels.Add((npcRender, unitAny.Position, NpcExtensions.Name(npc), npcRender.LabelColor));
-                            }
+                            drawMonsterLabels.Add((npcRender, unitAny.Position, NpcExtensions.Name(npc), npcRender.LabelColor));
                         }
                     }
                 }
@@ -698,7 +695,6 @@ namespace MapAssist.Helpers
                 case BuffPosition.Bottom:
                     buffYPos = gfx.Height * .8f;
                     break;
-
             }
 
             var buffsByColor = new Dictionary<Color, List<Bitmap>>();
@@ -733,6 +729,24 @@ namespace MapAssist.Helpers
                         buffsByColor[buffColor].Add(CreateResourceBitmap(gfx, stateStr));
                         totalBuffs++;
                     }
+                }
+            }
+
+            if (buffAlignment == BuffPosition.Bottom && _gameData.MenuOpen.PotionBelt)
+            {
+                var potionTopLeft = new Point(
+                    0.5f * gfx.Width + 0.113f * gfx.Height + 1.17f,
+                    0.785f * gfx.Height - 4
+                );
+
+                var buffsBottomRight = new Point(
+                    gfx.Width / 2f + totalBuffs * imgDimensions / 2f,
+                    buffYPos + imgDimensions
+                );
+
+                if (potionTopLeft.X < buffsBottomRight.X && potionTopLeft.Y < buffsBottomRight.Y)
+                {
+                    return;
                 }
             }
 
