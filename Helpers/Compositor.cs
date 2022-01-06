@@ -863,63 +863,24 @@ namespace MapAssist.Helpers
             {
                 var item = ItemLog[i];
 
-                Color fontColor;
-                if (item == null || !Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out fontColor))
+                var fontColor = Items.ItemNameColor(item);
+                if (item == null || fontColor == Color.Empty)
                 {
                     // Invalid item quality
                     continue;
                 }
 
+                var itemName = Items.ItemLogDisplayName(item);
                 var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
-
-                var isEth = (item.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
-                var itemBaseName = Items.ItemNameDisplay(item.TxtFileNo);
-                var itemSpecialName = "";
-                var itemLabelExtra = "";
-
-                if (isEth)
-                {
-                    itemLabelExtra += "[Eth] ";
-                    if (fontColor == Color.White)
-                    {
-                        fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
-                    }
-                }
-
-                if (item.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
-                {
-                    itemLabelExtra += "[" + numSockets + " S] ";
-                    if (fontColor == Color.White)
-                    {
-                        fontColor = Items.ItemColors[ItemQuality.SUPERIOR];
-                    }
-                }
-
-                if (itemBaseName.EndsWith(" Rune") || itemBaseName.StartsWith("Key of "))
-                {
-                    fontColor = Items.ItemColors[ItemQuality.CRAFT];
-                }
-
-                switch (item.ItemData.ItemQuality)
-                {
-                    case ItemQuality.UNIQUE:
-                        itemSpecialName = Items.UniqueName(item.TxtFileNo) + " ";
-                        break;
-                    case ItemQuality.SET:
-                        itemSpecialName = Items.SetName(item.TxtFileNo) + " ";
-                        break;
-                }
-
                 var position = anchor.Add(0, i * fontHeight);
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
-                var text = itemLabelExtra + itemSpecialName + itemBaseName;
 
                 if (textShadow)
                 {
-                    gfx.DrawText(font, shadowBrush, position.X + shadowOffset, position.Y + shadowOffset, text);
+                    gfx.DrawText(font, shadowBrush, position.X + shadowOffset, position.Y + shadowOffset, itemName);
                 }
 
-                gfx.DrawText(font, brush, position, text);
+                gfx.DrawText(font, brush, position, itemName);
             }
         }
 
