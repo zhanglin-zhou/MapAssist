@@ -66,6 +66,9 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "LabelFontSize", ApplyNamingConventions = false)]
         public float LabelFontSize { get; set; }
 
+        [YamlMember(Alias = "LabelFontShadow", ApplyNamingConventions = false)]
+        public bool LabelFontShadow { get; set; }
+
         public bool CanDrawLine()
         {
             return LineColor != Color.Transparent && LineThickness > 0;
