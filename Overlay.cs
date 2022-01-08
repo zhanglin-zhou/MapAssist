@@ -36,7 +36,7 @@ namespace MapAssist
         private readonly GraphicsWindow _window;
         private GameDataReader _gameDataReader;
         private GameData _gameData;
-        private Compositor _compositor;
+        private Compositor _compositor = new Compositor();
         private bool _show = true;
         private static readonly object _lock = new object();
 
@@ -66,7 +66,13 @@ namespace MapAssist
             {
                 lock (_lock)
                 {
-                    (_compositor, _gameData) = _gameDataReader.Get();
+                    var (gameData, areaData, pointsOfInterest, changed) = _gameDataReader.Get();
+                    _gameData = gameData;
+
+                    if (changed)
+                    {
+                        _compositor.setArea(areaData, pointsOfInterest);
+                    }
 
                     gfx.ClearScene();
 

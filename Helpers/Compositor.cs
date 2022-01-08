@@ -38,8 +38,8 @@ namespace MapAssist.Helpers
     {
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         public GameData _gameData;
-        public readonly AreaData _areaData;
-        private readonly IReadOnlyList<PointOfInterest> _pointsOfInterest;
+        public AreaData _areaData;
+        private IReadOnlyList<PointOfInterest> _pointsOfInterest;
         ExocetFont _exocetFont;
         FormalFont _formalFont;
 
@@ -53,7 +53,13 @@ namespace MapAssist.Helpers
         private const int WALKABLE = 0;
         private const int BORDER = 1;
 
-        public Compositor(AreaData areaData, IReadOnlyList<PointOfInterest> pointsOfInterest)
+        public Compositor()
+        {
+            _exocetFont = new ExocetFont();
+            _formalFont = new FormalFont();
+        }
+
+        public void setArea(AreaData areaData, IReadOnlyList<PointOfInterest> pointsOfInterest)
         {
             _areaData = areaData;
             _areaData.CalcViewAreas(_rotateRadians);
@@ -64,8 +70,8 @@ namespace MapAssist.Helpers
             }
 
             _pointsOfInterest = pointsOfInterest;
-            _exocetFont = new ExocetFont();
-            _formalFont = new FormalFont();
+
+            gamemaps = new HashSet<(Bitmap, Point)>();
         }
 
         public void Init(Graphics gfx, GameData gameData, Rectangle drawBounds)
