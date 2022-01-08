@@ -125,7 +125,7 @@ namespace MapAssist.Types
         SOCKETED //Item is Socketed in another Item
     };
 
-    class Items
+    public class Items
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
