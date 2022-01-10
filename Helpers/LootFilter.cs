@@ -25,13 +25,13 @@ namespace MapAssist.Helpers
 {
     public static class LootFilter
     {
-        public static bool Filter(UnitAny unitAny)
+        public static (bool, ItemFilter) Filter(UnitAny unitAny)
         {
             //skip low quality items
             var lowQuality = (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_LOWQUALITY) == ItemFlags.IFLAG_LOWQUALITY;
             if (lowQuality)
             {
-                return false;
+                return (false, null);
             }
 
             var baseName = Items.ItemName(unitAny.TxtFileNo);
@@ -46,7 +46,7 @@ namespace MapAssist.Helpers
             // So we know that simply having the name match means we can return true
             if (matches.Any(kv => kv.Value == null))
             {
-                return true;
+                return (true, null);
             }
 
             //get other item stats to use for filtering
@@ -72,10 +72,41 @@ namespace MapAssist.Helpers
                 var ethReqMet = (rule.Ethereal == null || rule.Ethereal == isEth);
                 if (!ethReqMet) { continue; }
 
-                return true;
+                var allSkillsReqMet = (rule.AllSkills == null || rule.AllSkills == 0 || Items.GetItemStatAllSkills(unitAny) >= rule.AllSkills);
+                if (!allSkillsReqMet) { continue; }
+
+                // Item class skills
+                var addClassSkillsReqMet = (rule.ClassSkills.Count == 0);
+                foreach (var subrule in rule.ClassSkills)
+                {
+                    addClassSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value);
+                    if (!addClassSkillsReqMet) { continue; }
+                }
+                if (!addClassSkillsReqMet) { continue; }
+
+                // Item class tab skills
+                var addClassTabSkillsReqMet = (rule.ClassTabSkills.Count == 0);
+                foreach (var subrule in rule.ClassTabSkills)
+                {
+                    addClassTabSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value);
+                    if (!addClassTabSkillsReqMet) { continue; }
+                }
+                if (!addClassTabSkillsReqMet) { continue; }
+
+                // Item single skills
+                var singleSkillsReqMet = (rule.SingleSkills.Count == 0);
+                foreach (var subrule in rule.SingleSkills)
+                {
+                    singleSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
+                    if (!singleSkillsReqMet) { continue; }
+                }
+                if (!singleSkillsReqMet) { continue; }
+
+                // Item meets all filter requirements
+                return (true, rule);
             }
 
-            return false;
+            return (false, null);
         }
     }
 }

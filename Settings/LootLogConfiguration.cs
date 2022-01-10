@@ -22,5 +22,16 @@ namespace MapAssist.Settings
         public int[] Sockets { get; set; }
         public int? Defense { get; set; }
         public int? AllResist { get; set; }
+        public int? AllSkills { get; set; }
+        public Dictionary<Structs.PlayerClass, int?> ClassSkills { get; set; }
+        public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; }
+        public Dictionary<Skills, int?> SingleSkills { get; set; }
+
+        public ItemFilter()
+        {
+            ClassSkills = new Dictionary<Structs.PlayerClass, int?>();
+            ClassTabSkills = new Dictionary<ClassTabs, int?>();
+            SingleSkills = new Dictionary<Skills, int?>();
+        }
     }
 }

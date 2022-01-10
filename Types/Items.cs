@@ -238,8 +238,13 @@ namespace MapAssist.Types
         public static void LogItem(UnitAny unit, int processId)
         {
             if ((!ItemUnitHashesSeen[processId].Contains(unit.ItemHash()) &&
-                !ItemUnitIdsSeen[processId].Contains(unit.UnitId)) && LootFilter.Filter(unit))
+                !ItemUnitIdsSeen[processId].Contains(unit.UnitId)))
             {
+                (var pickupItem, _) = LootFilter.Filter(unit);
+                if (!pickupItem)
+                {
+                    return;
+                }
                 if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop)
                 {
                     AudioPlayer.PlayItemAlert();
@@ -266,49 +271,103 @@ namespace MapAssist.Types
 
         public static string ItemLogDisplayName(UnitAny unit)
         {
-            var itemBaseName = Items.ItemName(unit.TxtFileNo);
+            var itemBaseName = ItemName(unit.TxtFileNo);
             var itemSpecialName = "";
             var itemPrefix = "";
             var itemSuffix = "";
 
-            var isEth = (unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
-            if (isEth)
+            (_, var rule) = LootFilter.Filter(unit);
+
+            if (rule == null)
+            {
+                return itemBaseName;
+            }
+
+            if (rule.Ethereal != null && (unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
             {
                 itemPrefix += "[Eth] ";
             }
 
-            if (unit.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
+            if (rule.Sockets != null && unit.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
             {
                 itemPrefix += "[" + numSockets + " S] ";
             }
 
-            if (unit.ItemData.ItemQuality == ItemQuality.NORMAL || unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
+            if (rule.Qualities != null && rule.Qualities.Contains(ItemQuality.SUPERIOR) && unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
             {
-                if (unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
-                {
-                    itemPrefix += "Sup. ";
-                }
+                itemPrefix += "Sup. ";
+            }
 
-                var itemArmorDefense = Items.GetArmorDefense(unit);
+            if (rule.Defense != null)
+            {
+                var itemArmorDefense = GetArmorDefense(unit);
                 if (itemArmorDefense > 0)
                 {
                     itemSuffix += $" ({itemArmorDefense} def)";
                 }
+            }
 
-                var itemAllRes = Items.GetItemStatAllResist(unit);
+            if (rule.AllResist != null)
+            {
+                var itemAllRes = GetItemStatAllResist(unit);
                 if (itemAllRes > 0)
                 {
                     itemSuffix += $" ({itemAllRes} all res)";
                 }
             }
 
+            if (rule.AllSkills != null)
+            {
+                var itemAllSkills = GetItemStatAllSkills(unit);
+                if (itemAllSkills > 0)
+                {
+                    itemSuffix += $" (+{itemAllSkills} all skills)";
+                }
+            }
+
+            if (rule.ClassSkills != null)
+            {
+                foreach (var subrule in rule.ClassSkills)
+                {
+                    var classSkills = GetItemStatAddClassSkills(unit, subrule.Key);
+                    if (classSkills > 0)
+                    {
+                        itemSuffix += $" (+{classSkills} {subrule.Key.ToString()})";
+                    }
+                }
+            }
+
+            if (rule.ClassTabSkills != null)
+            {
+                foreach (var subrule in rule.ClassTabSkills)
+                {
+                    var classTabSkills = GetItemStatAddClassTabSkills(unit, subrule.Key);
+                    if (classTabSkills > 0)
+                    {
+                        itemSuffix += $" (+{classTabSkills} {subrule.Key.ToString()})";
+                    }
+                }
+            }
+
+            if (rule.SingleSkills != null)
+            {
+                foreach (var subrule in rule.SingleSkills)
+                {
+                    var singleSkills = GetItemStatSingleSkills(unit, subrule.Key);
+                    if (singleSkills > 0)
+                    {
+                        itemSuffix += $" (+{singleSkills} {subrule.Key.ToString()})";
+                    }
+                }
+            }
+
             switch (unit.ItemData.ItemQuality)
             {
                 case ItemQuality.UNIQUE:
-                    itemSpecialName = Items.UniqueName(unit.TxtFileNo) + " ";
+                    itemSpecialName = UniqueName(unit.TxtFileNo) + " ";
                     break;
                 case ItemQuality.SET:
-                    itemSpecialName = Items.SetName(unit.TxtFileNo) + " ";
+                    itemSpecialName = SetName(unit.TxtFileNo) + " ";
                     break;
             }
 
@@ -369,6 +428,82 @@ namespace MapAssist.Types
             var coldRes = unitAny.Stats.TryGetValue(Stat.STAT_COLDRESIST, out var coldResValue) ? coldResValue : 0;
             var psnRes = unitAny.Stats.TryGetValue(Stat.STAT_POISONRESIST, out var psnResValue) ? psnResValue : 0;
             return new[] { fireRes, lightRes, coldRes, psnRes }.Min();
+        }
+
+        public static int GetItemStatAllSkills(UnitAny unitAny)
+        {
+            return unitAny.Stats.TryGetValue(Stat.STAT_ITEM_ALLSKILLS, out var allSkills) ? allSkills : 0;
+        }
+
+        public static int GetItemStatAddClassSkills(UnitAny unitAny)
+        {
+            var addClassSkills = 0;
+            if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDCLASSSKILLS, out var itemStats))
+            {
+                foreach (var stat in itemStats)
+                {
+                    if (stat.Value > addClassSkills)
+                    {
+                        addClassSkills = stat.Value;
+                    }
+                }
+            }
+            return addClassSkills;
+        }
+
+        public static int GetItemStatAddClassSkills(UnitAny unitAny, Structs.PlayerClass playerClass)
+        {
+            if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDCLASSSKILLS, out var itemStats) &&
+                itemStats.TryGetValue((ushort)playerClass, out var addClassSkills))
+            {
+                    return addClassSkills;
+            }
+            return 0;
+        }
+
+        public static int GetItemStatAddClassTabSkills(UnitAny unitAny)
+        {
+            var addSkillTab = 0;
+            if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDSKILL_TAB, out var itemStats))
+            {
+                foreach (var stat in itemStats)
+                {
+                    if (stat.Value > addSkillTab)
+                    {
+                        addSkillTab = stat.Value;
+                    }
+                }
+            }
+            return addSkillTab;
+        }
+
+        public static int GetItemStatAddClassTabSkills(UnitAny unitAny, ClassTabs classTab)
+        {
+            if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDSKILL_TAB, out var itemStats) &&
+                itemStats.TryGetValue((ushort)classTab, out var addSkillTab))
+            {
+                return addSkillTab;
+            }
+            return 0;
+        }
+
+        public static int GetItemStatSingleSkills(UnitAny unitAny, Skills skill)
+        {
+            var itemSkillsStats = new List<Stat>()
+            {
+                Stat.STAT_ITEM_SINGLESKILL,
+                Stat.STAT_ITEM_NONCLASSSKILL,
+            };
+
+            foreach (var statType in itemSkillsStats)
+            {
+                if (unitAny.ItemStats.TryGetValue(statType, out var itemStats) &&
+                    itemStats.TryGetValue((ushort)skill, out var skillLevel))
+                {
+                    return skillLevel;
+                }
+            }
+            return 0;
         }
 
         public static void ItemLogTimerElapsed(object sender, ElapsedEventArgs args, Timer self, int procId)
