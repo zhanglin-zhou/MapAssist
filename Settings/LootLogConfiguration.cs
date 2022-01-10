@@ -2,6 +2,7 @@
 using MapAssist.Types;
 
 using System.Collections.Generic;
+using YamlDotNet.Serialization;
 
 namespace MapAssist.Settings
 {
@@ -21,6 +22,20 @@ namespace MapAssist.Settings
         public bool? Ethereal { get; set; }
         public int[] Sockets { get; set; }
         public int? Defense { get; set; }
+        
+        [YamlMember(Alias = "All Resist")]
         public int? AllResist { get; set; }
+        
+        [YamlMember(Alias = "All Skills")]
+        public int? AllSkills { get; set; }
+        
+        [YamlMember(Alias = "Class Skills")]
+        public Dictionary<Structs.PlayerClass, int?> ClassSkills { get; set; } = new Dictionary<Structs.PlayerClass, int?>();
+        
+        [YamlMember(Alias = "Class Skill Tree")]
+        public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; } = new Dictionary<ClassTabs, int?>();
+        
+        [YamlMember(Alias = "Skills")]
+        public Dictionary<Skills, int?> Skills { get; set; } = new Dictionary<Skills, int?>();
     }
 }

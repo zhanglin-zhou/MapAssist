@@ -438,7 +438,8 @@ namespace MapAssist.Helpers
                 {
                     if (item.IsDropped())
                     {
-                        if (!LootFilter.Filter(item))
+                        (var pickupItem, _) = LootFilter.Filter(item);
+                        if (!pickupItem)
                         {
                             continue;
                         }
@@ -454,7 +455,8 @@ namespace MapAssist.Helpers
                 {
                     if (item.IsDropped())
                     {
-                        if (!LootFilter.Filter(item))
+                        (var pickupItem, _) = LootFilter.Filter(item);
+                        if (!pickupItem)
                         {
                             continue;
                         }
@@ -726,7 +728,7 @@ namespace MapAssist.Helpers
                     Color buffColor = States.StateColor(state);
                     if (state == State.STATE_CONVICTION)
                     {
-                        if (_gameData.PlayerUnit.Skill.RightSkillId == Skills.SKILL_CONVICTION) //add check later for if infinity is equipped
+                        if (_gameData.PlayerUnit.Skill.RightSkillId == Skills.Conviction) //add check later for if infinity is equipped
                         {
                             buffColor = States.BuffColor;
                         }

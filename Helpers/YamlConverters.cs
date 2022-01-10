@@ -226,6 +226,58 @@ namespace MapAssist.Helpers
         }
     }
 
+    internal sealed class ClassTabsYamlTypeConverter : IYamlTypeConverter
+    {
+        public bool Accepts(Type type)
+        {
+            return type == typeof(ClassTabs);
+        }
+
+        public object ReadYaml(IParser parser, Type type)
+        {
+            if (parser.TryConsume<Scalar>(out var scalar))
+            {
+                if (Enum.TryParse(scalar.Value.Replace(" ", ""), out ClassTabs classTab))
+                {
+                    return classTab;
+                }
+            }
+
+            return null;
+        }
+
+        public void WriteYaml(IEmitter emitter, object value, Type type)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal sealed class SkillsYamlTypeConverter : IYamlTypeConverter
+    {
+        public bool Accepts(Type type)
+        {
+            return type == typeof(Skills);
+        }
+
+        public object ReadYaml(IParser parser, Type type)
+        {
+            if (parser.TryConsume<Scalar>(out var scalar))
+            {
+                if (Enum.TryParse(scalar.Value.Replace(" ", ""), out Skills skill))
+                {
+                    return skill;
+                }
+            }
+
+            return null;
+        }
+
+        public void WriteYaml(IEmitter emitter, object value, Type type)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     internal static class Helpers
     {
         internal static void WriteIconRendering(IEmitter emitter, IconRendering node)
