@@ -158,7 +158,7 @@ namespace MapAssist.Types
                                         var statValues = processContext.Read<StatValue>(statListStruct.Stats.FirstStatPtr, Convert.ToInt32(statListStruct.Stats.Size));
                                         foreach (var stat in statValues)
                                         {
-                                            if (itemStatList.TryGetValue(stat.Stat, out _))
+                                            if (itemStatList.ContainsKey(stat.Stat))
                                             {
                                                 if (stat.Layer == 0) continue;
                                                 if (!itemStatList[stat.Stat].ContainsKey(stat.Layer))

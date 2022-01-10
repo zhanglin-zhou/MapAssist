@@ -23,15 +23,8 @@ namespace MapAssist.Settings
         public int? Defense { get; set; }
         public int? AllResist { get; set; }
         public int? AllSkills { get; set; }
-        public Dictionary<Structs.PlayerClass, int?> ClassSkills { get; set; }
-        public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; }
-        public Dictionary<Skills, int?> SingleSkills { get; set; }
-
-        public ItemFilter()
-        {
-            ClassSkills = new Dictionary<Structs.PlayerClass, int?>();
-            ClassTabSkills = new Dictionary<ClassTabs, int?>();
-            SingleSkills = new Dictionary<Skills, int?>();
-        }
+        public Dictionary<Structs.PlayerClass, int?> ClassSkills { get; set; } = new Dictionary<Structs.PlayerClass, int?>();
+        public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; } = new Dictionary<ClassTabs, int?>();
+        public Dictionary<Skills, int?> SingleSkills { get; set; } = new Dictionary<Skills, int?>();
     }
 }
