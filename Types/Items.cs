@@ -332,7 +332,7 @@ namespace MapAssist.Types
                     var classSkills = GetItemStatAddClassSkills(unit, subrule.Key);
                     if (classSkills > 0)
                     {
-                        itemSuffix += $" (+{classSkills} {subrule.Key.ToString()})";
+                        itemSuffix += $" (+{classSkills} {subrule.Key.ToString()} skills)";
                     }
                 }
             }
@@ -344,7 +344,7 @@ namespace MapAssist.Types
                     var classTabSkills = GetItemStatAddClassTabSkills(unit, subrule.Key);
                     if (classTabSkills > 0)
                     {
-                        itemSuffix += $" (+{classTabSkills} {subrule.Key.ToString()})";
+                        itemSuffix += $" (+{classTabSkills} {subrule.Key.Name()} skills)";
                     }
                 }
             }
@@ -356,7 +356,7 @@ namespace MapAssist.Types
                     var singleSkills = GetItemStatSingleSkills(unit, subrule.Key);
                     if (singleSkills > 0)
                     {
-                        itemSuffix += $" (+{singleSkills} {subrule.Key.ToString()})";
+                        itemSuffix += $" (+{singleSkills} {subrule.Key.Name()})";
                     }
                 }
             }
