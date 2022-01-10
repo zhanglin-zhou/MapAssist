@@ -94,8 +94,8 @@ namespace MapAssist.Helpers
                 if (!addClassTabSkillsReqMet) { continue; }
 
                 // Item single skills
-                var singleSkillsReqMet = (rule.SingleSkills.Count == 0);
-                foreach (var subrule in rule.SingleSkills)
+                var singleSkillsReqMet = (rule.Skills.Count == 0);
+                foreach (var subrule in rule.Skills)
                 {
                     singleSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!singleSkillsReqMet) { continue; }
