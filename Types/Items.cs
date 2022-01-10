@@ -283,17 +283,17 @@ namespace MapAssist.Types
                 return itemBaseName;
             }
 
-            if (rule.Ethereal != null && (unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
+            if ((unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
             {
                 itemPrefix += "[Eth] ";
             }
 
-            if (rule.Sockets != null && unit.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
+            if (unit.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var numSockets))
             {
                 itemPrefix += "[" + numSockets + " S] ";
             }
 
-            if (rule.Qualities != null && rule.Qualities.Contains(ItemQuality.SUPERIOR) && unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
+            if (unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
             {
                 itemPrefix += "Sup. ";
             }
