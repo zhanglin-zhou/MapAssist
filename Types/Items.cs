@@ -349,9 +349,9 @@ namespace MapAssist.Types
                 }
             }
 
-            if (rule.SingleSkills != null)
+            if (rule.Skills != null)
             {
-                foreach (var subrule in rule.SingleSkills)
+                foreach (var subrule in rule.Skills)
                 {
                     var singleSkills = GetItemStatSingleSkills(unit, subrule.Key);
                     if (singleSkills > 0)

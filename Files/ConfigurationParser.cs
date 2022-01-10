@@ -22,6 +22,8 @@ namespace MapAssist.Files
                 .WithNamingConvention(PascalCaseNamingConvention.Instance)
                 .WithTypeConverter(new AreaArrayYamlTypeConverter())
                 .WithTypeConverter(new ItemQualityYamlTypeConverter())
+                .WithTypeConverter(new ClassTabsYamlTypeConverter())
+                .WithTypeConverter(new SkillsYamlTypeConverter())
                 .Build();
 
         public static T ParseConfigurationFile(string fileName)
