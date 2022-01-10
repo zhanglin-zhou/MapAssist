@@ -59,7 +59,7 @@ x-bases:
     Ethereal: false
     Qualities: [normal, superior]
     Sockets: [0, 3, 4]
-    Defense: 1
+    Defense: 400
   - &merc-wep-base
     Ethereal: true
     Qualities: [normal, superior]
