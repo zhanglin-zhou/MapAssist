@@ -256,14 +256,14 @@ namespace MapAssist.Helpers
     {
         public bool Accepts(Type type)
         {
-            return type == typeof(Skills);
+            return type == typeof(Skill);
         }
 
         public object ReadYaml(IParser parser, Type type)
         {
             if (parser.TryConsume<Scalar>(out var scalar))
             {
-                if (Enum.TryParse(scalar.Value.Replace(" ", ""), out Skills skill))
+                if (Enum.TryParse(scalar.Value.Replace(" ", ""), out Skill skill))
                 {
                     return skill;
                 }
