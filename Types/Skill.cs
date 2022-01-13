@@ -88,8 +88,9 @@ namespace MapAssist.Types
         public Skill UsedSkillId => _usedSkillId;
     }
 
-    public enum Skill : ushort
+    public enum Skill : short
     {
+        Unset = -1,
         Attack = 0,
         Kick,
         Throw,
@@ -447,7 +448,7 @@ namespace MapAssist.Types
         UnHolyBoltEx,
         ShamanFireEx,
         ImpFireMissileEx,
-        FixedSiegeBeastStomp,
+        FixedSiegeBeastStomp
     };
 
     public enum ClassTabs
