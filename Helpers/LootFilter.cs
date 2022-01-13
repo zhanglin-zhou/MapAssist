@@ -18,6 +18,7 @@
  **/
 
 using System.Linq;
+using System.Collections.Generic;
 using MapAssist.Types;
 using MapAssist.Settings;
 
@@ -25,6 +26,41 @@ namespace MapAssist.Helpers
 {
     public static class LootFilter
     {
+        public static Dictionary<string, Stat> FilterOptionStats = new Dictionary<string, Stat>()
+        {
+            ["AllSkills"] = Stat.STAT_ITEM_ALLSKILLS,
+            ["Strength"] = Stat.STAT_STRENGTH,
+            ["Dexterity"] = Stat.STAT_DEXTERITY,
+            ["Vitality"] = Stat.STAT_VITALITY,
+            ["Energy"] = Stat.STAT_ENERGY,
+            ["AttackRating"] = Stat.STAT_TOHIT,
+            ["MinDamage"] = Stat.STAT_MINDAMAGE,
+            ["MaxDamage"] = Stat.STAT_MAXDAMAGE,
+            ["DamageReduced"] = Stat.STAT_DAMAGERESIST,
+            ["LifeSteal"] = Stat.STAT_LIFEDRAINMINDAM,
+            ["ManaSteal"] = Stat.STAT_MANADRAINMINDAM,
+            ["ColdSkillDamage"] = Stat.STAT_PASSIVE_COLD_MASTERY,
+            ["LightningSkillDamage"] = Stat.STAT_PASSIVE_LTNG_MASTERY,
+            ["FireSkillDamage"] = Stat.STAT_PASSIVE_FIRE_MASTERY,
+            ["PoisonSkillDamage"] = Stat.STAT_PASSIVE_POIS_MASTERY,
+            ["IncreasedAttackSpeed"] = Stat.STAT_ITEM_FASTERATTACKRATE,
+            ["FasterRunWalk"] = Stat.STAT_ITEM_FASTERMOVEVELOCITY,
+            ["FasterHitRecovery"] = Stat.STAT_ITEM_FASTERGETHITRATE,
+            ["FasterCastRate"] = Stat.STAT_ITEM_FASTERCASTRATE,
+            ["MagicFind"] = Stat.STAT_ITEM_MAGICBONUS,
+            ["GoldFind"] = Stat.STAT_ITEM_GOLDBONUS,
+            ["ColdResist"] = Stat.STAT_COLDRESIST,
+            ["LightningResist"] = Stat.STAT_LIGHTRESIST,
+            ["FireResist"] = Stat.STAT_FIRERESIST,
+            ["PoisonResist"] = Stat.STAT_POISONRESIST,
+        };
+
+        public static Dictionary<string, (Stat, int)> FilterOptionShifted = new Dictionary<string, (Stat, int)>()
+        {
+            ["MaxLife"] = (Stat.STAT_MAXHP, 8),
+            ["MaxMana"] = (Stat.STAT_MAXMANA, 8),
+        };
+
         public static (bool, ItemFilter) Filter(UnitAny unitAny)
         {
             //skip low quality items
@@ -57,29 +93,28 @@ namespace MapAssist.Helpers
             //scan the list of rules
             foreach (var rule in matches.SelectMany(kv => kv.Value))
             {
+                var testing = Items.GetStatAddSkillCharges(unitAny, Skill.Hydra);
+
                 var qualityReqMet = rule.Qualities == null || rule.Qualities.Length == 0 || rule.Qualities.Contains(itemQuality);
                 if (!qualityReqMet) { continue; }
 
                 var socketReqMet = rule.Sockets == null || rule.Sockets.Length == 0 || rule.Sockets.Contains(numSockets);
                 if (!socketReqMet) { continue; }
 
-                var defenseReqMet = rule.Defense == null || rule.Defense == 0 || Items.GetArmorDefense(unitAny) >= rule.Defense;
-                if (!defenseReqMet) { continue; }
-
-                var allResReqMet = rule.AllResist == null || rule.AllResist == 0 || Items.GetItemStatAllResist(unitAny) >= rule.AllResist;
-                if (!allResReqMet) { continue; }
-
                 var ethReqMet = (rule.Ethereal == null || rule.Ethereal == isEth);
                 if (!ethReqMet) { continue; }
 
-                var allSkillsReqMet = (rule.AllSkills == null || rule.AllSkills == 0 || Items.GetItemStatAllSkills(unitAny) >= rule.AllSkills);
-                if (!allSkillsReqMet) { continue; }
+                var allAttrReqMet = rule.AllAttributes == null || rule.AllAttributes == 0 || Items.GetStatAllAttributes(unitAny) >= rule.AllAttributes;
+                if (!allAttrReqMet) { continue; }
+
+                var allResReqMet = rule.AllResist == null || rule.AllResist == 0 || Items.GetStatAllResist(unitAny) >= rule.AllResist;
+                if (!allResReqMet) { continue; }
 
                 // Item class skills
                 var addClassSkillsReqMet = (rule.ClassSkills.Count == 0);
                 foreach (var subrule in rule.ClassSkills)
                 {
-                    addClassSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value);
+                    addClassSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!addClassSkillsReqMet) { continue; }
                 }
                 if (!addClassSkillsReqMet) { continue; }
@@ -88,19 +123,46 @@ namespace MapAssist.Helpers
                 var addClassTabSkillsReqMet = (rule.ClassTabSkills.Count == 0);
                 foreach (var subrule in rule.ClassTabSkills)
                 {
-                    addClassTabSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value);
+                    addClassTabSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!addClassTabSkillsReqMet) { continue; }
                 }
                 if (!addClassTabSkillsReqMet) { continue; }
+
+                // Item skill charges
+                var chargedSkillsReqMet = (rule.SkillCharges.Count == 0);
+                foreach (var subrule in rule.SkillCharges)
+                {
+                    chargedSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatAddSkillCharges(unitAny, subrule.Key) >= subrule.Value);
+                    if (!chargedSkillsReqMet) { continue; }
+                }
+                if (!chargedSkillsReqMet) { continue; }
 
                 // Item single skills
                 var singleSkillsReqMet = (rule.Skills.Count == 0);
                 foreach (var subrule in rule.Skills)
                 {
-                    singleSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
+                    singleSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!singleSkillsReqMet) { continue; }
                 }
                 if (!singleSkillsReqMet) { continue; }
+
+                // Shifted item stats
+                var shiftedStatReqMet = true;
+                foreach (var (prop, (stat, shift)) in FilterOptionShifted.Select(x => (x.Key, x.Value)))
+                {
+                    shiftedStatReqMet = rule[prop] == null || (int)rule[prop] == 0 || Items.GetItemStatShifted(unitAny, stat, shift) >= (int)rule[prop];
+                    if (!shiftedStatReqMet) { continue; }
+                }
+                if (!shiftedStatReqMet) { continue; }
+
+                // Other item stats
+                var otherStatReqMet = true;
+                foreach (var (prop, stat) in FilterOptionStats.Select(x => (x.Key, x.Value)))
+                {
+                    otherStatReqMet = rule[prop] == null || (int)rule[prop] == 0 || Items.GetItemStat(unitAny, stat) >= (int)rule[prop];
+                    if (!otherStatReqMet) { continue; }
+                }
+                if (!otherStatReqMet) { continue; }
 
                 // Item meets all filter requirements
                 return (true, rule);
