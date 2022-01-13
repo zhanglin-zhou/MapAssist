@@ -309,7 +309,7 @@ namespace MapAssist.Types
 
             if (rule.AllResist != null)
             {
-                var itemAllRes = GetStatAllResist(unit);
+                var itemAllRes = GetItemStatAllResist(unit);
                 if (itemAllRes > 0)
                 {
                     itemSuffix += $" ({itemAllRes} all res)";
@@ -329,7 +329,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.ClassSkills)
                 {
-                    var classSkills = GetStatAddClassSkills(unit, subrule.Key);
+                    var classSkills = GetItemStatAddClassSkills(unit, subrule.Key);
                     if (classSkills > 0)
                     {
                         itemSuffix += $" (+{classSkills} {subrule.Key} skills)";
@@ -341,7 +341,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.ClassTabSkills)
                 {
-                    var classTabSkills = GetStatAddClassTabSkills(unit, subrule.Key);
+                    var classTabSkills = GetItemStatAddClassTabSkills(unit, subrule.Key);
                     if (classTabSkills > 0)
                     {
                         itemSuffix += $" (+{classTabSkills} {subrule.Key.Name()} skills)";
@@ -353,7 +353,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.Skills)
                 {
-                    var singleSkills = GetStatSingleSkills(unit, subrule.Key);
+                    var singleSkills = GetItemStatSingleSkills(unit, subrule.Key);
                     if (singleSkills > 0)
                     {
                         itemSuffix += $" (+{singleSkills} {subrule.Key.Name()})";
@@ -426,7 +426,7 @@ namespace MapAssist.Types
             return unitAny.Stats.TryGetValue(stat, out var statValue) ? statValue >> shift : 0;
         }
 
-        public static int GetStatAllResist(UnitAny unitAny)
+        public static int GetItemStatAllResist(UnitAny unitAny)
         {
             unitAny.Stats.TryGetValue(Stat.STAT_FIRERESIST, out var fireRes);
             unitAny.Stats.TryGetValue(Stat.STAT_LIGHTRESIST, out var lightRes);
@@ -435,7 +435,7 @@ namespace MapAssist.Types
             return new[] { fireRes, lightRes, coldRes, psnRes }.Min();
         }
 
-        public static int GetStatAllAttributes(UnitAny unitAny)
+        public static int GetItemStatAllAttributes(UnitAny unitAny)
         {
             unitAny.Stats.TryGetValue(Stat.STAT_STRENGTH, out var strength);
             unitAny.Stats.TryGetValue(Stat.STAT_DEXTERITY, out var dexterity);
@@ -444,7 +444,7 @@ namespace MapAssist.Types
             return new[] { strength, dexterity, vitality, energy }.Min();
         }
 
-        public static int GetStatAddClassSkills(UnitAny unitAny)
+        public static int GetItemStatAddClassSkills(UnitAny unitAny)
         {
             var addClassSkills = 0;
             if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDCLASSSKILLS, out var itemStats))
@@ -460,7 +460,7 @@ namespace MapAssist.Types
             return addClassSkills;
         }
 
-        public static int GetStatAddClassSkills(UnitAny unitAny, Structs.PlayerClass playerClass)
+        public static int GetItemStatAddClassSkills(UnitAny unitAny, Structs.PlayerClass playerClass)
         {
             if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDCLASSSKILLS, out var itemStats) &&
                 itemStats.TryGetValue((ushort)playerClass, out var addClassSkills))
@@ -470,7 +470,7 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static int GetStatAddClassTabSkills(UnitAny unitAny)
+        public static int GetItemStatAddClassTabSkills(UnitAny unitAny)
         {
             var addSkillTab = 0;
             if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDSKILL_TAB, out var itemStats))
@@ -486,7 +486,7 @@ namespace MapAssist.Types
             return addSkillTab;
         }
 
-        public static int GetStatAddClassTabSkills(UnitAny unitAny, ClassTabs classTab)
+        public static int GetItemStatAddClassTabSkills(UnitAny unitAny, ClassTabs classTab)
         {
             if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_ADDSKILL_TAB, out var itemStats) &&
                 itemStats.TryGetValue((ushort)classTab, out var addSkillTab))
@@ -496,7 +496,7 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static int GetStatAddSkillCharges(UnitAny unitAny, Skill skill)
+        public static int GetItemStatAddSkillCharges(UnitAny unitAny, Skill skill)
         {
 
             if (unitAny.ItemStats.TryGetValue(Stat.STAT_ITEM_CHARGED_SKILL, out var itemStats))
@@ -513,7 +513,7 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static int GetStatSingleSkills(UnitAny unitAny, Skill skill)
+        public static int GetItemStatSingleSkills(UnitAny unitAny, Skill skill)
         {
             var itemSkillsStats = new List<Stat>()
             {

@@ -93,7 +93,7 @@ namespace MapAssist.Helpers
             //scan the list of rules
             foreach (var rule in matches.SelectMany(kv => kv.Value))
             {
-                var testing = Items.GetStatAddSkillCharges(unitAny, Skill.Hydra);
+                var testing = Items.GetItemStatAddSkillCharges(unitAny, Skill.Hydra);
 
                 var qualityReqMet = rule.Qualities == null || rule.Qualities.Length == 0 || rule.Qualities.Contains(itemQuality);
                 if (!qualityReqMet) { continue; }
@@ -104,17 +104,17 @@ namespace MapAssist.Helpers
                 var ethReqMet = (rule.Ethereal == null || rule.Ethereal == isEth);
                 if (!ethReqMet) { continue; }
 
-                var allAttrReqMet = rule.AllAttributes == null || rule.AllAttributes == 0 || Items.GetStatAllAttributes(unitAny) >= rule.AllAttributes;
+                var allAttrReqMet = rule.AllAttributes == null || rule.AllAttributes == 0 || Items.GetItemStatAllAttributes(unitAny) >= rule.AllAttributes;
                 if (!allAttrReqMet) { continue; }
 
-                var allResReqMet = rule.AllResist == null || rule.AllResist == 0 || Items.GetStatAllResist(unitAny) >= rule.AllResist;
+                var allResReqMet = rule.AllResist == null || rule.AllResist == 0 || Items.GetItemStatAllResist(unitAny) >= rule.AllResist;
                 if (!allResReqMet) { continue; }
 
                 // Item class skills
                 var addClassSkillsReqMet = (rule.ClassSkills.Count == 0);
                 foreach (var subrule in rule.ClassSkills)
                 {
-                    addClassSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value);
+                    addClassSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!addClassSkillsReqMet) { continue; }
                 }
                 if (!addClassSkillsReqMet) { continue; }
@@ -123,7 +123,7 @@ namespace MapAssist.Helpers
                 var addClassTabSkillsReqMet = (rule.ClassTabSkills.Count == 0);
                 foreach (var subrule in rule.ClassTabSkills)
                 {
-                    addClassTabSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value);
+                    addClassTabSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!addClassTabSkillsReqMet) { continue; }
                 }
                 if (!addClassTabSkillsReqMet) { continue; }
@@ -132,7 +132,7 @@ namespace MapAssist.Helpers
                 var chargedSkillsReqMet = (rule.SkillCharges.Count == 0);
                 foreach (var subrule in rule.SkillCharges)
                 {
-                    chargedSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatAddSkillCharges(unitAny, subrule.Key) >= subrule.Value);
+                    chargedSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatAddSkillCharges(unitAny, subrule.Key) >= subrule.Value);
                     if (!chargedSkillsReqMet) { continue; }
                 }
                 if (!chargedSkillsReqMet) { continue; }
@@ -141,7 +141,7 @@ namespace MapAssist.Helpers
                 var singleSkillsReqMet = (rule.Skills.Count == 0);
                 foreach (var subrule in rule.Skills)
                 {
-                    singleSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
+                    singleSkillsReqMet = (subrule.Value == null || subrule.Value == 0 || Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
                     if (!singleSkillsReqMet) { continue; }
                 }
                 if (!singleSkillsReqMet) { continue; }
