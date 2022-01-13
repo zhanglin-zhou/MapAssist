@@ -47,7 +47,7 @@ namespace MapAssist.Types
         private string _name;
         private bool _isMonster;
         private bool _updated;
-        private Skill _skill;
+        private Skills _skills;
         private bool _isPlayerUnit;
         private Roster _rosterData;
         private bool _hostileToPlayer;
@@ -112,7 +112,7 @@ namespace MapAssist.Types
                                     _initialArea = Path.Room.RoomEx.Level.LevelId;
                                     if (IsPlayerUnit())
                                     {
-                                        _skill = new Skill(_unitAny.pSkills);
+                                        _skills = new Skills(_unitAny.pSkills);
                                         _stateList = GetStateList();
                                     } else
                                     {
@@ -226,7 +226,7 @@ namespace MapAssist.Types
         public List<Resist> Immunities => _immunities;
         public uint[] StateFlags => _stateFlags;
         public List<State> StateList => _stateList;
-        public Skill Skill => _skill;
+        public Skills Skills => _skills;
         public ushort PartyId => GetPartyId();
         public bool HostileToPlayer => _hostileToPlayer;
         public bool InPlayerParty => _inPlayerParty;

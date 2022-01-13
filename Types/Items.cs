@@ -487,7 +487,7 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static int GetItemStatSingleSkills(UnitAny unitAny, Skills skill)
+        public static int GetItemStatSingleSkills(UnitAny unitAny, Skill skill)
         {
             var itemSkillsStats = new List<Stat>()
             {

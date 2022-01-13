@@ -17,31 +17,31 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using MapAssist.Helpers;
+using MapAssist.Interfaces;
+using MapAssist.Structs;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MapAssist.Helpers;
-using MapAssist.Interfaces;
-using MapAssist.Structs;
 
 namespace MapAssist.Types
 {
-    public class Skill : IUpdatable<Skill>
+    public class Skills : IUpdatable<Skills>
     {
         private readonly IntPtr _pSkills;
-        private Skills _rightSkillId;
-        private Skills _leftSkillId;
-        private Skills _usedSkillId;
+        private Dictionary<Skill, SkillPoints> _allSkills;
+        private Skill _rightSkillId;
+        private Skill _leftSkillId;
+        private Skill _usedSkillId;
 
-        public Skill(IntPtr pSkills)
+        public Skills(IntPtr pSkills)
         {
             _pSkills = pSkills;
             Update();
         }
-        public Skill Update()
+
+        public Skills Update()
         {
             using (var processContext = GameManager.GetProcessContext())
             {
@@ -49,24 +49,46 @@ namespace MapAssist.Types
 
                 var skill = processContext.Read<SkillStrc>(skillList.pRightSkill);
                 var skillTxt = processContext.Read<SkillTxt>(skill.SkillTxt);
-                _rightSkillId = (Skills)skillTxt.Id;
+                _rightSkillId = skillTxt.Id;
+
                 skill = processContext.Read<SkillStrc>(skillList.pLeftSkill);
                 skillTxt = processContext.Read<SkillTxt>(skill.SkillTxt);
-                _leftSkillId = (Skills)skillTxt.Id;
+                _leftSkillId = skillTxt.Id;
+
                 skill = processContext.Read<SkillStrc>(skillList.pUsedSkill);
                 skillTxt = processContext.Read<SkillTxt>(skill.SkillTxt);
-                _usedSkillId = (Skills)skillTxt.Id;
+                _usedSkillId = skillTxt.Id;
+
+                var allSkills = new Dictionary<Skill, SkillPoints>();
+                var skillPtr = skillList.pFirstSkill;
+                while (true)
+                {
+                    skill = processContext.Read<SkillStrc>(skillPtr);
+                    skillTxt = processContext.Read<SkillTxt>(skill.SkillTxt);
+                    allSkills.Add(skillTxt.Id, new SkillPoints()
+                    {
+                        HardPoints = skill.HardPoints,
+                        Quantity = skill.Quantity,
+                        Charges = skill.Charges
+                    });
+
+                    skillPtr = skill.pNextSkill;
+                    if (skillPtr == IntPtr.Zero) break;
+                }
+
+                _allSkills = allSkills;
             }
+
             return this;
         }
-        public Skills RightSkillId => _rightSkillId;
-        public Skills LeftSkillId => _leftSkillId;
-        public Skills UsedSkillId => _usedSkillId;
 
-
+        public Dictionary<Skill, SkillPoints> AllSkills => _allSkills;
+        public Skill RightSkillId => _rightSkillId;
+        public Skill LeftSkillId => _leftSkillId;
+        public Skill UsedSkillId => _usedSkillId;
     }
 
-    public enum Skills
+    public enum Skill : ushort
     {
         Attack = 0,
         Kick,
@@ -453,6 +475,13 @@ namespace MapAssist.Types
         AssassinMartialArts = 50,
     }
 
+    public class SkillPoints
+    {
+        public uint HardPoints;
+        public uint Quantity;
+        public uint Charges;
+    }
+
     public static class SkillExtensions
     {
         public static string Name(this ClassTabs classTab)
@@ -461,7 +490,7 @@ namespace MapAssist.Types
             return string.Concat(classTab.ToString().Select((x, j) => j > 0 && char.IsUpper(x) ? " " + x.ToString() : x.ToString()));
         }
 
-        public static string Name(this Skills skill)
+        public static string Name(this Skill skill)
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             return string.Concat(skill.ToString().Select((x, j) => j > 0 && char.IsUpper(x) ? " " + x.ToString() : x.ToString()));

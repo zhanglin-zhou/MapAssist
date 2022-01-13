@@ -36,6 +36,6 @@ namespace MapAssist.Settings
         public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; } = new Dictionary<ClassTabs, int?>();
         
         [YamlMember(Alias = "Skills")]
-        public Dictionary<Skills, int?> Skills { get; set; } = new Dictionary<Skills, int?>();
+        public Dictionary<Skill, int?> Skills { get; set; } = new Dictionary<Skill, int?>();
     }
 }
