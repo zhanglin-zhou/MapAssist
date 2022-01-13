@@ -358,12 +358,12 @@ namespace MapAssist.Types
 
         private List<Resist> GetImmunities()
         {
-            _statList.TryGetValue(Stat.STAT_DAMAGERESIST, out var resistanceDamage);
-            _statList.TryGetValue(Stat.STAT_MAGICRESIST, out var resistanceMagic);
-            _statList.TryGetValue(Stat.STAT_FIRERESIST, out var resistanceFire);
-            _statList.TryGetValue(Stat.STAT_LIGHTRESIST, out var resistanceLightning);
-            _statList.TryGetValue(Stat.STAT_COLDRESIST, out var resistanceCold);
-            _statList.TryGetValue(Stat.STAT_POISONRESIST, out var resistancePoison);
+            _statList.TryGetValue(Stat.DamageResist, out var resistanceDamage);
+            _statList.TryGetValue(Stat.MagicResist, out var resistanceMagic);
+            _statList.TryGetValue(Stat.FireResist, out var resistanceFire);
+            _statList.TryGetValue(Stat.LightningResist, out var resistanceLightning);
+            _statList.TryGetValue(Stat.ColdResist, out var resistanceCold);
+            _statList.TryGetValue(Stat.PoisonResist, out var resistancePoison);
 
             var resists = new List<int>
             {

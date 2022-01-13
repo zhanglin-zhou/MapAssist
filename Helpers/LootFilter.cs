@@ -28,37 +28,38 @@ namespace MapAssist.Helpers
     {
         public static Dictionary<string, Stat> FilterOptionStats = new Dictionary<string, Stat>()
         {
-            ["AllSkills"] = Stat.STAT_ITEM_ALLSKILLS,
-            ["Strength"] = Stat.STAT_STRENGTH,
-            ["Dexterity"] = Stat.STAT_DEXTERITY,
-            ["Vitality"] = Stat.STAT_VITALITY,
-            ["Energy"] = Stat.STAT_ENERGY,
-            ["AttackRating"] = Stat.STAT_TOHIT,
-            ["MinDamage"] = Stat.STAT_MINDAMAGE,
-            ["MaxDamage"] = Stat.STAT_MAXDAMAGE,
-            ["DamageReduced"] = Stat.STAT_DAMAGERESIST,
-            ["LifeSteal"] = Stat.STAT_LIFEDRAINMINDAM,
-            ["ManaSteal"] = Stat.STAT_MANADRAINMINDAM,
-            ["ColdSkillDamage"] = Stat.STAT_PASSIVE_COLD_MASTERY,
-            ["LightningSkillDamage"] = Stat.STAT_PASSIVE_LTNG_MASTERY,
-            ["FireSkillDamage"] = Stat.STAT_PASSIVE_FIRE_MASTERY,
-            ["PoisonSkillDamage"] = Stat.STAT_PASSIVE_POIS_MASTERY,
-            ["IncreasedAttackSpeed"] = Stat.STAT_ITEM_FASTERATTACKRATE,
-            ["FasterRunWalk"] = Stat.STAT_ITEM_FASTERMOVEVELOCITY,
-            ["FasterHitRecovery"] = Stat.STAT_ITEM_FASTERGETHITRATE,
-            ["FasterCastRate"] = Stat.STAT_ITEM_FASTERCASTRATE,
-            ["MagicFind"] = Stat.STAT_ITEM_MAGICBONUS,
-            ["GoldFind"] = Stat.STAT_ITEM_GOLDBONUS,
-            ["ColdResist"] = Stat.STAT_COLDRESIST,
-            ["LightningResist"] = Stat.STAT_LIGHTRESIST,
-            ["FireResist"] = Stat.STAT_FIRERESIST,
-            ["PoisonResist"] = Stat.STAT_POISONRESIST,
+            ["Defense"] = Stat.ArmorClass,
+            ["AllSkills"] = Stat.AllSkills,
+            ["Strength"] = Stat.Strength,
+            ["Dexterity"] = Stat.Dexterity,
+            ["Vitality"] = Stat.Vitality,
+            ["Energy"] = Stat.Energy,
+            ["AttackRating"] = Stat.ToHit,
+            ["MinDamage"] = Stat.MinDamage,
+            ["MaxDamage"] = Stat.MaxDamage,
+            ["DamageReduced"] = Stat.DamageResist,
+            ["LifeSteal"] = Stat.LifeDrainMinDamage,
+            ["ManaSteal"] = Stat.ManaDrainMinDamage,
+            ["ColdSkillDamage"] = Stat.PassiveColdMastery,
+            ["LightningSkillDamage"] = Stat.PassiveLightningMastery,
+            ["FireSkillDamage"] = Stat.PassiveFireMastery,
+            ["PoisonSkillDamage"] = Stat.PassivePoisonMastery,
+            ["IncreasedAttackSpeed"] = Stat.FasterAttackRate,
+            ["FasterRunWalk"] = Stat.FasterRunWalk,
+            ["FasterHitRecovery"] = Stat.FasterHitRecovery,
+            ["FasterCastRate"] = Stat.FasterCastRate,
+            ["MagicFind"] = Stat.MagicBonus,
+            ["GoldFind"] = Stat.GoldBonus,
+            ["ColdResist"] = Stat.ColdResist,
+            ["LightningResist"] = Stat.LightningResist,
+            ["FireResist"] = Stat.FireResist,
+            ["PoisonResist"] = Stat.PoisonResist,
         };
 
         public static Dictionary<string, (Stat, int)> FilterOptionShifted = new Dictionary<string, (Stat, int)>()
         {
-            ["MaxLife"] = (Stat.STAT_MAXHP, 8),
-            ["MaxMana"] = (Stat.STAT_MAXMANA, 8),
+            ["MaxLife"] = (Stat.MaxLife, 8),
+            ["MaxMana"] = (Stat.MaxMana, 8),
         };
 
         public static (bool, ItemFilter) Filter(UnitAny unitAny)
@@ -88,13 +89,11 @@ namespace MapAssist.Helpers
             //get other item stats to use for filtering
             var itemQuality = unitAny.ItemData.ItemQuality;
             var isEth = (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
-            var numSockets = unitAny.Stats.TryGetValue(Stat.STAT_ITEM_NUMSOCKETS, out var socketCount) ? socketCount : 0;
+            unitAny.Stats.TryGetValue(Stat.NumSockets, out var numSockets);
 
             //scan the list of rules
             foreach (var rule in matches.SelectMany(kv => kv.Value))
             {
-                var testing = Items.GetItemStatAddSkillCharges(unitAny, Skill.Hydra);
-
                 var qualityReqMet = rule.Qualities == null || rule.Qualities.Length == 0 || rule.Qualities.Contains(itemQuality);
                 if (!qualityReqMet) { continue; }
 
