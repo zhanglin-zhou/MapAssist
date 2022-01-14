@@ -1,6 +1,5 @@
 ﻿using MapAssist.Files;
 using MapAssist.Types;
-
 using System.Collections.Generic;
 using YamlDotNet.Serialization;
 
@@ -18,15 +17,15 @@ namespace MapAssist.Settings
 
     public class ItemFilter
     {
-        public object this[string propertyName]
+        public object this[Stat stat]
         {
-            get { return GetType().GetProperty(propertyName).GetValue(this, null); }
-            set { GetType().GetProperty(propertyName).SetValue(this, value, null); }
+            get { return GetType().GetProperty(stat.ToString()).GetValue(this, null); }
+            set { GetType().GetProperty(stat.ToString()).SetValue(this, value, null); }
         }
 
         public ItemQuality[] Qualities { get; set; }
-        public bool? Ethereal { get; set; }
         public int[] Sockets { get; set; }
+        public bool? Ethereal { get; set; }
         public int? Defense { get; set; }
         public int? Strength { get; set; }
         public int? Dexterity { get; set; }
@@ -104,20 +103,20 @@ namespace MapAssist.Settings
 
         [YamlMember(Alias = "All Resist")]
         public int? AllResist { get; set; }
-        
+
         [YamlMember(Alias = "All Skills")]
         public int? AllSkills { get; set; }
-        
+
         [YamlMember(Alias = "Class Skills")]
         public Dictionary<Structs.PlayerClass, int?> ClassSkills { get; set; } = new Dictionary<Structs.PlayerClass, int?>();
-        
+
         [YamlMember(Alias = "Class Skill Tree")]
         public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; } = new Dictionary<ClassTabs, int?>();
 
-        [YamlMember(Alias = "Skill Charges")]
-        public Dictionary<Skill, int?> SkillCharges { get; set; } = new Dictionary<Skill, int?>();
-
         [YamlMember(Alias = "Skills")]
         public Dictionary<Skill, int?> Skills { get; set; } = new Dictionary<Skill, int?>();
+
+        [YamlMember(Alias = "Skill Charges")]
+        public Dictionary<Skill, int?> SkillCharges { get; set; } = new Dictionary<Skill, int?>();
     }
 }

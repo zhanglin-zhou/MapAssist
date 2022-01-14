@@ -215,7 +215,7 @@ namespace MapAssist.Helpers
             return quality.Select(q =>
             {
                 ItemQuality parsedQuality;
-                var success = Enum.TryParse(q.ToUpper(), out parsedQuality);
+                var success = Enum.TryParse(q.ToUpper(), true, out parsedQuality);
                 return new {success, parsedQuality};
             }).Where(x => x.success).Select(x => x.parsedQuality).ToArray();
         }
@@ -237,7 +237,7 @@ namespace MapAssist.Helpers
         {
             if (parser.TryConsume<Scalar>(out var scalar))
             {
-                if (Enum.TryParse(scalar.Value.Replace(" ", ""), out ClassTabs classTab))
+                if (Enum.TryParse(scalar.Value.Replace(" ", ""), true, out ClassTabs classTab))
                 {
                     return classTab;
                 }
@@ -263,7 +263,7 @@ namespace MapAssist.Helpers
         {
             if (parser.TryConsume<Scalar>(out var scalar))
             {
-                if (Enum.TryParse(scalar.Value.Replace(" ", ""), out Skill skill))
+                if (Enum.TryParse(scalar.Value.Replace(" ", ""), true, out Skill skill))
                 {
                     return skill;
                 }
