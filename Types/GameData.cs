@@ -33,6 +33,7 @@ namespace MapAssist.Types
         public IntPtr MainWindowHandle;
         public string PlayerName;
         public HashSet<UnitAny> Monsters;
+        public HashSet<UnitAny> Mercs;
         public HashSet<UnitAny> Items;
         public HashSet<UnitAny> Objects;
         public Dictionary<uint, UnitAny> Players;
