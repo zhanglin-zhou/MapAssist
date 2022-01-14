@@ -108,7 +108,7 @@ namespace MapAssist.Types
         };
     }
 
-    public enum Npc
+    public enum Npc : ushort
     {
         Skeleton = 0,
         Returned = 1,
