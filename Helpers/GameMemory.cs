@@ -53,6 +53,7 @@ namespace MapAssist.Helpers
 
                 var menuOpen = processContext.Read<byte>(GameManager.MenuOpenOffset);
                 var menuData = processContext.Read<Structs.MenuData>(GameManager.MenuDataOffset);
+                var lastNpcInteracted = (Npc)processContext.Read<ushort>(GameManager.InteractedNpcOffset);
 
                 if (!menuData.InGame && Corpses.TryGetValue(_currentProcessId, out var _))
                 {
@@ -164,6 +165,7 @@ namespace MapAssist.Helpers
                             PlayerUnit = playerUnit,
                             MenuOpen = menuData,
                             MenuPanelOpen = menuOpen,
+                            LastNpcInteracted = lastNpcInteracted,
                             ProcessId = _currentProcessId
                         };
                     }
