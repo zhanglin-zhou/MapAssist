@@ -352,7 +352,7 @@ namespace MapAssist.Types
 
         public bool IsInStore()
         {
-            return (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
+            return Mode == ItemMode.STORED && (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
         }
 
         public string ItemHash()
