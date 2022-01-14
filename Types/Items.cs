@@ -276,13 +276,13 @@ namespace MapAssist.Types
 
             (_, var rule) = LootFilter.Filter(unit);
 
-            if (rule == null) return itemBaseName;
-
             if (unit.IsInStore())
             {
                 // TODO: List the name of seller
                 itemPrefix += $"[Vendor] ";
             }
+
+            if (rule == null) return itemPrefix + itemBaseName;
 
             if ((unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
             {
