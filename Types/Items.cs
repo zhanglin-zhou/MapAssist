@@ -283,6 +283,12 @@ namespace MapAssist.Types
                 return itemBaseName;
             }
 
+            if (unit.IsInStore())
+            {
+                // TODO: List the name of seller
+                itemPrefix += $"[Trade] ";
+            }
+
             if ((unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
             {
                 itemPrefix += "[Eth] ";

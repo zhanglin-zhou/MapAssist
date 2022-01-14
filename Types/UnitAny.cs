@@ -175,7 +175,7 @@ namespace MapAssist.Types
                                         _itemStatList = itemStatList;
                                     }
 
-                                    if (IsDropped())
+                                    if (IsDropped() || IsInStore())
                                     {
                                         var processId = processContext.ProcessId;
                                         Items.LogItem(this, processId);
@@ -206,7 +206,7 @@ namespace MapAssist.Types
         public UnitType UnitType => _unitAny.UnitType;
         public uint TxtFileNo => _unitAny.TxtFileNo;
         public uint UnitId => _unitAny.UnitId;
-        public uint Mode => _unitAny.Mode;
+        public ItemMode Mode => (ItemMode)_unitAny.Mode;
         public IntPtr UnitDataPtr => _unitAny.pUnitData;
         public Dictionary<Stat, int> Stats => _statList;
         public Dictionary<Stat, Dictionary<ushort, int>> ItemStats => _itemStatList;
@@ -347,8 +347,12 @@ namespace MapAssist.Types
 
         public bool IsDropped()
         {
-            var itemMode = (ItemMode)_unitAny.Mode;
-            return itemMode == ItemMode.DROPPING || itemMode == ItemMode.ONGROUND;
+            return Mode == ItemMode.DROPPING || Mode == ItemMode.ONGROUND;
+        }
+
+        public bool IsInStore()
+        {
+            return (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
         }
 
         public string ItemHash()
