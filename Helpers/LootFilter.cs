@@ -60,26 +60,26 @@ namespace MapAssist.Helpers
                     ["Sockets"] = () => rule.Sockets.Contains(Items.GetItemStat(unitAny, Stat.NumSockets)),
                     ["Ethereal"] = () => (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL,
                     ["AllAttributes"] = () => Items.GetItemStatAllAttributes(unitAny) >= rule.AllAttributes,
-                    ["AllResist"] = () => Items.GetItemStatAllResist(unitAny) >= rule.AllAttributes,
+                    ["AllResist"] = () => Items.GetItemStatAllResist(unitAny) >= rule.AllResist,
                     ["ClassSkills"] = () =>
                     {
                         foreach (var subrule in rule.ClassSkills) if (Items.GetItemStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value) return true;
-                        return false;
+                        return rule.ClassSkills.Count() == 0;
                     },
                     ["ClassTabSkills"] = () =>
                     {
                         foreach (var subrule in rule.ClassTabSkills) if (Items.GetItemStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value) return true;
-                        return false;
+                        return rule.ClassTabSkills.Count() == 0;
                     },
                     ["Skills"] = () =>
                     {
                         foreach (var subrule in rule.Skills) if (Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value) return true;
-                        return false;
+                        return rule.Skills.Count() == 0;
                     },
                     ["SkillCharges"] = () =>
                     {
                         foreach (var subrule in rule.SkillCharges) if (Items.GetItemStatAddSkillCharges(unitAny, subrule.Key) >= subrule.Value) return true;
-                        return false;
+                        return rule.SkillCharges.Count() == 0;
                     },
                 };
 
@@ -91,19 +91,18 @@ namespace MapAssist.Helpers
                 var requirementMet = true;
                 foreach (var property in rule.GetType().GetProperties())
                 {
-                    var yamlAttribute = property.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(YamlMemberAttribute));
+                    if (property.PropertyType == typeof(object)) continue; // This is the item from Stat property
 
-                    if (yamlAttribute != null)
+                    var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
+                    if (requirementsFunctions.TryGetValue(property.Name, out var requirementFunc))
                     {
-                        var fullName = yamlAttribute.NamedArguments.FirstOrDefault(x => x.MemberName == "Alias").TypedValue.Value;
+                        requirementMet &= propertyValue == null || requirementFunc();
                     }
-
-                    if (Enum.TryParse<Stat>(property.Name, out var stat))
+                    else if (Enum.TryParse<Stat>(property.Name, out var stat))
                     {
-                        var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
-                        requirementMet &= propertyValue == null || (requirementsFunctions.TryGetValue(property.Name, out var requirementFunc) ? requirementFunc() : Items.GetItemStat(unitAny, stat) >= (int)propertyValue);
-                        if (!requirementMet) continue;
+                        requirementMet &= propertyValue == null || Items.GetItemStat(unitAny, stat) >= (int)propertyValue;
                     }
+                    if (!requirementMet) break;
                 }
                 if (!requirementMet) continue;
 
