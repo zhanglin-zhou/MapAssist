@@ -269,7 +269,7 @@ namespace MapAssist.Types
 
         public bool IsPlayerOwned()
         {
-            return IsMerc() && Stats.ContainsKey(Stat.STAT_STRENGTH); // This is ugly, but seems to work.
+            return IsMerc() && Stats.ContainsKey(Stat.Strength); // This is ugly, but seems to work.
         }
 
         public bool IsPlayerUnit()
