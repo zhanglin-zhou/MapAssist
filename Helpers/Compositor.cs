@@ -437,7 +437,7 @@ namespace MapAssist.Helpers
             {
                 foreach (var item in _gameData.Items)
                 {
-                    if (item.IsDropped())
+                    if (item.IsDropped() && !Items.ItemUnitIdsOnPlayer[_gameData.ProcessId].Contains(item.UnitId))
                     {
                         (var pickupItem, _) = LootFilter.Filter(item);
                         if (!pickupItem)

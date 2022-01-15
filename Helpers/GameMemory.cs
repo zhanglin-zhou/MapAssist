@@ -58,14 +58,14 @@ namespace MapAssist.Helpers
                 var menuData = processContext.Read<Structs.MenuData>(GameManager.MenuDataOffset);
                 var lastNpcInteracted = (Npc)processContext.Read<ushort>(GameManager.InteractedNpcOffset);
 
-                if (!menuData.InGame && Corpses.TryGetValue(_currentProcessId, out var _))
+                if (!menuData.InGame && Corpses.ContainsKey(_currentProcessId))
                 {
                     Corpses[_currentProcessId].Clear();
                 }
 
                 var playerUnit = GameManager.PlayerUnit;
 
-                if (!PlayerUnits.TryGetValue(_currentProcessId, out var _))
+                if (!PlayerUnits.ContainsKey(_currentProcessId))
                 {
                     PlayerUnits.Add(_currentProcessId, playerUnit);
                 }
@@ -82,7 +82,7 @@ namespace MapAssist.Helpers
                     {
                         throw new Exception("Map seed is out of bounds.");
                     }
-                    if (!_lastMapSeed.TryGetValue(_currentProcessId, out var _))
+                    if (!_lastMapSeed.ContainsKey(_currentProcessId))
                     {
                         _lastMapSeed.Add(_currentProcessId, 0);
                     }
@@ -90,7 +90,7 @@ namespace MapAssist.Helpers
                     {
                         _lastMapSeed[_currentProcessId] = mapSeed;
                         //dispose leftover timers in this process if we started a new game
-                        if (Items.ItemLogTimers.TryGetValue(_currentProcessId, out var _))
+                        if (Items.ItemLogTimers.ContainsKey(_currentProcessId))
                         {
                             foreach (var timer in Items.ItemLogTimers[_currentProcessId])
                             {
@@ -100,20 +100,22 @@ namespace MapAssist.Helpers
                             }
                         }
 
-                        if (!Items.ItemUnitHashesSeen.TryGetValue(_currentProcessId, out var _))
+                        if (!Items.ItemUnitHashesSeen.ContainsKey(_currentProcessId))
                         {
                             Items.ItemUnitHashesSeen.Add(_currentProcessId, new HashSet<string>());
                             Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
+                            Items.ItemUnitIdsOnPlayer.Add(_currentProcessId, new HashSet<uint>());
                             Items.ItemLog.Add(_currentProcessId, new List<UnitAny>());
                         }
                         else
                         {
                             Items.ItemUnitHashesSeen[_currentProcessId].Clear();
                             Items.ItemUnitIdsSeen[_currentProcessId].Clear();
+                            Items.ItemUnitIdsOnPlayer[_currentProcessId].Clear();
                             Items.ItemLog[_currentProcessId].Clear();
                         }
 
-                        if (!Corpses.TryGetValue(_currentProcessId, out var _))
+                        if (!Corpses.ContainsKey(_currentProcessId))
                         {
                             Corpses.Add(_currentProcessId, new Dictionary<uint, UnitAny>());
                         }
@@ -158,6 +160,14 @@ namespace MapAssist.Helpers
                         foreach (var item in newVendorItems)
                         {
                             item.VendorOwner = !_firstMemoryRead ? lastNpcInteracted : Npc.Unknown; // This prevents marking the VendorOwner for all store items when restarting MapAssist in the middle of the game
+                        }
+
+                        foreach (var item in itemList.Where(item => item.IsPlayerHolding()))
+                        {
+                            if (!Items.ItemUnitIdsOnPlayer[_currentProcessId].Contains(item.UnitId))
+                            {
+                                Items.ItemUnitIdsOnPlayer[_currentProcessId].Add(item.UnitId);
+                            }
                         }
 
                         _firstMemoryRead = false;
@@ -239,7 +249,7 @@ namespace MapAssist.Helpers
                                 break;
 
                             case UnitType.Player:
-                                if (!playerList.TryGetValue(unitAny.UnitId, out var _) && unitAny.IsPlayer())
+                                if (!playerList.ContainsKey(unitAny.UnitId) && unitAny.IsPlayer())
                                 {
                                     playerList.Add(unitAny.UnitId, unitAny);
                                 }

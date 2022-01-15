@@ -371,12 +371,27 @@ namespace MapAssist.Types
 
         public bool IsDropped()
         {
-            return Mode == ItemMode.DROPPING || Mode == ItemMode.ONGROUND;
+            return ItemModeMapped() == Types.ItemModeMapped.Ground;
         }
 
         public bool IsInStore()
         {
             return ItemModeMapped() == Types.ItemModeMapped.Vendor;
+        }
+
+        public bool IsPlayerHolding()
+        {
+            switch (ItemModeMapped())
+            {
+                case Types.ItemModeMapped.Belt:
+                case Types.ItemModeMapped.Inventory:
+                case Types.ItemModeMapped.Cube:
+                case Types.ItemModeMapped.Stash:
+                case Types.ItemModeMapped.Player:
+                case Types.ItemModeMapped.Mercenary:
+                    return true;
+            }
+            return false;
         }
 
         public ItemModeMapped ItemModeMapped()
