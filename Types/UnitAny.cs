@@ -351,7 +351,8 @@ namespace MapAssist.Types
 
         public bool IsInStore()
         {
-            return ItemData.InvPage != InvPage.EQUIP && (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
+            return (ItemData.InvPage == InvPage.EQUIP || ItemData.InvPage == InvPage.TRADE) &&
+                (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
         }
 
         public string ItemHash()
