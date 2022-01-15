@@ -143,6 +143,7 @@ namespace MapAssist.Types
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsToSkip = new Dictionary<int, HashSet<uint>>();
+        public static Dictionary<int, Dictionary<uint, Npc>> ItemVendors = new Dictionary<int, Dictionary<uint, Npc>>();
         public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
         public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
@@ -251,8 +252,8 @@ namespace MapAssist.Types
 
         public static void LogItem(UnitAny unit, int processId)
         {
-            if ((!ItemUnitHashesSeen[processId].Contains(unit.ItemHash()) &&
-                !ItemUnitIdsSeen[processId].Contains(unit.UnitId)) &&
+            if ((unit.ItemModeMapped() == ItemModeMapped.Vendor || !ItemUnitHashesSeen[processId].Contains(unit.ItemHash())) &&
+                !ItemUnitIdsSeen[processId].Contains(unit.UnitId) &&
                 !ItemUnitIdsToSkip[processId].Contains(unit.UnitId))
             {
                 (var pickupItem, _) = LootFilter.Filter(unit);
@@ -276,7 +277,10 @@ namespace MapAssist.Types
                     }
                 }
 
-                ItemUnitHashesSeen[processId].Add(unit.ItemHash());
+                if (unit.ItemModeMapped() != ItemModeMapped.Vendor)
+                {
+                    ItemUnitHashesSeen[processId].Add(unit.ItemHash());
+                }
                 ItemUnitIdsSeen[processId].Add(unit.UnitId);
                 ItemLog[processId].Add(unit);
                 var timer = new Timer(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds * 1000);
