@@ -233,7 +233,7 @@ namespace MapAssist.Types
             return prop.ToString();
         }
 
-        public static void LogItem(UnitAny unit, int processId, string npcVendorName)
+        public static void LogItem(UnitAny unit, int processId)
         {
             if ((!ItemUnitHashesSeen[processId].Contains(unit.ItemHash()) &&
                 !ItemUnitIdsSeen[processId].Contains(unit.UnitId)))
@@ -243,19 +243,32 @@ namespace MapAssist.Types
                 {
                     return;
                 }
+
                 if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop)
                 {
                     AudioPlayer.PlayItemAlert();
                 }
 
+                string npcVendorName = null;
+                if (unit.IsInStore())
+                {
+                    using (var processContext = GameManager.GetProcessContext())
+                    {
+                        var lastNpcInteracted = (Npc)processContext.Read<ushort>(GameManager.InteractedNpcOffset);
+                        npcVendorName = NpcExtensions.Name(lastNpcInteracted);
+                    }
+                }
+
                 ItemUnitHashesSeen[processId].Add(unit.ItemHash());
                 ItemUnitIdsSeen[processId].Add(unit.UnitId);
                 ItemLog[processId].Add((unit, npcVendorName));
+
                 var timer = new Timer(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds * 1000);
                 timer.Elapsed += (sender, args) => ItemLogTimerElapsed(sender, args, timer, processId);
                 timer.Start();
+
                 //keep track of timers in each d2r process
-                if (ItemLogTimers.TryGetValue(processId, out var _))
+                if (ItemLogTimers.ContainsKey(processId))
                 {
                     ItemLogTimers[processId].Add(timer);
                 }

@@ -175,15 +175,9 @@ namespace MapAssist.Types
                                         _itemStatList = itemStatList;
                                     }
 
-                                    if (IsDropped())
+                                    if (IsDropped() || IsInStore())
                                     {
-                                        Items.LogItem(this, processContext.ProcessId, null);
-                                    }
-                                    else if (IsInStore())
-                                    {
-                                        var lastNpcInteracted = (Npc)processContext.Read<ushort>(GameManager.InteractedNpcOffset);
-                                        var npcVendorName = NpcExtensions.Name(lastNpcInteracted);
-                                        Items.LogItem(this, processContext.ProcessId, npcVendorName);
+                                        Items.LogItem(this, processContext.ProcessId);
                                     }
                                 }
                                 break;
