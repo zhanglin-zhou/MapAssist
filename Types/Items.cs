@@ -127,8 +127,8 @@ namespace MapAssist.Types
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
-        public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
-        public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
+        public static Dictionary<int, List<(UnitAny, string)>> ItemLog = new Dictionary<int, List<(UnitAny, string)>>();
+        public static List<(UnitAny, string)> CurrentItemLog = new List<(UnitAny, string)>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
         public static Dictionary<int, List<Timer>> ItemLogTimers = new Dictionary<int, List<Timer>>();
 
@@ -233,7 +233,7 @@ namespace MapAssist.Types
             return prop.ToString();
         }
 
-        public static void LogItem(UnitAny unit, int processId)
+        public static void LogItem(UnitAny unit, int processId, string npcVendorName)
         {
             if ((!ItemUnitHashesSeen[processId].Contains(unit.ItemHash()) &&
                 !ItemUnitIdsSeen[processId].Contains(unit.UnitId)))
@@ -250,7 +250,7 @@ namespace MapAssist.Types
 
                 ItemUnitHashesSeen[processId].Add(unit.ItemHash());
                 ItemUnitIdsSeen[processId].Add(unit.UnitId);
-                ItemLog[processId].Add(unit);
+                ItemLog[processId].Add((unit, npcVendorName));
                 var timer = new Timer(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds * 1000);
                 timer.Elapsed += (sender, args) => ItemLogTimerElapsed(sender, args, timer, processId);
                 timer.Start();
@@ -267,7 +267,7 @@ namespace MapAssist.Types
             }
         }
 
-        public static string ItemLogDisplayName(UnitAny unit)
+        public static string ItemLogDisplayName(UnitAny unit, string npcVendorName)
         {
             var itemBaseName = ItemName(unit.TxtFileNo);
             var itemSpecialName = "";
@@ -278,8 +278,8 @@ namespace MapAssist.Types
 
             if (unit.IsInStore())
             {
-                // TODO: List the name of seller
-                itemPrefix += $"[Vendor] ";
+                var vendorLabel = npcVendorName ?? "Vendor";
+                itemPrefix += $"[{vendorLabel}] ";
             }
 
             if (rule == null) return itemPrefix + itemBaseName;

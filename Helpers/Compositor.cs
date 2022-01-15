@@ -855,7 +855,7 @@ namespace MapAssist.Helpers
             var ItemLog = Items.CurrentItemLog.ToArray();
             for (var i = 0; i < ItemLog.Length; i++)
             {
-                var item = ItemLog[i];
+                var (item, npcVendorName) = ItemLog[i];
 
                 var fontColor = Items.ItemNameColor(item);
                 if (item == null || fontColor == Color.Empty)
@@ -864,7 +864,7 @@ namespace MapAssist.Helpers
                     continue;
                 }
 
-                var itemName = Items.ItemLogDisplayName(item);
+                var itemName = Items.ItemLogDisplayName(item, npcVendorName);
                 var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
                 var position = anchor.Add(0, i * fontHeight);
                 var brush = CreateSolidBrush(gfx, fontColor, 1);

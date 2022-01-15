@@ -175,10 +175,15 @@ namespace MapAssist.Types
                                         _itemStatList = itemStatList;
                                     }
 
-                                    if (IsDropped() || IsInStore())
+                                    if (IsDropped())
                                     {
-                                        var processId = processContext.ProcessId;
-                                        Items.LogItem(this, processId);
+                                        Items.LogItem(this, processContext.ProcessId, null);
+                                    }
+                                    else if (IsInStore())
+                                    {
+                                        var lastNpcInteracted = (Npc)processContext.Read<ushort>(GameManager.InteractedNpcOffset);
+                                        var npcVendorName = NpcExtensions.Name(lastNpcInteracted);
+                                        Items.LogItem(this, processContext.ProcessId, npcVendorName);
                                     }
                                 }
                                 break;
@@ -352,7 +357,7 @@ namespace MapAssist.Types
 
         public bool IsInStore()
         {
-            return Mode == ItemMode.STORED && (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
+            return ItemData.InvPage != InvPage.EQUIP && (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
         }
 
         public string ItemHash()

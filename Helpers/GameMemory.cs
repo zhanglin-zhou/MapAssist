@@ -99,7 +99,7 @@ namespace MapAssist.Helpers
                         {
                             Items.ItemUnitHashesSeen.Add(_currentProcessId, new HashSet<string>());
                             Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
-                            Items.ItemLog.Add(_currentProcessId, new List<UnitAny>());
+                            Items.ItemLog.Add(_currentProcessId, new List<(UnitAny, string)>());
                         }
                         else
                         {
