@@ -412,15 +412,8 @@ namespace MapAssist.Types
                     else return Types.ItemModeMapped.Mercenary;
             }
 
-            switch (ItemData.dwOwnerID)
-            {
-                case uint.MaxValue:
-                    return Types.ItemModeMapped.Vendor;
-
-                default:
-                    if (ItemData.InvPage == InvPage.EQUIP) return Types.ItemModeMapped.Trade; // Other player's trade window
-                    break;
-            }
+            if ((ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE) return Types.ItemModeMapped.Vendor;
+            if (ItemData.dwOwnerID != uint.MaxValue && ItemData.InvPage == InvPage.EQUIP) return Types.ItemModeMapped.Trade; // Other player's trade window
 
             switch (ItemData.InvPage)
             {
@@ -430,7 +423,7 @@ namespace MapAssist.Types
                 case InvPage.STASH: return Types.ItemModeMapped.Stash;
             }
 
-            return Types.ItemModeMapped.Unknown;
+            return Types.ItemModeMapped.Unknown; // Items that appeared in the trade window before will appear here
         }
 
         public string ItemHash()
