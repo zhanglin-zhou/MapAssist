@@ -366,8 +366,33 @@ namespace MapAssist.Types
 
         public bool IsInStore()
         {
-            return (ItemData.InvPage == InvPage.EQUIP || ItemData.InvPage == InvPage.TRADE) &&
-                (ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE;
+            return ItemModeMapped() == Types.ItemModeMapped.Vendor;
+        }
+
+        public ItemModeMapped ItemModeMapped()
+        {
+            switch (Mode)
+            {
+                case ItemMode.INBELT: return Types.ItemModeMapped.Belt;
+                case ItemMode.ONGROUND: return Types.ItemModeMapped.Ground;
+                case ItemMode.SOCKETED: return Types.ItemModeMapped.Socket;
+                case ItemMode.EQUIP:
+                    if (ItemData.dwOwnerID != uint.MaxValue) return Types.ItemModeMapped.Player;
+                    else return Types.ItemModeMapped.Mercenary;
+            }
+
+            if (ItemData.InvPtr == IntPtr.Zero) return Types.ItemModeMapped.Vendor;
+            if (ItemData.dwOwnerID != uint.MaxValue && ItemData.InvPage == InvPage.EQUIP) return Types.ItemModeMapped.Trade; // Other player's trade window
+
+            switch (ItemData.InvPage)
+            {
+                case InvPage.INVENTORY: return Types.ItemModeMapped.Inventory;
+                case InvPage.TRADE: return Types.ItemModeMapped.Trade;
+                case InvPage.CUBE: return Types.ItemModeMapped.Cube;
+                case InvPage.STASH: return Types.ItemModeMapped.Stash;
+            }
+
+            return Types.ItemModeMapped.Unknown;
         }
 
         public string ItemHash()
