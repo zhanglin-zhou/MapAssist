@@ -369,10 +369,15 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.SkillCharges)
                 {
-                    var skillChanges = GetItemStatAddSkillCharges(unit, subrule.Key);
-                    if (skillChanges > 0)
+                    var (skillLevel, currentCharges, maxCharges) = GetItemStatAddSkillCharges(unit, subrule.Key);
+                    if (skillLevel > 0)
                     {
-                        itemSuffix += $" ({skillChanges} {subrule.Key.Name()} charges)";
+                        var charges = "";
+                        if (currentCharges > 0 && maxCharges > 0)
+                        {
+                            charges = $"{currentCharges}/{ maxCharges} ";
+                        }
+                        itemSuffix += $" (+{skillLevel} {subrule.Key.Name()} {charges}charges)";
                     }
                 }
             }
@@ -500,7 +505,7 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static int GetItemStatAddSkillCharges(UnitAny unitAny, Skill skill)
+        public static (int, int, int) GetItemStatAddSkillCharges(UnitAny unitAny, Skill skill)
         {
             if (unitAny.ItemStats.TryGetValue(Stat.ItemChargedSkill, out var itemStats))
             {
@@ -513,11 +518,11 @@ namespace MapAssist.Types
                         var maxCharges = data >> 8;
                         var currentCharges = data % (1 << 8);
 
-                        return maxCharges;
+                        return (level, currentCharges, maxCharges);
                     }
                 }
             }
-            return 0;
+            return (0, 0, 0);
         }
 
         public static int GetItemStatSingleSkills(UnitAny unitAny, Skill skill)

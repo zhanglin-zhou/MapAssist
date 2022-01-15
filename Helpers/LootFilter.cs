@@ -78,7 +78,7 @@ namespace MapAssist.Helpers
                     },
                     ["SkillCharges"] = () =>
                     {
-                        foreach (var subrule in rule.SkillCharges) if (Items.GetItemStatAddSkillCharges(unitAny, subrule.Key) >= subrule.Value) return true;
+                        foreach (var subrule in rule.SkillCharges) if (Items.GetItemStatAddSkillCharges(unitAny, subrule.Key).Item1 >= subrule.Value) return true;
                         return rule.SkillCharges.Count() == 0;
                     },
                 };
