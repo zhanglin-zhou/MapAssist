@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using GameOverlay.Drawing;
 using MapAssist.Helpers;
 using MapAssist.Interfaces;
 using MapAssist.Settings;
 using MapAssist.Structs;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace MapAssist.Types
 {
@@ -54,17 +54,20 @@ namespace MapAssist.Types
         private bool _inPlayerParty;
         private PlayerClass _playerClass;
         private Area _initialArea;
+        public Npc VendorOwner { get; set; } = Npc.Invalid;
 
         public UnitAny(IntPtr pUnit)
         {
             _pUnit = pUnit;
             Update();
         }
+
         public UnitAny(IntPtr pUnit, Roster rosterData)
         {
             _pUnit = pUnit;
             Update(rosterData);
         }
+
         public UnitAny Update()
         {
             return Update(null);
@@ -80,7 +83,7 @@ namespace MapAssist.Types
                     if (IsValidUnit())
                     {
                         _path = new Path(_unitAny.pPath);
-                        if(_unitAny.pStatsListEx != IntPtr.Zero)
+                        if (_unitAny.pStatsListEx != IntPtr.Zero)
                         {
                             var statListStruct = processContext.Read<StatListStruct>(_unitAny.pStatsListEx);
                             var statList = new Dictionary<Stat, int>();
@@ -114,7 +117,8 @@ namespace MapAssist.Types
                                     {
                                         _skills = new Skills(_unitAny.pSkills);
                                         _stateList = GetStateList();
-                                    } else
+                                    }
+                                    else
                                     {
                                         if (GameManager.PlayerFound && _rosterData != null)
                                         {
@@ -139,12 +143,14 @@ namespace MapAssist.Types
                                     }
                                 }
                                 break;
+
                             case UnitType.Monster:
                                 if (IsMonster())
                                 {
                                     _monsterData = processContext.Read<MonsterData>(_unitAny.pUnitData);
                                 }
                                 break;
+
                             case UnitType.Item:
                                 if (MapAssistConfiguration.Loaded.ItemLog.Enabled)
                                 {
@@ -168,7 +174,7 @@ namespace MapAssist.Types
                                             }
                                             else
                                             {
-                                                itemStatList.Add(stat.Stat, new Dictionary<ushort, int>() { {stat.Layer, stat.Value } });
+                                                itemStatList.Add(stat.Stat, new Dictionary<ushort, int>() { { stat.Layer, stat.Value } });
                                             }
                                         }
 
@@ -181,6 +187,7 @@ namespace MapAssist.Types
                                     }
                                 }
                                 break;
+
                             case UnitType.Object:
                                 _objectData = processContext.Read<ObjectData>(_unitAny.pUnitData);
                                 if (_objectData.pObjectTxt != IntPtr.Zero)
@@ -220,7 +227,9 @@ namespace MapAssist.Types
         public ushort X => IsMovable() ? _path.DynamicX : _path.StaticX;
         public ushort Y => IsMovable() ? _path.DynamicY : _path.StaticY;
         public Point Position => new Point(X, Y);
+
         public UnitAny ListNext(Roster rosterData) => new UnitAny(_unitAny.pListNext, rosterData);
+
         public UnitAny RoomNext => new UnitAny(_unitAny.pRoomNext);
         public List<Resist> Immunities => _immunities;
         public uint[] StateFlags => _stateFlags;
@@ -242,6 +251,7 @@ namespace MapAssist.Types
         {
             return _pUnit != IntPtr.Zero;
         }
+
         public bool IsValidUnit()
         {
             return _unitAny.pUnitData != IntPtr.Zero && _unitAny.pPath != IntPtr.Zero && _unitAny.UnitType <= UnitType.Tile;
@@ -305,6 +315,7 @@ namespace MapAssist.Types
             }
             return false;
         }
+
         public bool IsPortal()
         {
             var castedType = (GameObject)TxtFileNo;
@@ -312,21 +323,25 @@ namespace MapAssist.Types
             return ((!string.IsNullOrWhiteSpace(name) && name.Contains("Portal") &&
                      castedType != GameObject.WaypointPortal) || castedType == GameObject.HellGate);
         }
+
         public bool IsShrine()
         {
             return UnitType == UnitType.Object && _objectData.pShrineTxt != IntPtr.Zero &&
                 _objectData.InteractType <= (byte)ShrineType.Poison;
         }
+
         public bool IsWell()
         {
             return UnitType == UnitType.Object && _objectData.pObjectTxt != IntPtr.Zero &&
                 _objectTxt.ObjectType == "Well";
         }
+
         public bool IsChest()
         {
             return UnitType == UnitType.Object && _objectData.pObjectTxt != IntPtr.Zero && _unitAny.Mode == 0 &&
                 Chest.NormalChests.Contains((GameObject)_objectTxt.Id);
         }
+
         public bool IsMonster()
         {
             if (_updated)
@@ -389,11 +404,12 @@ namespace MapAssist.Types
 
             return immunities;
         }
-        
+
         public bool GetState(State state)
         {
             return (StateFlags[(int)state >> 5] & StateMasks.gdwBitMasks[(int)state & 31]) > 0;
         }
+
         private List<State> GetStateList()
         {
             var stateList = new List<State>();
@@ -409,7 +425,7 @@ namespace MapAssist.Types
 
         public bool IsHostileTo(UnitAny otherUnit)
         {
-            if(UnitType != UnitType.Player || otherUnit.UnitType != UnitType.Player)
+            if (UnitType != UnitType.Player || otherUnit.UnitType != UnitType.Player)
             {
                 return false;
             }
@@ -442,16 +458,19 @@ namespace MapAssist.Types
             }
             return false;
         }
+
         private ushort GetPartyId()
         {
-            if (_rosterData != null){
-                if(_rosterData.EntriesByUnitId.TryGetValue(UnitId, out var rosterEntry))
+            if (_rosterData != null)
+            {
+                if (_rosterData.EntriesByUnitId.TryGetValue(UnitId, out var rosterEntry))
                 {
                     return rosterEntry.PartyID;
                 }
             }
             return ushort.MaxValue; //maxvalue = not in party
         }
+
         public double DistanceTo(Point position)
         {
             return Math.Sqrt((Math.Pow(position.X - Position.X, 2) + Math.Pow(position.Y - Position.Y, 2)));
@@ -466,6 +485,7 @@ namespace MapAssist.Types
         public static bool operator ==(UnitAny unit1, UnitAny unit2) => (unit1 is null && unit2 is null) || (!(unit1 is null) && unit1.Equals(unit2));
 
         public static bool operator !=(UnitAny unit1, UnitAny unit2) => !(unit1 == unit2);
+
         public UnitAny Clone()
         {
             var unitAny = new UnitAny(_pUnit);
