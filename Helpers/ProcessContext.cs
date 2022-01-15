@@ -158,6 +158,23 @@ namespace MapAssist.Helpers
             return IntPtr.Add(_baseAddr, (int)(delta + 1 + offsetAddressToInt));
         }
 
+        public IntPtr GetInteractedNpcOffset()
+        {
+            var pattern = "\x42\x0F\xB6\x84\x20\x00\x00\x00\x00\x38\x02";
+            var mask = "xxxxx????xx";
+            var patternAddress = FindPattern(pattern, mask);
+
+            var offsetBuffer = new byte[4];
+            var resultRelativeAddress = IntPtr.Add(patternAddress, 5);
+            if (!WindowsExternal.ReadProcessMemory(_handle, resultRelativeAddress, offsetBuffer, sizeof(int), out _))
+            {
+                _log.Info($"Failed to find pattern {PatternToString(pattern)}");
+                return IntPtr.Zero;
+            }
+            var offsetAddressToInt = BitConverter.ToInt32(offsetBuffer, 0);
+            return IntPtr.Add(_baseAddr, (int)(offsetAddressToInt - 0xC4));
+        }
+
         public byte[] GetProcessMemory()
         {
             var memoryBuffer = new byte[_moduleSize];

@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using GameOverlay.Drawing;
 using MapAssist.Helpers;
 using MapAssist.Interfaces;
 using MapAssist.Settings;
 using MapAssist.Structs;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace MapAssist.Types
 {
@@ -54,17 +54,20 @@ namespace MapAssist.Types
         private bool _inPlayerParty;
         private PlayerClass _playerClass;
         private Area _initialArea;
+        public Npc VendorOwner { get; set; } = Npc.Invalid;
 
         public UnitAny(IntPtr pUnit)
         {
             _pUnit = pUnit;
             Update();
         }
+
         public UnitAny(IntPtr pUnit, Roster rosterData)
         {
             _pUnit = pUnit;
             Update(rosterData);
         }
+
         public UnitAny Update()
         {
             return Update(null);
@@ -80,7 +83,7 @@ namespace MapAssist.Types
                     if (IsValidUnit())
                     {
                         _path = new Path(_unitAny.pPath);
-                        if(_unitAny.pStatsListEx != IntPtr.Zero)
+                        if (_unitAny.pStatsListEx != IntPtr.Zero)
                         {
                             var statListStruct = processContext.Read<StatListStruct>(_unitAny.pStatsListEx);
                             var statList = new Dictionary<Stat, int>();
@@ -114,7 +117,8 @@ namespace MapAssist.Types
                                     {
                                         _skills = new Skills(_unitAny.pSkills);
                                         _stateList = GetStateList();
-                                    } else
+                                    }
+                                    else
                                     {
                                         if (GameManager.PlayerFound && _rosterData != null)
                                         {
@@ -139,12 +143,14 @@ namespace MapAssist.Types
                                     }
                                 }
                                 break;
+
                             case UnitType.Monster:
                                 if (IsMonster())
                                 {
                                     _monsterData = processContext.Read<MonsterData>(_unitAny.pUnitData);
                                 }
                                 break;
+
                             case UnitType.Item:
                                 if (MapAssistConfiguration.Loaded.ItemLog.Enabled)
                                 {
@@ -168,20 +174,20 @@ namespace MapAssist.Types
                                             }
                                             else
                                             {
-                                                itemStatList.Add(stat.Stat, new Dictionary<ushort, int>() { {stat.Layer, stat.Value } });
+                                                itemStatList.Add(stat.Stat, new Dictionary<ushort, int>() { { stat.Layer, stat.Value } });
                                             }
                                         }
 
                                         _itemStatList = itemStatList;
                                     }
 
-                                    if (IsDropped())
+                                    if ((IsDropped() && !IsIdentified()) || IsInStore())
                                     {
-                                        var processId = processContext.ProcessId;
-                                        Items.LogItem(this, processId);
+                                        Items.LogItem(this, processContext.ProcessId);
                                     }
                                 }
                                 break;
+
                             case UnitType.Object:
                                 _objectData = processContext.Read<ObjectData>(_unitAny.pUnitData);
                                 if (_objectData.pObjectTxt != IntPtr.Zero)
@@ -206,7 +212,7 @@ namespace MapAssist.Types
         public UnitType UnitType => _unitAny.UnitType;
         public uint TxtFileNo => _unitAny.TxtFileNo;
         public uint UnitId => _unitAny.UnitId;
-        public uint Mode => _unitAny.Mode;
+        public ItemMode Mode => (ItemMode)_unitAny.Mode;
         public IntPtr UnitDataPtr => _unitAny.pUnitData;
         public Dictionary<Stat, int> Stats => _statList;
         public Dictionary<Stat, Dictionary<ushort, int>> ItemStats => _itemStatList;
@@ -221,7 +227,9 @@ namespace MapAssist.Types
         public ushort X => IsMovable() ? _path.DynamicX : _path.StaticX;
         public ushort Y => IsMovable() ? _path.DynamicY : _path.StaticY;
         public Point Position => new Point(X, Y);
+
         public UnitAny ListNext(Roster rosterData) => new UnitAny(_unitAny.pListNext, rosterData);
+
         public UnitAny RoomNext => new UnitAny(_unitAny.pRoomNext);
         public List<Resist> Immunities => _immunities;
         public uint[] StateFlags => _stateFlags;
@@ -243,6 +251,7 @@ namespace MapAssist.Types
         {
             return _pUnit != IntPtr.Zero;
         }
+
         public bool IsValidUnit()
         {
             return _unitAny.pUnitData != IntPtr.Zero && _unitAny.pPath != IntPtr.Zero && _unitAny.UnitType <= UnitType.Tile;
@@ -260,7 +269,7 @@ namespace MapAssist.Types
 
         public bool IsPlayerOwned()
         {
-            return IsMerc() && Stats.ContainsKey(Stat.STAT_STRENGTH); // This is ugly, but seems to work.
+            return IsMerc() && Stats.ContainsKey(Stat.Strength); // This is ugly, but seems to work.
         }
 
         public bool IsPlayerUnit()
@@ -316,6 +325,7 @@ namespace MapAssist.Types
             }
             return false;
         }
+
         public bool IsPortal()
         {
             var castedType = (GameObject)TxtFileNo;
@@ -323,21 +333,25 @@ namespace MapAssist.Types
             return ((!string.IsNullOrWhiteSpace(name) && name.Contains("Portal") &&
                      castedType != GameObject.WaypointPortal) || castedType == GameObject.HellGate);
         }
+
         public bool IsShrine()
         {
             return UnitType == UnitType.Object && _objectData.pShrineTxt != IntPtr.Zero &&
                 _objectData.InteractType <= (byte)ShrineType.Poison;
         }
+
         public bool IsWell()
         {
             return UnitType == UnitType.Object && _objectData.pObjectTxt != IntPtr.Zero &&
                 _objectTxt.ObjectType == "Well";
         }
+
         public bool IsChest()
         {
             return UnitType == UnitType.Object && _objectData.pObjectTxt != IntPtr.Zero && _unitAny.Mode == 0 &&
                 Chest.NormalChests.Contains((GameObject)_objectTxt.Id);
         }
+
         public bool IsMonster()
         {
             if (_updated)
@@ -355,10 +369,61 @@ namespace MapAssist.Types
             }
         }
 
+        public bool IsIdentified()
+        {
+            return ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
+        }
+
         public bool IsDropped()
         {
-            var itemMode = (ItemMode)_unitAny.Mode;
-            return itemMode == ItemMode.DROPPING || itemMode == ItemMode.ONGROUND;
+            return ItemModeMapped() == Types.ItemModeMapped.Ground;
+        }
+
+        public bool IsInStore()
+        {
+            return ItemModeMapped() == Types.ItemModeMapped.Vendor;
+        }
+
+        public bool IsPlayerHolding()
+        {
+            switch (ItemModeMapped())
+            {
+                case Types.ItemModeMapped.Belt:
+                case Types.ItemModeMapped.Inventory:
+                case Types.ItemModeMapped.Cube:
+                case Types.ItemModeMapped.Stash:
+                case Types.ItemModeMapped.Player:
+                case Types.ItemModeMapped.Mercenary:
+                    return true;
+            }
+            return false;
+        }
+
+        public ItemModeMapped ItemModeMapped()
+        {
+            switch (Mode)
+            {
+                case ItemMode.INBELT: return Types.ItemModeMapped.Belt;
+                case ItemMode.DROPPING: return Types.ItemModeMapped.Ground;
+                case ItemMode.ONGROUND: return Types.ItemModeMapped.Ground;
+                case ItemMode.SOCKETED: return Types.ItemModeMapped.Socket;
+                case ItemMode.EQUIP:
+                    if (ItemData.dwOwnerID != uint.MaxValue) return Types.ItemModeMapped.Player;
+                    else return Types.ItemModeMapped.Mercenary;
+            }
+
+            if ((ItemData.ItemFlags & ItemFlags.IFLAG_INSTORE) == ItemFlags.IFLAG_INSTORE) return Types.ItemModeMapped.Vendor;
+            if (ItemData.dwOwnerID != uint.MaxValue && ItemData.InvPage == InvPage.EQUIP) return Types.ItemModeMapped.Trade; // Other player's trade window
+
+            switch (ItemData.InvPage)
+            {
+                case InvPage.INVENTORY: return Types.ItemModeMapped.Inventory;
+                case InvPage.TRADE: return Types.ItemModeMapped.Trade;
+                case InvPage.CUBE: return Types.ItemModeMapped.Cube;
+                case InvPage.STASH: return Types.ItemModeMapped.Stash;
+            }
+
+            return Types.ItemModeMapped.Unknown; // Items that appeared in the trade window before will appear here
         }
 
         public string ItemHash()
@@ -368,12 +433,12 @@ namespace MapAssist.Types
 
         private List<Resist> GetImmunities()
         {
-            _statList.TryGetValue(Stat.STAT_DAMAGERESIST, out var resistanceDamage);
-            _statList.TryGetValue(Stat.STAT_MAGICRESIST, out var resistanceMagic);
-            _statList.TryGetValue(Stat.STAT_FIRERESIST, out var resistanceFire);
-            _statList.TryGetValue(Stat.STAT_LIGHTRESIST, out var resistanceLightning);
-            _statList.TryGetValue(Stat.STAT_COLDRESIST, out var resistanceCold);
-            _statList.TryGetValue(Stat.STAT_POISONRESIST, out var resistancePoison);
+            _statList.TryGetValue(Stat.DamageReduced, out var resistanceDamage);
+            _statList.TryGetValue(Stat.MagicResist, out var resistanceMagic);
+            _statList.TryGetValue(Stat.FireResist, out var resistanceFire);
+            _statList.TryGetValue(Stat.LightningResist, out var resistanceLightning);
+            _statList.TryGetValue(Stat.ColdResist, out var resistanceCold);
+            _statList.TryGetValue(Stat.PoisonResist, out var resistancePoison);
 
             var resists = new List<int>
             {
@@ -396,11 +461,12 @@ namespace MapAssist.Types
 
             return immunities;
         }
-        
+
         public bool GetState(State state)
         {
             return (StateFlags[(int)state >> 5] & StateMasks.gdwBitMasks[(int)state & 31]) > 0;
         }
+
         private List<State> GetStateList()
         {
             var stateList = new List<State>();
@@ -416,7 +482,7 @@ namespace MapAssist.Types
 
         public bool IsHostileTo(UnitAny otherUnit)
         {
-            if(UnitType != UnitType.Player || otherUnit.UnitType != UnitType.Player)
+            if (UnitType != UnitType.Player || otherUnit.UnitType != UnitType.Player)
             {
                 return false;
             }
@@ -449,16 +515,19 @@ namespace MapAssist.Types
             }
             return false;
         }
+
         private ushort GetPartyId()
         {
-            if (_rosterData != null){
-                if(_rosterData.EntriesByUnitId.TryGetValue(UnitId, out var rosterEntry))
+            if (_rosterData != null)
+            {
+                if (_rosterData.EntriesByUnitId.TryGetValue(UnitId, out var rosterEntry))
                 {
                     return rosterEntry.PartyID;
                 }
             }
             return ushort.MaxValue; //maxvalue = not in party
         }
+
         public double DistanceTo(Point position)
         {
             return Math.Sqrt((Math.Pow(position.X - Position.X, 2) + Math.Pow(position.Y - Position.Y, 2)));
@@ -473,6 +542,7 @@ namespace MapAssist.Types
         public static bool operator ==(UnitAny unit1, UnitAny unit2) => (unit1 is null && unit2 is null) || (!(unit1 is null) && unit1.Equals(unit2));
 
         public static bool operator !=(UnitAny unit1, UnitAny unit2) => !(unit1 == unit2);
+
         public UnitAny Clone()
         {
             var unitAny = new UnitAny(_pUnit);

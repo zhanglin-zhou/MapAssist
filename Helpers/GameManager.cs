@@ -17,12 +17,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using MapAssist.Settings;
+using MapAssist.Structs;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
-using MapAssist.Settings;
-using MapAssist.Structs;
 
 namespace MapAssist.Helpers
 {
@@ -39,6 +39,7 @@ namespace MapAssist.Helpers
         private static ProcessContext _processContext;
 
         public delegate void StatusUpdateHandler(object sender, EventArgs e);
+
         public static event StatusUpdateHandler OnGameAccessDenied;
 
         private static Types.UnitAny _PlayerUnit = default;
@@ -48,6 +49,7 @@ namespace MapAssist.Helpers
         private static IntPtr _MenuPanelOpenOffset;
         private static IntPtr _MenuDataOffset;
         private static IntPtr _RosterDataOffset;
+        private static IntPtr _InteractedNpcOffset;
 
         private static WindowsExternal.WinEventDelegate _eventDelegate = null;
 
@@ -212,7 +214,6 @@ namespace MapAssist.Helpers
             {
                 if (_UnitHashTableOffset == IntPtr.Zero)
                 {
-
                     _UnitHashTableOffset = processContext.GetUnitHashtableOffset();
                 }
 
@@ -237,6 +238,7 @@ namespace MapAssist.Helpers
                 return _ExpansionCheckOffset;
             }
         }
+
         public static IntPtr GameIPOffset
         {
             get
@@ -249,12 +251,12 @@ namespace MapAssist.Helpers
                 using (var processContext = GetProcessContext())
                 {
                     _GameIPOffset = (IntPtr)processContext.GetGameIPOffset();
-
                 }
 
                 return _GameIPOffset;
             }
         }
+
         public static IntPtr MenuOpenOffset
         {
             get
@@ -272,6 +274,7 @@ namespace MapAssist.Helpers
                 return _MenuPanelOpenOffset;
             }
         }
+
         public static IntPtr MenuDataOffset
         {
             get
@@ -289,6 +292,7 @@ namespace MapAssist.Helpers
                 return _MenuDataOffset;
             }
         }
+
         public static IntPtr RosterDataOffset
         {
             get
@@ -307,6 +311,24 @@ namespace MapAssist.Helpers
             }
         }
 
+        public static IntPtr InteractedNpcOffset
+        {
+            get
+            {
+                if (_InteractedNpcOffset != IntPtr.Zero)
+                {
+                    return _InteractedNpcOffset;
+                }
+
+                using (var processContext = GetProcessContext())
+                {
+                    _InteractedNpcOffset = processContext.GetInteractedNpcOffset();
+                }
+
+                return _InteractedNpcOffset;
+            }
+        }
+
         public static void ResetPlayerUnit()
         {
             _PlayerUnit = default;
@@ -315,13 +337,13 @@ namespace MapAssist.Helpers
             {
                 if (processContext == null) { return; }
                 var processId = processContext.ProcessId;
-                if(GameMemory.PlayerUnits.TryGetValue(processId, out var playerUnit))
+                if (GameMemory.PlayerUnits.TryGetValue(processId, out var playerUnit))
                 {
                     GameMemory.PlayerUnits[processId] = default;
                 }
             }
         }
-        
+
         public static void Dispose()
         {
             if (_lastGameProcess != null)

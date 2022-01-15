@@ -17,9 +17,9 @@
 *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 **/
 
-using System.Collections.Generic;
 using MapAssist.Helpers;
 using MapAssist.Settings;
+using System.Collections.Generic;
 
 namespace MapAssist.Types
 {
@@ -108,7 +108,7 @@ namespace MapAssist.Types
         };
     }
 
-    public enum Npc
+    public enum Npc : ushort
     {
         Skeleton = 0,
         Returned = 1,
@@ -520,9 +520,7 @@ namespace MapAssist.Types
         RatMan3 = 407,
         Malachai = 408,
         Hephasto = 409, // The Feature Creep ?!?
-
-        // Expansion (Are We missing something here?  D2BS has a 410 that we DONT have)
-        WakeOfDestruction = 410,
+        WakeOfDestruction = 410, // Expansion (Are We missing something here?  D2BS has a 410 that we DONT have)
         ChargedBoltSentry = 411,
         LightningSentry = 412,
         BladeCreeper = 413,
@@ -847,6 +845,7 @@ namespace MapAssist.Types
         Specter3 = 732,
         BurningSoul3 = 733,
         Invalid,
+        Unknown,
         NpcNotApplicable = 0xFFFF
     }
 

@@ -437,7 +437,7 @@ namespace MapAssist.Helpers
             {
                 foreach (var item in _gameData.Items)
                 {
-                    if (item.IsDropped())
+                    if (item.IsDropped() && !item.IsIdentified() && !Items.ItemUnitIdsToSkip[_gameData.ProcessId].Contains(item.UnitId))
                     {
                         (var pickupItem, _) = LootFilter.Filter(item);
                         if (!pickupItem)
@@ -449,30 +449,11 @@ namespace MapAssist.Helpers
                         var render = MapAssistConfiguration.Loaded.MapConfiguration.Item;
 
                         drawItemIcons.Add((render, itemPosition));
-                    }
-                }
 
-                foreach (var item in _gameData.Items)
-                {
-                    if (item.IsDropped())
-                    {
-                        (var pickupItem, _) = LootFilter.Filter(item);
-                        if (!pickupItem)
-                        {
-                            continue;
-                        }
+                        var itemBaseName = Items.ItemNameDisplay(item.TxtFileNo);
+                        var itemNameColor = Items.ItemNameColor(item);
 
-                        if (item != null && Items.ItemColors.TryGetValue(item.ItemData.ItemQuality, out var color))
-                        {
-                            var itemBaseName = Items.ItemNameDisplay(item.TxtFileNo);
-
-                            if (itemBaseName.EndsWith(" Rune") || itemBaseName.StartsWith("Key of "))
-                            {
-                                color = Items.ItemColors[ItemQuality.CRAFT];
-                            }
-
-                            drawItemLabels.Add((MapAssistConfiguration.Loaded.MapConfiguration.Item, item.Position, itemBaseName, color));
-                        }
+                        drawItemLabels.Add((render, item.Position, itemBaseName, itemNameColor));
                     }
                 }
             }
