@@ -90,7 +90,9 @@ namespace MapAssist.Helpers
                         {
                             foreach (var timer in Items.ItemLogTimers[_currentProcessId])
                             {
-                                timer.Dispose();
+                                if (timer != null) { 
+                                    timer.Dispose();
+                                }
                             }
                         }
 
