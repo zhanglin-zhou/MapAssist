@@ -21,6 +21,7 @@ using MapAssist.Settings;
 using MapAssist.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MapAssist.Helpers
 {
@@ -32,6 +33,8 @@ namespace MapAssist.Helpers
 
         public static Dictionary<int, UnitAny> PlayerUnits = new Dictionary<int, UnitAny>();
         public static Dictionary<int, Dictionary<uint, UnitAny>> Corpses = new Dictionary<int, Dictionary<uint, UnitAny>>();
+
+        private static bool _firstMemoryRead = true;
 
         public static GameData GetGameData()
         {
@@ -99,7 +102,7 @@ namespace MapAssist.Helpers
                         {
                             Items.ItemUnitHashesSeen.Add(_currentProcessId, new HashSet<string>());
                             Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
-                            Items.ItemLog.Add(_currentProcessId, new List<(UnitAny, string)>());
+                            Items.ItemLog.Add(_currentProcessId, new List<UnitAny>());
                         }
                         else
                         {
@@ -147,6 +150,14 @@ namespace MapAssist.Helpers
                         var objectList = new HashSet<UnitAny>();
                         var playerList = new Dictionary<uint, UnitAny>();
                         GetUnits(rosterData, ref monsterList, ref itemList, ref playerList, ref objectList);
+
+                        var newVendorItems = itemList.Where(item => item.IsInStore() && item.VendorOwner == Npc.Invalid).ToArray();
+                        foreach (var item in newVendorItems)
+                        {
+                            item.VendorOwner = !_firstMemoryRead ? lastNpcInteracted : Npc.Unknown; // This prevents marking the VendorOwner for all store items when restarting MapAssist in the middle of the game
+                        }
+
+                        _firstMemoryRead = false;
 
                         return new GameData
                         {

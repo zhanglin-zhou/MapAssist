@@ -127,8 +127,8 @@ namespace MapAssist.Types
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
-        public static Dictionary<int, List<(UnitAny, string)>> ItemLog = new Dictionary<int, List<(UnitAny, string)>>();
-        public static List<(UnitAny, string)> CurrentItemLog = new List<(UnitAny, string)>();
+        public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
+        public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
         public static Dictionary<int, List<Timer>> ItemLogTimers = new Dictionary<int, List<Timer>>();
 
@@ -261,8 +261,7 @@ namespace MapAssist.Types
 
                 ItemUnitHashesSeen[processId].Add(unit.ItemHash());
                 ItemUnitIdsSeen[processId].Add(unit.UnitId);
-                ItemLog[processId].Add((unit, npcVendorName));
-
+                ItemLog[processId].Add(unit);
                 var timer = new Timer(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds * 1000);
                 timer.Elapsed += (sender, args) => ItemLogTimerElapsed(sender, args, timer, processId);
                 timer.Start();
@@ -280,7 +279,7 @@ namespace MapAssist.Types
             }
         }
 
-        public static string ItemLogDisplayName(UnitAny unit, string npcVendorName)
+        public static string ItemLogDisplayName(UnitAny unit)
         {
             var itemBaseName = ItemName(unit.TxtFileNo);
             var itemSpecialName = "";
@@ -289,9 +288,9 @@ namespace MapAssist.Types
 
             (_, var rule) = LootFilter.Filter(unit);
 
-            if (unit.IsInStore())
+            if (unit.IsInStore() && unit.VendorOwner != Npc.Invalid)
             {
-                var vendorLabel = npcVendorName ?? "Vendor";
+                var vendorLabel = unit.VendorOwner != Npc.Unknown ? NpcExtensions.Name(unit.VendorOwner) : "Vendor";
                 itemPrefix += $"[{vendorLabel}] ";
             }
 

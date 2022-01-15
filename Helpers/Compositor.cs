@@ -40,8 +40,8 @@ namespace MapAssist.Helpers
         public GameData _gameData;
         public AreaData _areaData;
         private IReadOnlyList<PointOfInterest> _pointsOfInterest;
-        ExocetFont _exocetFont;
-        FormalFont _formalFont;
+        private ExocetFont _exocetFont;
+        private FormalFont _formalFont;
 
         private Matrix3x2 mapTransformMatrix;
         private Matrix3x2 areaTransformMatrix;
@@ -86,6 +86,7 @@ namespace MapAssist.Helpers
                 case MapPosition.TopLeft:
                     _drawBounds.Right = _drawBounds.Left + renderWidth;
                     break;
+
                 case MapPosition.TopRight:
                     _drawBounds.Left = _drawBounds.Right - renderWidth;
                     break;
@@ -266,7 +267,7 @@ namespace MapAssist.Helpers
 
                     continue;
                 }
-                
+
                 if (gameObject.IsPortal())
                 {
                     var destinationArea = (Area)Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
@@ -678,9 +679,11 @@ namespace MapAssist.Helpers
                 case BuffPosition.Player:
                     buffYPos = (gfx.Height / 2f) - imgDimensions - (gfx.Height * .12f);
                     break;
+
                 case BuffPosition.Top:
                     buffYPos = gfx.Height * .12f;
                     break;
+
                 case BuffPosition.Bottom:
                     if (_gameData.MenuOpen.SkillSelect)
                     {
@@ -855,7 +858,7 @@ namespace MapAssist.Helpers
             var ItemLog = Items.CurrentItemLog.ToArray();
             for (var i = 0; i < ItemLog.Length; i++)
             {
-                var (item, npcVendorName) = ItemLog[i];
+                var item = ItemLog[i];
 
                 var fontColor = Items.ItemNameColor(item);
                 if (item == null || fontColor == Color.Empty)
@@ -864,7 +867,7 @@ namespace MapAssist.Helpers
                     continue;
                 }
 
-                var itemName = Items.ItemLogDisplayName(item, npcVendorName);
+                var itemName = Items.ItemLogDisplayName(item);
                 var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
                 var position = anchor.Add(0, i * fontHeight);
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
@@ -920,13 +923,14 @@ namespace MapAssist.Helpers
                         {
                             gfx.FillEllipse(fillBrush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * _scaleHeight / 2); // Divide by 2 because the parameter requires a radius
                         }
-                        
+
                         if (rendering.IconOutlineColor.A > 0)
                         {
                             gfx.DrawEllipse(outlineBrush, position, rendering.IconSize * scaleWidth / 2, rendering.IconSize * _scaleHeight / 2, rendering.IconThickness); // Divide by 2 because the parameter requires a radius
                         }
 
                         break;
+
                     case Shape.Portal:
                         if (rendering.IconColor.A > 0)
                         {
@@ -939,6 +943,7 @@ namespace MapAssist.Helpers
                         }
 
                         break;
+
                     default:
                         if (points == null) break;
 
@@ -1072,6 +1077,7 @@ namespace MapAssist.Helpers
                         new Point(render.IconSize, render.IconSize),
                         new Point(0, render.IconSize)
                     }.Select(point => point.Subtract(render.IconSize / 2f).Rotate(_rotateRadians).Multiply(scaleWidth, _scaleHeight)).ToArray();
+
                 case Shape.Ellipse: // Use a rectangle since that's effectively the same size and that's all this function is used for at the moment
                     return new Point[]
                     {
@@ -1080,6 +1086,7 @@ namespace MapAssist.Helpers
                         new Point(render.IconSize, render.IconSize),
                         new Point(0, render.IconSize)
                     }.Select(point => point.Subtract(render.IconSize / 2f).Rotate(_rotateRadians).Multiply(scaleWidth, _scaleHeight)).ToArray();
+
                 case Shape.Portal: // Use a rectangle since that's effectively the same size and that's all this function is used for at the moment
                     return new Point[]
                     {
@@ -1101,6 +1108,7 @@ namespace MapAssist.Helpers
                         new Point(halfSize, render.IconSize),
                         new Point(halfSize - cutSize, halfSize + cutSize)
                     }.Select(point => point.Subtract(halfSize).Multiply(scaleWidth, _scaleHeight)).ToArray();
+
                 case Shape.Cross:
                     var a = render.IconSize * 0.25f;
                     var b = render.IconSize * 0.50f;
@@ -1263,6 +1271,7 @@ namespace MapAssist.Helpers
 
         // Creates and cached resources
         private Dictionary<string, Bitmap> cacheBitmaps = new Dictionary<string, Bitmap>();
+
         private Bitmap CreateResourceBitmap(Graphics gfx, string name)
         {
             var key = name;
@@ -1279,6 +1288,7 @@ namespace MapAssist.Helpers
         }
 
         private Dictionary<(string, float), Font> cacheFonts = new Dictionary<(string, float), Font>();
+
         private Font CreateFont(Graphics gfx, string fontFamilyName, float size)
         {
             var key = (fontFamilyName, size);
@@ -1302,6 +1312,7 @@ namespace MapAssist.Helpers
         }
 
         private Dictionary<(Color, float?), SolidBrush> cacheBrushes = new Dictionary<(Color, float?), SolidBrush>();
+
         private SolidBrush CreateSolidBrush(Graphics gfx, Color color,
             float? opacity = null)
         {
