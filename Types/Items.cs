@@ -142,7 +142,7 @@ namespace MapAssist.Types
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
-        public static Dictionary<int, HashSet<uint>> ItemUnitIdsOnPlayer = new Dictionary<int, HashSet<uint>>();
+        public static Dictionary<int, HashSet<uint>> ItemUnitIdsToSkip = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
         public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
@@ -253,7 +253,7 @@ namespace MapAssist.Types
         {
             if ((!ItemUnitHashesSeen[processId].Contains(unit.ItemHash()) &&
                 !ItemUnitIdsSeen[processId].Contains(unit.UnitId)) &&
-                !ItemUnitIdsOnPlayer[processId].Contains(unit.UnitId))
+                !ItemUnitIdsToSkip[processId].Contains(unit.UnitId))
             {
                 (var pickupItem, _) = LootFilter.Filter(unit);
                 if (!pickupItem)

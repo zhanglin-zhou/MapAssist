@@ -181,7 +181,7 @@ namespace MapAssist.Types
                                         _itemStatList = itemStatList;
                                     }
 
-                                    if (IsDropped() || IsInStore())
+                                    if ((IsDropped() && !IsIdentified()) || IsInStore())
                                     {
                                         Items.LogItem(this, processContext.ProcessId);
                                     }
@@ -367,6 +367,11 @@ namespace MapAssist.Types
                 _isMonster = true;
                 return true;
             }
+        }
+
+        public bool IsIdentified()
+        {
+            return (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
         }
 
         public bool IsDropped()

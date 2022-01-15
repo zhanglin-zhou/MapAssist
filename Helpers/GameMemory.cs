@@ -104,14 +104,14 @@ namespace MapAssist.Helpers
                         {
                             Items.ItemUnitHashesSeen.Add(_currentProcessId, new HashSet<string>());
                             Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
-                            Items.ItemUnitIdsOnPlayer.Add(_currentProcessId, new HashSet<uint>());
+                            Items.ItemUnitIdsToSkip.Add(_currentProcessId, new HashSet<uint>());
                             Items.ItemLog.Add(_currentProcessId, new List<UnitAny>());
                         }
                         else
                         {
                             Items.ItemUnitHashesSeen[_currentProcessId].Clear();
                             Items.ItemUnitIdsSeen[_currentProcessId].Clear();
-                            Items.ItemUnitIdsOnPlayer[_currentProcessId].Clear();
+                            Items.ItemUnitIdsToSkip[_currentProcessId].Clear();
                             Items.ItemLog[_currentProcessId].Clear();
                         }
 
@@ -164,9 +164,9 @@ namespace MapAssist.Helpers
 
                         foreach (var item in itemList.Where(item => item.IsPlayerHolding()))
                         {
-                            if (!Items.ItemUnitIdsOnPlayer[_currentProcessId].Contains(item.UnitId))
+                            if (!Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
                             {
-                                Items.ItemUnitIdsOnPlayer[_currentProcessId].Add(item.UnitId);
+                                Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
                             }
                         }
 
