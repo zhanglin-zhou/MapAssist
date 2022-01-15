@@ -262,6 +262,16 @@ namespace MapAssist.Types
             return UnitType == UnitType.Player && _unitAny.pAct != IntPtr.Zero;
         }
 
+        public bool IsMerc()
+        {
+            return new List<Npc> { Npc.Rogue2, Npc.Guard, Npc.IronWolf, Npc.Act5Hireling2Hand }.Contains((Npc)TxtFileNo);
+        }
+
+        public bool IsPlayerOwned()
+        {
+            return IsMerc() && Stats.ContainsKey(Stat.STAT_STRENGTH); // This is ugly, but seems to work.
+        }
+
         public bool IsPlayerUnit()
         {
             if (_isPlayerUnit)

@@ -94,7 +94,9 @@ namespace MapAssist.Helpers
                         {
                             foreach (var timer in Items.ItemLogTimers[_currentProcessId])
                             {
-                                timer.Dispose();
+                                if (timer != null) { 
+                                    timer.Dispose();
+                                }
                             }
                         }
 
@@ -146,10 +148,11 @@ namespace MapAssist.Helpers
                     if (!Equals(playerUnit, default(UnitAny)))
                     {
                         var monsterList = new HashSet<UnitAny>();
+                        var mercList = new HashSet<UnitAny>();
                         var itemList = new HashSet<UnitAny>();
                         var objectList = new HashSet<UnitAny>();
                         var playerList = new Dictionary<uint, UnitAny>();
-                        GetUnits(rosterData, ref monsterList, ref itemList, ref playerList, ref objectList);
+                        GetUnits(rosterData, ref monsterList, ref mercList, ref itemList, ref playerList, ref objectList);
 
                         var newVendorItems = itemList.Where(item => item.IsInStore() && item.VendorOwner == Npc.Invalid).ToArray();
                         foreach (var item in newVendorItems)
@@ -168,6 +171,7 @@ namespace MapAssist.Helpers
                             MainWindowHandle = GameManager.MainWindowHandle,
                             PlayerName = playerUnit.Name,
                             Monsters = monsterList,
+                            Mercs = mercList,
                             Items = itemList,
                             Objects = objectList,
                             Players = playerList,
@@ -187,7 +191,7 @@ namespace MapAssist.Helpers
             return null;
         }
 
-        private static void GetUnits(Roster rosterData, ref HashSet<UnitAny> monsterList, ref HashSet<UnitAny> itemList, ref Dictionary<uint, UnitAny> playerList, ref HashSet<UnitAny> objectList)
+        private static void GetUnits(Roster rosterData, ref HashSet<UnitAny> monsterList, ref HashSet<UnitAny> mercList, ref HashSet<UnitAny> itemList, ref Dictionary<uint, UnitAny> playerList, ref HashSet<UnitAny> objectList)
         {
             for (var i = 0; i <= 4; i++)
             {
@@ -213,6 +217,10 @@ namespace MapAssist.Helpers
                                 if (!monsterList.Contains(unitAny) && unitAny.IsMonster())
                                 {
                                     monsterList.Add(unitAny);
+                                }
+                                else if (!monsterList.Contains(unitAny) && unitAny.IsMerc())
+                                {
+                                    mercList.Add(unitAny);
                                 }
                                 break;
 

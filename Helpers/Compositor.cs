@@ -496,6 +496,17 @@ namespace MapAssist.Helpers
                 }
             }
 
+            foreach (var merc in _gameData.Mercs.ToArray())
+            {
+                var rendering = MapAssistConfiguration.Loaded.MapConfiguration.MyMerc;
+                if (!merc.IsPlayerOwned()) rendering = MapAssistConfiguration.Loaded.MapConfiguration.OtherMercs;
+
+                if (rendering.CanDrawIcon())
+                {
+                    drawPlayerIcons.Add((rendering, merc.Position));
+                }
+            }
+
             if (GameMemory.Corpses.TryGetValue(_gameData.ProcessId, out corpseList) && corpseList.Values.Count > 0)
             {
                 var rendering = MapAssistConfiguration.Loaded.MapConfiguration.Corpse;
@@ -628,6 +639,8 @@ namespace MapAssist.Helpers
             var playersRenderingOrder = new IconRendering[]
             {
                 MapAssistConfiguration.Loaded.MapConfiguration.Corpse,
+                MapAssistConfiguration.Loaded.MapConfiguration.OtherMercs,
+                MapAssistConfiguration.Loaded.MapConfiguration.MyMerc,
                 MapAssistConfiguration.Loaded.MapConfiguration.NonPartyPlayer,
                 MapAssistConfiguration.Loaded.MapConfiguration.PartyPlayer,
                 MapAssistConfiguration.Loaded.MapConfiguration.Player,

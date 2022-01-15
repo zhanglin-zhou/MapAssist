@@ -125,6 +125,12 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "HostilePlayer", ApplyNamingConventions = false)]
         public PointOfInterestRendering HostilePlayer { get; set; }
 
+        [YamlMember(Alias = "MyMerc", ApplyNamingConventions = false)]
+        public PointOfInterestRendering MyMerc { get; set; }
+
+        [YamlMember(Alias = "OtherMercs", ApplyNamingConventions = false)]
+        public PointOfInterestRendering OtherMercs { get; set; }
+
         [YamlMember(Alias = "Corpse", ApplyNamingConventions = false)]
         public PointOfInterestRendering Corpse { get; set; }
 
