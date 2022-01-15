@@ -94,7 +94,8 @@ namespace MapAssist.Helpers
                         {
                             foreach (var timer in Items.ItemLogTimers[_currentProcessId])
                             {
-                                if (timer != null) { 
+                                if (timer != null)
+                                {
                                     timer.Dispose();
                                 }
                             }
@@ -105,6 +106,7 @@ namespace MapAssist.Helpers
                             Items.ItemUnitHashesSeen.Add(_currentProcessId, new HashSet<string>());
                             Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
                             Items.ItemUnitIdsToSkip.Add(_currentProcessId, new HashSet<uint>());
+                            Items.ItemVendors.Add(_currentProcessId, new Dictionary<uint, Npc>());
                             Items.ItemLog.Add(_currentProcessId, new List<UnitAny>());
                         }
                         else
@@ -112,6 +114,7 @@ namespace MapAssist.Helpers
                             Items.ItemUnitHashesSeen[_currentProcessId].Clear();
                             Items.ItemUnitIdsSeen[_currentProcessId].Clear();
                             Items.ItemUnitIdsToSkip[_currentProcessId].Clear();
+                            Items.ItemVendors[_currentProcessId].Clear();
                             Items.ItemLog[_currentProcessId].Clear();
                         }
 
@@ -156,10 +159,19 @@ namespace MapAssist.Helpers
                         var playerList = new Dictionary<uint, UnitAny>();
                         GetUnits(rosterData, ref monsterList, ref mercList, ref itemList, ref playerList, ref objectList);
 
-                        var newVendorItems = itemList.Where(item => item.IsInStore() && item.VendorOwner == Npc.Invalid).ToArray();
-                        foreach (var item in newVendorItems)
+                        foreach (var item in itemList)
                         {
-                            item.VendorOwner = !_firstMemoryRead ? lastNpcInteracted : Npc.Unknown; // This prevents marking the VendorOwner for all store items when restarting MapAssist in the middle of the game
+                            if (!item.IsInStore()) continue;
+
+                            if (Items.ItemVendors[_currentProcessId].TryGetValue(item.UnitId, out var vendor))
+                            {
+                                item.VendorOwner = vendor;
+                            }
+                            else
+                            {
+                                item.VendorOwner = !_firstMemoryRead ? lastNpcInteracted : Npc.Unknown; // This prevents marking the VendorOwner for all store items when restarting MapAssist in the middle of the game
+                                Items.ItemVendors[_currentProcessId].Add(item.UnitId, item.VendorOwner);
+                            }
                         }
 
                         foreach (var item in itemList.Where(item => item.IsPlayerHolding()))

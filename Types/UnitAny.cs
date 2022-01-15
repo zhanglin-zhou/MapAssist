@@ -371,7 +371,7 @@ namespace MapAssist.Types
 
         public bool IsIdentified()
         {
-            return (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
+            return ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
         }
 
         public bool IsDropped()
@@ -412,8 +412,15 @@ namespace MapAssist.Types
                     else return Types.ItemModeMapped.Mercenary;
             }
 
-            if (ItemData.InvPtr == IntPtr.Zero) return Types.ItemModeMapped.Vendor;
-            if (ItemData.dwOwnerID != uint.MaxValue && ItemData.InvPage == InvPage.EQUIP) return Types.ItemModeMapped.Trade; // Other player's trade window
+            switch (ItemData.dwOwnerID)
+            {
+                case uint.MaxValue:
+                    return Types.ItemModeMapped.Vendor;
+
+                default:
+                    if (ItemData.InvPage == InvPage.EQUIP) return Types.ItemModeMapped.Trade; // Other player's trade window
+                    break;
+            }
 
             switch (ItemData.InvPage)
             {
