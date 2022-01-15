@@ -371,7 +371,7 @@ namespace MapAssist.Types
 
         public bool IsIdentified()
         {
-            return (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
+            return ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
         }
 
         public bool IsDropped()
