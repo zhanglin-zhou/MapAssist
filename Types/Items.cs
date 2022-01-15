@@ -123,6 +123,21 @@ namespace MapAssist.Types
         SOCKETED //Item is Socketed in another Item
     };
 
+    public enum ItemModeMapped // Provides more detail over ItemMode
+    {
+        Player,
+        Inventory,
+        Belt,
+        Cube,
+        Stash,
+        Vendor,
+        Trade,
+        Mercenary,
+        Socket,
+        Ground,
+        Unknown
+    };
+
     public class Items
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
