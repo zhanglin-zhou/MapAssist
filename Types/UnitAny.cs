@@ -384,6 +384,7 @@ namespace MapAssist.Types
             switch (Mode)
             {
                 case ItemMode.INBELT: return Types.ItemModeMapped.Belt;
+                case ItemMode.DROPPING: return Types.ItemModeMapped.Ground;
                 case ItemMode.ONGROUND: return Types.ItemModeMapped.Ground;
                 case ItemMode.SOCKETED: return Types.ItemModeMapped.Socket;
                 case ItemMode.EQUIP:
