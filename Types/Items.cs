@@ -478,6 +478,22 @@ namespace MapAssist.Types
             return fontColor;
         }
 
+        public static ItemTier GetItemTier(UnitAny unitAny)
+        {
+            return GetItemTier((Item)unitAny.TxtFileNo);
+        }
+
+        public static ItemTier GetItemTier(Item item)
+        {
+            var itemClasses = ItemClasses.Where(x => x.Value.Contains(item));
+            if (itemClasses.Count() == 0) return ItemTier.NotApplicable;
+
+            var itemClass = itemClasses.First();
+            if (itemClass.Key == Item.ClassCirclets) return ItemTier.NotApplicable;
+
+            return (ItemTier)(Array.IndexOf(itemClass.Value, item) * 3 / itemClass.Value.Length); // All items with each class (except circlets) come in equal amounts within each tier
+        }
+
         public static int GetItemStat(UnitAny unitAny, Stat stat)
         {
             return unitAny.Stats.TryGetValue(stat, out var statValue) ? statValue : 0;
@@ -1730,6 +1746,44 @@ namespace MapAssist.Types
             {657, "fed"},
             {658, "std"}
         };
+
+        public static Dictionary<Item, Item[]> ItemClasses = new Dictionary<Item, Item[]>()
+        {
+            [Item.ClassAxes] = new Item[] { Item.HandAxe, Item.Axe, Item.DoubleAxe, Item.MilitaryPick, Item.WarAxe, Item.LargeAxe, Item.BroadAxe, Item.BattleAxe, Item.GreatAxe, Item.GiantAxe, Item.Hatchet, Item.Cleaver, Item.TwinAxe, Item.Crowbill, Item.Naga, Item.MilitaryAxe, Item.BeardedAxe, Item.Tabar, Item.GothicAxe, Item.AncientAxe, Item.Tomahawk, Item.SmallCrescent, Item.EttinAxe, Item.WarSpike, Item.BerserkerAxe, Item.FeralAxe, Item.SilverEdgedAxe, Item.Decapitator, Item.ChampionAxe, Item.GloriousAxe },
+            [Item.ClassWands] = new Item[] { Item.Wand, Item.YewWand, Item.BoneWand, Item.GrimWand, Item.BurntWand, Item.PetrifiedWand, Item.TombWand, Item.GraveWand, Item.PolishedWand, Item.GhostWand, Item.LichWand, Item.UnearthedWand },
+            [Item.ClassClubs] = new Item[] { Item.Club, Item.SpikedClub, Item.Cudgel, Item.BarbedClub, Item.Truncheon, Item.TyrantClub },
+            [Item.ClassScepters] = new Item[] { Item.Scepter, Item.GrandScepter, Item.WarScepter, Item.RuneScepter, Item.HolyWaterSprinkler, Item.DivineScepter, Item.MightyScepter, Item.SeraphRod, Item.Caduceus },
+            [Item.ClassMaces] = new Item[] { Item.Mace, Item.MorningStar, Item.Flail, Item.FlangedMace, Item.JaggedStar, Item.Knout, Item.ReinforcedMace, Item.DevilStar, Item.Scourge },
+            [Item.ClassHammers] = new Item[] { Item.WarHammer, Item.Maul, Item.GreatMaul, Item.BattleHammer, Item.WarClub, Item.MartelDeFer, Item.LegendaryMallet, Item.OgreMaul, Item.ThunderMaul },
+            [Item.ClassSwords] = new Item[] { Item.ShortSword, Item.Scimitar, Item.Sabre, Item.Falchion, Item.CrystalSword, Item.BroadSword, Item.LongSword, Item.WarSword, Item.TwoHandedSword, Item.Claymore, Item.GiantSword, Item.BastardSword, Item.Flamberge, Item.GreatSword, Item.Gladius, Item.Cutlass, Item.Shamshir, Item.Tulwar, Item.DimensionalBlade, Item.BattleSword, Item.RuneSword, Item.AncientSword, Item.Espandon, Item.DacianFalx, Item.TuskSword, Item.GothicSword, Item.Zweihander, Item.ExecutionerSword, Item.Falcata, Item.Ataghan, Item.ElegantBlade, Item.HydraEdge, Item.PhaseBlade, Item.ConquestSword, Item.CrypticSword, Item.MythicalSword, Item.LegendSword, Item.HighlandBlade, Item.BalrogBlade, Item.ChampionSword, Item.ColossusSword, Item.ColossusBlade },
+            [Item.ClassDaggers] = new Item[] { Item.Dagger, Item.Dirk, Item.Kris, Item.Blade, Item.Poignard, Item.Rondel, Item.Cinquedeas, Item.Stiletto, Item.BoneKnife, Item.MithrilPoint, Item.FangedKnife, Item.LegendSpike },
+            [Item.ClassThrowingKnifes] = new Item[] { Item.ThrowingKnife, Item.BalancedKnife, Item.BattleDart, Item.WarDart, Item.FlyingKnife, Item.WingedKnife },
+            [Item.ClassThrowingAxes] = new Item[] { Item.ThrowingAxe, Item.BalancedAxe, Item.Francisca, Item.Hurlbat, Item.FlyingAxe, Item.WingedAxe },
+            [Item.ClassJavelins] = new Item[] { Item.Javelin, Item.Pilum, Item.ShortSpear, Item.Glaive, Item.ThrowingSpear, Item.WarJavelin, Item.GreatPilum, Item.Simbilan, Item.Spiculum, Item.Harpoon, Item.HyperionJavelin, Item.StygianPilum, Item.BalrogSpear, Item.GhostGlaive, Item.WingedHarpoon },
+            [Item.ClassSpears] = new Item[] { Item.Spear, Item.Trident, Item.Brandistock, Item.Spetum, Item.Pike, Item.WarSpear, Item.Fuscina, Item.WarFork, Item.Yari, Item.Lance, Item.HyperionSpear, Item.StygianPike, Item.Mancatcher, Item.GhostSpear, Item.WarPike },
+            [Item.ClassPolearms] = new Item[] { Item.Bardiche, Item.Voulge, Item.Scythe, Item.Poleaxe, Item.Halberd, Item.WarScythe, Item.LochaberAxe, Item.Bill, Item.BattleScythe, Item.Partizan, Item.BecDeCorbin, Item.GrimScythe, Item.OgreAxe, Item.ColossusVoulge, Item.Thresher, Item.CrypticAxe, Item.GreatPoleaxe, Item.GiantThresher },
+            [Item.ClassStaves] = new Item[] { Item.ShortStaff, Item.LongStaff, Item.GnarledStaff, Item.BattleStaff, Item.WarStaff, Item.JoStaff, Item.QuarterStaff, Item.CedarStaff, Item.GothicStaff, Item.RuneStaff, Item.WalkingStick, Item.Stalagmite, Item.ElderStaff, Item.Shillelagh, Item.ArchonStaff },
+            [Item.ClassBows] = new Item[] { Item.ShortBow, Item.HuntersBow, Item.LongBow, Item.CompositeBow, Item.ShortBattleBow, Item.LongBattleBow, Item.ShortWarBow, Item.LongWarBow, Item.EdgeBow, Item.RazorBow, Item.CedarBow, Item.DoubleBow, Item.ShortSiegeBow, Item.LargeSiegeBow, Item.RuneBow, Item.GothicBow, Item.SpiderBow, Item.BladeBow, Item.ShadowBow, Item.GreatBow, Item.DiamondBow, Item.CrusaderBow, Item.WardBow, Item.HydraBow },
+            [Item.ClassCrossbows] = new Item[] { Item.LightCrossbow, Item.Crossbow, Item.HeavyCrossbow, Item.RepeatingCrossbow, Item.Arbalest, Item.SiegeCrossbow, Item.Ballista, Item.ChuKoNu, Item.PelletBow, Item.GorgonCrossbow, Item.ColossusCrossbow, Item.DemonCrossBow },
+
+            [Item.ClassHelms] = new Item[] { Item.Cap, Item.SkullCap, Item.Helm, Item.FullHelm, Item.GreatHelm, Item.Crown, Item.Mask, Item.BoneHelm, Item.WarHat, Item.Sallet, Item.Casque, Item.Basinet, Item.WingedHelm, Item.GrandCrown, Item.DeathMask, Item.GrimHelm, Item.Shako, Item.Hydraskull, Item.Armet, Item.GiantConch, Item.SpiredHelm, Item.Corona, Item.DemonHead, Item.BoneVisage },
+            [Item.ClassArmors] = new Item[] { Item.QuiltedArmor, Item.LeatherArmor, Item.HardLeatherArmor, Item.StuddedLeather, Item.RingMail, Item.ScaleMail, Item.ChainMail, Item.BreastPlate, Item.SplintMail, Item.PlateMail, Item.FieldPlate, Item.GothicPlate, Item.FullPlateMail, Item.AncientArmor, Item.LightPlate, Item.GhostArmor, Item.SerpentskinArmor, Item.DemonhideArmor, Item.TrellisedArmor, Item.LinkedMail, Item.TigulatedMail, Item.MeshArmor, Item.Cuirass, Item.RussetArmor, Item.TemplarCoat, Item.SharktoothArmor, Item.EmbossedPlate, Item.ChaosArmor, Item.OrnatePlate, Item.MagePlate, Item.DuskShroud, Item.Wyrmhide, Item.ScarabHusk, Item.WireFleece, Item.DiamondMail, Item.LoricatedMail, Item.Boneweave, Item.GreatHauberk, Item.BalrogSkin, Item.HellforgePlate, Item.KrakenShell, Item.LacqueredPlate, Item.ShadowPlate, Item.SacredArmor, Item.ArchonPlate },
+            [Item.ClassShields] = new Item[] { Item.Buckler, Item.SmallShield, Item.LargeShield, Item.KiteShield, Item.TowerShield, Item.GothicShield, Item.BoneShield, Item.SpikedShield, Item.Defender, Item.RoundShield, Item.Scutum, Item.DragonShield, Item.Pavise, Item.AncientShield, Item.GrimShield, Item.BarbedShield, Item.Heater, Item.Luna, Item.Hyperion, Item.Monarch, Item.Aegis, Item.Ward, Item.TrollNest, Item.BladeBarrier },
+            [Item.ClassGloves] = new Item[] { Item.LeatherGloves, Item.HeavyGloves, Item.ChainGloves, Item.LightGauntlets, Item.Gauntlets, Item.DemonhideGloves, Item.SharkskinGloves, Item.HeavyBracers, Item.BattleGauntlets, Item.WarGauntlets, Item.BrambleMitts, Item.VampireboneGloves, Item.Vambraces, Item.CrusaderGauntlets, Item.OgreGauntlets },
+            [Item.ClassBoots] = new Item[] { Item.Boots, Item.HeavyBoots, Item.ChainBoots, Item.LightPlatedBoots, Item.Greaves, Item.DemonhideBoots, Item.SharkskinBoots, Item.MeshBoots, Item.BattleBoots, Item.WarBoots, Item.WyrmhideBoots, Item.ScarabshellBoots, Item.BoneweaveBoots, Item.MirroredBoots, Item.MyrmidonGreaves },
+            [Item.ClassBelts] = new Item[] { Item.Sash, Item.LightBelt, Item.Belt, Item.HeavyBelt, Item.PlatedBelt, Item.DemonhideSash, Item.SharkskinBelt, Item.MeshBelt, Item.BattleBelt, Item.WarBelt, Item.SpiderwebSash, Item.VampirefangBelt, Item.MithrilCoil, Item.TrollBelt, Item.ColossusGirdle },
+            [Item.ClassCirclets] = new Item[] { Item.Circlet, Item.Coronet, Item.Tiara, Item.Diadem },
+
+            [Item.ClassAssassinKatars] = new Item[] { Item.Katar, Item.WristBlade, Item.HatchetHands, Item.Cestus, Item.Claws, Item.BladeTalons, Item.ScissorsKatar, Item.Quhab, Item.WristSpike, Item.Fascia, Item.HandScythe, Item.GreaterClaws, Item.GreaterTalons, Item.ScissorsQuhab, Item.Suwayyah, Item.WristSword, Item.WarFist, Item.BattleCestus, Item.FeralClaws, Item.RunicTalons, Item.ScissorsSuwayyah },
+            [Item.ClassSorceressOrbs] = new Item[] { Item.EagleOrb, Item.SacredGlobe, Item.SmokedSphere, Item.ClaspedOrb, Item.JaredsStone, Item.GlowingOrb, Item.CrystallineGlobe, Item.CloudySphere, Item.SparklingBall, Item.SwirlingCrystal, Item.HeavenlyStone, Item.EldritchOrb, Item.DemonHeart, Item.VortexOrb, Item.DimensionalShard },
+            [Item.ClassAmazonBows] = new Item[] { Item.StagBow, Item.ReflexBow, Item.AshwoodBow, Item.CeremonialBow, Item.MatriarchalBow, Item.GrandMatronBow },
+            [Item.ClassAmazonSpears] = new Item[] { Item.MaidenSpear, Item.MaidenPike, Item.CeremonialSpear, Item.CeremonialPike, Item.MatriarchalSpear, Item.MatriarchalPike },
+            [Item.ClassAmazonJavelins] = new Item[] { Item.MaidenJavelin, Item.CeremonialJavelin, Item.MatriarchalJavelin },
+            [Item.ClassDruidHelms] = new Item[] { Item.WolfHead, Item.HawkHelm, Item.Antlers, Item.FalconMask, Item.SpiritMask, Item.AlphaHelm, Item.GriffonHeaddress, Item.HuntersGuise, Item.SacredFeathers, Item.TotemicMask, Item.BloodSpirit, Item.SunSpirit, Item.EarthSpirit, Item.SkySpirit, Item.DreamSpirit },
+            [Item.ClassBarbarianHelms] = new Item[] { Item.JawboneCap, Item.FangedHelm, Item.HornedHelm, Item.AssaultHelmet, Item.AvengerGuard, Item.JawboneVisor, Item.LionHelm, Item.RageMask, Item.SavageHelmet, Item.SlayerGuard, Item.CarnageHelm, Item.FuryVisor, Item.DestroyerHelm, Item.ConquerorCrown, Item.GuardianCrown },
+            [Item.ClassPaladinShields] = new Item[] { Item.Targe, Item.Rondache, Item.HeraldicShield, Item.AerinShield, Item.CrownShield, Item.AkaranTarge, Item.AkaranRondache, Item.ProtectorShield, Item.GildedShield, Item.RoyalShield, Item.SacredTarge, Item.SacredRondache, Item.AncientShield, Item.ZakarumShield, Item.VortexShield },
+            [Item.ClassNecromancerShields] = new Item[] { Item.PreservedHead, Item.ZombieHead, Item.UnravellerHead, Item.GargoyleHead, Item.DemonHeadShield, Item.MummifiedTrophy, Item.FetishTrophy, Item.SextonTrophy, Item.CantorTrophy, Item.HierophantTrophy, Item.MinionSkull, Item.HellspawnSkull, Item.OverseerSkull, Item.SuccubusSkull, Item.BloodlordSkull },
+        };
     }
 
     public enum Item : uint
@@ -1794,7 +1848,7 @@ namespace MapAssist.Types
         Bardiche,
         Voulge,
         Scythe,
-        PoleAxe,
+        Poleaxe,
         Halberd,
         WarScythe,
         ShortStaff,
@@ -1810,10 +1864,10 @@ namespace MapAssist.Types
         LongBattleBow,
         ShortWarBow,
         LongWarBow,
-        LightCrossBow,
-        CrossBow,
-        HeavyCrossBow,
-        RepeatingCrossBow,
+        LightCrossbow,
+        Crossbow,
+        HeavyCrossbow,
+        RepeatingCrossbow,
         RancidGasPotion,
         OilPotion,
         ChokingGasPotion,
@@ -1872,7 +1926,7 @@ namespace MapAssist.Types
         Stiletto,
         BattleDart,
         Francisca,
-        Wardart,
+        WarDart,
         Hurlbat,
         WarJavelin,
         GreatPilum,
@@ -1881,7 +1935,7 @@ namespace MapAssist.Types
         Harpoon,
         WarSpear,
         Fuscina,
-        Warfork,
+        WarFork,
         Yari,
         Lance,
         LochaberAxe,
@@ -1946,10 +2000,10 @@ namespace MapAssist.Types
         UnearthedWand,
         Truncheon,
         MightyScepter,
-        Seraphrod,
+        SeraphRod,
         Caduceus,
         TyrantClub,
-        Reinforcedmace,
+        ReinforcedMace,
         DevilStar,
         Scourge,
         LegendaryMallet,
@@ -1991,7 +2045,7 @@ namespace MapAssist.Types
         ColossusVoulge,
         Thresher,
         CrypticAxe,
-        GreatpoleAxe,
+        GreatPoleaxe,
         GiantThresher,
         WalkingStick,
         Stalagmite,
@@ -2007,8 +2061,8 @@ namespace MapAssist.Types
         WardBow,
         HydraBow,
         PelletBow,
-        GorgonCrossBow,
-        ColossusCrossBow,
+        GorgonCrossbow,
+        ColossusCrossbow,
         DemonCrossBow,
         EagleOrb,
         SacredGlobe,
@@ -2036,7 +2090,7 @@ namespace MapAssist.Types
         VortexOrb,
         DimensionalShard,
         MatriarchalBow,
-        GrandmatronBow,
+        GrandMatronBow,
         MatriarchalSpear,
         MatriarchalPike,
         MatriarchalJavelin,
@@ -2049,7 +2103,7 @@ namespace MapAssist.Types
         Mask,
         QuiltedArmor,
         LeatherArmor,
-        HardleatherArmor,
+        HardLeatherArmor,
         StuddedLeather,
         RingMail,
         ScaleMail,
@@ -2157,19 +2211,19 @@ namespace MapAssist.Types
         Tiara,
         Diadem,
         Shako,
-        HydraSkull,
+        Hydraskull,
         Armet,
         GiantConch,
         SpiredHelm,
         Corona,
         DemonHead,
         DuskShroud,
-        WyrmHide,
+        Wyrmhide,
         ScarabHusk,
         WireFleece,
         DiamondMail,
         LoricatedMail,
-        BoneWeave,
+        Boneweave,
         GreatHauberk,
         BalrogSkin,
         HellforgePlate,
@@ -2395,7 +2449,50 @@ namespace MapAssist.Types
         StandardOfHeroes,
 
         // Used only for item filter
+        ClassAxes = 0xFFD0,
+        ClassWands,
+        ClassClubs,
+        ClassScepters,
+        ClassMaces,
+        ClassHammers,
+        ClassSwords,
+        ClassDaggers,
+        ClassThrowingKnifes,
+        ClassThrowingAxes,
+        ClassJavelins,
+        ClassSpears,
+        ClassPolearms,
+        ClassStaves,
+        ClassBows,
+        ClassCrossbows,
+
+        ClassHelms,
+        ClassArmors,
+        ClassShields,
+        ClassGloves,
+        ClassBoots,
+        ClassBelts,
+        ClassCirclets,
+
+        ClassAssassinKatars,
+        ClassSorceressOrbs,
+        ClassAmazonBows,
+        ClassAmazonSpears,
+        ClassAmazonJavelins,
+        ClassDruidHelms,
+        ClassBarbarianHelms,
+        ClassPaladinShields,
+        ClassNecromancerShields,
+
         xBases = 0xFFFF - 0x1,
         Any = 0xFFFF
     };
+
+    public enum ItemTier
+    {
+        Normal,
+        Exceptional,
+        Elite,
+        NotApplicable
+    }
 }

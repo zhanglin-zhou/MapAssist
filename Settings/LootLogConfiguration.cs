@@ -1,6 +1,8 @@
 ﻿using MapAssist.Files;
 using MapAssist.Types;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using YamlDotNet.Serialization;
 
 namespace MapAssist.Settings
@@ -12,6 +14,45 @@ namespace MapAssist.Settings
         public static void Load()
         {
             Filters = ConfigurationParser<Dictionary<Item, List<ItemFilter>>>.ParseConfigurationFile($"./{MapAssistConfiguration.Loaded.ItemLog.FilterFileName}");
+
+            for (var itemClass = Item.ClassAxes; ; itemClass += 1)
+            {
+                if (!Enum.IsDefined(typeof(Item), itemClass)) break;
+                if (!Filters.ContainsKey(itemClass)) continue;
+
+                Action<ItemFilter> assignRule = (rule) =>
+                {
+                    var classItems = Items.ItemClasses[itemClass].Where(item => rule == null || rule.Tiers == null || rule.Tiers.Contains(Items.GetItemTier(item))).ToArray();
+
+                    foreach (var item in classItems)
+                    {
+                        if (Filters.ContainsKey(item) && Filters[item] == null) continue; // null rule so everything is already being returned
+
+                        if (Filters.ContainsKey(item))
+                        {
+                            if (rule == null) Filters[item] = null; // replace with a null rule
+                            else Filters[item].Add(rule);
+                        }
+                        else
+                        {
+                            if (rule == null) Filters.Add(item, null);
+                            else Filters.Add(item, new List<ItemFilter> { rule });
+                        }
+                    }
+                };
+
+                if (Filters[itemClass] == null)
+                {
+                    assignRule(null);
+                }
+                else
+                {
+                    foreach (var rule in Filters[itemClass])
+                    {
+                        assignRule(rule);
+                    }
+                }
+            }
         }
     }
 
@@ -23,6 +64,7 @@ namespace MapAssist.Settings
             set { GetType().GetProperty(stat.ToString()).SetValue(this, value, null); }
         }
 
+        public ItemTier[] Tiers { get; set; }
         public bool PlaySoundOnDrop { get; set; } = true;
         public ItemQuality[] Qualities { get; set; }
         public int[] Sockets { get; set; }
