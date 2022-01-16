@@ -171,5 +171,10 @@ namespace MapAssist.Helpers
         {
             return new Matrix3x2(matrix.M11, matrix.M12, matrix.M21, matrix.M22, matrix.M31, matrix.M32);
         }
+
+        public static float ScaleFontSize(this Graphics gfx, float baseFontSize)
+        {
+            return gfx.Height / (1080 / baseFontSize);
+        }
     }
 }

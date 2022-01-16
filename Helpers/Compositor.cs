@@ -222,7 +222,8 @@ namespace MapAssist.Helpers
 
                 if (poi.RenderingSettings.CanDrawLine())
                 {
-                    var padding = poi.RenderingSettings.CanDrawLabel() ? (float)poi.RenderingSettings.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                    var fontSize = gfx.ScaleFontSize((float)poi.RenderingSettings.LabelFontSize);
+                    var padding = poi.RenderingSettings.CanDrawLabel() ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                     var poiPosition = MovePointInBounds(poi.Position, _gameData.PlayerPosition, padding);
                     DrawLine(gfx, poi.RenderingSettings, _gameData.PlayerPosition, poiPosition);
                 }
@@ -510,6 +511,7 @@ namespace MapAssist.Helpers
             if (GameMemory.Corpses.TryGetValue(_gameData.ProcessId, out corpseList) && corpseList.Values.Count > 0)
             {
                 var rendering = MapAssistConfiguration.Loaded.MapConfiguration.Corpse;
+                var fontSize = gfx.ScaleFontSize((float)rendering.LabelFontSize);
                 var canDrawLabel = rendering.CanDrawLabel();
                 var canDrawIcon = rendering.CanDrawIcon();
                 var canDrawLine = rendering.CanDrawLine();
@@ -530,7 +532,7 @@ namespace MapAssist.Helpers
                     }
                     if (canDrawLine && corpse.Name == _gameData.PlayerUnit.Name)
                     {
-                        var padding = canDrawLabel ? (float)rendering.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                        var padding = canDrawLabel ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                         var poiPosition = MovePointInBounds(corpse.Position, _gameData.PlayerPosition, padding);
                         DrawLine(gfx, rendering, _gameData.PlayerPosition, poiPosition);
                     }
@@ -601,7 +603,8 @@ namespace MapAssist.Helpers
 
                             if (rendering.CanDrawLine() && playerUnit.HostileToPlayer)
                             {
-                                var padding = rendering.CanDrawLabel() ? (float)MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
+                                var fontSize = gfx.ScaleFontSize((float)MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize);
+                                var padding = rendering.CanDrawLabel() ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
                                 var poiPosition = MovePointInBounds(playerUnit.Position, _gameData.PlayerPosition, padding);
                                 DrawLine(gfx, MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer, _gameData.PlayerPosition, poiPosition);
                             }
@@ -810,8 +813,7 @@ namespace MapAssist.Helpers
 
             // Setup
             var font = MapAssistConfiguration.Loaded.GameInfo.LabelFont;
-            var fontSizeBase = (float)MapAssistConfiguration.Loaded.GameInfo.LabelFontSize;
-            var fontSize = fontSizeBase * ((gfx.Height / 67.5f) / fontSizeBase);
+            var fontSize = gfx.ScaleFontSize((float)MapAssistConfiguration.Loaded.GameInfo.LabelFontSize);
             var textShadow = MapAssistConfiguration.Loaded.GameInfo.LabelTextShadow;
             var textAlign = MapAssistConfiguration.Loaded.GameInfo.Position == GameInfoPosition.Right ? TextAlign.Right : TextAlign.Left;
             var textColor = Color.FromArgb(199, 179, 119);
@@ -875,7 +877,7 @@ namespace MapAssist.Helpers
             }
 
             // Setup
-            var fontSize = (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize;
+            var fontSize = gfx.ScaleFontSize((float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
             var fontHeight = (fontSize + fontSize / 2f);
             var textShadow = MapAssistConfiguration.Loaded.ItemLog.LabelTextShadow;
             var shadowBrush = CreateSolidBrush(gfx, Color.Black, 0.6f);
@@ -895,7 +897,7 @@ namespace MapAssist.Helpers
                 }
 
                 var itemName = Items.ItemLogDisplayName(item);
-                var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, (float)MapAssistConfiguration.Loaded.ItemLog.LabelFontSize);
+                var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, fontSize);
                 var position = anchor.Add(0, i * fontHeight);
                 var brush = CreateSolidBrush(gfx, fontColor, 1);
 
@@ -1046,7 +1048,8 @@ namespace MapAssist.Helpers
 
             var useColor = color ?? rendering.LabelColor;
 
-            var font = CreateFont(gfx, rendering.LabelFont, (float)rendering.LabelFontSize);
+            var fontSize = gfx.ScaleFontSize((float)rendering.LabelFontSize);
+            var font = CreateFont(gfx, rendering.LabelFont, fontSize);
             var iconShape = GetIconShape(rendering).ToRectangle();
             var textSize = gfx.MeasureString(font, text);
             var textShadow = rendering.LabelTextShadow;
@@ -1060,7 +1063,7 @@ namespace MapAssist.Helpers
             position = position.Add(new Point(0, (textSize.Y / 2 + 5) * (!rendering.CanDrawArrowHead() ? -1 : multiplier)));
             position = MoveTextInBounds(position, text, textSize);
 
-            DrawText(gfx, position, text, rendering.LabelFont, (float)rendering.LabelFontSize, useColor, textShadow, TextAlign.Center);
+            DrawText(gfx, position, text, rendering.LabelFont, fontSize, useColor, textShadow, TextAlign.Center);
 
             renderTarget.Transform = currentTransform;
         }
