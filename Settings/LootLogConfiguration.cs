@@ -7,11 +7,11 @@ namespace MapAssist.Settings
 {
     public class LootLogConfiguration
     {
-        public static Dictionary<string, List<ItemFilter>> Filters { get; set; }
+        public static Dictionary<Item, List<ItemFilter>> Filters { get; set; }
 
         public static void Load()
         {
-            Filters = ConfigurationParser<Dictionary<string, List<ItemFilter>>>.ParseConfigurationFile($"./{MapAssistConfiguration.Loaded.ItemLog.FilterFileName}");
+            Filters = ConfigurationParser<Dictionary<Item, List<ItemFilter>>>.ParseConfigurationFile($"./{MapAssistConfiguration.Loaded.ItemLog.FilterFileName}");
         }
     }
 

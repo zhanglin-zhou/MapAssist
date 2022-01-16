@@ -1,10 +1,10 @@
-﻿using System;
+﻿using MapAssist.Settings;
+using MapAssist.Types;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using MapAssist.Settings;
-using MapAssist.Types;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
@@ -28,7 +28,7 @@ namespace MapAssist.Helpers
             emitter.Emit(new Scalar(null, ((double)value).ToString(new CultureInfo("en-US")))); // Otherwise some bug in the yamlconverter won't have the right precisions on doubles
         }
     }
-    
+
     internal sealed class MapColorConfigurationTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
@@ -62,6 +62,7 @@ namespace MapAssist.Helpers
             emitter.Emit(new MappingEnd());
         }
     }
+
     internal sealed class PortalRenderingTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
@@ -83,6 +84,7 @@ namespace MapAssist.Helpers
             emitter.Emit(new MappingEnd());
         }
     }
+
     internal sealed class PointOfInterestRenderingTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
@@ -104,6 +106,7 @@ namespace MapAssist.Helpers
             emitter.Emit(new MappingEnd());
         }
     }
+
     internal sealed class IconRenderingTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
@@ -125,6 +128,7 @@ namespace MapAssist.Helpers
             emitter.Emit(new MappingEnd());
         }
     }
+
     internal sealed class AreaArrayYamlTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
@@ -180,18 +184,48 @@ namespace MapAssist.Helpers
         }
     }
 
+    internal sealed class ItemYamlTypeConverter : IYamlTypeConverter
+    {
+        public bool Accepts(Type type)
+        {
+            return type == typeof(Item);
+        }
+
+        public object ReadYaml(IParser parser, Type type)
+        {
+            if (parser.TryConsume<Scalar>(out var scalar))
+            {
+                if (Enum.TryParse(scalar.Value.Replace(" ", "").Replace("-", ""), true, out Item item))
+                {
+                    return item;
+                }
+                else
+                {
+                    throw new Exception($"Failed to parse item: {scalar.Value}");
+                }
+            }
+
+            return null;
+        }
+
+        public void WriteYaml(IEmitter emitter, object value, Type type)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     internal sealed class ItemQualityYamlTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
         {
             return type == typeof(ItemQuality[]);
         }
-        
+
         public object ReadYaml(IParser parser, Type type)
         {
             if (parser.TryConsume<Scalar>(out var scalar))
             {
-                var items = new List<string>() {scalar.Value};
+                var items = new List<string>() { scalar.Value };
                 return ParseItemQuality(items);
             }
 
@@ -206,7 +240,7 @@ namespace MapAssist.Helpers
                 parser.Consume<SequenceEnd>();
                 return ParseItemQuality(items);
             }
-            
+
             return null;
         }
 
@@ -216,7 +250,7 @@ namespace MapAssist.Helpers
             {
                 ItemQuality parsedQuality;
                 var success = Enum.TryParse(q.ToUpper(), true, out parsedQuality);
-                return new {success, parsedQuality};
+                return new { success, parsedQuality };
             }).Where(x => x.success).Select(x => x.parsedQuality).ToArray();
         }
 
@@ -240,6 +274,10 @@ namespace MapAssist.Helpers
                 if (Enum.TryParse(scalar.Value.Replace(" ", ""), true, out ClassTabs classTab))
                 {
                     return classTab;
+                }
+                else
+                {
+                    throw new Exception($"Failed to parse class tab: {scalar.Value}");
                 }
             }
 
@@ -266,6 +304,10 @@ namespace MapAssist.Helpers
                 if (Enum.TryParse(scalar.Value.Replace(" ", ""), true, out Skill skill))
                 {
                     return skill;
+                }
+                else
+                {
+                    throw new Exception($"Failed to parse skill: {scalar.Value}");
                 }
             }
 
@@ -315,7 +357,7 @@ namespace MapAssist.Helpers
         internal static void WritePOIRendering(IEmitter emitter, PointOfInterestRendering node)
         {
             WriteIconRendering(emitter, node);
-            
+
             var hasLine = node.LineColor != null && node.LineColor.A > 0 && node.LineThickness > 0;
             var hasLabelColor = node.LabelColor != null && node.LabelColor.A > 0;
             var hasLabel = node.LabelFontSize > 0;
