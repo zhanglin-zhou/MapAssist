@@ -817,30 +817,57 @@ namespace MapAssist.Helpers
             var textShadow = MapAssistConfiguration.Loaded.GameInfo.LabelTextShadow;
             var textAlign = MapAssistConfiguration.Loaded.GameInfo.Position == GameInfoPosition.Right ? TextAlign.Right : TextAlign.Left;
             var textColor = Color.FromArgb(199, 179, 119);
-            var linePadding = fontSize + (gfx.Height / 360f);
+            var linePadding = fontSize + (gfx.Height / 280f);
 
-            // Game Name
-            if (MapAssistConfiguration.Loaded.GameInfo.ShowGameName && _gameData.Session.GameName.Length > 0)
+            if (MapAssistConfiguration.Loaded.GameInfo.Position == GameInfoPosition.Right && _gameData.MenuOpen.Map)
             {
-                var gameText = "Game: " + _gameData.Session.GameName;
-                DrawText(gfx, anchor, gameText, font, fontSize, textColor, true, textAlign);
-                anchor.Y += linePadding;
+                // Don't overlap game text when the in-game map is open
+                anchor.Y += linePadding * 4;
+            }
+            else
+            {
+                // Game Name
+                if (MapAssistConfiguration.Loaded.GameInfo.ShowGameName && _gameData.Session.GameName.Length > 0)
+                {
+                    var gameNameText = "Game: " + _gameData.Session.GameName;
+                    DrawText(gfx, anchor, gameNameText, font, fontSize, textColor, true, textAlign);
+                    anchor.Y += linePadding;
+
+                    if (_gameData.Session.GamePass.Length > 0)
+                    {
+                        var gamePassText = "Password: " + _gameData.Session.GamePass;
+                        DrawText(gfx, anchor, gamePassText, font, fontSize, textColor, true, textAlign);
+                        anchor.Y += linePadding;
+                    }
+                }
+
+                // Area
+                if (MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel)
+                {
+                    var areaText = _areaData.Area.Name();
+                    DrawText(gfx, anchor, areaText, font, fontSize, textColor, textShadow, textAlign);
+                    anchor.Y += linePadding;
+                }
+
+                // Difficulty
+                if (MapAssistConfiguration.Loaded.GameInfo.ShowDifficulty)
+                {
+                    var difficultyText = "Difficulty: " + _gameData.Difficulty.ToString();
+                    DrawText(gfx, anchor, difficultyText, font, fontSize, textColor, textShadow, textAlign);
+                    anchor.Y += linePadding;
+                }
             }
 
             // Area Level
             if (MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel)
             {
-                var areaText = _areaData.Area.MapLabel(_gameData.Difficulty);
-                DrawText(gfx, anchor, areaText, font, fontSize, textColor, textShadow, textAlign);
-                anchor.Y += linePadding;
-            }
-
-            // Difficulty
-            if (MapAssistConfiguration.Loaded.GameInfo.ShowDifficulty)
-            {
-                var areaText = "Difficulty: " + _gameData.Difficulty.ToString();
-                DrawText(gfx, anchor, areaText, font, fontSize, textColor, textShadow, textAlign);
-                anchor.Y += linePadding;
+                var areaLevel = _areaData.Area.Level(_gameData.Difficulty);
+                if (areaLevel > 0)
+                {
+                    var areaLevelText = "Area Level: " + areaLevel;
+                    DrawText(gfx, anchor, areaLevelText, font, fontSize, textColor, textShadow, textAlign);
+                    anchor.Y += linePadding;
+                }
             }
 
             // Game IP
