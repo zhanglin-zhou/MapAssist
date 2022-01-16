@@ -16,7 +16,6 @@ Shako:                              # Item Base Type
 #   Sockets: [0 - 6]
 #   Qualities: [inferior, normal, superior, magic, set, rare, unique, crafted]
 #   Defense: (number)
-#   All Skills: (number)
 #   Strength: (number)
 #   Dexterity: (number)
 #   Vitality: (number)
