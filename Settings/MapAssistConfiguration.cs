@@ -214,6 +214,15 @@ public class HotkeyConfiguration
 
 public class GameInfoConfiguration
 {
+    [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
+    public GameInfoPosition Position { get; set; }
+
+    [YamlMember(Alias = "ShowGameName", ApplyNamingConventions = false)]
+    public bool ShowGameName { get; set; }
+
+    [YamlMember(Alias = "ShowDifficulty", ApplyNamingConventions = false)]
+    public bool ShowDifficulty { get; set; }
+
     [YamlMember(Alias = "ShowGameIP", ApplyNamingConventions = false)]
     public bool ShowGameIP { get; set; }
 

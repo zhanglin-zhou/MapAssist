@@ -114,7 +114,20 @@ namespace MapAssist
                             _compositor.DrawBuffs(gfx);
                         }
 
-                        _compositor.DrawGameInfo(gfx, new Point(PlayerIconWidth() + 50, PlayerIconWidth() + 50), e, errorLoadingAreaData);
+                        var anchor = new Point();
+                        switch (MapAssistConfiguration.Loaded.GameInfo.Position)
+                        {
+                            case GameInfoPosition.Left:
+                                anchor = new Point(PlayerIconWidth() + 50, PlayerIconWidth() + 50);
+                                break;
+                            case GameInfoPosition.Right:
+                                var rect = WindowRect();
+                                var rightMargin = -(rect.Width / 75f);
+                                var topMargin = rect.Height / 85f;
+                                anchor = new Point(gfx.Width + rightMargin, topMargin);
+                                break;
+                        }
+                        _compositor.DrawGameInfo(gfx, anchor, e, errorLoadingAreaData);
                     }
                 }
             }
