@@ -40,10 +40,9 @@ namespace MapAssist.Helpers
             var lowQuality = (unitAny.ItemData.ItemFlags & ItemFlags.IFLAG_LOWQUALITY) == ItemFlags.IFLAG_LOWQUALITY;
             if (lowQuality) return (false, null);
 
-            var baseName = Items.ItemName(unitAny.TxtFileNo);
             // Populate a list of filter rules by combining rules from "Any" and the item base name
             // Use only one list or the other depending on if "Any" exists
-            var matches = LootLogConfiguration.Filters.Where(f => f.Key == "Any" || f.Key == baseName).ToList();
+            var matches = LootLogConfiguration.Filters.Where(f => f.Key == Item.Any || (uint)f.Key == unitAny.TxtFileNo).ToList();
 
             // Early breakout
             // We know that there is an item in here without any actual filters
