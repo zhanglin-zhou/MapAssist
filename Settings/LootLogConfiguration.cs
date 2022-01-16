@@ -23,6 +23,7 @@ namespace MapAssist.Settings
             set { GetType().GetProperty(stat.ToString()).SetValue(this, value, null); }
         }
 
+        public bool PlaySoundOnDrop { get; set; } = true;
         public ItemQuality[] Qualities { get; set; }
         public int[] Sockets { get; set; }
         public bool? Ethereal { get; set; }

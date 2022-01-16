@@ -256,13 +256,13 @@ namespace MapAssist.Types
                 !ItemUnitIdsSeen[processId].Contains(unit.UnitId) &&
                 !ItemUnitIdsToSkip[processId].Contains(unit.UnitId))
             {
-                (var pickupItem, _) = LootFilter.Filter(unit);
+                var (pickupItem, rule) = LootFilter.Filter(unit);
                 if (!pickupItem)
                 {
                     return;
                 }
 
-                if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop)
+                if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop && (rule == null || rule.PlaySoundOnDrop))
                 {
                     AudioPlayer.PlayItemAlert();
                 }
