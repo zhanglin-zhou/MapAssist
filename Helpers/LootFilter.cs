@@ -64,22 +64,22 @@ namespace MapAssist.Helpers
                     ["ClassSkills"] = () =>
                     {
                         if (rule.ClassSkills.Count() == 0) return true;
-                        return !rule.ClassSkills.Select(subrule => Items.GetItemStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value).Contains(false);
+                        return rule.ClassSkills.All(subrule => Items.GetItemStatAddClassSkills(unitAny, subrule.Key) >= subrule.Value);
                     },
                     ["ClassTabSkills"] = () =>
                     {
                         if (rule.ClassTabSkills.Count() == 0) return true;
-                        return !rule.ClassTabSkills.Select(subrule => Items.GetItemStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value).Contains(false);
+                        return rule.ClassTabSkills.All(subrule => Items.GetItemStatAddClassTabSkills(unitAny, subrule.Key) >= subrule.Value);
                     },
                     ["Skills"] = () =>
                     {
                         if (rule.Skills.Count() == 0) return true;
-                        return !rule.Skills.Select(subrule => Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value).Contains(false);
+                        return rule.Skills.All(subrule => Items.GetItemStatSingleSkills(unitAny, subrule.Key) >= subrule.Value);
                     },
                     ["SkillCharges"] = () =>
                     {
                         if (rule.SkillCharges.Count() == 0) return true;
-                        return !rule.SkillCharges.Select(subrule => Items.GetItemStatAddSkillCharges(unitAny, subrule.Key).Item1 >= subrule.Value).Contains(false);
+                        return rule.SkillCharges.All(subrule => Items.GetItemStatAddSkillCharges(unitAny, subrule.Key).Item1 >= subrule.Value);
                     },
                 };
 
