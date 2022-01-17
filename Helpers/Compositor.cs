@@ -499,6 +499,8 @@ namespace MapAssist.Helpers
 
             foreach (var merc in _gameData.Mercs.ToArray())
             {
+                if (merc.IsCorpse) continue;
+
                 var rendering = MapAssistConfiguration.Loaded.MapConfiguration.MyMerc;
                 if (!merc.IsPlayerOwned()) rendering = MapAssistConfiguration.Loaded.MapConfiguration.OtherMercs;
 
