@@ -70,7 +70,7 @@ Thresher:
 # This will show 3/20 Javazon Gloves when a town vendor has a pair for sale
 # It will work with all exceptional and elite gloves
 Gloves:
-  - Tier: [exceptional, elite]
+  - Tiers: [exceptional, elite]
     Qualities: magic
     Increased Attack Speed: 20
     Class Skill Tree:
