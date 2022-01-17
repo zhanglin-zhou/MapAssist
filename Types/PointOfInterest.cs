@@ -41,7 +41,7 @@ namespace MapAssist.Types
                     if (gameObject.IsPortal())
                     {
                         var area = (Area) Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
-                        if (Utils.GetPortalName(area, difficulty) == Label)
+                        if (area.PortalLabel(difficulty) == Label)
                         {
                             return true;
                         }
