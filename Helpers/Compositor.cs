@@ -858,6 +858,15 @@ namespace MapAssist.Helpers
                 }
             }
 
+            // Game IP
+            if (MapAssistConfiguration.Loaded.GameInfo.ShowGameIP)
+            {
+                var ipColor = _gameData.Session.GameIP == MapAssistConfiguration.Loaded.GameInfo.HuntingIP ? Color.Green : textColor;
+                var ipText = "IP: " + _gameData.Session.GameIP;
+                DrawText(gfx, anchor, ipText, font, fontSize, ipColor, textShadow, textAlign);
+                anchor.Y += linePadding;
+            }
+
             // Area Level
             if (MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel)
             {
@@ -868,15 +877,6 @@ namespace MapAssist.Helpers
                     DrawText(gfx, anchor, areaLevelText, font, fontSize, textColor, textShadow, textAlign);
                     anchor.Y += linePadding;
                 }
-            }
-
-            // Game IP
-            if (MapAssistConfiguration.Loaded.GameInfo.ShowGameIP)
-            {
-                var ipColor = _gameData.Session.GameIP == MapAssistConfiguration.Loaded.GameInfo.HuntingIP ? Color.Green : textColor;
-                var ipText = "IP: " + _gameData.Session.GameIP;
-                DrawText(gfx, anchor, ipText, font, fontSize, ipColor, textShadow, textAlign);
-                anchor.Y += linePadding;
             }
 
             // Overlay FPS

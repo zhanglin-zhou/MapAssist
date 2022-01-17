@@ -220,6 +220,9 @@ public class GameInfoConfiguration
     [YamlMember(Alias = "ShowGameName", ApplyNamingConventions = false)]
     public bool ShowGameName { get; set; }
 
+    [YamlMember(Alias = "ShowArea", ApplyNamingConventions = false)]
+    public bool ShowArea { get; set; }
+
     [YamlMember(Alias = "ShowDifficulty", ApplyNamingConventions = false)]
     public bool ShowDifficulty { get; set; }
 
