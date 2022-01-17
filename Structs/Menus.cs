@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using MapAssist.Types;
 using System;
 using System.Runtime.InteropServices;
 
@@ -73,7 +74,7 @@ namespace MapAssist.Structs
         [FieldOffset(0x00)] public bool IsHovered;
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x01)] public bool IsItemTooltip;
-        [FieldOffset(0x04)] public byte UnitType; // Some enum, not quite sure about the details yet
+        [FieldOffset(0x04)] public UnitType UnitType;
         [FieldOffset(0x08)] public uint UnitId;
     }
 }
