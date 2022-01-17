@@ -3,8 +3,8 @@
 # Item filter rules
 # "Any" can be used if you would like to see ALL uniques, all set items, all items with x sockets, etc
 # Most of the time we don't want to filter that broadly, so this is commented out with #
-Any:
-  - Qualities: [unique, magic]
+# Any:
+# - Qualities: [unique, magic]
 
 # The first line or "Key" is the item base type, in the next case, "Harlequin Crest" is a unique "Shako"
 # Alert to any unique Shako, regardless of any other criteria (sockets, eth)
