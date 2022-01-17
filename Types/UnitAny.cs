@@ -55,6 +55,7 @@ namespace MapAssist.Types
         private PlayerClass _playerClass;
         private Area _initialArea;
         public Npc VendorOwner { get; set; } = Npc.Invalid;
+        public bool IsHovered { get; set; } = false;
 
         public UnitAny(IntPtr pUnit)
         {
