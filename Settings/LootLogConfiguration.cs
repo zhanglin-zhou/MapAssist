@@ -22,7 +22,7 @@ namespace MapAssist.Settings
 
                 Action<ItemFilter> assignRule = (rule) =>
                 {
-                    var classItems = Items.ItemClasses[itemClass].Where(item => rule == null || rule.Tiers == null || rule.Tiers.Contains(Items.GetItemTier(item))).ToArray();
+                    var classItems = Items.ItemClasses[itemClass].Where(item => itemClass == Item.ClassCirclets || rule == null || rule.Tiers == null || rule.Tiers.Contains(Items.GetItemTier(item))).ToArray();
 
                     foreach (var item in classItems)
                     {
