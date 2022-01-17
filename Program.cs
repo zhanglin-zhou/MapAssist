@@ -201,8 +201,8 @@ namespace MapAssist
                 _log.Fatal(e);
                 _log.Fatal(e, "Invalid yaml for configuration file");
 
-                MessageBox.Show(e.Message, $"{messageBoxTitle}: MapAssist configuration yaml parsing error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var message = e.InnerException != null ? e.InnerException.Message : e.Message;
+                MessageBox.Show(message, $"{messageBoxTitle}: MapAssist configuration yaml parsing error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception e)
             {
