@@ -253,6 +253,9 @@ public class ItemLogConfiguration
     [YamlMember(Alias = "Enabled", ApplyNamingConventions = false)]
     public bool Enabled { get; set; }
 
+    [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
+    public GameInfoPosition Position { get; set; }
+
     [YamlMember(Alias = "FilterFileName", ApplyNamingConventions = false)]
     public string FilterFileName { get; set; }
 

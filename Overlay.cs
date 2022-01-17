@@ -114,20 +114,14 @@ namespace MapAssist
                             _compositor.DrawBuffs(gfx);
                         }
 
-                        var anchor = new Point();
-                        switch (MapAssistConfiguration.Loaded.GameInfo.Position)
-                        {
-                            case GameInfoPosition.Left:
-                                anchor = new Point(PlayerIconWidth() + 50, PlayerIconWidth() + 50);
-                                break;
-                            case GameInfoPosition.Right:
-                                var rect = WindowRect();
-                                var rightMargin = -(rect.Width / 75f);
-                                var topMargin = rect.Height / 85f;
-                                anchor = new Point(gfx.Width + rightMargin, topMargin);
-                                break;
-                        }
-                        _compositor.DrawGameInfo(gfx, anchor, e, errorLoadingAreaData);
+
+                        var gameInfoAnchor = GameInfoAnchor(MapAssistConfiguration.Loaded.GameInfo.Position);
+                        var nextAnchor = _compositor.DrawGameInfo(gfx, gameInfoAnchor, e, errorLoadingAreaData);
+
+                        var itemLogAnchor = (MapAssistConfiguration.Loaded.ItemLog.Position == MapAssistConfiguration.Loaded.GameInfo.Position)
+                            ? nextAnchor.Add(0, GameInfoPadding())
+                            : GameInfoAnchor(MapAssistConfiguration.Loaded.ItemLog.Position);
+                        _compositor.DrawItemLog(gfx, itemLogAnchor);
                     }
                 }
             }
@@ -217,6 +211,27 @@ namespace MapAssist
         {
             var rect = WindowRect();
             return rect.Height / 20f;
+        }
+
+        private float GameInfoPadding()
+        {
+            var rect = WindowRect();
+            return rect.Height / 100f;
+        }
+
+        private Point GameInfoAnchor(GameInfoPosition position)
+        {
+            switch (position)
+            {
+                case GameInfoPosition.TopLeft:
+                    return new Point(PlayerIconWidth() + 50, PlayerIconWidth() + 50);
+                case GameInfoPosition.TopRight:
+                    var rect = WindowRect();
+                    var rightMargin = -(rect.Width / 75f);
+                    var topMargin = rect.Height / 35f;
+                    return new Point(rect.Width + rightMargin, topMargin);
+            }
+            return new Point();
         }
 
         private void _window_DestroyGraphics(object sender, DestroyGraphicsEventArgs e)

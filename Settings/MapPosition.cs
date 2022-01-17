@@ -35,8 +35,8 @@ namespace MapAssist.Settings
 
     public enum GameInfoPosition
     {
-        Left,
-        Right
+        TopLeft,
+        TopRight
     }
 
     public enum TextAlign
