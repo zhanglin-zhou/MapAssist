@@ -881,6 +881,32 @@ namespace MapAssist.Helpers
                 anchor.Y += lineHeight;
             }
 
+            if (true)
+            {
+                foreach (var unitAny in _gameData.Monsters)
+                {
+                    if (unitAny.MonsterData.MonsterType != MonsterTypeFlags.Unique) continue;
+
+                    var infoText = $"{unitAny.MonsterStats.Name} HP: {unitAny.GetHealthPercentage():P}";
+
+                    var barHalfWidth = (gfx.Width / 3) / 2;
+                    var barHalfHeight = 20;
+
+                    var centerX = gfx.Width / 2;
+                    var centerY = gfx.Height / 40 + barHalfHeight;
+
+                    var barMins = new Point(centerX - barHalfWidth, centerY - barHalfHeight);
+                    var barMaxs = new Point(centerX + barHalfWidth, centerY + barHalfHeight);
+
+                    DrawBar(gfx, barMins, barMaxs, Color.White, Color.Firebrick, 2,
+                        (float)unitAny.GetHealthPercentage());
+                    DrawText(gfx, new Point(centerX, centerY), infoText, font, 24, Color.Black, false,
+                        TextAlign.Center);
+
+                    break;
+                }
+            }
+
             if (errorLoadingAreaData)
             {
                 DrawText(gfx, anchor, "ERROR LOADING AREA!", font, (int)Math.Round(fontSize * 1.5), Color.Orange, textShadow, textAlign);
