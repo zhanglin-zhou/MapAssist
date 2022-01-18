@@ -28,6 +28,7 @@ namespace MapAssist.Types
     {
         public string Label;
         public Area Area;
+        public Area NextArea;
         public Point Position;
         public PointOfInterestRendering RenderingSettings;
         public PoiType Type;
@@ -40,7 +41,7 @@ namespace MapAssist.Types
                 {
                     if (gameObject.IsPortal())
                     {
-                        var area = (Area) Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
+                        var area = (Area)Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
                         if (area.PortalLabel(difficulty) == Label)
                         {
                             return true;
@@ -51,6 +52,7 @@ namespace MapAssist.Types
             return false;
         }
     }
+
     public enum PoiType
     {
         NextArea,
