@@ -1123,6 +1123,22 @@ namespace MapAssist.Helpers
             gfx.DrawText(font, brush, position, text);
         }
 
+        private void DrawBar(Graphics gfx, Point mins, Point maxs, Color colorBG, Color colorFG, int outlineThickness,
+            float percentage)
+        {
+            var outlineBrush = CreateSolidBrush(gfx, Color.Black, 1);
+            var fillBrushBG = CreateSolidBrush(gfx, colorBG, 1);
+            var fillBrushFG = CreateSolidBrush(gfx, colorFG, 1);
+
+            gfx.FillRectangle(fillBrushBG, mins.X, mins.Y, maxs.X, maxs.Y);
+
+            var lerpX = (maxs.X - mins.X) * percentage + mins.X;
+            gfx.FillRectangle(fillBrushFG, mins.X, mins.Y, lerpX, maxs.Y);
+
+            if (outlineThickness > 0)
+                gfx.DrawRectangle(outlineBrush, mins.X, mins.Y, maxs.X, maxs.Y, outlineThickness);
+        }
+
         // Utility Functions
         private Point[] GetIconShape(IconRendering render,
             bool equalScaling = false)
