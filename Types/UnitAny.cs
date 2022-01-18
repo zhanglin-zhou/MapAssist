@@ -1,4 +1,4 @@
-﻿/**
+/**
  *   Copyright (C) 2021 okaygo
  *
  *   https://github.com/misterokaygo/MapAssist/
@@ -333,6 +333,12 @@ namespace MapAssist.Types
             var name = Enum.GetName(typeof(GameObject), TxtFileNo);
             return ((!string.IsNullOrWhiteSpace(name) && name.Contains("Portal") &&
                      castedType != GameObject.WaypointPortal) || castedType == GameObject.HellGate);
+        }
+
+        public bool IsWaypoint()
+        {
+            var castedType = (GameObject)TxtFileNo;
+            return castedType.IsWaypoint();
         }
 
         public bool IsShrine()
