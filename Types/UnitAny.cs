@@ -36,6 +36,7 @@ namespace MapAssist.Types
         private Path _path;
         private Inventory _inventory;
         private MonsterData _monsterData;
+        private MonStats _monsterStats;
         private ItemData _itemData;
         private ObjectData _objectData;
         private ObjectTxt _objectTxt;
@@ -149,6 +150,7 @@ namespace MapAssist.Types
                                 if (IsMonster())
                                 {
                                     _monsterData = processContext.Read<MonsterData>(_unitAny.pUnitData);
+                                    _monsterStats = processContext.Read<MonStats>(_monsterData.pMonStats);
                                 }
                                 break;
 
@@ -218,6 +220,7 @@ namespace MapAssist.Types
         public Dictionary<Stat, int> Stats => _statList;
         public Dictionary<Stat, Dictionary<ushort, int>> ItemStats => _itemStatList;
         public MonsterData MonsterData => _monsterData;
+        public MonStats MonsterStats => _monsterStats;
         public ItemData ItemData => _itemData;
         public ObjectData ObjectData => _objectData;
         public ObjectTxt ObjectTxt => _objectTxt;
