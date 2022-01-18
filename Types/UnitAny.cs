@@ -546,7 +546,7 @@ namespace MapAssist.Types
         public double GetHealthPercentage()
         {
             if (_statList.TryGetValue(Stat.Life, out var health) &&
-                _statList.TryGetValue(Stat.MaxLife, out var maxHp))
+                _statList.TryGetValue(Stat.MaxLife, out var maxHp) && (maxHp > 0))
             {
                 return (double)health / maxHp;
             }
