@@ -17,6 +17,7 @@ RenderingConfiguration:
   IconOpacity: 0.9
   OverlayMode: true
   Position: Center
+  MonsterHealthBar: true
   ToggleViaInGameMap: false
   ToggleViaInGamePanels: true
   StickToLastGameWindow: false

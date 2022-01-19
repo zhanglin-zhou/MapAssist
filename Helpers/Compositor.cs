@@ -802,8 +802,64 @@ namespace MapAssist.Helpers
             }
         }
 
+        public void DrawMonsterBar(Graphics gfx)
+        {
+            if (!MapAssistConfiguration.Loaded.RenderingConfiguration.MonsterHealthBar) return;
+
+            Func<(Types.UnitAny, string)> getActiveMonster = () =>
+            {
+                var boss = _gameData.Monsters.FirstOrDefault(x => NPC.Bosses.Contains((Npc)x.TxtFileNo));
+                if (boss != null) return (boss, NpcExtensions.Name((Npc)boss.TxtFileNo));
+
+                var monstersAround = new List<(Types.UnitAny, string)>();
+
+                foreach (var monster in _gameData.Monsters)
+                {
+                    var monsterClass = monster.MonsterStats.Name;
+                    var monsterName = NPC.SuperUniques.Where(x => x.Value == monsterClass).ToArray();
+
+                    if (monsterName.Length == 1 && (monster.MonsterData.BossLineID > 0 || (Npc)monster.TxtFileNo == Npc.Summoner)) // Summoner seems to be an odd exception
+                    {
+                        monstersAround.Add((monster, NpcExtensions.LocalizedName(monsterName[0].Key)));
+                    }
+                }
+
+                if (monstersAround.Count == 1) return monstersAround[0];
+                else if (monstersAround.Count == 0) return (null, null);
+
+                var hoveredMonster = monstersAround.Where(x => x.Item1.IsHovered).ToArray();
+                if (hoveredMonster.Length == 1) return hoveredMonster[0];
+                
+                return (null, null);
+            };
+
+            var (activeMonster, name) = getActiveMonster();
+            if (activeMonster == null) return;
+
+            var infoText = $"{name} HP: {activeMonster.GetHealthPercentage():P}";
+
+            var barWidth = gfx.Width * 0.3f;
+            var barHeight = gfx.Height * 0.04f;
+            var font = MapAssistConfiguration.Loaded.GameInfo.LabelFont;
+
+            var fontSize = barHeight / 2f;
+            var blackBrush = CreateSolidBrush(gfx, Color.Black, 1);
+            var redBrush = CreateSolidBrush(gfx, Color.Firebrick, 1);
+            var whiteBrush = CreateSolidBrush(gfx, Color.DarkGray, 1);
+
+            var center = new Point(gfx.Width / 2, gfx.Height * 0.043f);
+            var barRect = new Rectangle(center.X - barWidth / 2, center.Y - barHeight / 2, center.X + barWidth / 2, center.Y + barHeight / 2);
+            var fillRect = new Rectangle(center.X - barWidth / 2, center.Y - barHeight / 2, center.X - barWidth / 2 + barWidth * activeMonster.GetHealthPercentage(), center.Y + barHeight / 2);
+
+            gfx.FillRectangle(whiteBrush, barRect);
+            gfx.FillRectangle(redBrush, fillRect);
+            gfx.DrawRectangle(blackBrush, barRect, 2);
+
+            DrawText(gfx, center, infoText, font, fontSize, Color.Black, false, TextAlign.Center);
+        }
+
         public Point DrawGameInfo(Graphics gfx, Point anchor,
-            DrawGraphicsEventArgs e, bool errorLoadingAreaData)
+                    DrawGraphicsEventArgs e, bool errorLoadingAreaData)
         {
             if (_gameData.MenuPanelOpen >= 2)
             {
@@ -1096,7 +1152,7 @@ namespace MapAssist.Helpers
             renderTarget.Transform = currentTransform;
         }
 
-        private void DrawText(Graphics gfx, Point position, string text, string fontFamily, float fontSize, 
+        private void DrawText(Graphics gfx, Point position, string text, string fontFamily, float fontSize,
             Color color, bool textShadow, TextAlign align, float opacity = 1f)
         {
             var font = CreateFont(gfx, fontFamily, fontSize);

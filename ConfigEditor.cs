@@ -65,6 +65,7 @@ namespace MapAssist
             lblMapZoomValue.Text = MapAssistConfiguration.Loaded.RenderingConfiguration.ZoomLevel.ToString();
 
             chkOverlayMode.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode;
+            chkMonsterHealthBar.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.MonsterHealthBar;
             chkToggleViaMap.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGameMap;
             chkToggleViaPanels.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.ToggleViaInGamePanels;
             chkStickToLastGameWindow.Checked = MapAssistConfiguration.Loaded.RenderingConfiguration.StickToLastGameWindow;
@@ -220,6 +221,11 @@ namespace MapAssist
         private void chkOverlayMode_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.RenderingConfiguration.OverlayMode = chkOverlayMode.Checked;
+        }
+
+        private void chkMonsterHealthBar_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.RenderingConfiguration.MonsterHealthBar = chkMonsterHealthBar.Checked;
         }
 
         private void cboPosition_SelectedIndexChanged(object sender, EventArgs e)

@@ -174,6 +174,9 @@ public class RenderingConfiguration
     [YamlMember(Alias = "Position", ApplyNamingConventions = false)]
     public MapPosition Position { get; set; }
 
+    [YamlMember(Alias = "MonsterHealthBar", ApplyNamingConventions = false)]
+    public bool MonsterHealthBar { get; set; }
+
     [YamlMember(Alias = "ToggleViaInGameMap", ApplyNamingConventions = false)]
     public bool ToggleViaInGameMap { get; set; }
 

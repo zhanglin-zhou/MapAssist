@@ -24,6 +24,7 @@ using MapAssist.Settings;
 using MapAssist.Types;
 using System;
 using System.Windows.Forms;
+
 //using WK.Libraries.HotkeyListenerNS;
 using Graphics = GameOverlay.Drawing.Graphics;
 
@@ -100,6 +101,7 @@ namespace MapAssist
                             case MapPosition.TopLeft:
                                 drawBounds = new Rectangle(PlayerIconWidth() + 40, PlayerIconWidth() + 100, 0, PlayerIconWidth() + 100 + size);
                                 break;
+
                             case MapPosition.TopRight:
                                 drawBounds = new Rectangle(0, 100, gfx.Width, 100 + size);
                                 break;
@@ -112,8 +114,8 @@ namespace MapAssist
                             _compositor.DrawGamemap(gfx);
                             _compositor.DrawOverlay(gfx);
                             _compositor.DrawBuffs(gfx);
+                            _compositor.DrawMonsterBar(gfx);
                         }
-
 
                         var gameInfoAnchor = GameInfoAnchor(MapAssistConfiguration.Loaded.GameInfo.Position);
                         var nextAnchor = _compositor.DrawGameInfo(gfx, gameInfoAnchor, e, errorLoadingAreaData);
@@ -225,6 +227,7 @@ namespace MapAssist
             {
                 case GameInfoPosition.TopLeft:
                     return new Point(PlayerIconWidth() + 50, PlayerIconWidth() + 50);
+
                 case GameInfoPosition.TopRight:
                     var rect = WindowRect();
                     var rightMargin = -(rect.Width / 75f);
