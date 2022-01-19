@@ -815,15 +815,12 @@ namespace MapAssist.Helpers
 
                 foreach (var monster in _gameData.Monsters)
                 {
-                    if ((monster.MonsterData.MonsterType & MonsterTypeFlags.SuperUnique) == MonsterTypeFlags.SuperUnique)
-                    {
-                        var monsterClass = monster.MonsterStats.Name;
-                        var monsterName = NPC.SuperUniques.Where(x => x.Value == monsterClass).ToArray();
+                    var monsterClass = monster.MonsterStats.Name;
+                    var monsterName = NPC.SuperUniques.Where(x => x.Value == monsterClass).ToArray();
 
-                        if (monsterName.Length == 1)
-                        {
-                            monstersAround.Add((monster, NpcExtensions.LocalizedName(monsterName[0].Key)));
-                        }
+                    if (monsterName.Length == 1 && (monster.MonsterData.BossLineID > 0 || (Npc)monster.TxtFileNo == Npc.Summoner)) // Summoner seems to be an odd exception
+                    {
+                        monstersAround.Add((monster, NpcExtensions.LocalizedName(monsterName[0].Key)));
                     }
                 }
 
@@ -832,7 +829,8 @@ namespace MapAssist.Helpers
 
                 var hoveredMonster = monstersAround.Where(x => x.Item1.IsHovered).ToArray();
                 if (hoveredMonster.Length == 1) return hoveredMonster[0];
-                else return (null, null);
+                
+                return (null, null);
             };
 
             var (activeMonster, name) = getActiveMonster();
