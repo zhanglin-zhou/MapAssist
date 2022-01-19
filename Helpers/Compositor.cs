@@ -802,8 +802,66 @@ namespace MapAssist.Helpers
             }
         }
 
+        public void DrawMonsterBar(Graphics gfx)
+        {
+            if (!MapAssistConfiguration.Loaded.RenderingConfiguration.MonsterHealthBar) return;
+
+            Func<(Types.UnitAny, string)> getActiveMonster = () =>
+            {
+                var boss = _gameData.Monsters.FirstOrDefault(x => NPC.Bosses.Contains((Npc)x.TxtFileNo));
+                if (boss != null) return (boss, NpcExtensions.Name((Npc)boss.TxtFileNo));
+
+                var monstersAround = new List<(Types.UnitAny, string)>();
+
+                foreach (var monster in _gameData.Monsters)
+                {
+                    if ((monster.MonsterData.MonsterType & MonsterTypeFlags.SuperUnique) == MonsterTypeFlags.SuperUnique)
+                    {
+                        var monsterClass = monster.MonsterStats.Name;
+                        var monsterName = NPC.SuperUniques.Where(x => x.Value == monsterClass).ToArray();
+
+                        if (monsterName.Length == 1)
+                        {
+                            monstersAround.Add((monster, NpcExtensions.LocalizedName(monsterName[0].Key)));
+                        }
+                    }
+                }
+
+                if (monstersAround.Count == 1) return monstersAround[0];
+                else if (monstersAround.Count == 0) return (null, null);
+
+                var hoveredMonster = monstersAround.Where(x => x.Item1.IsHovered).ToArray();
+                if (hoveredMonster.Length == 1) return hoveredMonster[0];
+                else return (null, null);
+            };
+
+            var (activeMonster, name) = getActiveMonster();
+            if (activeMonster == null) return;
+
+            var infoText = $"{name} HP: {activeMonster.GetHealthPercentage():P}";
+
+            var barWidth = gfx.Width * 0.3f;
+            var barHeight = gfx.Height * 0.04f;
+            var font = MapAssistConfiguration.Loaded.GameInfo.LabelFont;
+
+            var fontSize = barHeight / 2f;
+            var blackBrush = CreateSolidBrush(gfx, Color.Black, 1);
+            var redBrush = CreateSolidBrush(gfx, Color.Firebrick, 1);
+            var whiteBrush = CreateSolidBrush(gfx, Color.DarkGray, 1);
+
+            var center = new Point(gfx.Width / 2, gfx.Height * 0.043f);
+            var barRect = new Rectangle(center.X - barWidth / 2, center.Y - barHeight / 2, center.X + barWidth / 2, center.Y + barHeight / 2);
+            var fillRect = new Rectangle(center.X - barWidth / 2, center.Y - barHeight / 2, center.X - barWidth / 2 + barWidth * activeMonster.GetHealthPercentage(), center.Y + barHeight / 2);
+
+            gfx.FillRectangle(whiteBrush, barRect);
+            gfx.FillRectangle(redBrush, fillRect);
+            gfx.DrawRectangle(blackBrush, barRect, 2);
+
+            DrawText(gfx, center, infoText, font, fontSize, Color.Black, false, TextAlign.Center);
+        }
+
         public Point DrawGameInfo(Graphics gfx, Point anchor,
-            DrawGraphicsEventArgs e, bool errorLoadingAreaData)
+                    DrawGraphicsEventArgs e, bool errorLoadingAreaData)
         {
             if (_gameData.MenuPanelOpen >= 2)
             {
@@ -879,32 +937,6 @@ namespace MapAssist.Helpers
                 var fpsText = "FPS: " + gfx.FPS.ToString() + " / DeltaTime: " + e.DeltaTime.ToString();
                 DrawText(gfx, anchor, fpsText, font, fontSize, textColor, textShadow, textAlign);
                 anchor.Y += lineHeight;
-            }
-
-            if (true)
-            {
-                foreach (var unitAny in _gameData.Monsters)
-                {
-                    if (unitAny.MonsterData.MonsterType != MonsterTypeFlags.Unique) continue;
-
-                    var infoText = $"{unitAny.MonsterStats.Name} HP: {unitAny.GetHealthPercentage():P}";
-
-                    var barHalfWidth = (gfx.Width / 3) / 2;
-                    var barHalfHeight = 20;
-
-                    var centerX = gfx.Width / 2;
-                    var centerY = gfx.Height / 40 + barHalfHeight;
-
-                    var barMins = new Point(centerX - barHalfWidth, centerY - barHalfHeight);
-                    var barMaxs = new Point(centerX + barHalfWidth, centerY + barHalfHeight);
-
-                    DrawBar(gfx, barMins, barMaxs, Color.White, Color.Firebrick, 2,
-                        (float)unitAny.GetHealthPercentage());
-                    DrawText(gfx, new Point(centerX, centerY), infoText, font, 24, Color.Black, false,
-                        TextAlign.Center);
-
-                    break;
-                }
             }
 
             if (errorLoadingAreaData)
@@ -1122,7 +1154,7 @@ namespace MapAssist.Helpers
             renderTarget.Transform = currentTransform;
         }
 
-        private void DrawText(Graphics gfx, Point position, string text, string fontFamily, float fontSize, 
+        private void DrawText(Graphics gfx, Point position, string text, string fontFamily, float fontSize,
             Color color, bool textShadow, TextAlign align, float opacity = 1f)
         {
             var font = CreateFont(gfx, fontFamily, fontSize);
@@ -1147,22 +1179,6 @@ namespace MapAssist.Helpers
             }
 
             gfx.DrawText(font, brush, position, text);
-        }
-
-        private void DrawBar(Graphics gfx, Point mins, Point maxs, Color colorBG, Color colorFG, int outlineThickness,
-            float percentage)
-        {
-            var outlineBrush = CreateSolidBrush(gfx, Color.Black, 1);
-            var fillBrushBG = CreateSolidBrush(gfx, colorBG, 1);
-            var fillBrushFG = CreateSolidBrush(gfx, colorFG, 1);
-
-            gfx.FillRectangle(fillBrushBG, mins.X, mins.Y, maxs.X, maxs.Y);
-
-            var lerpX = (maxs.X - mins.X) * percentage + mins.X;
-            gfx.FillRectangle(fillBrushFG, mins.X, mins.Y, lerpX, maxs.Y);
-
-            if (outlineThickness > 0)
-                gfx.DrawRectangle(outlineBrush, mins.X, mins.Y, maxs.X, maxs.Y, outlineThickness);
         }
 
         // Utility Functions

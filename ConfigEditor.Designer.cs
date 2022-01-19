@@ -61,6 +61,7 @@
             this.cboBuffPosition = new System.Windows.Forms.ComboBox();
             this.buffSize = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkMonsterHealthBar = new System.Windows.Forms.CheckBox();
             this.btnClearBorderColor = new System.Windows.Forms.Button();
             this.btnClearWalkableColor = new System.Windows.Forms.Button();
             this.chkStickToLastGameWindow = new System.Windows.Forms.CheckBox();
@@ -244,7 +245,7 @@
             this.groupBox4.Controls.Add(this.txtD2Path);
             this.groupBox4.Controls.Add(this.btnBrowseD2Location);
             this.groupBox4.Controls.Add(this.label1);
-            this.groupBox4.Location = new System.Drawing.Point(11, 171);
+            this.groupBox4.Location = new System.Drawing.Point(11, 167);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(300, 69);
             this.groupBox4.TabIndex = 24;
@@ -299,7 +300,7 @@
             this.grpGameInfo.Controls.Add(this.label7);
             this.grpGameInfo.Location = new System.Drawing.Point(11, 9);
             this.grpGameInfo.Name = "grpGameInfo";
-            this.grpGameInfo.Size = new System.Drawing.Size(300, 146);
+            this.grpGameInfo.Size = new System.Drawing.Size(300, 140);
             this.grpGameInfo.TabIndex = 23;
             this.grpGameInfo.TabStop = false;
             this.grpGameInfo.Text = "Game Info";
@@ -318,7 +319,7 @@
             // chkGameInfoTextShadow
             // 
             this.chkGameInfoTextShadow.AutoSize = true;
-            this.chkGameInfoTextShadow.Location = new System.Drawing.Point(11, 114);
+            this.chkGameInfoTextShadow.Location = new System.Drawing.Point(11, 111);
             this.chkGameInfoTextShadow.Name = "chkGameInfoTextShadow";
             this.chkGameInfoTextShadow.Size = new System.Drawing.Size(89, 17);
             this.chkGameInfoTextShadow.TabIndex = 34;
@@ -405,7 +406,7 @@
             this.btnClearGameInfoFont.FlatAppearance.BorderSize = 0;
             this.btnClearGameInfoFont.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearGameInfoFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearGameInfoFont.Location = new System.Drawing.Point(85, 85);
+            this.btnClearGameInfoFont.Location = new System.Drawing.Point(85, 80);
             this.btnClearGameInfoFont.Name = "btnClearGameInfoFont";
             this.btnClearGameInfoFont.Size = new System.Drawing.Size(23, 23);
             this.btnClearGameInfoFont.TabIndex = 33;
@@ -416,7 +417,7 @@
             // btnGameInfoFont
             // 
             this.btnGameInfoFont.BackColor = System.Drawing.Color.Transparent;
-            this.btnGameInfoFont.Location = new System.Drawing.Point(10, 85);
+            this.btnGameInfoFont.Location = new System.Drawing.Point(10, 80);
             this.btnGameInfoFont.Name = "btnGameInfoFont";
             this.btnGameInfoFont.Size = new System.Drawing.Size(75, 23);
             this.btnGameInfoFont.TabIndex = 32;
@@ -459,7 +460,7 @@
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Location = new System.Drawing.Point(6, 6);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(301, 404);
+            this.panel1.Size = new System.Drawing.Size(301, 427);
             this.panel1.TabIndex = 0;
             // 
             // groupBox3
@@ -469,9 +470,9 @@
             this.groupBox3.Controls.Add(this.lblBuffSize);
             this.groupBox3.Controls.Add(this.cboBuffPosition);
             this.groupBox3.Controls.Add(this.buffSize);
-            this.groupBox3.Location = new System.Drawing.Point(5, 309);
+            this.groupBox3.Location = new System.Drawing.Point(0, 330);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(290, 89);
+            this.groupBox3.Size = new System.Drawing.Size(295, 89);
             this.groupBox3.TabIndex = 22;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Buffs";
@@ -532,6 +533,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.chkMonsterHealthBar);
             this.groupBox1.Controls.Add(this.btnClearBorderColor);
             this.groupBox1.Controls.Add(this.btnClearWalkableColor);
             this.groupBox1.Controls.Add(this.chkStickToLastGameWindow);
@@ -554,19 +556,30 @@
             this.groupBox1.Controls.Add(this.chkToggleViaMap);
             this.groupBox1.Controls.Add(this.lblIconOpacity);
             this.groupBox1.Controls.Add(this.chkToggleViaPanels);
-            this.groupBox1.Location = new System.Drawing.Point(5, 3);
+            this.groupBox1.Location = new System.Drawing.Point(0, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(290, 300);
+            this.groupBox1.Size = new System.Drawing.Size(295, 321);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Map Rendering";
+            // 
+            // chkMonsterHealthBar
+            // 
+            this.chkMonsterHealthBar.AutoSize = true;
+            this.chkMonsterHealthBar.Location = new System.Drawing.Point(10, 195);
+            this.chkMonsterHealthBar.Name = "chkMonsterHealthBar";
+            this.chkMonsterHealthBar.Size = new System.Drawing.Size(143, 17);
+            this.chkMonsterHealthBar.TabIndex = 26;
+            this.chkMonsterHealthBar.Text = "Show monster health bar";
+            this.chkMonsterHealthBar.UseVisualStyleBackColor = true;
+            this.chkMonsterHealthBar.CheckedChanged += new System.EventHandler(this.chkMonsterHealthBar_CheckedChanged);
             // 
             // btnClearBorderColor
             // 
             this.btnClearBorderColor.FlatAppearance.BorderSize = 0;
             this.btnClearBorderColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearBorderColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearBorderColor.Location = new System.Drawing.Point(233, 264);
+            this.btnClearBorderColor.Location = new System.Drawing.Point(232, 287);
             this.btnClearBorderColor.Name = "btnClearBorderColor";
             this.btnClearBorderColor.Size = new System.Drawing.Size(23, 23);
             this.btnClearBorderColor.TabIndex = 23;
@@ -579,7 +592,7 @@
             this.btnClearWalkableColor.FlatAppearance.BorderSize = 0;
             this.btnClearWalkableColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClearWalkableColor.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F);
-            this.btnClearWalkableColor.Location = new System.Drawing.Point(103, 264);
+            this.btnClearWalkableColor.Location = new System.Drawing.Point(102, 287);
             this.btnClearWalkableColor.Name = "btnClearWalkableColor";
             this.btnClearWalkableColor.Size = new System.Drawing.Size(23, 23);
             this.btnClearWalkableColor.TabIndex = 22;
@@ -590,7 +603,7 @@
             // chkStickToLastGameWindow
             // 
             this.chkStickToLastGameWindow.AutoSize = true;
-            this.chkStickToLastGameWindow.Location = new System.Drawing.Point(10, 241);
+            this.chkStickToLastGameWindow.Location = new System.Drawing.Point(9, 264);
             this.chkStickToLastGameWindow.Name = "chkStickToLastGameWindow";
             this.chkStickToLastGameWindow.Size = new System.Drawing.Size(222, 17);
             this.chkStickToLastGameWindow.TabIndex = 25;
@@ -601,7 +614,7 @@
             // btnBorderColor
             // 
             this.btnBorderColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBorderColor.Location = new System.Drawing.Point(141, 264);
+            this.btnBorderColor.Location = new System.Drawing.Point(140, 287);
             this.btnBorderColor.Name = "btnBorderColor";
             this.btnBorderColor.Size = new System.Drawing.Size(91, 23);
             this.btnBorderColor.TabIndex = 23;
@@ -612,7 +625,7 @@
             // btnWalkableColor
             // 
             this.btnWalkableColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnWalkableColor.Location = new System.Drawing.Point(11, 264);
+            this.btnWalkableColor.Location = new System.Drawing.Point(10, 287);
             this.btnWalkableColor.Name = "btnWalkableColor";
             this.btnWalkableColor.Size = new System.Drawing.Size(91, 23);
             this.btnWalkableColor.TabIndex = 22;
@@ -783,7 +796,7 @@
             // chkToggleViaMap
             // 
             this.chkToggleViaMap.AutoSize = true;
-            this.chkToggleViaMap.Location = new System.Drawing.Point(10, 195);
+            this.chkToggleViaMap.Location = new System.Drawing.Point(10, 218);
             this.chkToggleViaMap.Name = "chkToggleViaMap";
             this.chkToggleViaMap.Size = new System.Drawing.Size(172, 17);
             this.chkToggleViaMap.TabIndex = 8;
@@ -804,7 +817,7 @@
             // chkToggleViaPanels
             // 
             this.chkToggleViaPanels.AutoSize = true;
-            this.chkToggleViaPanels.Location = new System.Drawing.Point(10, 218);
+            this.chkToggleViaPanels.Location = new System.Drawing.Point(9, 241);
             this.chkToggleViaPanels.Name = "chkToggleViaPanels";
             this.chkToggleViaPanels.Size = new System.Drawing.Size(196, 17);
             this.chkToggleViaPanels.TabIndex = 9;
@@ -1758,5 +1771,6 @@
         private System.Windows.Forms.CheckBox chkShowAreaLevel;
         private System.Windows.Forms.ComboBox cboItemLogPosition;
         private System.Windows.Forms.Label lblItemLogPosition;
+        private System.Windows.Forms.CheckBox chkMonsterHealthBar;
     }
 }

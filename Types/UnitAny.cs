@@ -543,14 +543,14 @@ namespace MapAssist.Types
             return Math.Sqrt((Math.Pow(position.X - Position.X, 2) + Math.Pow(position.Y - Position.Y, 2)));
         }
 
-        public double GetHealthPercentage()
+        public float GetHealthPercentage()
         {
             if (_statList.TryGetValue(Stat.Life, out var health) &&
-                _statList.TryGetValue(Stat.MaxLife, out var maxHp) && (maxHp > 0))
+                _statList.TryGetValue(Stat.MaxLife, out var maxHp) && maxHp > 0)
             {
-                return (double)health / maxHp;
+                return (float)health / maxHp;
             }
-            return 0.0;
+            return 0.0f;
         }
 
         public override bool Equals(object obj) => obj is UnitAny other && Equals(other);

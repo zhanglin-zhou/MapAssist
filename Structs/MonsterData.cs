@@ -33,7 +33,7 @@ namespace MapAssist.Structs
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct MonStats
     {
-        public ushort Id;
+        private ushort Id;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         public string Name;
