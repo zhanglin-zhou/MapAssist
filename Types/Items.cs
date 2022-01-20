@@ -23,7 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Timers;
 using YamlDotNet.Serialization;
 
 namespace MapAssist.Types
@@ -144,10 +143,8 @@ namespace MapAssist.Types
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsToSkip = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, Dictionary<uint, Npc>> ItemVendors = new Dictionary<int, Dictionary<uint, Npc>>();
-        public static Dictionary<int, List<UnitAny>> ItemLog = new Dictionary<int, List<UnitAny>>();
-        public static List<UnitAny> CurrentItemLog = new List<UnitAny>();
+        public static Dictionary<int, List<UnitItem>> ItemLog = new Dictionary<int, List<UnitItem>>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
-        public static Dictionary<int, List<Timer>> ItemLogTimers = new Dictionary<int, List<Timer>>();
 
         public static string ItemNameFromKey(string key)
         {
@@ -250,57 +247,31 @@ namespace MapAssist.Types
             return prop.ToString();
         }
 
-        public static void LogItem(UnitAny unit, int processId)
+        public static void LogItem(UnitItem unit, int processId)
         {
-            if ((unit.ItemModeMapped() == ItemModeMapped.Vendor || !ItemUnitHashesSeen[processId].Contains(unit.ItemHash())) &&
+            if ((unit.ItemModeMapped == ItemModeMapped.Vendor || !ItemUnitHashesSeen[processId].Contains(unit.ItemHash())) &&
                 !ItemUnitIdsSeen[processId].Contains(unit.UnitId) &&
                 !ItemUnitIdsToSkip[processId].Contains(unit.UnitId))
             {
                 var (pickupItem, rule) = LootFilter.Filter(unit);
-                if (!pickupItem)
-                {
-                    return;
-                }
+                if (!pickupItem) return;
 
                 if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop && (rule == null || rule.PlaySoundOnDrop))
                 {
                     AudioPlayer.PlayItemAlert();
                 }
 
-                string npcVendorName = null;
-                if (unit.IsInStore())
-                {
-                    using (var processContext = GameManager.GetProcessContext())
-                    {
-                        var lastNpcInteracted = (Npc)processContext.Read<ushort>(GameManager.InteractedNpcOffset);
-                        npcVendorName = NpcExtensions.Name(lastNpcInteracted);
-                    }
-                }
-
-                if (unit.ItemModeMapped() != ItemModeMapped.Vendor)
+                if (unit.ItemModeMapped != ItemModeMapped.Vendor)
                 {
                     ItemUnitHashesSeen[processId].Add(unit.ItemHash());
                 }
+
                 ItemUnitIdsSeen[processId].Add(unit.UnitId);
                 ItemLog[processId].Add(unit);
-                var timer = new Timer(MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds * 1000);
-                timer.Elapsed += (sender, args) => ItemLogTimerElapsed(sender, args, timer, processId);
-                timer.Start();
-
-                //keep track of timers in each d2r process
-                if (ItemLogTimers.ContainsKey(processId))
-                {
-                    ItemLogTimers[processId].Add(timer);
-                }
-                else
-                {
-                    ItemLogTimers.Add(processId, new List<Timer>());
-                    ItemLogTimers[processId].Add(timer);
-                }
             }
         }
 
-        public static string ItemLogDisplayName(UnitAny unit)
+        public static string ItemLogDisplayName(UnitItem unit)
         {
             var itemBaseName = ItemName(unit.TxtFileNo);
             var itemSpecialName = "";
@@ -309,7 +280,7 @@ namespace MapAssist.Types
 
             (_, var rule) = LootFilter.Filter(unit);
 
-            if (unit.IsInStore() && unit.VendorOwner != Npc.Invalid)
+            if (unit.IsInStore && unit.VendorOwner != Npc.Invalid)
             {
                 var vendorLabel = unit.VendorOwner != Npc.Unknown ? NpcExtensions.Name(unit.VendorOwner) : "Vendor";
                 itemPrefix += $"[{vendorLabel}] ";
@@ -436,10 +407,10 @@ namespace MapAssist.Types
             return itemPrefix + itemSpecialName + itemBaseName + itemSuffix;
         }
 
-        public static Color ItemNameColor(UnitAny unit)
+        public static Color ItemNameColor(UnitItem unit)
         {
             Color fontColor;
-            if (unit == null || !Items.ItemColors.TryGetValue(unit.ItemData.ItemQuality, out fontColor))
+            if (unit == null || !ItemColors.TryGetValue(unit.ItemData.ItemQuality, out fontColor))
             {
                 // Invalid item quality
                 return Color.Empty;
@@ -478,9 +449,9 @@ namespace MapAssist.Types
             return fontColor;
         }
 
-        public static ItemTier GetItemTier(UnitAny unitAny)
+        public static ItemTier GetItemTier(UnitItem item)
         {
-            return GetItemTier((Item)unitAny.TxtFileNo);
+            return GetItemTier(item.Item);
         }
 
         public static ItemTier GetItemTier(Item item)
@@ -494,37 +465,37 @@ namespace MapAssist.Types
             return (ItemTier)(Array.IndexOf(itemClass.Value, item) * 3 / itemClass.Value.Length); // All items with each class (except circlets) come in equal amounts within each tier
         }
 
-        public static int GetItemStat(UnitAny unitAny, Stat stat)
+        public static int GetItemStat(UnitItem item, Stat stat)
         {
-            return unitAny.Stats.TryGetValue(stat, out var statValue) ? statValue : 0;
+            return item.Stats.TryGetValue(stat, out var statValue) ? statValue : 0;
         }
 
-        public static int GetItemStatShifted(UnitAny unitAny, Stat stat, int shift)
+        public static int GetItemStatShifted(UnitItem item, Stat stat, int shift)
         {
-            return unitAny.Stats.TryGetValue(stat, out var statValue) ? statValue >> shift : 0;
+            return item.Stats.TryGetValue(stat, out var statValue) ? statValue >> shift : 0;
         }
 
-        public static int GetItemStatAllResist(UnitAny unitAny)
+        public static int GetItemStatAllResist(UnitItem item)
         {
-            unitAny.Stats.TryGetValue(Stat.FireResist, out var fireRes);
-            unitAny.Stats.TryGetValue(Stat.LightningResist, out var lightRes);
-            unitAny.Stats.TryGetValue(Stat.ColdResist, out var coldRes);
-            unitAny.Stats.TryGetValue(Stat.PoisonResist, out var psnRes);
+            item.Stats.TryGetValue(Stat.FireResist, out var fireRes);
+            item.Stats.TryGetValue(Stat.LightningResist, out var lightRes);
+            item.Stats.TryGetValue(Stat.ColdResist, out var coldRes);
+            item.Stats.TryGetValue(Stat.PoisonResist, out var psnRes);
             return new[] { fireRes, lightRes, coldRes, psnRes }.Min();
         }
 
-        public static int GetItemStatAllAttributes(UnitAny unitAny)
+        public static int GetItemStatAllAttributes(UnitItem item)
         {
-            unitAny.Stats.TryGetValue(Stat.Strength, out var strength);
-            unitAny.Stats.TryGetValue(Stat.Dexterity, out var dexterity);
-            unitAny.Stats.TryGetValue(Stat.Vitality, out var vitality);
-            unitAny.Stats.TryGetValue(Stat.Energy, out var energy);
+            item.Stats.TryGetValue(Stat.Strength, out var strength);
+            item.Stats.TryGetValue(Stat.Dexterity, out var dexterity);
+            item.Stats.TryGetValue(Stat.Vitality, out var vitality);
+            item.Stats.TryGetValue(Stat.Energy, out var energy);
             return new[] { strength, dexterity, vitality, energy }.Min();
         }
 
-        public static int GetItemStatAddClassSkills(UnitAny unitAny, Structs.PlayerClass playerClass)
+        public static int GetItemStatAddClassSkills(UnitItem item, Structs.PlayerClass playerClass)
         {
-            if (unitAny.ItemStats.TryGetValue(Stat.AddClassSkills, out var itemStats) &&
+            if (item.StatLayers.TryGetValue(Stat.AddClassSkills, out var itemStats) &&
                 itemStats.TryGetValue((ushort)playerClass, out var addClassSkills))
             {
                 return addClassSkills;
@@ -532,9 +503,9 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static int GetItemStatAddClassTabSkills(UnitAny unitAny, ClassTabs classTab)
+        public static int GetItemStatAddClassTabSkills(UnitItem item, ClassTabs classTab)
         {
-            if (unitAny.ItemStats.TryGetValue(Stat.AddSkillTab, out var itemStats) &&
+            if (item.StatLayers.TryGetValue(Stat.AddSkillTab, out var itemStats) &&
                 itemStats.TryGetValue((ushort)classTab, out var addSkillTab))
             {
                 return addSkillTab;
@@ -542,9 +513,9 @@ namespace MapAssist.Types
             return 0;
         }
 
-        public static (int, int, int) GetItemStatAddSkillCharges(UnitAny unitAny, Skill skill)
+        public static (int, int, int) GetItemStatAddSkillCharges(UnitItem item, Skill skill)
         {
-            if (unitAny.ItemStats.TryGetValue(Stat.ItemChargedSkill, out var itemStats))
+            if (item.StatLayers.TryGetValue(Stat.ItemChargedSkill, out var itemStats))
             {
                 foreach (var stat in itemStats)
                 {
@@ -562,7 +533,7 @@ namespace MapAssist.Types
             return (0, 0, 0);
         }
 
-        public static int GetItemStatSingleSkills(UnitAny unitAny, Skill skill)
+        public static int GetItemStatSingleSkills(UnitItem item, Skill skill)
         {
             var itemSkillsStats = new List<Stat>()
             {
@@ -572,31 +543,13 @@ namespace MapAssist.Types
 
             foreach (var statType in itemSkillsStats)
             {
-                if (unitAny.ItemStats.TryGetValue(statType, out var itemStats) &&
+                if (item.StatLayers.TryGetValue(statType, out var itemStats) &&
                     itemStats.TryGetValue((ushort)skill, out var skillLevel))
                 {
                     return skillLevel;
                 }
             }
             return 0;
-        }
-
-        public static void ItemLogTimerElapsed(object sender, ElapsedEventArgs args, Timer self, int procId)
-        {
-            if (ItemLog.TryGetValue(procId, out var itemLog))
-            {
-                if (itemLog.Count > 0)
-                {
-                    itemLog.RemoveAt(0);
-                }
-
-                if (ItemLogTimers.TryGetValue(procId, out var timer) && timer.Contains(self))
-                {
-                    try { timer.Remove(self); } catch (Exception) { } // This still randomly errors, even with the proper checks in place, hence the try catch block
-                }
-            }
-
-            self.Dispose();
         }
 
         public static readonly Dictionary<ItemQuality, Color> ItemColors = new Dictionary<ItemQuality, Color>()
@@ -2450,6 +2403,7 @@ namespace MapAssist.Types
 
         // Used only for item filter
         ClassAxes = 0xFFD0,
+
         ClassWands,
         ClassClubs,
         ClassScepters,
