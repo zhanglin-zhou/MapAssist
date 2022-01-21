@@ -784,8 +784,10 @@ namespace MapAssist.Helpers
 
             Func<(UnitMonster, string)> getActiveMonster = () =>
             {
+                var hoveredUnit = _gameData.Monsters.Where(x => x.IsHovered).ToArray();
+                
                 var boss = _gameData.Monsters.FirstOrDefault(x => NPC.Bosses.Contains(x.Npc));
-                if (boss != null) return (boss, NpcExtensions.Name(boss.Npc));
+                if (boss != null && (boss.IsHovered || hoveredUnit.Count() == 0)) return (boss, NpcExtensions.Name(boss.Npc));
 
                 var monstersAround = new List<(UnitMonster, string)>();
 
@@ -799,8 +801,7 @@ namespace MapAssist.Helpers
                         monstersAround.Add((monster, NpcExtensions.LocalizedName(monsterName[0].Key)));
                     }
                 }
-                var hoveredUnit = _gameData.Monsters.Where(x => x.IsHovered).ToArray();
-
+                
                 if (monstersAround.Count == 1 && hoveredUnit.Count() == 0) return monstersAround[0];
                 else if (monstersAround.Count == 0) return (null, null);
 

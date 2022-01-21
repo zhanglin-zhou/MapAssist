@@ -245,7 +245,7 @@ namespace MapAssist.Helpers
 
                 do
                 {
-                    if (saveToCache && cache.TryGetValue(unit.UnitId, out var seenUnit) && !allUnits.ContainsKey(((T)seenUnit).UnitId))
+                    if (saveToCache && cache.TryGetValue(unit.UnitId, out var seenUnit) && seenUnit is T && !allUnits.ContainsKey(((T)seenUnit).UnitId))
                     {
                         var castedSeenUnit = (T)seenUnit;
                         if (unit.pUnit != castedSeenUnit.pUnit) { 
