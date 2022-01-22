@@ -42,7 +42,7 @@ namespace MapAssist.Types
         public bool IsHovered { get; set; } = false;
         public bool IsCached { get; private set; } = false;
         private Path Path { get; set; }
-        public bool IsCorpse => Struct.isCorpse && UnitId != GameMemory.PlayerUnit.UnitId;
+        public bool IsCorpse => Struct.isCorpse && UnitId != GameMemory.PlayerUnit.UnitId && Area != Area.None;
 
         public UnitAny(IntPtr pUnit)
         {
@@ -160,9 +160,9 @@ namespace MapAssist.Types
             get => new List<Npc> { Npc.Rogue2, Npc.Guard, Npc.IronWolf, Npc.Act5Hireling2Hand }.Contains((Npc)TxtFileNo);
         }
 
-        public double DistanceTo(Point position)
+        public double DistanceTo(UnitAny other)
         {
-            return Math.Sqrt((Math.Pow(X - Position.X, 2) + Math.Pow(Y - Position.Y, 2)));
+            return Math.Sqrt((Math.Pow(other.X - Position.X, 2) + Math.Pow(other.Y - Position.Y, 2)));
         }
 
         public override bool Equals(object obj) => obj is UnitAny other && Equals(other);

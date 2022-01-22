@@ -32,6 +32,7 @@ namespace MapAssist.Helpers
         private static int _currentProcessId;
 
         public static Dictionary<int, UnitPlayer> PlayerUnits = new Dictionary<int, UnitPlayer>();
+        public static Dictionary<int, Dictionary<string, UnitPlayer>> Corpses = new Dictionary<int, Dictionary<string, UnitPlayer>>();
         public static Dictionary<object, object> cache = new Dictionary<object, object>();
 
         private static bool _firstMemoryRead = true;
@@ -63,6 +64,11 @@ namespace MapAssist.Helpers
 
                 if (!menuData.InGame)
                 {
+                    if (Corpses.ContainsKey(_currentProcessId))
+                    {
+                        Corpses[_currentProcessId].Clear();
+                    }
+
                     return null;
                 }
 
@@ -107,7 +113,7 @@ namespace MapAssist.Helpers
                 // Check if new game
                 if (mapSeed != _lastMapSeeds[_currentProcessId])
                 {
-                    UpdateItemLog();
+                    UpdateMemoryData();
                     _lastMapSeeds[_currentProcessId] = mapSeed;
                 }
 
@@ -138,8 +144,21 @@ namespace MapAssist.Helpers
                     .Select(x => x.UpdateParties(playerUnit.RosterEntry)).ToArray()
                     .Where(x => x != null && x.UnitId < uint.MaxValue).ToDictionary(x => x.UnitId, x => x);
 
-                var corpseList = rawPlayerUnits.Where(x => x.UnitType == UnitType.Player && x.IsCorpse)
-                    .ToArray();
+                // Corpses
+                var corpseList = rawPlayerUnits.Where(x => x.UnitType == UnitType.Player && x.IsCorpse).Concat(Corpses[_currentProcessId].Values).Distinct().ToArray();
+                foreach (var corpse in corpseList)
+                {
+                    var containsKey = Corpses[_currentProcessId].ContainsKey(corpse.CorpseHash());
+
+                    if (!containsKey)
+                    {
+                        Corpses[_currentProcessId].Add(corpse.CorpseHash(), corpse);
+                    }
+                    else if (containsKey && corpse.DistanceTo(playerUnit) <= 40)
+                    {
+                        Corpses[_currentProcessId].Remove(corpse.CorpseHash());
+                    }
+                }
 
                 // Monsters
                 var rawMonsterUnits = GetUnits<UnitMonster>(UnitType.Monster)
@@ -248,7 +267,8 @@ namespace MapAssist.Helpers
                     if (saveToCache && cache.TryGetValue(unit.UnitId, out var seenUnit) && seenUnit is T && !allUnits.ContainsKey(((T)seenUnit).UnitId))
                     {
                         var castedSeenUnit = (T)seenUnit;
-                        if (unit.pUnit != castedSeenUnit.pUnit) { 
+                        if (unit.pUnit != castedSeenUnit.pUnit)
+                        {
                             castedSeenUnit.UpdateStruct(unit.pUnit, unit.Struct);
                         }
 
@@ -269,7 +289,7 @@ namespace MapAssist.Helpers
             return allUnits.Values.ToArray();
         }
 
-        private static void UpdateItemLog()
+        private static void UpdateMemoryData()
         {
             if (!Items.ItemUnitHashesSeen.ContainsKey(_currentProcessId))
             {
@@ -286,6 +306,15 @@ namespace MapAssist.Helpers
                 Items.ItemUnitIdsToSkip[_currentProcessId].Clear();
                 Items.ItemVendors[_currentProcessId].Clear();
                 Items.ItemLog[_currentProcessId].Clear();
+            }
+
+            if (!Corpses.ContainsKey(_currentProcessId))
+            {
+                Corpses.Add(_currentProcessId, new Dictionary<string, UnitPlayer>());
+            }
+            else
+            {
+                Corpses[_currentProcessId].Clear();
             }
         }
 

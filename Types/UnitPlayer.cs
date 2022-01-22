@@ -155,6 +155,11 @@ namespace MapAssist.Types
             return (StateFlags[(int)state >> 5] & StateMasks.gdwBitMasks[(int)state & 31]) > 0;
         }
 
+        public string CorpseHash()
+        {
+            return Name + "/" + Position.X + "/" + Position.Y;
+        }
+
         //public UnitPlayer Clone()
         //{
         //    var clone = new UnitPlayer(pUnit);
