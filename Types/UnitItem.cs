@@ -21,7 +21,7 @@ namespace MapAssist.Types
         {
             base.Update();
 
-            if (MapAssistConfiguration.Loaded.ItemLog.Enabled)
+            if (IsValidUnit && MapAssistConfiguration.Loaded.ItemLog.Enabled)
             {
                 using (var processContext = GameManager.GetProcessContext())
                 {
