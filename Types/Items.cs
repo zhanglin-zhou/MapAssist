@@ -27,233 +27,22 @@ using YamlDotNet.Serialization;
 
 namespace MapAssist.Types
 {
-    [Flags]
-    public enum ItemFlags : uint
-    {
-        IFLAG_NEWITEM = 0x00000001,
-        IFLAG_TARGET = 0x00000002,
-        IFLAG_TARGETING = 0x00000004,
-        IFLAG_DELETED = 0x00000008,
-        IFLAG_IDENTIFIED = 0x00000010,
-        IFLAG_QUANTITY = 0x00000020,
-        IFLAG_SWITCHIN = 0x00000040,
-        IFLAG_SWITCHOUT = 0x00000080,
-        IFLAG_BROKEN = 0x00000100,
-        IFLAG_REPAIRED = 0x00000200,
-        IFLAG_UNK1 = 0x00000400,
-        IFLAG_SOCKETED = 0x00000800,
-        IFLAG_NOSELL = 0x00001000,
-        IFLAG_INSTORE = 0x00002000,
-        IFLAG_NOEQUIP = 0x00004000,
-        IFLAG_NAMED = 0x00008000,
-        IFLAG_ISEAR = 0x00010000,
-        IFLAG_STARTITEM = 0x00020000,
-        IFLAG_UNK2 = 0x00040000,
-        IFLAG_INIT = 0x00080000,
-        IFLAG_UNK3 = 0x00100000,
-        IFLAG_COMPACTSAVE = 0x00200000,
-        IFLAG_ETHEREAL = 0x00400000,
-        IFLAG_JUSTSAVED = 0x00800000,
-        IFLAG_PERSONALIZED = 0x01000000,
-        IFLAG_LOWQUALITY = 0x02000000,
-        IFLAG_RUNEWORD = 0x04000000,
-        IFLAG_ITEM = 0x08000000
-    }
-
-    public enum ItemQuality : uint
-    {
-        INFERIOR = 0x01, //0x01 Inferior
-        NORMAL = 0x02, //0x02 Normal
-        SUPERIOR = 0x03, //0x03 Superior
-        MAGIC = 0x04, //0x04 Magic
-        SET = 0x05, //0x05 Set
-        RARE = 0x06, //0x06 Rare
-        UNIQUE = 0x07, //0x07 Unique
-        CRAFT = 0x08, //0x08 Crafted
-        TEMPERED = 0x09 //0x09 Tempered
-    }
-
-    public enum InvPage : byte
-    {
-        INVENTORY = 0,
-        EQUIP = 1,
-        TRADE = 2,
-        CUBE = 3,
-        STASH = 4,
-        BELT = 5,
-        NULL = 255,
-    }
-
-    public enum StashType : byte
-    {
-        Body = 0,
-        Personal = 1,
-        Shared1 = 2,
-        Shared2 = 3,
-        Shared3 = 4,
-        Belt = 5
-    }
-
-    public enum BodyLoc : byte
-    {
-        NONE, //Not Equipped
-        HEAD, //Helm
-        NECK, //Amulet
-        TORSO, //Body Armor
-        RARM, //Right-Hand
-        LARM, //Left-Hand
-        RRIN, //Right Ring
-        LRIN, //Left Ring
-        BELT, //Belt
-        FEET, //Boots
-        GLOVES, //Gloves
-        SWRARM, //Right-Hand on Switch
-        SWLARM //Left-Hand on Switch
-    };
-
-    public enum ItemMode : uint
-    {
-        STORED, //Item is in Storage (inventory, cube, Stash?)
-        EQUIP, //Item is Equippped
-        INBELT, //Item is in Belt Rows
-        ONGROUND, //Item is on Ground
-        ONCURSOR, //Item is on Cursor
-        DROPPING, //Item is Being Dropped
-        SOCKETED //Item is Socketed in another Item
-    };
-
-    public enum ItemModeMapped // Provides more detail over ItemMode
-    {
-        Player,
-        Inventory,
-        Belt,
-        Cube,
-        Stash,
-        Vendor,
-        Trade,
-        Mercenary,
-        Socket,
-        Ground,
-        Unknown
-    };
-
     public class Items
     {
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsToSkip = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, Dictionary<uint, Npc>> ItemVendors = new Dictionary<int, Dictionary<uint, Npc>>();
-        public static Dictionary<int, List<UnitItem>> ItemLog = new Dictionary<int, List<UnitItem>>();
+        public static Dictionary<int, List<ItemLogEntry>> ItemLog = new Dictionary<int, List<ItemLogEntry>>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
 
-        public static string ItemNameFromKey(string key)
+        public static void LogItem(UnitItem item, int processId)
         {
-            LocalizedObj localItem;
-            if (!LocalizedItems.TryGetValue(key, out localItem))
+            if ((item.ItemModeMapped == ItemModeMapped.Vendor || !ItemUnitHashesSeen[processId].Contains(item.HashString)) &&
+                !ItemUnitIdsSeen[processId].Contains(item.UnitId) &&
+                !ItemUnitIdsToSkip[processId].Contains(item.UnitId))
             {
-                return "ItemNotFound";
-            }
-
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-
-            return prop.ToString();
-        }
-
-        public static string ItemNameDisplay(uint txtFileNo)
-        {
-            string itemCode;
-            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
-            {
-                return "ItemNotFound";
-            }
-
-            LocalizedObj localItem;
-            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
-            {
-                return "ItemNotFound";
-            }
-
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-
-            return prop.ToString();
-        }
-
-        public static string ItemName(uint txtFileNo)
-        {
-            string itemCode;
-            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
-            {
-                return "ItemNotFound";
-            }
-
-            LocalizedObj localItem;
-            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
-            {
-                return "ItemNotFound";
-            }
-
-            return localItem.enUS;
-        }
-
-        public static string UniqueName(uint txtFileNo)
-        {
-            string itemCode;
-            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
-            {
-                return "Unique";
-            }
-
-            if (!_UniqueFromCode.TryGetValue(itemCode, out itemCode))
-            {
-                return "Unique";
-            }
-
-            LocalizedObj localItem;
-            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
-            {
-                return "Unique";
-            }
-
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-
-            return prop.ToString();
-        }
-
-        public static string SetName(uint txtFileNo)
-        {
-            string itemCode;
-            if (!_ItemCodes.TryGetValue(txtFileNo, out itemCode))
-            {
-                return "Set";
-            }
-
-            if (!_SetFromCode.TryGetValue(itemCode, out itemCode))
-            {
-                return "Set";
-            }
-
-            LocalizedObj localItem;
-            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
-            {
-                return "Set";
-            }
-
-            var lang = MapAssistConfiguration.Loaded.LanguageCode;
-            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
-
-            return prop.ToString();
-        }
-
-        public static void LogItem(UnitItem unit, int processId)
-        {
-            if ((unit.ItemModeMapped == ItemModeMapped.Vendor || !ItemUnitHashesSeen[processId].Contains(unit.ItemHash())) &&
-                !ItemUnitIdsSeen[processId].Contains(unit.UnitId) &&
-                !ItemUnitIdsToSkip[processId].Contains(unit.UnitId))
-            {
-                var (pickupItem, rule) = LootFilter.Filter(unit);
+                var (pickupItem, rule) = LootFilter.Filter(item);
                 if (!pickupItem) return;
 
                 if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop && (rule == null || rule.PlaySoundOnDrop))
@@ -261,51 +50,55 @@ namespace MapAssist.Types
                     AudioPlayer.PlayItemAlert();
                 }
 
-                if (unit.ItemModeMapped != ItemModeMapped.Vendor)
+                if (item.ItemModeMapped != ItemModeMapped.Vendor)
                 {
-                    ItemUnitHashesSeen[processId].Add(unit.ItemHash());
+                    ItemUnitHashesSeen[processId].Add(item.HashString);
                 }
 
-                ItemUnitIdsSeen[processId].Add(unit.UnitId);
-                ItemLog[processId].Add(unit);
+                ItemUnitIdsSeen[processId].Add(item.UnitId);
+                ItemLog[processId].Add(new ItemLogEntry()
+                {
+                    Text = ItemLogDisplayName(item, rule),
+                    Color = item.ItemBaseColor,
+                    ItemHashString = item.HashString,
+                    UnitItem = item
+                });
             }
         }
 
-        public static string ItemLogDisplayName(UnitItem unit)
+        public static string ItemLogDisplayName(UnitItem item, ItemFilter rule)
         {
-            var itemBaseName = ItemName(unit.TxtFileNo);
+            var itemBaseName = GetItemName(item);
             var itemSpecialName = "";
             var itemPrefix = "";
             var itemSuffix = "";
 
-            (_, var rule) = LootFilter.Filter(unit);
-
-            if (unit.IsInStore && unit.VendorOwner != Npc.Invalid)
+            if (item.IsInStore && item.VendorOwner != Npc.Invalid)
             {
-                var vendorLabel = unit.VendorOwner != Npc.Unknown ? NpcExtensions.Name(unit.VendorOwner) : "Vendor";
+                var vendorLabel = item.VendorOwner != Npc.Unknown ? NpcExtensions.Name(item.VendorOwner) : "Vendor";
                 itemPrefix += $"[{vendorLabel}] ";
             }
 
             if (rule == null) return itemPrefix + itemBaseName;
 
-            if ((unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
+            if ((item.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL)
             {
                 itemPrefix += "[Eth] ";
             }
 
-            if (unit.Stats.TryGetValue(Stat.NumSockets, out var numSockets))
+            if (item.Stats.TryGetValue(Stat.NumSockets, out var numSockets))
             {
                 itemPrefix += "[" + numSockets + " S] ";
             }
 
-            if (unit.ItemData.ItemQuality == ItemQuality.SUPERIOR)
+            if (item.ItemData.ItemQuality == ItemQuality.SUPERIOR)
             {
                 itemPrefix += "Sup. ";
             }
 
             if (rule.AllResist != null)
             {
-                var itemAllRes = GetItemStatAllResist(unit);
+                var itemAllRes = GetItemStatAllResist(item);
                 if (itemAllRes > 0)
                 {
                     itemSuffix += $" ({itemAllRes} all res)";
@@ -314,7 +107,7 @@ namespace MapAssist.Types
 
             if (rule.AllSkills != null)
             {
-                var itemAllSkills = GetItemStat(unit, Stat.AllSkills);
+                var itemAllSkills = GetItemStat(item, Stat.AllSkills);
                 if (itemAllSkills > 0)
                 {
                     itemSuffix += $" (+{itemAllSkills} all skills)";
@@ -325,7 +118,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.ClassSkills)
                 {
-                    var classSkills = GetItemStatAddClassSkills(unit, subrule.Key);
+                    var classSkills = GetItemStatAddClassSkills(item, subrule.Key);
                     if (classSkills > 0)
                     {
                         itemSuffix += $" (+{classSkills} {subrule.Key} skills)";
@@ -337,7 +130,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.ClassTabSkills)
                 {
-                    var classTabSkills = GetItemStatAddClassTabSkills(unit, subrule.Key);
+                    var classTabSkills = GetItemStatAddClassTabSkills(item, subrule.Key);
                     if (classTabSkills > 0)
                     {
                         itemSuffix += $" (+{classTabSkills} {subrule.Key.Name()} skills)";
@@ -349,7 +142,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.Skills)
                 {
-                    var singleSkills = GetItemStatSingleSkills(unit, subrule.Key);
+                    var singleSkills = GetItemStatSingleSkills(item, subrule.Key);
                     if (singleSkills > 0)
                     {
                         itemSuffix += $" (+{singleSkills} {subrule.Key.Name()})";
@@ -361,7 +154,7 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.SkillCharges)
                 {
-                    var (skillLevel, currentCharges, maxCharges) = GetItemStatAddSkillCharges(unit, subrule.Key);
+                    var (skillLevel, currentCharges, maxCharges) = GetItemStatAddSkillCharges(item, subrule.Key);
                     if (skillLevel > 0)
                     {
                         var charges = "";
@@ -384,7 +177,7 @@ namespace MapAssist.Types
                 if (property.PropertyType == typeof(int?) && Enum.TryParse<Stat>(property.Name, out var stat))
                 {
                     var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
-                    var statValue = GetItemStat(unit, stat);
+                    var statValue = GetItemStat(item, stat);
 
                     if (propertyValue != null && statValue > 0)
                     {
@@ -393,21 +186,122 @@ namespace MapAssist.Types
                 }
             }
 
-            switch (unit.ItemData.ItemQuality)
+            switch (item.ItemData.ItemQuality)
             {
                 case ItemQuality.UNIQUE:
-                    itemSpecialName = UniqueName(unit.TxtFileNo) + " ";
+                    itemSpecialName = GetUniqueName(item) + " ";
                     break;
 
                 case ItemQuality.SET:
-                    itemSpecialName = SetName(unit.TxtFileNo) + " ";
+                    itemSpecialName = GetSetName(item) + " ";
                     break;
             }
 
             return itemPrefix + itemSpecialName + itemBaseName + itemSuffix;
         }
 
-        public static Color ItemNameColor(UnitItem unit)
+        public static string GetItemNameFromKey(string key)
+        {
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(key, out localItem))
+            {
+                return "ItemNotFound";
+            }
+
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
+        }
+
+        public static string GetItemBaseName(UnitItem item)
+        {
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(item.TxtFileNo, out itemCode))
+            {
+                return "ItemNotFound";
+            }
+
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "ItemNotFound";
+            }
+
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
+        }
+
+        public static string GetItemName(UnitItem item)
+        {
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(item.TxtFileNo, out itemCode))
+            {
+                return "ItemNotFound";
+            }
+
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "ItemNotFound";
+            }
+
+            return localItem.enUS;
+        }
+
+        public static string GetUniqueName(UnitItem item)
+        {
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(item.TxtFileNo, out itemCode))
+            {
+                return "Unique";
+            }
+
+            if (!_UniqueFromCode.TryGetValue(itemCode, out itemCode))
+            {
+                return "Unique";
+            }
+
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "Unique";
+            }
+
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
+        }
+
+        public static string GetSetName(UnitItem item)
+        {
+            string itemCode;
+            if (!_ItemCodes.TryGetValue(item.TxtFileNo, out itemCode))
+            {
+                return "Set";
+            }
+
+            if (!_SetFromCode.TryGetValue(itemCode, out itemCode))
+            {
+                return "Set";
+            }
+
+            LocalizedObj localItem;
+            if (!LocalizedItems.TryGetValue(itemCode, out localItem))
+            {
+                return "Set";
+            }
+
+            var lang = MapAssistConfiguration.Loaded.LanguageCode;
+            var prop = localItem.GetType().GetProperty(lang.ToString()).GetValue(localItem, null);
+
+            return prop.ToString();
+        }
+
+        public static Color GetItemBaseColor(UnitItem unit)
         {
             Color fontColor;
             if (unit == null || !ItemColors.TryGetValue(unit.ItemData.ItemQuality, out fontColor))
@@ -419,18 +313,18 @@ namespace MapAssist.Types
             var isEth = (unit.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
             if (isEth && fontColor == Color.White)
             {
-                return Items.ItemColors[ItemQuality.SUPERIOR];
+                return ItemColors[ItemQuality.SUPERIOR];
             }
 
             if (unit.Stats.ContainsKey(Stat.NumSockets) && fontColor == Color.White)
             {
-                return Items.ItemColors[ItemQuality.SUPERIOR];
+                return ItemColors[ItemQuality.SUPERIOR];
             }
 
             if (unit.TxtFileNo >= 610 && unit.TxtFileNo <= 642)
             {
                 // Runes
-                return Items.ItemColors[ItemQuality.CRAFT];
+                return ItemColors[ItemQuality.CRAFT];
             }
 
             switch (unit.TxtFileNo)
@@ -443,7 +337,7 @@ namespace MapAssist.Types
                 case 655: // Charged Essense of Hatred
                 case 656: // Burning Essence of Terror
                 case 657: // Festering Essence of Destruction
-                    return Items.ItemColors[ItemQuality.CRAFT];
+                    return ItemColors[ItemQuality.CRAFT];
             }
 
             return fontColor;
@@ -1738,6 +1632,128 @@ namespace MapAssist.Types
             [Item.ClassNecromancerShields] = new Item[] { Item.PreservedHead, Item.ZombieHead, Item.UnravellerHead, Item.GargoyleHead, Item.DemonHeadShield, Item.MummifiedTrophy, Item.FetishTrophy, Item.SextonTrophy, Item.CantorTrophy, Item.HierophantTrophy, Item.MinionSkull, Item.HellspawnSkull, Item.OverseerSkull, Item.SuccubusSkull, Item.BloodlordSkull },
         };
     }
+
+    public class ItemLogEntry
+    {
+        public string Text { get; set; }
+        public Color Color { get; set; }
+        public DateTime LogDate { get; private set; } = DateTime.Now;
+        public bool ItemLogExpired { get => DateTime.Now.Subtract(LogDate).TotalSeconds > MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds; }
+        public string ItemHashString { get; set; }
+        public string ShowOnMap { get; set; }
+        public UnitItem UnitItem { get; set; }
+        public ItemFilter Rule { get; set; }
+    }
+
+    [Flags]
+    public enum ItemFlags : uint
+    {
+        IFLAG_NEWITEM = 0x00000001,
+        IFLAG_TARGET = 0x00000002,
+        IFLAG_TARGETING = 0x00000004,
+        IFLAG_DELETED = 0x00000008,
+        IFLAG_IDENTIFIED = 0x00000010,
+        IFLAG_QUANTITY = 0x00000020,
+        IFLAG_SWITCHIN = 0x00000040,
+        IFLAG_SWITCHOUT = 0x00000080,
+        IFLAG_BROKEN = 0x00000100,
+        IFLAG_REPAIRED = 0x00000200,
+        IFLAG_UNK1 = 0x00000400,
+        IFLAG_SOCKETED = 0x00000800,
+        IFLAG_NOSELL = 0x00001000,
+        IFLAG_INSTORE = 0x00002000,
+        IFLAG_NOEQUIP = 0x00004000,
+        IFLAG_NAMED = 0x00008000,
+        IFLAG_ISEAR = 0x00010000,
+        IFLAG_STARTITEM = 0x00020000,
+        IFLAG_UNK2 = 0x00040000,
+        IFLAG_INIT = 0x00080000,
+        IFLAG_UNK3 = 0x00100000,
+        IFLAG_COMPACTSAVE = 0x00200000,
+        IFLAG_ETHEREAL = 0x00400000,
+        IFLAG_JUSTSAVED = 0x00800000,
+        IFLAG_PERSONALIZED = 0x01000000,
+        IFLAG_LOWQUALITY = 0x02000000,
+        IFLAG_RUNEWORD = 0x04000000,
+        IFLAG_ITEM = 0x08000000
+    }
+
+    public enum ItemQuality : uint
+    {
+        INFERIOR = 0x01, //0x01 Inferior
+        NORMAL = 0x02, //0x02 Normal
+        SUPERIOR = 0x03, //0x03 Superior
+        MAGIC = 0x04, //0x04 Magic
+        SET = 0x05, //0x05 Set
+        RARE = 0x06, //0x06 Rare
+        UNIQUE = 0x07, //0x07 Unique
+        CRAFT = 0x08, //0x08 Crafted
+        TEMPERED = 0x09 //0x09 Tempered
+    }
+
+    public enum InvPage : byte
+    {
+        INVENTORY = 0,
+        EQUIP = 1,
+        TRADE = 2,
+        CUBE = 3,
+        STASH = 4,
+        BELT = 5,
+        NULL = 255,
+    }
+
+    public enum StashType : byte
+    {
+        Body = 0,
+        Personal = 1,
+        Shared1 = 2,
+        Shared2 = 3,
+        Shared3 = 4,
+        Belt = 5
+    }
+
+    public enum BodyLoc : byte
+    {
+        NONE, //Not Equipped
+        HEAD, //Helm
+        NECK, //Amulet
+        TORSO, //Body Armor
+        RARM, //Right-Hand
+        LARM, //Left-Hand
+        RRIN, //Right Ring
+        LRIN, //Left Ring
+        BELT, //Belt
+        FEET, //Boots
+        GLOVES, //Gloves
+        SWRARM, //Right-Hand on Switch
+        SWLARM //Left-Hand on Switch
+    };
+
+    public enum ItemMode : uint
+    {
+        STORED, //Item is in Storage (inventory, cube, Stash?)
+        EQUIP, //Item is Equippped
+        INBELT, //Item is in Belt Rows
+        ONGROUND, //Item is on Ground
+        ONCURSOR, //Item is on Cursor
+        DROPPING, //Item is Being Dropped
+        SOCKETED //Item is Socketed in another Item
+    };
+
+    public enum ItemModeMapped // Provides more detail over ItemMode
+    {
+        Player,
+        Inventory,
+        Belt,
+        Cube,
+        Stash,
+        Vendor,
+        Trade,
+        Mercenary,
+        Socket,
+        Ground,
+        Unknown
+    };
 
     public enum Item : uint
     {

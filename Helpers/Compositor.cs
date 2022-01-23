@@ -430,6 +430,12 @@ namespace MapAssist.Helpers
 
         private void DrawItems(Graphics gfx)
         {
+            var areasToRender = new AreaData[] { _areaData };
+            if (AreaExtensions.RequiresStitching(_areaData.Area))
+            {
+                areasToRender = areasToRender.Concat(_areaData.AdjacentAreas.Values.Where(area => AreaExtensions.RequiresStitching(area.Area))).ToArray();
+            }
+
             var drawItemIcons = new List<(IconRendering, Point)>();
             var drawItemLabels = new List<(PointOfInterestRendering, Point, string, Color?)>();
 
@@ -437,23 +443,15 @@ namespace MapAssist.Helpers
             {
                 foreach (var item in _gameData.Items)
                 {
-                    if (item.IsDropped && !item.IsIdentified && !Items.ItemUnitIdsToSkip[_gameData.ProcessId].Contains(item.UnitId))
+                    if (item.IsValidItem && item.IsDropped && !item.IsIdentified && !Items.ItemUnitIdsToSkip[_gameData.ProcessId].Contains(item.UnitId))
                     {
-                        (var pickupItem, _) = LootFilter.Filter(item);
-                        if (!pickupItem)
-                        {
-                            continue;
-                        }
+                        if (!areasToRender.Any(area => area.IncludesPoint(item.Position))) continue; // Don't show item if not in drawn areas
 
                         var itemPosition = item.Position;
                         var render = MapAssistConfiguration.Loaded.MapConfiguration.Item;
 
                         drawItemIcons.Add((render, itemPosition));
-
-                        var itemBaseName = Items.ItemNameDisplay(item.TxtFileNo);
-                        var itemNameColor = Items.ItemNameColor(item);
-
-                        drawItemLabels.Add((render, item.Position, itemBaseName, itemNameColor));
+                        drawItemLabels.Add((render, item.Position, item.ItemBaseName, item.ItemBaseColor));
                     }
                 }
             }
@@ -540,7 +538,7 @@ namespace MapAssist.Helpers
                         if (!myPlayer && !areasToRender.Any(area => area.IncludesPoint(playerUnit.Position))) continue; // Don't show player if not in drawn areas
 
                         // use data from the unit table if available
-                        if (playerUnit.InParty) 
+                        if (playerUnit.InParty)
                         {
                             var rendering = myPlayer
                                 ? MapAssistConfiguration.Loaded.MapConfiguration.Player
@@ -714,7 +712,7 @@ namespace MapAssist.Helpers
                             buffColor = States.DebuffColor;
                         }
                     }
-                    
+
                     if (buffsByColor.ContainsKey(buffColor))
                     {
                         buffsByColor[buffColor].Add(CreateResourceBitmap(gfx, stateStr));
@@ -785,7 +783,7 @@ namespace MapAssist.Helpers
             Func<(UnitMonster, string)> getActiveMonster = () =>
             {
                 var hoveredUnit = _gameData.Monsters.Where(x => x.IsHovered).ToArray();
-                
+
                 var boss = _gameData.Monsters.FirstOrDefault(x => NPC.Bosses.Contains(x.Npc));
                 if (boss != null && (boss.IsHovered || hoveredUnit.Count() == 0)) return (boss, NpcExtensions.Name(boss.Npc));
 
@@ -801,13 +799,13 @@ namespace MapAssist.Helpers
                         monstersAround.Add((monster, NpcExtensions.LocalizedName(monsterName[0].Key)));
                     }
                 }
-                
+
                 if (monstersAround.Count == 1 && hoveredUnit.Count() == 0) return monstersAround[0];
                 else if (monstersAround.Count == 0) return (null, null);
 
                 var hoveredMonster = monstersAround.Where(x => x.Item1.IsHovered).ToArray();
                 if (hoveredMonster.Length == 1) return hoveredMonster[0];
-                
+
                 return (null, null);
             };
 
@@ -940,34 +938,27 @@ namespace MapAssist.Helpers
             var shadowOffset = fontSize * 0.0625f; // 1/16th
 
             // Item Log
-            for (var i = 0; i < _gameData.Items.Length; i++)
+            var itemsToShow = _gameData.ItemLog.Where(item => item != null && !item.ItemLogExpired && item.Color != Color.Empty).ToArray();
+            for (var i = 0; i < itemsToShow.Length; i++)
             {
-                var item = _gameData.Items[i];
+                var item = itemsToShow[i];
 
-                var fontColor = Items.ItemNameColor(item);
-                if (item == null || fontColor == Color.Empty)
-                {
-                    // Invalid item quality
-                    continue;
-                }
-
-                var itemName = Items.ItemLogDisplayName(item);
                 var font = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, fontSize);
                 var position = anchor.Add(0, i * lineHeight);
-                var brush = CreateSolidBrush(gfx, fontColor, 1);
+                var brush = CreateSolidBrush(gfx, item.Color, 1);
 
                 if (MapAssistConfiguration.Loaded.ItemLog.Position == GameInfoPosition.TopRight)
                 {
-                    var stringSize = gfx.MeasureString(font, itemName);
+                    var stringSize = gfx.MeasureString(font, item.Text);
                     position = position.Subtract(stringSize.X, 0);
                 }
 
                 if (textShadow)
                 {
-                    gfx.DrawText(font, shadowBrush, position.X + shadowOffset, position.Y + shadowOffset, itemName);
+                    gfx.DrawText(font, shadowBrush, position.X + shadowOffset, position.Y + shadowOffset, item.Text);
                 }
 
-                gfx.DrawText(font, brush, position, itemName);
+                gfx.DrawText(font, brush, position, item.Text);
             }
         }
 

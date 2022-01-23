@@ -12,7 +12,7 @@ namespace MapAssist.Types
         public List<Resist> Immunities { get; set; }
         public Npc Npc => (Npc)TxtFileNo;
 
-        public UnitMonster(IntPtr pUnit) : base(pUnit)
+        public UnitMonster(IntPtr ptrUnit) : base(ptrUnit)
         {
         }
 
@@ -77,5 +77,7 @@ namespace MapAssist.Types
                 return 0.0f;
             }
         }
+
+        public override string HashString => Npc + "/" + Position.X + "/" + Position.Y;
     }
 }

@@ -16,7 +16,7 @@ namespace MapAssist.Types
         public bool IsHostile { get; private set; }
         public RosterEntry RosterEntry { get; private set; }
 
-        public UnitPlayer(IntPtr pUnit) : base(pUnit)
+        public UnitPlayer(IntPtr ptrUnit) : base(ptrUnit)
         {
         }
 
@@ -155,16 +155,6 @@ namespace MapAssist.Types
             return (StateFlags[(int)state >> 5] & StateMasks.gdwBitMasks[(int)state & 31]) > 0;
         }
 
-        public string CorpseHash()
-        {
-            return Name + "/" + Position.X + "/" + Position.Y;
-        }
-
-        //public UnitPlayer Clone()
-        //{
-        //    var clone = new UnitPlayer(pUnit);
-        //    clone.Update(RosterData);
-        //    return clone;
-        //}
+        public override string HashString => Name + "/" + Position.X + "/" + Position.Y;
     }
 }

@@ -2,6 +2,7 @@
 using MapAssist.Settings;
 using MapAssist.Structs;
 using System;
+using System.Drawing;
 
 namespace MapAssist.Types
 {
@@ -11,9 +12,10 @@ namespace MapAssist.Types
         public Npc VendorOwner { get; set; } = Npc.Invalid;
         public Item Item => (Item)TxtFileNo;
         public ItemMode ItemMode => (ItemMode)Struct.Mode;
-        public DateTime FoundTime { get; private set; } = DateTime.Now;
+        public string ItemBaseName => Items.GetItemBaseName(this);
+        public Color ItemBaseColor => Items.GetItemBaseColor(this);
 
-        public UnitItem(IntPtr pUnit) : base(pUnit)
+        public UnitItem(IntPtr ptrUnit) : base(ptrUnit)
         {
         }
 
@@ -26,31 +28,25 @@ namespace MapAssist.Types
                 using (var processContext = GameManager.GetProcessContext())
                 {
                     ItemData = processContext.Read<ItemData>(Struct.pUnitData);
-
-                    if ((IsDropped && !IsIdentified) || IsInStore)
-                    {
-                        Items.LogItem(this, processContext.ProcessId);
-                    }
                 }
             }
 
             return this;
         }
 
-        public bool IsIdentified
-        {
-            get => ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
-        }
+        private bool _isInvalid = false;
 
-        public bool IsDropped
-        {
-            get => ItemModeMapped == ItemModeMapped.Ground;
-        }
+        public void MarkValid() => _isInvalid = false;
 
-        public bool IsInStore
-        {
-            get => ItemModeMapped == ItemModeMapped.Vendor;
-        }
+        public void MarkInvalid() => _isInvalid = true;
+
+        public bool IsValidItem => !_isInvalid && UnitId != uint.MaxValue;
+
+        public bool IsIdentified => ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
+
+        public bool IsDropped => ItemModeMapped == ItemModeMapped.Ground;
+
+        public bool IsInStore => ItemModeMapped == ItemModeMapped.Vendor;
 
         public bool IsPlayerHolding
         {
@@ -100,9 +96,6 @@ namespace MapAssist.Types
             }
         }
 
-        public string ItemHash()
-        {
-            return Item + "/" + Position.X + "/" + Position.Y;
-        }
+        public override string HashString => Item + "/" + Position.X + "/" + Position.Y;
     }
 }

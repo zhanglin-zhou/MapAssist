@@ -148,15 +148,15 @@ namespace MapAssist.Helpers
                 var corpseList = rawPlayerUnits.Where(x => x.UnitType == UnitType.Player && x.IsCorpse).Concat(Corpses[_currentProcessId].Values).Distinct().ToArray();
                 foreach (var corpse in corpseList)
                 {
-                    var containsKey = Corpses[_currentProcessId].ContainsKey(corpse.CorpseHash());
+                    var containsKey = Corpses[_currentProcessId].ContainsKey(corpse.HashString);
 
                     if (!containsKey)
                     {
-                        Corpses[_currentProcessId].Add(corpse.CorpseHash(), corpse);
+                        Corpses[_currentProcessId].Add(corpse.HashString, corpse);
                     }
                     else if (containsKey && corpse.DistanceTo(playerUnit) <= 40)
                     {
-                        Corpses[_currentProcessId].Remove(corpse.CorpseHash());
+                        Corpses[_currentProcessId].Remove(corpse.HashString);
                     }
                 }
 
@@ -177,11 +177,17 @@ namespace MapAssist.Helpers
                 var objectList = rawObjectUnits.Where(x => x != null && x.UnitType == UnitType.Object && x.UnitId < uint.MaxValue).ToArray();
 
                 // Items
-                var rawItemUnits = GetUnits<UnitItem>(UnitType.Item, true);
-                foreach (var item in rawItemUnits)
+                var rawItemUnits = new List<UnitItem>();
+                foreach (var item in GetUnits<UnitItem>(UnitType.Item, true).Where(x => x.UnitId < uint.MaxValue).ToArray())
                 {
                     if (Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId)) continue;
+
                     item.Update();
+
+                    cache[item.UnitId] = item;
+                    cache[item.HashString] = item;
+
+                    if (item.UnitId == uint.MaxValue) continue;
 
                     if (item.IsInStore)
                     {
@@ -200,8 +206,28 @@ namespace MapAssist.Helpers
                     {
                         Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
                     }
+
+                    if (item.IsValidItem && (item.IsDropped && !item.IsIdentified) || item.IsInStore)
+                    {
+                        Items.LogItem(item, _currentProcessId);
+                    }
+
+                    rawItemUnits.Add(item);
                 }
-                var itemList = Items.ItemLog[_currentProcessId].Where(x => DateTime.Now.Subtract(x.FoundTime).TotalSeconds < MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds).ToArray();
+
+                //var rawItemHashes = rawItemUnits.Select(x => x.HashString).ToArray();
+                var itemList = Items.ItemLog[_currentProcessId].Select(item =>
+                {
+                    var cachedItem = (UnitItem)cache[item.ItemHashString];
+                    if (cachedItem.HashString == item.ItemHashString) item.UnitItem = cachedItem;
+
+                    if (item.UnitItem.DistanceTo(playerUnit) <= 40 && !rawItemUnits.Contains(item.UnitItem)) // Player is close to the item position but it was not found
+                    {
+                        item.UnitItem.MarkInvalid();
+                    }
+
+                    return item.UnitItem;
+                }).Where(x => x != null).ToArray();
 
                 // Unit hover
                 var allUnits = ((UnitAny[])playerList.Values.ToArray()).Concat(monsterList).Concat(mercList).Concat(rawObjectUnits).Concat(rawItemUnits);
@@ -236,6 +262,7 @@ namespace MapAssist.Helpers
                     Mercs = mercList,
                     Objects = objectList,
                     Items = itemList,
+                    ItemLog = Items.ItemLog[_currentProcessId].ToArray(),
                     Session = session,
                     Roster = rosterData,
                     MenuOpen = menuData,
@@ -246,10 +273,7 @@ namespace MapAssist.Helpers
             }
         }
 
-        public static UnitPlayer PlayerUnit
-        {
-            get => PlayerUnits.TryGetValue(_currentProcessId, out var player) ? player : null;
-        }
+        public static UnitPlayer PlayerUnit => PlayerUnits.TryGetValue(_currentProcessId, out var player) ? player : null;
 
         private static T[] GetUnits<T>(UnitType unitType, bool saveToCache = false) where T : UnitAny
         {
@@ -258,32 +282,41 @@ namespace MapAssist.Helpers
 
             var unitHashTable = GameManager.UnitHashTable(128 * 8 * (int)unitType);
 
-            foreach (var pUnit in unitHashTable.UnitTable)
+            foreach (var ptrUnit in unitHashTable.UnitTable)
             {
-                var unit = CreateUnit(pUnit);
+                if (ptrUnit == IntPtr.Zero) continue;
+
+                var unit = CreateUnit(ptrUnit);
+
+                Action<object> UseCachedUnit = (seenUnit) =>
+                {
+                    var castedSeenUnit = (T)seenUnit;
+                    castedSeenUnit.CopyFrom(unit);
+
+                    allUnits[castedSeenUnit.UnitId] = castedSeenUnit;
+                };
 
                 do
                 {
-                    if (saveToCache && cache.TryGetValue(unit.UnitId, out var seenUnit) && seenUnit is T && !allUnits.ContainsKey(((T)seenUnit).UnitId))
+                    if (saveToCache && cache.TryGetValue(unit.UnitId, out var seenUnit1) && seenUnit1 is T && !allUnits.ContainsKey(((T)seenUnit1).UnitId))
                     {
-                        var castedSeenUnit = (T)seenUnit;
-                        if (unit.pUnit != castedSeenUnit.pUnit)
-                        {
-                            castedSeenUnit.UpdateStruct(unit.pUnit, unit.Struct);
-                        }
-
-                        allUnits.Add(castedSeenUnit.UnitId, castedSeenUnit);
+                        UseCachedUnit(seenUnit1);
+                    }
+                    else if (saveToCache && cache.TryGetValue(unit.HashString, out var seenUnit2) && seenUnit2 is T && !allUnits.ContainsKey(((T)seenUnit2).UnitId))
+                    {
+                        UseCachedUnit(seenUnit2);
                     }
                     else if (unit.IsValidUnit && !allUnits.ContainsKey(unit.UnitId))
                     {
-                        allUnits.Add(unit.UnitId, unit);
+                        allUnits[unit.UnitId] = unit;
 
-                        if (saveToCache && !cache.ContainsKey(unit.UnitId))
+                        if (saveToCache)
                         {
-                            cache.Add(unit.UnitId, unit);
+                            cache[unit.UnitId] = unit;
+                            cache[unit.HashString] = unit;
                         }
                     }
-                } while ((unit = CreateUnit(unit.Struct.pListNext)).IsValidUnit);
+                } while (unit.Struct.pListNext != IntPtr.Zero && (unit = CreateUnit(unit.Struct.pListNext)).IsValidUnit);
             }
 
             return allUnits.Values.ToArray();
@@ -297,7 +330,7 @@ namespace MapAssist.Helpers
                 Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
                 Items.ItemUnitIdsToSkip.Add(_currentProcessId, new HashSet<uint>());
                 Items.ItemVendors.Add(_currentProcessId, new Dictionary<uint, Npc>());
-                Items.ItemLog.Add(_currentProcessId, new List<UnitItem>());
+                Items.ItemLog.Add(_currentProcessId, new List<ItemLogEntry>());
             }
             else
             {
