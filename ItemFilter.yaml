@@ -1,3 +1,24 @@
+Any:
+  - Strength: 1
+  - Dexterity: 1
+  - Vitality: 1
+  - Energy: 1
+  - Max Life: 1
+  - Max Mana: 1
+  - Attack Rating: 1
+  - Life Steal: 1
+  - Mana Steal: 1
+  - Increased Attack Speed: 1
+  - Faster Hit Recovery: 1
+  - Faster Cast Rate: 1
+  - Magic Find: 1
+  - Gold Find: 1
+  - All Resist: 1
+  - Cold Resist: 1
+  - Lightning Resist: 1
+  - Fire Resist: 1
+  - Poison Resist: 1
+
 # IMPORTANT: After changing anything in this file, ensure validity using https://jsonformatter.org/yaml-validator
 
 # Item filter rules

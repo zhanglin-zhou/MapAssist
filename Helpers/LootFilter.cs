@@ -48,16 +48,14 @@ namespace MapAssist.Helpers
             // So we know that simply having the name match means we can return true
             if (matches.Any(kv => kv.Value == null))
             {
-                return (!item.IsPlayerHolding, null);
+                return (!item.IsAnyPlayerHolding, null);
             }
 
             // Scan the list of rules
             foreach (var rule in matches.SelectMany(kv => kv.Value))
             {
-                if (item.IsIdentified && !rule.FilterRequiresItemIsIdentified())
-                {
-                    continue;
-                }
+                // Skip generic unid rules for identified items
+                if (item.IsIdentified && rule.TargetsUnidItem()) continue;
 
                 // Requirement check functions
                 var requirementsFunctions = new Dictionary<string, Func<bool>>()

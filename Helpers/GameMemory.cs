@@ -123,7 +123,11 @@ namespace MapAssist.Helpers
                 }
 
                 // Check if new game
-                if (mapSeed != _lastMapSeeds[_currentProcessId])
+                if (mapSeed == _lastMapSeeds[_currentProcessId])
+                {
+                    _playerMapChanged[_currentProcessId] = false;
+                }
+                else
                 {
                     UpdateMemoryData();
                     _lastMapSeeds[_currentProcessId] = mapSeed;
@@ -195,18 +199,18 @@ namespace MapAssist.Helpers
                 {
                     if (Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId)) continue;
 
-                    if (_playerMapChanged[_currentProcessId] && item.IsPlayerHolding && item.Item != Item.HoradricCube && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
+                    if (_playerMapChanged[_currentProcessId] && item.IsAnyPlayerHolding && item.Item != Item.HoradricCube && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
                     {
                         Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
                         continue;
                     }
 
-                    if (item.IsIdentifiedInPlayerInventory && !Items.InventoryItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
+                    if (item.IsPlayerOwned && item.IsIdentified && !Items.InventoryItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
                     {
                         item.IsCached = false;
                     }
 
-                    var identifiedPreUpdate = item.IsIdentified;
+                    var enableInventoryFilterCheck = item.IsIdentified && item.IsPlayerOwned;
 
                     item.Update();
 
@@ -231,7 +235,7 @@ namespace MapAssist.Helpers
                         }
                     }
 
-                    if (item.IsValidItem && (item.IsDropped && !item.IsIdentified || item.IsIdentified && item.IsInStore || (identifiedPreUpdate && item.IsIdentifiedInPlayerInventory)))
+                    if (item.IsValidItem && ((item.IsDropped && !item.IsIdentified) || (item.IsIdentified && item.IsInStore) || enableInventoryFilterCheck))
                     {
                         Items.LogItem(item, _currentProcessId);
                     }
@@ -281,7 +285,6 @@ namespace MapAssist.Helpers
                 }
 
                 // Return data
-                _playerMapChanged[_currentProcessId] = false;
                 _firstMemoryRead = false;
                 _errorThrown = false;
 

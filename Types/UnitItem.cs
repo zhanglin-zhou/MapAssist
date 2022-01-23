@@ -45,13 +45,11 @@ namespace MapAssist.Types
 
         public bool IsIdentified => ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
 
-        public bool IsIdentifiedInPlayerInventory => IsPlayerOwned && IsIdentified && IsPlayerHolding;
-
         public bool IsDropped => ItemModeMapped == ItemModeMapped.Ground;
 
         public bool IsInStore => ItemModeMapped == ItemModeMapped.Vendor;
 
-        public bool IsPlayerHolding
+        public bool IsAnyPlayerHolding
         {
             get
             {

@@ -165,40 +165,30 @@ namespace MapAssist.Settings
 
     public static class ItemFilterExtensions
     {
-        public static bool FilterRequiresItemIsIdentified(this ItemFilter rule)
+        public static bool TargetsUnidItem(this ItemFilter rule)
         {
-            if (rule == null) return false;
-
-            var unidentifiedProps = new List<string>()
-            {
-                "Ethereal",
-                "Defense",
-                "PlaySoundOnDrop",
-                "Qualities",
-                "Sockets",
-                "Tiers",
-            };
+            if (rule == null) return true;
 
             foreach (var property in rule.GetType().GetProperties())
             {
-                var propType = property.PropertyType;
-                if (propType == typeof(object)) continue; // This is the item from Stat property
+                if (property.Name == "Defense") continue;
 
-                if (unidentifiedProps.Contains(property.Name)) continue;
+                var propType = property.PropertyType;
+                if (propType == typeof(object)) continue;
 
                 var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
                 if (propertyValue != null && propType == typeof(int?) && (int)propertyValue > 0)
                 {
-                    return true;
+                    return false;
                 }
             }
 
-            if (rule.Skills.Where(subrule => subrule.Value != null).Count() > 0) return true;
-            if (rule.SkillCharges.Where(subrule => subrule.Value != null).Count() > 0) return true;
-            if (rule.ClassSkills.Where(subrule => subrule.Value != null).Count() > 0) return true;
-            if (rule.ClassTabSkills.Where(subrule => subrule.Value != null).Count() > 0) return true;
+            if (rule.Skills.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.SkillCharges.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.ClassSkills.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.ClassTabSkills.Where(subrule => subrule.Value != null).Count() > 0) return false;
 
-            return false;
+            return true;
         }
     }
 }

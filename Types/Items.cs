@@ -50,7 +50,7 @@ namespace MapAssist.Types
                     ItemUnitHashesSeen[processId].Add(item.HashString);
                 }
 
-                if (item.IsIdentifiedInPlayerInventory)
+                if (item.IsPlayerOwned && item.IsIdentified)
                 {
                     InventoryItemUnitIdsToSkip[processId].Add(item.UnitId);
                     ItemUnitIdsToSkip[processId].Add(item.UnitId);
@@ -77,7 +77,7 @@ namespace MapAssist.Types
         }
 
         private static bool CheckInventoryItem(UnitItem item, int processId) =>
-            item.IsIdentifiedInPlayerInventory &&
+            item.IsIdentified && item.IsPlayerOwned &&
             !InventoryItemUnitIdsToSkip[processId].Contains(item.UnitId);
 
         private static bool CheckDroppedItem(UnitItem item, int processId) =>
@@ -103,7 +103,7 @@ namespace MapAssist.Types
                 var vendorLabel = item.VendorOwner != Npc.Unknown ? NpcExtensions.Name(item.VendorOwner) : "Vendor";
                 itemPrefix += $"[{vendorLabel}] ";
             }
-            else if (item.IsIdentifiedInPlayerInventory)
+            else if (item.IsIdentified)
             {
                 itemPrefix += "[Identified] ";
             }
