@@ -97,6 +97,8 @@ namespace MapAssist
 
             cboItemLogPosition.SelectedIndex = cboItemLogPosition.FindStringExact(MapAssistConfiguration.Loaded.ItemLog.Position.ToString().ToProperCase());
             chkItemLogEnabled.Checked = MapAssistConfiguration.Loaded.ItemLog.Enabled;
+            chkItemLogItemsOnIdentify.Checked = MapAssistConfiguration.Loaded.ItemLog.CheckItemOnIdentify;
+            chkItemLogVendorTrade.Checked = MapAssistConfiguration.Loaded.ItemLog.CheckVendorTrade;
             chkPlaySound.Checked = MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop;
             txtFilterFile.Text = MapAssistConfiguration.Loaded.ItemLog.FilterFileName;
             txtSoundFile.Text = MapAssistConfiguration.Loaded.ItemLog.SoundFile;
@@ -581,6 +583,16 @@ namespace MapAssist
         private void chkItemLogEnabled_CheckedChanged(object sender, EventArgs e)
         {
             MapAssistConfiguration.Loaded.ItemLog.Enabled = chkItemLogEnabled.Checked;
+        }
+
+        private void chkItemLogItemsOnIdentify_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.ItemLog.CheckItemOnIdentify = chkItemLogItemsOnIdentify.Checked;
+        }
+
+        private void chkItemLogVendorTrade_CheckedChanged(object sender, EventArgs e)
+        {
+            MapAssistConfiguration.Loaded.ItemLog.CheckVendorTrade = chkItemLogVendorTrade.Checked;
         }
 
         private void cboItemLogPosition_SelectedIndexChanged(object sender, EventArgs e)

@@ -9,6 +9,7 @@ namespace MapAssist.Types
     public class UnitItem : UnitAny
     {
         public ItemData ItemData { get; private set; }
+        public new bool IsPlayerOwned { get; set; } = false;
         public Npc VendorOwner { get; set; } = Npc.Invalid;
         public Item Item => (Item)TxtFileNo;
         public ItemMode ItemMode => (ItemMode)Struct.Mode;
@@ -43,6 +44,8 @@ namespace MapAssist.Types
         public bool IsValidItem => !_isInvalid && UnitId != uint.MaxValue;
 
         public bool IsIdentified => ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
+
+        public bool IsIdentifiedInPlayerInventory => IsPlayerOwned && IsIdentified && IsPlayerHolding;
 
         public bool IsDropped => ItemModeMapped == ItemModeMapped.Ground;
 
@@ -95,7 +98,7 @@ namespace MapAssist.Types
                 return ItemModeMapped.Unknown; // Items that appeared in the trade window before will appear here
             }
         }
-
+        
         public override string HashString => Item + "/" + Position.X + "/" + Position.Y;
     }
 }

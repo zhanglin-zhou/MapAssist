@@ -37,6 +37,8 @@ namespace MapAssist.Helpers
 
         private static bool _firstMemoryRead = true;
         private static bool _errorThrown = false;
+        private static bool _mapSeedChanged = false;
+        private static uint _cubeOwnerId = uint.MaxValue;
 
         public static GameData GetGameData()
         {
@@ -115,6 +117,7 @@ namespace MapAssist.Helpers
                 {
                     UpdateMemoryData();
                     _lastMapSeeds[_currentProcessId] = mapSeed;
+                    _mapSeedChanged = true;
                 }
 
                 // Extra checks on game details
@@ -182,12 +185,30 @@ namespace MapAssist.Helpers
                 {
                     if (Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId)) continue;
 
+                    if (_mapSeedChanged && item.IsPlayerHolding && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
+                    {
+                        Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
+                        continue;
+                    }
+
+                    if (item.IsIdentifiedInPlayerInventory && !Items.InventoryItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
+                    {
+                        item.IsCached = false;
+                    }
+
+                    var identifiedPreUpdate = item.IsIdentified;
+
                     item.Update();
 
                     cache[item.UnitId] = item;
                     cache[item.HashString] = item;
 
                     if (item.UnitId == uint.MaxValue) continue;
+
+                    if (_cubeOwnerId != uint.MaxValue)
+                    {
+                        item.IsPlayerOwned = (item.ItemData.dwOwnerID == _cubeOwnerId);
+                    }
 
                     if (item.IsInStore)
                     {
@@ -202,12 +223,7 @@ namespace MapAssist.Helpers
                         }
                     }
 
-                    if (item.IsPlayerHolding && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
-                    {
-                        Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
-                    }
-
-                    if (item.IsValidItem && (item.IsDropped && !item.IsIdentified) || item.IsInStore)
+                    if (item.IsValidItem && (item.IsDropped && !item.IsIdentified || item.IsIdentified && item.IsInStore || (identifiedPreUpdate && item.IsIdentifiedInPlayerInventory)))
                     {
                         Items.LogItem(item, _currentProcessId);
                     }
@@ -241,7 +257,8 @@ namespace MapAssist.Helpers
                     if (units.Length > 0) units[0].IsHovered = true;
                 }
 
-                // Return data;
+                // Return data
+                _mapSeedChanged = false;
                 _firstMemoryRead = false;
                 _errorThrown = false;
 
@@ -329,6 +346,7 @@ namespace MapAssist.Helpers
                 Items.ItemUnitHashesSeen.Add(_currentProcessId, new HashSet<string>());
                 Items.ItemUnitIdsSeen.Add(_currentProcessId, new HashSet<uint>());
                 Items.ItemUnitIdsToSkip.Add(_currentProcessId, new HashSet<uint>());
+                Items.InventoryItemUnitIdsToSkip.Add(_currentProcessId, new HashSet<uint>());
                 Items.ItemVendors.Add(_currentProcessId, new Dictionary<uint, Npc>());
                 Items.ItemLog.Add(_currentProcessId, new List<ItemLogEntry>());
             }
@@ -337,6 +355,7 @@ namespace MapAssist.Helpers
                 Items.ItemUnitHashesSeen[_currentProcessId].Clear();
                 Items.ItemUnitIdsSeen[_currentProcessId].Clear();
                 Items.ItemUnitIdsToSkip[_currentProcessId].Clear();
+                Items.InventoryItemUnitIdsToSkip[_currentProcessId].Clear();
                 Items.ItemVendors[_currentProcessId].Clear();
                 Items.ItemLog[_currentProcessId].Clear();
             }
@@ -348,6 +367,16 @@ namespace MapAssist.Helpers
             else
             {
                 Corpses[_currentProcessId].Clear();
+            }
+
+            var cube = GetUnits<UnitItem>(UnitType.Item, true).FirstOrDefault(x => x.Item == Item.HoradricCube);
+            if (cube != null)
+            {
+                cube.Update();
+                if (_cubeOwnerId != cube.ItemData.dwOwnerID)
+                {
+                    _cubeOwnerId = cube.ItemData.dwOwnerID;
+                }
             }
         }
 

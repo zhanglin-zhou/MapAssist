@@ -144,12 +144,6 @@ Short Staff:
     All Skills: 1
     PlaySoundOnDrop: false
 
-# This will show Barbarian Warcry Sticks when a town vendor has them for sale
-Glaive:
-  - Qualities: magic
-    Class Skill Tree:
-      Barbarian Warcries: 3
-
 # This is just an object that holds all our commonly used aliases
 # Aliases are labeled by the `&` and then the name and provide a simple way to reuse rule criteria later on
 # They are used by referencing `*` then the name as you'll see in the Mercenary section of this config
@@ -174,9 +168,47 @@ x-bases:
     All Resist: 25
     Sockets: [0, 4]
 
-# This ring rule will show all magic, rare, and unique rings
+# Unidentified item filter rules can use any criteria in this template:
+# <Item Class | Item Base Name>:
+#   Tiers:
+#   Qualities:
+#   Sockets:
+#   Ethereal:
+#   PlaySoundOnDrop:
+#
+# This ring rule will show all unidentified magic, rare, and unique rings that drop on the ground
 Ring:
   - Qualities: [magic, rare, unique]
+  # The rings below have stats that are only possible on identified items, so these rules
+  # will alert you when a matching item is identified by you or picked up as identified
+  - Qualities: magic
+    Magic Find: 40
+  - Qualities: magic
+    Faster Cast Rate: 10
+    Max Mana: 120
+  - Qualities: magic
+    Magic Find: 15
+    Max Mana: 120
+  - Qualities: magic
+    Faster Cast Rate: 10
+    Fire Resist: 15
+    Lightning Resist: 15
+  - Qualities: magic
+    Magic Find: 15
+    Fire Resist: 15
+    Lightning Resist: 15
+  - Qualities: rare
+    Faster Cast Rate: 10
+    Max Mana: 80
+    All Resist: 10
+  - Qualities: unique # SoJ or BK ring
+    All Skills: 1
+
+# This will show Barbarian Warcry Sticks when you trade a town vendor that has them for sale
+Glaive:
+  - Qualities: magic
+    Class Skill Tree:
+      Barbarian Warcries: 3
 
 ### Some items are inactive
 ### To activate them for the loot log, remove the ## in front of them

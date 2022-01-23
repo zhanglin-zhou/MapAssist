@@ -32,30 +32,40 @@ namespace MapAssist.Types
         public static Dictionary<int, HashSet<string>> ItemUnitHashesSeen = new Dictionary<int, HashSet<string>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsSeen = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, HashSet<uint>> ItemUnitIdsToSkip = new Dictionary<int, HashSet<uint>>();
+        public static Dictionary<int, HashSet<uint>> InventoryItemUnitIdsToSkip = new Dictionary<int, HashSet<uint>>();
         public static Dictionary<int, Dictionary<uint, Npc>> ItemVendors = new Dictionary<int, Dictionary<uint, Npc>>();
         public static Dictionary<int, List<ItemLogEntry>> ItemLog = new Dictionary<int, List<ItemLogEntry>>();
         public static Dictionary<string, LocalizedObj> LocalizedItems = new Dictionary<string, LocalizedObj>();
 
         public static void LogItem(UnitItem item, int processId)
         {
-            if ((item.ItemModeMapped == ItemModeMapped.Vendor || !ItemUnitHashesSeen[processId].Contains(item.HashString)) &&
-                !ItemUnitIdsSeen[processId].Contains(item.UnitId) &&
-                !ItemUnitIdsToSkip[processId].Contains(item.UnitId))
+            if (CheckInventoryItem(item, processId) || CheckDroppedOrVendorItem(item, processId))
             {
-                var (pickupItem, rule) = LootFilter.Filter(item);
-                if (!pickupItem) return;
+                if (item.IsInStore)
+                {
+                    InventoryItemUnitIdsToSkip[processId].Add(item.UnitId);
+                }
+                else
+                {
+                    ItemUnitHashesSeen[processId].Add(item.HashString);
+                }
+
+                if (item.IsIdentifiedInPlayerInventory)
+                {
+                    InventoryItemUnitIdsToSkip[processId].Add(item.UnitId);
+                    ItemUnitIdsToSkip[processId].Add(item.UnitId);
+                }
+
+                ItemUnitIdsSeen[processId].Add(item.UnitId);
+
+                var (logItem, rule) = LootFilter.Filter(item);
+                if (!logItem) return;
 
                 if (MapAssistConfiguration.Loaded.ItemLog.PlaySoundOnDrop && (rule == null || rule.PlaySoundOnDrop))
                 {
                     AudioPlayer.PlayItemAlert();
                 }
 
-                if (item.ItemModeMapped != ItemModeMapped.Vendor)
-                {
-                    ItemUnitHashesSeen[processId].Add(item.HashString);
-                }
-
-                ItemUnitIdsSeen[processId].Add(item.UnitId);
                 ItemLog[processId].Add(new ItemLogEntry()
                 {
                     Text = ItemLogDisplayName(item, rule),
@@ -65,6 +75,15 @@ namespace MapAssist.Types
                 });
             }
         }
+
+        private static bool CheckInventoryItem(UnitItem item, int processId) =>
+            item.IsIdentifiedInPlayerInventory &&
+            !InventoryItemUnitIdsToSkip[processId].Contains(item.UnitId);
+
+        private static bool CheckDroppedOrVendorItem(UnitItem item, int processId) =>
+            (item.IsInStore || !ItemUnitHashesSeen[processId].Contains(item.HashString)) &&
+            !ItemUnitIdsSeen[processId].Contains(item.UnitId) &&
+            !ItemUnitIdsToSkip[processId].Contains(item.UnitId);
 
         public static string ItemLogDisplayName(UnitItem item, ItemFilter rule)
         {
@@ -77,6 +96,10 @@ namespace MapAssist.Types
             {
                 var vendorLabel = item.VendorOwner != Npc.Unknown ? NpcExtensions.Name(item.VendorOwner) : "Vendor";
                 itemPrefix += $"[{vendorLabel}] ";
+            }
+            else if (item.IsIdentifiedInPlayerInventory)
+            {
+                itemPrefix += "[Identified] ";
             }
 
             if (rule == null) return itemPrefix + itemBaseName;
@@ -160,7 +183,7 @@ namespace MapAssist.Types
                         var charges = "";
                         if (currentCharges > 0 && maxCharges > 0)
                         {
-                            charges = $"{currentCharges}/{ maxCharges} ";
+                            charges = $"{currentCharges}/{maxCharges} ";
                         }
                         itemSuffix += $" (+{skillLevel} {subrule.Key.Name()} {charges}charges)";
                     }
@@ -172,17 +195,41 @@ namespace MapAssist.Types
                 var yamlAttribute = property.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(YamlMemberAttribute));
                 var propName = property.Name;
 
+                if (propName == "AllSkills" || propName == "AllResist" || propName == "MaxLife" || propName == "MaxMana")
+                {
+                    continue;
+                }
+
                 if (yamlAttribute != null) propName = yamlAttribute.NamedArguments.FirstOrDefault(x => x.MemberName == "Alias").TypedValue.Value.ToString();
 
                 if (property.PropertyType == typeof(int?) && Enum.TryParse<Stat>(property.Name, out var stat))
                 {
                     var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
-                    var statValue = GetItemStat(item, stat);
+                    if (propertyValue == null) continue;
 
-                    if (propertyValue != null && statValue > 0)
+                    var statValue = GetItemStat(item, stat);
+                    if (statValue > 0)
                     {
                         itemSuffix += $" ({statValue} {propName})";
                     }
+                }
+            }
+
+            foreach (var (stat, shift) in LootFilter.StatShifts.Select(x => (x.Key, x.Value)))
+            {
+                var property = rule.GetType().GetProperty(stat.ToString());
+                var propertyValue = property.GetValue(rule, null);
+                if (propertyValue == null) continue;
+
+                var yamlAttribute = property.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(YamlMemberAttribute));
+                var propName = property.Name;
+
+                if (yamlAttribute != null) propName = yamlAttribute.NamedArguments.FirstOrDefault(x => x.MemberName == "Alias").TypedValue.Value.ToString();
+
+                var statValue = GetItemStatShifted(item, stat, shift);
+                if (statValue > 0)
+                {
+                    itemSuffix += $" ({statValue} {propName})";
                 }
             }
 
