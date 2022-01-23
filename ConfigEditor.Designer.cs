@@ -152,7 +152,7 @@
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.chkItemLogItemsOnIdentify = new System.Windows.Forms.CheckBox();
-            this.chkItemLogVendorTrade = new System.Windows.Forms.CheckBox();
+            this.chkItemLogVendorItems = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -1223,7 +1223,7 @@
             // 
             // tabPage6
             // 
-            this.tabPage6.Controls.Add(this.chkItemLogVendorTrade);
+            this.tabPage6.Controls.Add(this.chkItemLogVendorItems);
             this.tabPage6.Controls.Add(this.chkItemLogItemsOnIdentify);
             this.tabPage6.Controls.Add(this.cboItemLogPosition);
             this.tabPage6.Controls.Add(this.lblItemLogPosition);
@@ -1606,16 +1606,16 @@
             this.chkItemLogItemsOnIdentify.UseVisualStyleBackColor = true;
             this.chkItemLogItemsOnIdentify.CheckedChanged += new System.EventHandler(this.chkItemLogItemsOnIdentify_CheckedChanged);
             // 
-            // chkItemLogVendorTrade
+            // chkItemLogVendorItems
             // 
-            this.chkItemLogVendorTrade.AutoSize = true;
-            this.chkItemLogVendorTrade.Location = new System.Drawing.Point(14, 62);
-            this.chkItemLogVendorTrade.Name = "chkItemLogVendorTrade";
-            this.chkItemLogVendorTrade.Size = new System.Drawing.Size(153, 17);
-            this.chkItemLogVendorTrade.TabIndex = 40;
-            this.chkItemLogVendorTrade.Text = "Check Vendor Trade Items";
-            this.chkItemLogVendorTrade.UseVisualStyleBackColor = true;
-            this.chkItemLogVendorTrade.CheckedChanged += new System.EventHandler(this.chkItemLogVendorTrade_CheckedChanged);
+            this.chkItemLogVendorItems.AutoSize = true;
+            this.chkItemLogVendorItems.Location = new System.Drawing.Point(14, 62);
+            this.chkItemLogVendorItems.Name = "chkItemLogVendorItems";
+            this.chkItemLogVendorItems.Size = new System.Drawing.Size(153, 17);
+            this.chkItemLogVendorItems.TabIndex = 40;
+            this.chkItemLogVendorItems.Text = "Check Vendor Items";
+            this.chkItemLogVendorItems.UseVisualStyleBackColor = true;
+            this.chkItemLogVendorItems.CheckedChanged += new System.EventHandler(this.chkItemLogVendorItems_CheckedChanged);
             // 
             // ConfigEditor
             // 
@@ -1798,7 +1798,7 @@
         private System.Windows.Forms.ComboBox cboItemLogPosition;
         private System.Windows.Forms.Label lblItemLogPosition;
         private System.Windows.Forms.CheckBox chkMonsterHealthBar;
-        private System.Windows.Forms.CheckBox chkItemLogVendorTrade;
+        private System.Windows.Forms.CheckBox chkItemLogVendorItems;
         private System.Windows.Forms.CheckBox chkItemLogItemsOnIdentify;
     }
 }

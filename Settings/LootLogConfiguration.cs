@@ -169,16 +169,22 @@ namespace MapAssist.Settings
         {
             if (rule == null) return false;
 
+            var unidentifiedProps = new List<string>()
+            {
+                "Ethereal",
+                "Defense",
+                "PlaySoundOnDrop",
+                "Qualities",
+                "Sockets",
+                "Tiers",
+            };
+
             foreach (var property in rule.GetType().GetProperties())
             {
                 var propType = property.PropertyType;
                 if (propType == typeof(object)) continue; // This is the item from Stat property
 
-                var propName = property.Name;
-                if (propName == "Qualities" || propName == "Ethereal" || propName == "Tiers" || propName == "Sockets" || propName == "PlaySoundOnDrop")
-                {
-                    continue;
-                }
+                if (unidentifiedProps.Contains(property.Name)) continue;
 
                 var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
                 if (propertyValue != null && propType == typeof(int?) && (int)propertyValue > 0)

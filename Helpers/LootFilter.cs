@@ -48,11 +48,7 @@ namespace MapAssist.Helpers
             // So we know that simply having the name match means we can return true
             if (matches.Any(kv => kv.Value == null))
             {
-                if (item.IsPlayerHolding)
-                {
-                    return (false, null);
-                }
-                return (true, null);
+                return (!item.IsPlayerHolding, null);
             }
 
             // Scan the list of rules

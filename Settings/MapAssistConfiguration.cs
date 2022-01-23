@@ -262,8 +262,8 @@ public class ItemLogConfiguration
     [YamlMember(Alias = "FilterFileName", ApplyNamingConventions = false)]
     public string FilterFileName { get; set; }
 
-    [YamlMember(Alias = "CheckVendorTrade", ApplyNamingConventions = false)]
-    public bool CheckVendorTrade { get; set; }
+    [YamlMember(Alias = "CheckVendorItems", ApplyNamingConventions = false)]
+    public bool CheckVendorItems { get; set; }
 
     [YamlMember(Alias = "CheckItemOnIdentify", ApplyNamingConventions = false)]
     public bool CheckItemOnIdentify { get; set; }

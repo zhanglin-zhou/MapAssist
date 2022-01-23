@@ -29,6 +29,8 @@ namespace MapAssist.Helpers
     {
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         private static Dictionary<int, uint> _lastMapSeeds = new Dictionary<int, uint>();
+        private static Dictionary<int, bool> _playerMapChanged = new Dictionary<int, bool>();
+        private static Dictionary<int, uint> _playerCubeOwnerID = new Dictionary<int, uint>();
         private static int _currentProcessId;
 
         public static Dictionary<int, UnitPlayer> PlayerUnits = new Dictionary<int, UnitPlayer>();
@@ -37,8 +39,6 @@ namespace MapAssist.Helpers
 
         private static bool _firstMemoryRead = true;
         private static bool _errorThrown = false;
-        private static bool _mapSeedChanged = false;
-        private static uint _cubeOwnerId = uint.MaxValue;
 
         public static GameData GetGameData()
         {
@@ -112,12 +112,22 @@ namespace MapAssist.Helpers
                     _lastMapSeeds.Add(_currentProcessId, 0);
                 }
 
+                if (!_playerMapChanged.ContainsKey(_currentProcessId))
+                {
+                    _playerMapChanged.Add(_currentProcessId, false);
+                }
+
+                if (!_playerCubeOwnerID.ContainsKey(_currentProcessId))
+                {
+                    _playerCubeOwnerID.Add(_currentProcessId, uint.MaxValue);
+                }
+
                 // Check if new game
                 if (mapSeed != _lastMapSeeds[_currentProcessId])
                 {
                     UpdateMemoryData();
                     _lastMapSeeds[_currentProcessId] = mapSeed;
-                    _mapSeedChanged = true;
+                    _playerMapChanged[_currentProcessId] = true;
                 }
 
                 // Extra checks on game details
@@ -185,7 +195,7 @@ namespace MapAssist.Helpers
                 {
                     if (Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId)) continue;
 
-                    if (_mapSeedChanged && item.IsPlayerHolding && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
+                    if (_playerMapChanged[_currentProcessId] && item.IsPlayerHolding && item.Item != Item.HoradricCube && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
                     {
                         Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
                         continue;
@@ -205,10 +215,8 @@ namespace MapAssist.Helpers
 
                     if (item.UnitId == uint.MaxValue) continue;
 
-                    if (_cubeOwnerId != uint.MaxValue)
-                    {
-                        item.IsPlayerOwned = (item.ItemData.dwOwnerID == _cubeOwnerId);
-                    }
+                    item.IsPlayerOwned = _playerCubeOwnerID[_currentProcessId] != uint.MaxValue &&
+                        item.ItemData.dwOwnerID == _playerCubeOwnerID[_currentProcessId];
 
                     if (item.IsInStore)
                     {
@@ -228,6 +236,11 @@ namespace MapAssist.Helpers
                         Items.LogItem(item, _currentProcessId);
                     }
 
+                    if (item.Item == Item.HoradricCube)
+                    {
+                        Items.ItemUnitIdsToSkip[_currentProcessId].Add(item.UnitId);
+                    }
+
                     rawItemUnits.Add(item);
                 }
 
@@ -245,6 +258,16 @@ namespace MapAssist.Helpers
                     return item.UnitItem;
                 }).Where(x => x != null).ToArray();
 
+                // Set Cube Owner
+                if (_playerMapChanged[_currentProcessId])
+                {
+                    var cube = rawItemUnits.FirstOrDefault(x => x.Item == Item.HoradricCube);
+                    if (cube != null)
+                    {
+                        _playerCubeOwnerID[_currentProcessId] = cube.ItemData.dwOwnerID;
+                    }
+                }
+
                 // Unit hover
                 var allUnits = ((UnitAny[])playerList.Values.ToArray()).Concat(monsterList).Concat(mercList).Concat(rawObjectUnits).Concat(rawItemUnits);
 
@@ -258,7 +281,7 @@ namespace MapAssist.Helpers
                 }
 
                 // Return data
-                _mapSeedChanged = false;
+                _playerMapChanged[_currentProcessId] = false;
                 _firstMemoryRead = false;
                 _errorThrown = false;
 
@@ -367,16 +390,6 @@ namespace MapAssist.Helpers
             else
             {
                 Corpses[_currentProcessId].Clear();
-            }
-
-            var cube = GetUnits<UnitItem>(UnitType.Item, true).FirstOrDefault(x => x.Item == Item.HoradricCube);
-            if (cube != null)
-            {
-                cube.Update();
-                if (_cubeOwnerId != cube.ItemData.dwOwnerID)
-                {
-                    _cubeOwnerId = cube.ItemData.dwOwnerID;
-                }
             }
         }
 

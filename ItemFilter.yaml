@@ -172,6 +172,7 @@ x-bases:
 # <Item Class | Item Base Name>:
 #   Tiers:
 #   Qualities:
+#   Defense:
 #   Sockets:
 #   Ethereal:
 #   PlaySoundOnDrop:

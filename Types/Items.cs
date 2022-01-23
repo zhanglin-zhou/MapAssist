@@ -39,7 +39,7 @@ namespace MapAssist.Types
 
         public static void LogItem(UnitItem item, int processId)
         {
-            if (CheckInventoryItem(item, processId) || CheckDroppedOrVendorItem(item, processId))
+            if (CheckDroppedItem(item, processId) || CheckInventoryItem(item, processId) || CheckVendorItem(item, processId))
             {
                 if (item.IsInStore)
                 {
@@ -80,13 +80,19 @@ namespace MapAssist.Types
             item.IsIdentifiedInPlayerInventory &&
             !InventoryItemUnitIdsToSkip[processId].Contains(item.UnitId);
 
-        private static bool CheckDroppedOrVendorItem(UnitItem item, int processId) =>
-            (item.IsInStore || !ItemUnitHashesSeen[processId].Contains(item.HashString)) &&
+        private static bool CheckDroppedItem(UnitItem item, int processId) =>
+            !ItemUnitHashesSeen[processId].Contains(item.HashString) &&
+            !ItemUnitIdsSeen[processId].Contains(item.UnitId) &&
+            !ItemUnitIdsToSkip[processId].Contains(item.UnitId);
+
+        private static bool CheckVendorItem(UnitItem item, int processId) =>
+            item.IsInStore &&
             !ItemUnitIdsSeen[processId].Contains(item.UnitId) &&
             !ItemUnitIdsToSkip[processId].Contains(item.UnitId);
 
         public static string ItemLogDisplayName(UnitItem item, ItemFilter rule)
         {
+            var statsProcessed = new List<Stat>();
             var itemBaseName = GetItemName(item);
             var itemSpecialName = "";
             var itemPrefix = "";
@@ -135,6 +141,7 @@ namespace MapAssist.Types
                 {
                     itemSuffix += $" (+{itemAllSkills} all skills)";
                 }
+                statsProcessed.Add(Stat.AllSkills);
             }
 
             if (rule.ClassSkills != null)
@@ -190,28 +197,6 @@ namespace MapAssist.Types
                 }
             }
 
-            foreach (var property in rule.GetType().GetProperties())
-            {
-                var yamlAttribute = property.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(YamlMemberAttribute));
-                var propName = property.Name;
-
-                if (yamlAttribute != null) propName = yamlAttribute.NamedArguments.FirstOrDefault(x => x.MemberName == "Alias").TypedValue.Value.ToString();
-
-                if (property.PropertyType == typeof(int?) && Enum.TryParse<Stat>(property.Name, out var stat))
-                {
-                    if (stat == Stat.AllSkills || stat == Stat.MaxLife || stat == Stat.MaxMana) continue;
-
-                    var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
-                    if (propertyValue == null) continue;
-
-                    var statValue = GetItemStat(item, stat);
-                    if (statValue > 0)
-                    {
-                        itemSuffix += $" ({statValue} {propName})";
-                    }
-                }
-            }
-
             foreach (var (stat, shift) in LootFilter.StatShifts.Select(x => (x.Key, x.Value)))
             {
                 var property = rule.GetType().GetProperty(stat.ToString());
@@ -227,6 +212,29 @@ namespace MapAssist.Types
                 if (statValue > 0)
                 {
                     itemSuffix += $" ({statValue} {propName})";
+                }
+                statsProcessed.Add(stat);
+            }
+
+            foreach (var property in rule.GetType().GetProperties())
+            {
+                var yamlAttribute = property.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(YamlMemberAttribute));
+                var propName = property.Name;
+
+                if (yamlAttribute != null) propName = yamlAttribute.NamedArguments.FirstOrDefault(x => x.MemberName == "Alias").TypedValue.Value.ToString();
+
+                if (property.PropertyType == typeof(int?) && Enum.TryParse<Stat>(property.Name, out var stat))
+                {
+                    if (statsProcessed.Contains(stat)) continue;
+
+                    var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
+                    if (propertyValue == null) continue;
+
+                    var statValue = GetItemStat(item, stat);
+                    if (statValue > 0)
+                    {
+                        itemSuffix += $" ({statValue} {propName})";
+                    }
                 }
             }
 
