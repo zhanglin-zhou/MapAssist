@@ -195,15 +195,12 @@ namespace MapAssist.Types
                 var yamlAttribute = property.CustomAttributes.FirstOrDefault(x => x.AttributeType == typeof(YamlMemberAttribute));
                 var propName = property.Name;
 
-                if (propName == "AllSkills" || propName == "AllResist" || propName == "MaxLife" || propName == "MaxMana")
-                {
-                    continue;
-                }
-
                 if (yamlAttribute != null) propName = yamlAttribute.NamedArguments.FirstOrDefault(x => x.MemberName == "Alias").TypedValue.Value.ToString();
 
                 if (property.PropertyType == typeof(int?) && Enum.TryParse<Stat>(property.Name, out var stat))
                 {
+                    if (stat == Stat.AllSkills || stat == Stat.MaxLife || stat == Stat.MaxMana) continue;
+
                     var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
                     if (propertyValue == null) continue;
 
