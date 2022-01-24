@@ -9,6 +9,7 @@ namespace MapAssist.Types
     public class UnitItem : UnitAny
     {
         public ItemData ItemData { get; private set; }
+        public new bool IsPlayerOwned { get; set; } = false;
         public Npc VendorOwner { get; set; } = Npc.Invalid;
         public Item Item => (Item)TxtFileNo;
         public ItemMode ItemMode => (ItemMode)Struct.Mode;
@@ -48,7 +49,7 @@ namespace MapAssist.Types
 
         public bool IsInStore => ItemModeMapped == ItemModeMapped.Vendor;
 
-        public bool IsPlayerHolding
+        public bool IsAnyPlayerHolding
         {
             get
             {
@@ -95,7 +96,7 @@ namespace MapAssist.Types
                 return ItemModeMapped.Unknown; // Items that appeared in the trade window before will appear here
             }
         }
-
+        
         public override string HashString => Item + "/" + Position.X + "/" + Position.Y;
     }
 }

@@ -162,4 +162,33 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "Skill Charges")]
         public Dictionary<Skill, int?> SkillCharges { get; set; } = new Dictionary<Skill, int?>();
     }
+
+    public static class ItemFilterExtensions
+    {
+        public static bool TargetsUnidItem(this ItemFilter rule)
+        {
+            if (rule == null) return true;
+
+            foreach (var property in rule.GetType().GetProperties())
+            {
+                if (property.Name == "Defense") continue;
+
+                var propType = property.PropertyType;
+                if (propType == typeof(object)) continue;
+
+                var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
+                if (propertyValue != null && propType == typeof(int?) && (int)propertyValue > 0)
+                {
+                    return false;
+                }
+            }
+
+            if (rule.Skills.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.SkillCharges.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.ClassSkills.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.ClassTabSkills.Where(subrule => subrule.Value != null).Count() > 0) return false;
+
+            return true;
+        }
+    }
 }

@@ -22,7 +22,6 @@ using MapAssist.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YamlDotNet.Serialization;
 
 namespace MapAssist.Helpers
 {
@@ -47,11 +46,17 @@ namespace MapAssist.Helpers
             // Early breakout
             // We know that there is an item in here without any actual filters
             // So we know that simply having the name match means we can return true
-            if (matches.Any(kv => kv.Value == null)) return (true, null);
+            if (matches.Any(kv => kv.Value == null))
+            {
+                return (!item.IsAnyPlayerHolding, null);
+            }
 
             // Scan the list of rules
             foreach (var rule in matches.SelectMany(kv => kv.Value))
             {
+                // Skip generic unid rules for identified items
+                if (item.IsIdentified && rule.TargetsUnidItem()) continue;
+
                 // Requirement check functions
                 var requirementsFunctions = new Dictionary<string, Func<bool>>()
                 {
