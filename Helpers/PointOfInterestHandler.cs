@@ -54,6 +54,7 @@ namespace MapAssist.Helpers
             [Area.BloodMoor] = Area.DenOfEvil,
             [Area.ColdPlains] = Area.BurialGrounds,
             [Area.BlackMarsh] = Area.ForgottenTower,
+            [Area.TamoeHighland] = Area.PitLevel1,
             [Area.DryHills] = Area.HallsOfTheDeadLevel1,
             [Area.FarOasis] = Area.MaggotLairLevel1,
             [Area.LostCity] = Area.ValleyOfSnakes,
