@@ -204,8 +204,8 @@ namespace MapAssist.Types
     {
         public static Dictionary<Resist, Color> ResistColor = new Dictionary<Resist, Color>
         {
-            {Resist.PHYSICAL, Color.Peru},
-            {Resist.MAGIC, Color.OrangeRed},
+            {Resist.PHYSICAL, Color.RosyBrown},
+            {Resist.MAGIC, Color.DarkOrange},
             {Resist.FIRE, Color.Red},
             {Resist.LIGHTNING, Color.Yellow},
             {Resist.COLD, Color.CornflowerBlue},
