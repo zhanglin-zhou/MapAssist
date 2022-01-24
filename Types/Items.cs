@@ -148,10 +148,10 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.ClassSkills)
                 {
-                    var classSkills = GetItemStatAddClassSkills(item, subrule.Key);
+                    var (className, classSkills) = GetItemStatAddClassSkills(item, subrule.Key);
                     if (classSkills > 0)
                     {
-                        itemSuffix += $" (+{classSkills} {subrule.Key} skills)";
+                        itemSuffix += $" (+{classSkills} {className} skills)";
                     }
                 }
             }
@@ -160,10 +160,10 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.ClassTabSkills)
                 {
-                    var classTabSkills = GetItemStatAddClassTabSkills(item, subrule.Key);
+                    var (classTabName, classTabSkills) = GetItemStatAddClassTabSkills(item, subrule.Key);
                     if (classTabSkills > 0)
                     {
-                        itemSuffix += $" (+{classTabSkills} {subrule.Key.Name()} skills)";
+                        itemSuffix += $" (+{classTabSkills} {classTabName.Name()} skills)";
                     }
                 }
             }
@@ -439,24 +439,62 @@ namespace MapAssist.Types
             return new[] { strength, dexterity, vitality, energy }.Min();
         }
 
-        public static int GetItemStatAddClassSkills(UnitItem item, Structs.PlayerClass playerClass)
+        public static (Structs.PlayerClass, int) GetItemStatAddClassSkills(UnitItem item, Structs.PlayerClass playerClass)
         {
+            if (playerClass == Structs.PlayerClass.Any)
+            {
+                var maxClassSkills = 0;
+                var maxClass = playerClass;
+                for (var classId = Structs.PlayerClass.Amazon; classId <= Structs.PlayerClass.Assassin; classId++)
+                {
+                    if (item.StatLayers.TryGetValue(Stat.AddClassSkills, out var anyItemStats) &&
+                        anyItemStats.TryGetValue((ushort)classId, out var anyClassSkills))
+                    {
+                        if (anyClassSkills > maxClassSkills)
+                        {
+                            maxClassSkills = anyClassSkills;
+                            maxClass = classId;
+                        }
+                    }
+                }
+                return (maxClass, maxClassSkills);
+            }
+
             if (item.StatLayers.TryGetValue(Stat.AddClassSkills, out var itemStats) &&
                 itemStats.TryGetValue((ushort)playerClass, out var addClassSkills))
             {
-                return addClassSkills;
+                return (playerClass, addClassSkills);
             }
-            return 0;
+            return (playerClass, 0);
         }
 
-        public static int GetItemStatAddClassTabSkills(UnitItem item, ClassTabs classTab)
+        public static (ClassTabs, int) GetItemStatAddClassTabSkills(UnitItem item, ClassTabs classTab)
         {
+            if (classTab == ClassTabs.Any)
+            {
+                var maxTabSkills = 0;
+                var maxClassTab = classTab;
+                foreach (var classTabId in Enum.GetValues(typeof(ClassTabs)).Cast<ClassTabs>().Where(x => x != ClassTabs.Any).ToList())
+                {
+                    if (item.StatLayers.TryGetValue(Stat.AddSkillTab, out var anyItemStats) &&
+                        anyItemStats.TryGetValue((ushort)classTabId, out var anyTabSkills))
+                    {
+                        if (anyTabSkills > maxTabSkills)
+                        {
+                            maxClassTab = classTabId;
+                            maxTabSkills = anyTabSkills;
+                        }
+                    }
+                }
+                return (maxClassTab, maxTabSkills);
+            }
+
             if (item.StatLayers.TryGetValue(Stat.AddSkillTab, out var itemStats) &&
                 itemStats.TryGetValue((ushort)classTab, out var addSkillTab))
             {
-                return addSkillTab;
+                return (classTab, addSkillTab);
             }
-            return 0;
+            return (classTab, 0);
         }
 
         public static (int, int, int) GetItemStatAddSkillCharges(UnitItem item, Skill skill)
