@@ -442,7 +442,9 @@ namespace MapAssist.Types
         UnHolyBoltEx,
         ShamanFireEx,
         ImpFireMissileEx,
-        FixedSiegeBeastStomp
+        FixedSiegeBeastStomp,
+
+        Any = short.MaxValue
     };
 
     public enum SkillTree

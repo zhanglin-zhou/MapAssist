@@ -86,7 +86,7 @@ namespace MapAssist.Helpers
                     ["Skills"] = () =>
                     {
                         if (rule.Skills.Count() == 0) return true;
-                        return rule.Skills.All(subrule => Items.GetItemStatAddSingleSkills(item, subrule.Key) >= subrule.Value);
+                        return rule.Skills.All(subrule => Items.GetItemStatAddSingleSkills(item, subrule.Key).Item2 >= subrule.Value);
                     },
                     ["SkillCharges"] = () =>
                     {
