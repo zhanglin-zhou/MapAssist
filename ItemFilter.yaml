@@ -1,78 +1,10 @@
 # IMPORTANT: After changing anything in this file, ensure validity using https://jsonformatter.org/yaml-validator
-
-# Item filter rules
-# "Any" can be used if you would like to see ALL uniques, all set items, all items with x sockets, etc
-# Most of the time we don't want to filter that broadly, so this is commented out with #
-# Any:
-# - Qualities: [unique, magic]
+# More details about how to configure this file can be found at https://github.com/OneXDeveloper/MapAssist/wiki/Item-Filter
 
 # The first line or "Key" is the item base type, in the next case, "Harlequin Crest" is a unique "Shako"
 # Alert to any unique Shako, regardless of any other criteria (sockets, eth)
 Shako:                              # Item Base Type
   - Qualities: unique               # Rule starts with "-" and lists one of 3 criteria
-
-# Criteria options are:
-#   Ethereal: (true/false)
-#   Sockets: [0 - 6]
-#   Qualities: [inferior, normal, superior, magic, set, rare, unique, crafted]
-#   Defense: (number)
-#   Strength: (number)
-#   Dexterity: (number)
-#   Vitality: (number)
-#   Energy: (number)
-#   Max Life: (number)
-#   Max Mana: (number)
-#   Attack Rating: (number)
-#   Min Damage: (number)
-#   Max Damage: (number)
-#   Damage Reduced: (number)
-#   Life Steal: (number)
-#   Mana Steal: (number)
-#   Cold Skill Damage: (number)
-#   Lightning Skill Damage: (number)
-#   Fire Skill Damage: (number)
-#   Poison Skill Damage: (number)
-#   Increased Attack Speed: (number)
-#   Faster Run Walk: (number)
-#   Faster Hit Recovery: (number)
-#   Faster Cast Rate: (number)
-#   Magic Find: (number)
-#   Gold Find: (number)
-#   Cold Resist: (number)
-#   Lightning Resist: (number)
-#   Fire Resist: (number)
-#   Poison Resist: (number)
-#   All Resist: (number)
-#   Skills:
-#      <Skill Name>: (number)
-#   Skill Charges:
-#      <Skill Name>: (number)
-#   Class Skill Tree:
-#      <Class Tree | 'Any'>: (number)
-#   Class Skills:
-#      <Class | 'Any'>: (number)
-#   All Skills: (number)
-#   Faster Block Rate: (number)
-#   Deadly Strike: (number)
-#   Crushing Blow: (number)
-#   Open Wounds: (number)
-#   Cannot Be Frozen: (number)
-#   Slain Monsters Rest In Peace: (number)
-#   Prevent Monster Heal: (number)
-#   Absorb Cold Percent: (number)
-#   Absorb Fire Percent: (number)
-#   Absorb Lightning Percent: (number)
-#   Max Cold Resist: (number)
-#   Max Lightning Resist: (number)
-#   Max Fire Resist: (number)
-#   Max Poison Resist: (number)
-#   Enemy Fire Resist: (negative number)
-#   Enemy Lightning Resist: (negative number)
-#   Enemy Cold Resist: (negative number)
-#   Enemy Poison Resist: (negative number)
-#   Max Life Percent: (number)
-#   Max Mana Percent: (number)
-#   Damage Taken Goes To Mana: (number)
 
 # Additional criteria can be listed below the first. Do not prefix a "-" to lines with criteria you wish to include
 # as part of the same rule. You can also list multiple values for both Qualities and Sockets as shown in the Thresher
@@ -87,44 +19,6 @@ Thresher:
     Qualities: [normal, superior]
     Sockets: [0, 4]
   - Qualities: unique # The Reaper's Toll
-
-# Possible classes of items are:
-#   Axes
-#   Wands
-#   Clubs
-#   Scepters
-#   Maces
-#   Hammers
-#   Swords
-#   Daggers
-#   Throwing Knifes
-#   Throwing Axes
-#   Javelins
-#   Spears
-#   Polearms
-#   Staves
-#   Bows
-#   Crossbows
-#   Helms
-#   Armors
-#   Shields
-#   Gloves
-#   Boots
-#   Belts
-#   Circlets
-#   Assassin Katars
-#   Sorceress Orbs
-#   Amazon Bows
-#   Amazon Spears
-#   Amazon Javelins
-#   Druid Helms
-#   Barbarian Helms
-#   Paladin Shields
-#   Necromancer Shields
-# Possible tiers of items are (note that these will not work with circlets):
-#   Normal
-#   Exceptional
-#   Elite
 
 # This will show 3/20 Javazon Gloves when a town vendor has a pair for sale
 # It will work with all exceptional and elite gloves
@@ -188,15 +82,6 @@ x-bases:
     Qualities: [normal, superior]
     All Resist: 25
     Sockets: [0, 4]
-
-# Unidentified item filter rules can use any criteria in this template:
-# <Item Class | Item Base Name>:
-#   Tiers:
-#   Qualities:
-#   Defense:
-#   Sockets:
-#   Ethereal:
-#   PlaySoundOnDrop:
 #
 # This ring rule will show all unidentified magic, rare, and unique rings that drop on the ground
 Ring:
