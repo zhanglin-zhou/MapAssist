@@ -24,7 +24,7 @@ namespace MapAssist.Files
                 .WithTypeConverter(new ItemYamlTypeConverter())
                 .WithTypeConverter(new ItemQualityYamlTypeConverter())
                 .WithTypeConverter(new ItemTierYamlTypeConverter())
-                .WithTypeConverter(new ClassTabsYamlTypeConverter())
+                .WithTypeConverter(new SkillTreeYamlTypeConverter())
                 .WithTypeConverter(new SkillsYamlTypeConverter())
                 .Build();
 

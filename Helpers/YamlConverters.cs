@@ -310,20 +310,20 @@ namespace MapAssist.Helpers
         }
     }
 
-    internal sealed class ClassTabsYamlTypeConverter : IYamlTypeConverter
+    internal sealed class SkillTreeYamlTypeConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
         {
-            return type == typeof(ClassTabs);
+            return type == typeof(SkillTree);
         }
 
         public object ReadYaml(IParser parser, Type type)
         {
             if (parser.TryConsume<Scalar>(out var scalar))
             {
-                if (Enum.TryParse(scalar.Value.Replace(" ", ""), true, out ClassTabs classTab))
+                if (Enum.TryParse(scalar.Value.Replace(" ", ""), true, out SkillTree skillTree))
                 {
-                    return classTab;
+                    return skillTree;
                 }
                 else
                 {

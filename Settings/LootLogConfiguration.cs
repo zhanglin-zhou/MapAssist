@@ -154,7 +154,7 @@ namespace MapAssist.Settings
         public Dictionary<Structs.PlayerClass, int?> ClassSkills { get; set; } = new Dictionary<Structs.PlayerClass, int?>();
 
         [YamlMember(Alias = "Class Skill Tree")]
-        public Dictionary<ClassTabs, int?> ClassTabSkills { get; set; } = new Dictionary<ClassTabs, int?>();
+        public Dictionary<SkillTree, int?> SkillTrees { get; set; } = new Dictionary<SkillTree, int?>();
 
         [YamlMember(Alias = "Skills")]
         public Dictionary<Skill, int?> Skills { get; set; } = new Dictionary<Skill, int?>();
@@ -249,7 +249,7 @@ namespace MapAssist.Settings
             if (rule.Skills.Where(subrule => subrule.Value != null).Count() > 0) return false;
             if (rule.SkillCharges.Where(subrule => subrule.Value != null).Count() > 0) return false;
             if (rule.ClassSkills.Where(subrule => subrule.Value != null).Count() > 0) return false;
-            if (rule.ClassTabSkills.Where(subrule => subrule.Value != null).Count() > 0) return false;
+            if (rule.SkillTrees.Where(subrule => subrule.Value != null).Count() > 0) return false;
 
             return true;
         }
