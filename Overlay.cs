@@ -130,7 +130,6 @@ namespace MapAssist
             catch (Exception ex)
             {
                 _log.Error(ex);
-                GameManager.ResetPlayerUnit();
             }
         }
 
