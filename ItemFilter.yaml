@@ -48,10 +48,31 @@ Shako:                              # Item Base Type
 #   Skill Charges:
 #      <Skill Name>: (number)
 #   Class Skill Tree:
-#      <Class Tree>: (number)
+#      <Class Tree | 'Any'>: (number)
 #   Class Skills:
-#      <Class>: (number)
+#      <Class | 'Any'>: (number)
 #   All Skills: (number)
+#   Faster Block Rate: (number)
+#   Deadly Strike: (number)
+#   Crushing Blow: (number)
+#   Open Wounds: (number)
+#   Cannot Be Frozen: (number)
+#   Slain Monsters Rest In Peace: (number)
+#   Prevent Monster Heal: (number)
+#   Absorb Cold Percent: (number)
+#   Absorb Fire Percent: (number)
+#   Absorb Lightning Percent: (number)
+#   Max Cold Resist: (number)
+#   Max Lightning Resist: (number)
+#   Max Fire Resist: (number)
+#   Max Poison Resist: (number)
+#   Enemy Fire Resist: (negative number)
+#   Enemy Lightning Resist: (negative number)
+#   Enemy Cold Resist: (negative number)
+#   Enemy Poison Resist: (negative number)
+#   Max Life Percent: (number)
+#   Max Mana Percent: (number)
+#   Damage Taken Goes To Mana: (number)
 
 # Additional criteria can be listed below the first. Do not prefix a "-" to lines with criteria you wish to include
 # as part of the same rule. You can also list multiple values for both Qualities and Sockets as shown in the Thresher

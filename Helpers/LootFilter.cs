@@ -33,6 +33,14 @@ namespace MapAssist.Helpers
             [Stat.MaxMana] = 8,
         };
 
+        public static List<Stat> NegativeValueStats = new List<Stat>()
+        {
+            Stat.EnemyFireResist,
+            Stat.EnemyLightningResist,
+            Stat.EnemyColdResist,
+            Stat.EnemyPoisonResist,
+        };
+
         public static (bool, ItemFilter) Filter(UnitItem item)
         {
             // Skip low quality items
@@ -68,12 +76,12 @@ namespace MapAssist.Helpers
                     ["ClassSkills"] = () =>
                     {
                         if (rule.ClassSkills.Count() == 0) return true;
-                        return rule.ClassSkills.All(subrule => Items.GetItemStatAddClassSkills(item, subrule.Key) >= subrule.Value);
+                        return rule.ClassSkills.All(subrule => Items.GetItemStatAddClassSkills(item, subrule.Key).Item2 >= subrule.Value);
                     },
                     ["ClassTabSkills"] = () =>
                     {
                         if (rule.ClassTabSkills.Count() == 0) return true;
-                        return rule.ClassTabSkills.All(subrule => Items.GetItemStatAddClassTabSkills(item, subrule.Key) >= subrule.Value);
+                        return rule.ClassTabSkills.All(subrule => Items.GetItemStatAddClassTabSkills(item, subrule.Key).Item2 >= subrule.Value);
                     },
                     ["Skills"] = () =>
                     {
@@ -98,13 +106,17 @@ namespace MapAssist.Helpers
                     if (property.PropertyType == typeof(object)) continue; // This is the item from Stat property
 
                     var propertyValue = rule.GetType().GetProperty(property.Name).GetValue(rule, null);
+                    if (propertyValue == null) continue;
+
                     if (requirementsFunctions.TryGetValue(property.Name, out var requirementFunc))
                     {
-                        requirementMet &= propertyValue == null || requirementFunc();
+                        requirementMet &= requirementFunc();
                     }
                     else if (Enum.TryParse<Stat>(property.Name, out var stat))
                     {
-                        requirementMet &= propertyValue == null || Items.GetItemStat(item, stat) >= (int)propertyValue;
+                        requirementMet &= NegativeValueStats.Contains(stat)
+                            ? (int)propertyValue < 0 && Items.GetItemStat(item, stat) <= (int)propertyValue
+                            : Items.GetItemStat(item, stat) >= (int)propertyValue;
                     }
                     if (!requirementMet) break;
                 }
