@@ -387,6 +387,7 @@ namespace MapAssist
                 btnClearLineColor.Visible = btnLineColor.BackColor.A > 0;
                 
                 lineArrowSize.Value = iconProp.ArrowHeadSize;
+                lineThicknessSize.Value = (int)iconProp.LineThickness;
                 lblLineArrowSizeValue.Text = lineArrowSize.Value.ToString();
                 lblLineThicknessSizeValue.Text = lineThicknessSize.Value.ToString();
             }
