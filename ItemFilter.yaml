@@ -20,15 +20,6 @@ Thresher:
     Sockets: [0, 4]
   - Qualities: unique # The Reaper's Toll
 
-# This will show 3/20 Javazon Gloves when a town vendor has a pair for sale
-# It will work with all exceptional and elite gloves
-Gloves:
-  - Tiers: [exceptional, elite]
-    Qualities: magic
-    Increased Attack Speed: 20
-    Class Skill Tree:
-      Amazon Javelin And Spear: 3
-
 # Listing multiple values
 # Another way to list multiple values for Qualities and Sockets is to list each desired quality or number of sockets
 # on its own line with an extra indent and a "-"
@@ -93,16 +84,14 @@ Ring:
     Max Mana: 120
   - Qualities: magic
     Faster Cast Rate: 10
-    Fire Resist: 15
-    Lightning Resist: 15
+    Sum Resist: 30
   - Qualities: magic
     Magic Find: 15
-    Fire Resist: 15
-    Lightning Resist: 15
+    Sum Resist: 30
   - Qualities: rare
     Faster Cast Rate: 10
     Max Mana: 80
-    All Resist: 10
+    Sum Resist: 40
   - Qualities: unique # SoJ or BK ring
     All Skills: 1
 
@@ -221,6 +210,13 @@ Boots:
 Gloves:
   - Tiers: [exceptional, elite]
     Qualities: rare
+  # This will show 3/20 Javazon Gloves when a town vendor has a pair for sale
+  # It will work with all exceptional and elite gloves
+  - Tiers: [exceptional, elite]
+    Qualities: magic
+    Increased Attack Speed: 20
+    Class Skill Tree:
+        Amazon Javelin And Spear: 3
 
 ### Helmets
 Bone Visage:

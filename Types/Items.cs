@@ -127,10 +127,19 @@ namespace MapAssist.Types
 
             if (rule.AllResist != null)
             {
-                var itemAllRes = GetItemStatAllResist(item);
+                var itemAllRes = GetItemStatResists(item, false);
                 if (itemAllRes > 0)
                 {
                     itemSuffix += $" ({itemAllRes} all res)";
+                }
+            }
+
+            if (rule.SumResist != null)
+            {
+                var itemSumRes = GetItemStatResists(item, true);
+                if (itemSumRes > 0)
+                {
+                    itemSuffix += $" ({itemSumRes} sum res)";
                 }
             }
 
@@ -421,13 +430,14 @@ namespace MapAssist.Types
             return item.Stats.TryGetValue(stat, out var statValue) ? statValue >> shift : 0;
         }
 
-        public static int GetItemStatAllResist(UnitItem item)
+        public static int GetItemStatResists(UnitItem item, bool sumOfEach)
         {
             item.Stats.TryGetValue(Stat.FireResist, out var fireRes);
             item.Stats.TryGetValue(Stat.LightningResist, out var lightRes);
             item.Stats.TryGetValue(Stat.ColdResist, out var coldRes);
             item.Stats.TryGetValue(Stat.PoisonResist, out var psnRes);
-            return new[] { fireRes, lightRes, coldRes, psnRes }.Min();
+            var resistances = new[] { fireRes, lightRes, coldRes, psnRes };
+            return sumOfEach ? resistances.Sum() : resistances.Min();
         }
 
         public static int GetItemStatAllAttributes(UnitItem item)
