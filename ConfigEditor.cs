@@ -83,7 +83,7 @@ namespace MapAssist
             chkShowArea.Checked = MapAssistConfiguration.Loaded.GameInfo.ShowAreaLevel;
             txtHuntIP.ReadOnly = !MapAssistConfiguration.Loaded.GameInfo.ShowGameIP;
             txtHuntIP.Text = MapAssistConfiguration.Loaded.GameInfo.HuntingIP;
-            txtD2Path.Text = MapAssistConfiguration.Loaded.D2Path;
+            txtD2Path.Text = MapAssistConfiguration.Loaded.D2LoDPath;
             chkGameInfoTextShadow.Checked = MapAssistConfiguration.Loaded.GameInfo.LabelTextShadow;
             btnClearGameInfoFont.Visible = MapAssistConfiguration.Loaded.GameInfo.LabelFont != MapAssistConfiguration.Default.GameInfo.LabelFont ||
                 MapAssistConfiguration.Loaded.GameInfo.LabelFontSize != MapAssistConfiguration.Default.GameInfo.LabelFontSize;
@@ -288,7 +288,7 @@ namespace MapAssist
 
         private void txtD2Path_TextChanged(object sender, EventArgs e)
         {
-            MapAssistConfiguration.Loaded.D2Path = txtD2Path.Text;
+            MapAssistConfiguration.Loaded.D2LoDPath = txtD2Path.Text;
         }
 
         private void chkShowOverlayFPS_CheckedChanged(object sender, EventArgs e)

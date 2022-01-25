@@ -65,7 +65,7 @@ namespace MapAssist.Settings
         public GameInfoConfiguration GameInfo { get; set; }
 
         [YamlMember(Alias = "D2Path", ApplyNamingConventions = false)]
-        public string D2Path { get; set; }
+        public string D2LoDPath { get; set; }
 
         [YamlMember(Alias = "LanguageCode", ApplyNamingConventions = false)]
         public Locale LanguageCode { get; set; }
