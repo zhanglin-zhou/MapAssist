@@ -72,7 +72,8 @@ namespace MapAssist.Helpers
                     ["Sockets"] = () => rule.Sockets.Contains(Items.GetItemStat(item, Stat.NumSockets)),
                     ["Ethereal"] = () => ((item.ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL) == rule.Ethereal,
                     ["AllAttributes"] = () => Items.GetItemStatAllAttributes(item) >= rule.AllAttributes,
-                    ["AllResist"] = () => Items.GetItemStatAllResist(item) >= rule.AllResist,
+                    ["AllResist"] = () => Items.GetItemStatResists(item, false) >= rule.AllResist,
+                    ["SumResist"] = () => Items.GetItemStatResists(item, true) >= rule.SumResist,
                     ["ClassSkills"] = () =>
                     {
                         if (rule.ClassSkills.Count() == 0) return true;

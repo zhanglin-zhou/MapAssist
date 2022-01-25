@@ -144,6 +144,9 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "Poison Resist")]
         public int? PoisonResist { get; set; }
 
+        [YamlMember(Alias = "Sum Resist")]
+        public int? SumResist { get; set; }
+
         [YamlMember(Alias = "All Resist")]
         public int? AllResist { get; set; }
 
