@@ -156,14 +156,14 @@ namespace MapAssist.Types
                 }
             }
 
-            if (rule.ClassTabSkills != null)
+            if (rule.SkillTrees != null)
             {
-                foreach (var subrule in rule.ClassTabSkills)
+                foreach (var subrule in rule.SkillTrees)
                 {
-                    var (classTabName, classTabSkills) = GetItemStatAddClassTabSkills(item, subrule.Key);
-                    if (classTabSkills > 0)
+                    var (skillTreeName, skillTrees) = GetItemStatAddSkillTreeSkills(item, subrule.Key);
+                    if (skillTrees > 0)
                     {
-                        itemSuffix += $" (+{classTabSkills} {classTabName.Name()} skills)";
+                        itemSuffix += $" (+{skillTrees} {skillTreeName.Name()} skills)";
                     }
                 }
             }
@@ -172,10 +172,10 @@ namespace MapAssist.Types
             {
                 foreach (var subrule in rule.Skills)
                 {
-                    var singleSkills = GetItemStatSingleSkills(item, subrule.Key);
+                    var (skill, singleSkills) = GetItemStatAddSingleSkills(item, subrule.Key);
                     if (singleSkills > 0)
                     {
-                        itemSuffix += $" (+{singleSkills} {subrule.Key.Name()})";
+                        itemSuffix += $" (+{singleSkills} {skill.Name()})";
                     }
                 }
             }
@@ -190,9 +190,9 @@ namespace MapAssist.Types
                         var charges = "";
                         if (currentCharges > 0 && maxCharges > 0)
                         {
-                            charges = $"{currentCharges}/{maxCharges} ";
+                            charges = $"{currentCharges}/{maxCharges}";
                         }
-                        itemSuffix += $" (+{skillLevel} {subrule.Key.Name()} {charges}charges)";
+                        itemSuffix += $" (+{skillLevel} {subrule.Key.Name()} {charges} charges)";
                     }
                 }
             }
@@ -441,10 +441,13 @@ namespace MapAssist.Types
 
         public static (Structs.PlayerClass, int) GetItemStatAddClassSkills(UnitItem item, Structs.PlayerClass playerClass)
         {
+            var allSkills = GetItemStat(item, Stat.AllSkills);
+
             if (playerClass == Structs.PlayerClass.Any)
             {
                 var maxClassSkills = 0;
                 var maxClass = playerClass;
+
                 for (var classId = Structs.PlayerClass.Amazon; classId <= Structs.PlayerClass.Assassin; classId++)
                 {
                     if (item.StatLayers.TryGetValue(Stat.AddClassSkills, out var anyItemStats) &&
@@ -457,44 +460,101 @@ namespace MapAssist.Types
                         }
                     }
                 }
-                return (maxClass, maxClassSkills);
+
+                return (maxClass, allSkills + maxClassSkills);
             }
 
             if (item.StatLayers.TryGetValue(Stat.AddClassSkills, out var itemStats) &&
                 itemStats.TryGetValue((ushort)playerClass, out var addClassSkills))
             {
-                return (playerClass, addClassSkills);
+                return (playerClass, allSkills + addClassSkills);
             }
-            return (playerClass, 0);
+
+            return (playerClass, allSkills);
         }
 
-        public static (ClassTabs, int) GetItemStatAddClassTabSkills(UnitItem item, ClassTabs classTab)
+        public static (SkillTree, int) GetItemStatAddSkillTreeSkills(UnitItem item, SkillTree skillTree)
         {
-            if (classTab == ClassTabs.Any)
+            if (skillTree == SkillTree.Any)
             {
-                var maxTabSkills = 0;
-                var maxClassTab = classTab;
-                foreach (var classTabId in Enum.GetValues(typeof(ClassTabs)).Cast<ClassTabs>().Where(x => x != ClassTabs.Any).ToList())
+                var maxSkillTreeQuantity = 0;
+                var maxSkillTree = skillTree;
+
+                foreach (var skillTreeId in Enum.GetValues(typeof(SkillTree)).Cast<SkillTree>().Where(x => x != SkillTree.Any).ToList())
                 {
                     if (item.StatLayers.TryGetValue(Stat.AddSkillTab, out var anyItemStats) &&
-                        anyItemStats.TryGetValue((ushort)classTabId, out var anyTabSkills))
+                        anyItemStats.TryGetValue((ushort)skillTreeId, out var anyTabSkills))
                     {
-                        if (anyTabSkills > maxTabSkills)
+                        anyTabSkills += GetItemStatAddClassSkills(item, skillTreeId.GetPlayerClass()).Item2; // This adds the +class skill points and +all skills points
+
+                        if (anyTabSkills > maxSkillTreeQuantity)
                         {
-                            maxClassTab = classTabId;
-                            maxTabSkills = anyTabSkills;
+                            maxSkillTree = skillTreeId;
+                            maxSkillTreeQuantity = anyTabSkills;
                         }
                     }
                 }
-                return (maxClassTab, maxTabSkills);
+
+                return (maxSkillTree, maxSkillTreeQuantity);
             }
 
+            var baseAddSkills = GetItemStatAddClassSkills(item, skillTree.GetPlayerClass()).Item2; // This adds the +class skill points and +all skills points
+
             if (item.StatLayers.TryGetValue(Stat.AddSkillTab, out var itemStats) &&
-                itemStats.TryGetValue((ushort)classTab, out var addSkillTab))
+                itemStats.TryGetValue((ushort)skillTree, out var addSkillTab))
             {
-                return (classTab, addSkillTab);
+                return (skillTree, baseAddSkills + addSkillTab);
             }
-            return (classTab, 0);
+
+            return (skillTree, baseAddSkills);
+        }
+
+        public static (Skill, int) GetItemStatAddSingleSkills(UnitItem item, Skill skill)
+        {
+            var itemSkillsStats = new List<Stat>()
+            {
+                Stat.SingleSkill,
+                Stat.NonClassSkill,
+            };
+
+            if (skill == Skill.Any)
+            {
+                var maxSkillQuantity = 0;
+                var maxSkill = skill;
+
+                foreach (var statType in itemSkillsStats)
+                {
+                    foreach (var skillId in SkillExtensions.SkillTreeToSkillDict.SelectMany(x => x.Value).ToList())
+                    {
+                        if (item.StatLayers.TryGetValue(statType, out var anyItemStats) &&
+                            anyItemStats.TryGetValue((ushort)skillId, out var anySkillLevel))
+                        {
+                            anySkillLevel += (statType == Stat.SingleSkill ? GetItemStatAddSkillTreeSkills(item, skill.GetSkillTree()).Item2 : 0); // This adds the +skill tree points, +class skill points and +all skills points
+
+                            if (anySkillLevel > maxSkillQuantity)
+                            {
+                                maxSkill = skillId;
+                                maxSkillQuantity = anySkillLevel;
+                            }
+                        }
+                    }
+                }
+
+                return (maxSkill, maxSkillQuantity);
+            }
+
+            var baseAddSkills = GetItemStatAddSkillTreeSkills(item, skill.GetSkillTree()).Item2; // This adds the +skill tree points, +class skill points and +all skills points
+
+            foreach (var statType in itemSkillsStats)
+            {
+                if (item.StatLayers.TryGetValue(statType, out var itemStats) &&
+                    itemStats.TryGetValue((ushort)skill, out var skillLevel))
+                {
+                    return (skill, (statType == Stat.SingleSkill ? baseAddSkills : 0) + skillLevel);
+                }
+            }
+
+            return (skill, baseAddSkills);
         }
 
         public static (int, int, int) GetItemStatAddSkillCharges(UnitItem item, Skill skill)
@@ -505,6 +565,7 @@ namespace MapAssist.Types
                 {
                     var skillId = stat.Key >> 6;
                     var level = stat.Key % (1 << 6);
+
                     if (skillId == (int)skill && itemStats.TryGetValue(stat.Key, out var data))
                     {
                         var maxCharges = data >> 8;
@@ -515,25 +576,6 @@ namespace MapAssist.Types
                 }
             }
             return (0, 0, 0);
-        }
-
-        public static int GetItemStatSingleSkills(UnitItem item, Skill skill)
-        {
-            var itemSkillsStats = new List<Stat>()
-            {
-                Stat.SingleSkill,
-                Stat.NonClassSkill,
-            };
-
-            foreach (var statType in itemSkillsStats)
-            {
-                if (item.StatLayers.TryGetValue(statType, out var itemStats) &&
-                    itemStats.TryGetValue((ushort)skill, out var skillLevel))
-                {
-                    return skillLevel;
-                }
-            }
-            return 0;
         }
 
         public static readonly Dictionary<ItemQuality, Color> ItemColors = new Dictionary<ItemQuality, Color>()

@@ -78,15 +78,15 @@ namespace MapAssist.Helpers
                         if (rule.ClassSkills.Count() == 0) return true;
                         return rule.ClassSkills.All(subrule => Items.GetItemStatAddClassSkills(item, subrule.Key).Item2 >= subrule.Value);
                     },
-                    ["ClassTabSkills"] = () =>
+                    ["SkillTrees"] = () =>
                     {
-                        if (rule.ClassTabSkills.Count() == 0) return true;
-                        return rule.ClassTabSkills.All(subrule => Items.GetItemStatAddClassTabSkills(item, subrule.Key).Item2 >= subrule.Value);
+                        if (rule.SkillTrees.Count() == 0) return true;
+                        return rule.SkillTrees.All(subrule => Items.GetItemStatAddSkillTreeSkills(item, subrule.Key).Item2 >= subrule.Value);
                     },
                     ["Skills"] = () =>
                     {
                         if (rule.Skills.Count() == 0) return true;
-                        return rule.Skills.All(subrule => Items.GetItemStatSingleSkills(item, subrule.Key) >= subrule.Value);
+                        return rule.Skills.All(subrule => Items.GetItemStatAddSingleSkills(item, subrule.Key).Item2 >= subrule.Value);
                     },
                     ["SkillCharges"] = () =>
                     {
