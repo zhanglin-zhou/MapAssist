@@ -528,7 +528,7 @@ namespace MapAssist.Helpers
                 foreach (var player in _gameData.Roster.List)
                 {
                     var myPlayer = player.UnitId == myPlayerEntry.UnitId;
-                    var inMyParty = player.PartyID == myPlayerEntry.PartyID;
+                    var inMyParty = player.PartyID != ushort.MaxValue && player.PartyID == myPlayerEntry.PartyID;
                     var playerName = player.Name;
 
                     var canDrawIcon = MapAssistConfiguration.Loaded.MapConfiguration.Player.CanDrawIcon();
