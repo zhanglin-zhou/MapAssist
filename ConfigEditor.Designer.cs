@@ -1484,6 +1484,7 @@
             this.cboBuffPosition.Name = "cboBuffPosition";
             this.cboBuffPosition.Size = new System.Drawing.Size(124, 21);
             this.cboBuffPosition.TabIndex = 18;
+            this.cboBuffPosition.SelectedIndexChanged += new System.EventHandler(this.cboBuffPosition_SelectedIndexChanged);
             // 
             // buffSize
             // 
@@ -1495,6 +1496,8 @@
             this.buffSize.Name = "buffSize";
             this.buffSize.Size = new System.Drawing.Size(170, 27);
             this.buffSize.TabIndex = 15;
+            this.buffSize.Scroll += new System.EventHandler(this.buffSize_Scroll);
+            this.buffSize.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
             // 
             // grpHotkeys
             // 
