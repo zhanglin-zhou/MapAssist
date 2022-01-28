@@ -77,6 +77,25 @@
             this.chkToggleViaMap = new System.Windows.Forms.CheckBox();
             this.lblIconOpacity = new System.Windows.Forms.Label();
             this.chkToggleViaPanels = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.grpPresets = new System.Windows.Forms.GroupBox();
+            this.lblMapLinesMode = new System.Windows.Forms.Label();
+            this.cboMapLinesMode = new System.Windows.Forms.ComboBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblBuffSizeValue = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lblBuffSize = new System.Windows.Forms.Label();
+            this.cboBuffPosition = new System.Windows.Forms.ComboBox();
+            this.buffSize = new System.Windows.Forms.TrackBar();
+            this.grpHotkeys = new System.Windows.Forms.GroupBox();
+            this.txtZoomOutKey = new System.Windows.Forms.TextBox();
+            this.txtZoomInKey = new System.Windows.Forms.TextBox();
+            this.txtAreaLevelKey = new System.Windows.Forms.TextBox();
+            this.txtToggleMapKey = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabDrawing = new System.Windows.Forms.TabControl();
             this.tabIcon = new System.Windows.Forms.TabPage();
@@ -131,25 +150,6 @@
             this.txtFilterFile = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.chkItemLogEnabled = new System.Windows.Forms.CheckBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.grpMapLinesMode = new System.Windows.Forms.GroupBox();
-            this.lblMapLinesMode = new System.Windows.Forms.Label();
-            this.cboMapLinesMode = new System.Windows.Forms.ComboBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.lblBuffSizeValue = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.lblBuffSize = new System.Windows.Forms.Label();
-            this.cboBuffPosition = new System.Windows.Forms.ComboBox();
-            this.buffSize = new System.Windows.Forms.TrackBar();
-            this.grpHotkeys = new System.Windows.Forms.GroupBox();
-            this.txtZoomOutKey = new System.Windows.Forms.TextBox();
-            this.txtZoomInKey = new System.Windows.Forms.TextBox();
-            this.txtAreaLevelKey = new System.Windows.Forms.TextBox();
-            this.txtToggleMapKey = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnRemoveHidden = new System.Windows.Forms.Button();
@@ -167,6 +167,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.mapSize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconOpacity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.opacity)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            this.grpPresets.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.buffSize)).BeginInit();
+            this.grpHotkeys.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabDrawing.SuspendLayout();
             this.tabIcon.SuspendLayout();
@@ -179,11 +184,6 @@
             this.tabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.soundVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).BeginInit();
-            this.tabPage3.SuspendLayout();
-            this.grpMapLinesMode.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.buffSize)).BeginInit();
-            this.grpHotkeys.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -192,9 +192,9 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage6);
-            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
@@ -457,7 +457,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(324, 325);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Display";
+            this.tabPage1.Text = "Map";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox1
@@ -753,6 +753,208 @@
             this.chkToggleViaPanels.Text = "Hide when in-game menus are open";
             this.chkToggleViaPanels.UseVisualStyleBackColor = true;
             this.chkToggleViaPanels.CheckedChanged += new System.EventHandler(this.chkToggleViaPanels_CheckedChanged);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.grpPresets);
+            this.tabPage3.Controls.Add(this.groupBox3);
+            this.tabPage3.Controls.Add(this.grpHotkeys);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(324, 325);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Overlay";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // grpPresets
+            // 
+            this.grpPresets.Controls.Add(this.lblMapLinesMode);
+            this.grpPresets.Controls.Add(this.cboMapLinesMode);
+            this.grpPresets.Location = new System.Drawing.Point(11, 255);
+            this.grpPresets.Name = "grpPresets";
+            this.grpPresets.Size = new System.Drawing.Size(300, 59);
+            this.grpPresets.TabIndex = 24;
+            this.grpPresets.TabStop = false;
+            this.grpPresets.Text = "Presets";
+            // 
+            // lblMapLinesMode
+            // 
+            this.lblMapLinesMode.AutoSize = true;
+            this.lblMapLinesMode.Location = new System.Drawing.Point(6, 25);
+            this.lblMapLinesMode.Name = "lblMapLinesMode";
+            this.lblMapLinesMode.Size = new System.Drawing.Size(86, 13);
+            this.lblMapLinesMode.TabIndex = 21;
+            this.lblMapLinesMode.Text = "Map Lines Mode";
+            this.lblMapLinesMode.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // cboMapLinesMode
+            // 
+            this.cboMapLinesMode.AllowDrop = true;
+            this.cboMapLinesMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboMapLinesMode.FormattingEnabled = true;
+            this.cboMapLinesMode.Location = new System.Drawing.Point(117, 22);
+            this.cboMapLinesMode.Name = "cboMapLinesMode";
+            this.cboMapLinesMode.Size = new System.Drawing.Size(124, 21);
+            this.cboMapLinesMode.TabIndex = 20;
+            this.cboMapLinesMode.SelectedIndexChanged += new System.EventHandler(this.cboMapLinesMode_SelectedIndexChanged);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.lblBuffSizeValue);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.lblBuffSize);
+            this.groupBox3.Controls.Add(this.cboBuffPosition);
+            this.groupBox3.Controls.Add(this.buffSize);
+            this.groupBox3.Location = new System.Drawing.Point(11, 154);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(300, 91);
+            this.groupBox3.TabIndex = 23;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Buffs";
+            // 
+            // lblBuffSizeValue
+            // 
+            this.lblBuffSizeValue.AutoSize = true;
+            this.lblBuffSizeValue.BackColor = System.Drawing.Color.Transparent;
+            this.lblBuffSizeValue.Location = new System.Drawing.Point(252, 21);
+            this.lblBuffSizeValue.Name = "lblBuffSizeValue";
+            this.lblBuffSizeValue.Size = new System.Drawing.Size(31, 13);
+            this.lblBuffSizeValue.TabIndex = 22;
+            this.lblBuffSizeValue.Text = "1000";
+            this.lblBuffSizeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(8, 60);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(44, 13);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "Position";
+            // 
+            // lblBuffSize
+            // 
+            this.lblBuffSize.AutoSize = true;
+            this.lblBuffSize.BackColor = System.Drawing.Color.Transparent;
+            this.lblBuffSize.Location = new System.Drawing.Point(7, 21);
+            this.lblBuffSize.Name = "lblBuffSize";
+            this.lblBuffSize.Size = new System.Drawing.Size(51, 13);
+            this.lblBuffSize.TabIndex = 16;
+            this.lblBuffSize.Text = "Icon Size";
+            // 
+            // cboBuffPosition
+            // 
+            this.cboBuffPosition.AllowDrop = true;
+            this.cboBuffPosition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboBuffPosition.FormattingEnabled = true;
+            this.cboBuffPosition.Location = new System.Drawing.Point(117, 57);
+            this.cboBuffPosition.Name = "cboBuffPosition";
+            this.cboBuffPosition.Size = new System.Drawing.Size(124, 21);
+            this.cboBuffPosition.TabIndex = 18;
+            this.cboBuffPosition.SelectedIndexChanged += new System.EventHandler(this.cboBuffPosition_SelectedIndexChanged);
+            // 
+            // buffSize
+            // 
+            this.buffSize.AutoSize = false;
+            this.buffSize.BackColor = System.Drawing.Color.White;
+            this.buffSize.LargeChange = 1;
+            this.buffSize.Location = new System.Drawing.Point(79, 19);
+            this.buffSize.Maximum = 20;
+            this.buffSize.Name = "buffSize";
+            this.buffSize.Size = new System.Drawing.Size(170, 27);
+            this.buffSize.TabIndex = 15;
+            this.buffSize.Scroll += new System.EventHandler(this.buffSize_Scroll);
+            this.buffSize.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
+            // 
+            // grpHotkeys
+            // 
+            this.grpHotkeys.Controls.Add(this.txtZoomOutKey);
+            this.grpHotkeys.Controls.Add(this.txtZoomInKey);
+            this.grpHotkeys.Controls.Add(this.txtAreaLevelKey);
+            this.grpHotkeys.Controls.Add(this.txtToggleMapKey);
+            this.grpHotkeys.Controls.Add(this.label15);
+            this.grpHotkeys.Controls.Add(this.label14);
+            this.grpHotkeys.Controls.Add(this.label13);
+            this.grpHotkeys.Controls.Add(this.label12);
+            this.grpHotkeys.Location = new System.Drawing.Point(11, 9);
+            this.grpHotkeys.Name = "grpHotkeys";
+            this.grpHotkeys.Size = new System.Drawing.Size(300, 135);
+            this.grpHotkeys.TabIndex = 8;
+            this.grpHotkeys.TabStop = false;
+            this.grpHotkeys.Text = "Hotkeys";
+            // 
+            // txtZoomOutKey
+            // 
+            this.txtZoomOutKey.Location = new System.Drawing.Point(143, 102);
+            this.txtZoomOutKey.MaxLength = 1;
+            this.txtZoomOutKey.Name = "txtZoomOutKey";
+            this.txtZoomOutKey.Size = new System.Drawing.Size(94, 20);
+            this.txtZoomOutKey.TabIndex = 15;
+            this.txtZoomOutKey.TextChanged += new System.EventHandler(this.txtZoomOutKey_TextChanged);
+            // 
+            // txtZoomInKey
+            // 
+            this.txtZoomInKey.Location = new System.Drawing.Point(143, 75);
+            this.txtZoomInKey.MaxLength = 1;
+            this.txtZoomInKey.Name = "txtZoomInKey";
+            this.txtZoomInKey.Size = new System.Drawing.Size(94, 20);
+            this.txtZoomInKey.TabIndex = 14;
+            this.txtZoomInKey.TextChanged += new System.EventHandler(this.txtZoomInKey_TextChanged);
+            // 
+            // txtAreaLevelKey
+            // 
+            this.txtAreaLevelKey.Location = new System.Drawing.Point(143, 48);
+            this.txtAreaLevelKey.MaxLength = 1;
+            this.txtAreaLevelKey.Name = "txtAreaLevelKey";
+            this.txtAreaLevelKey.Size = new System.Drawing.Size(94, 20);
+            this.txtAreaLevelKey.TabIndex = 13;
+            this.txtAreaLevelKey.TextChanged += new System.EventHandler(this.txtAreaLevelKey_TextChanged);
+            // 
+            // txtToggleMapKey
+            // 
+            this.txtToggleMapKey.Location = new System.Drawing.Point(143, 21);
+            this.txtToggleMapKey.MaxLength = 1;
+            this.txtToggleMapKey.Name = "txtToggleMapKey";
+            this.txtToggleMapKey.Size = new System.Drawing.Size(94, 20);
+            this.txtToggleMapKey.TabIndex = 12;
+            this.txtToggleMapKey.TextChanged += new System.EventHandler(this.txtToggleMapKey_TextChanged);
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(6, 105);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(75, 13);
+            this.label15.TabIndex = 11;
+            this.label15.Text = "Zoom Out Key";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(6, 78);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(67, 13);
+            this.label14.TabIndex = 10;
+            this.label14.Text = "Zoom In Key";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 51);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(115, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "Toggle Area Level Key";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 24);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(85, 13);
+            this.label12.TabIndex = 8;
+            this.label12.Text = "Toggle Map Key";
             // 
             // tabPage2
             // 
@@ -1404,208 +1606,6 @@
             this.chkItemLogEnabled.UseVisualStyleBackColor = true;
             this.chkItemLogEnabled.CheckedChanged += new System.EventHandler(this.chkItemLogEnabled_CheckedChanged);
             // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.grpMapLinesMode);
-            this.tabPage3.Controls.Add(this.groupBox3);
-            this.tabPage3.Controls.Add(this.grpHotkeys);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(324, 325);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Overlay";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // grpMapLinesMode
-            // 
-            this.grpMapLinesMode.Controls.Add(this.lblMapLinesMode);
-            this.grpMapLinesMode.Controls.Add(this.cboMapLinesMode);
-            this.grpMapLinesMode.Location = new System.Drawing.Point(11, 255);
-            this.grpMapLinesMode.Name = "grpMapLinesMode";
-            this.grpMapLinesMode.Size = new System.Drawing.Size(300, 59);
-            this.grpMapLinesMode.TabIndex = 24;
-            this.grpMapLinesMode.TabStop = false;
-            this.grpMapLinesMode.Text = "Map";
-            // 
-            // lblMapLinesMode
-            // 
-            this.lblMapLinesMode.AutoSize = true;
-            this.lblMapLinesMode.Location = new System.Drawing.Point(6, 25);
-            this.lblMapLinesMode.Name = "lblMapLinesMode";
-            this.lblMapLinesMode.Size = new System.Drawing.Size(62, 13);
-            this.lblMapLinesMode.TabIndex = 21;
-            this.lblMapLinesMode.Text = "Lines Mode";
-            this.lblMapLinesMode.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // cboMapLinesMode
-            // 
-            this.cboMapLinesMode.AllowDrop = true;
-            this.cboMapLinesMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboMapLinesMode.FormattingEnabled = true;
-            this.cboMapLinesMode.Location = new System.Drawing.Point(117, 22);
-            this.cboMapLinesMode.Name = "cboMapLinesMode";
-            this.cboMapLinesMode.Size = new System.Drawing.Size(124, 21);
-            this.cboMapLinesMode.TabIndex = 20;
-            this.cboMapLinesMode.SelectedIndexChanged += new System.EventHandler(this.cboMapLinesMode_SelectedIndexChanged);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.lblBuffSizeValue);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.lblBuffSize);
-            this.groupBox3.Controls.Add(this.cboBuffPosition);
-            this.groupBox3.Controls.Add(this.buffSize);
-            this.groupBox3.Location = new System.Drawing.Point(11, 154);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(300, 91);
-            this.groupBox3.TabIndex = 23;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Buffs";
-            // 
-            // lblBuffSizeValue
-            // 
-            this.lblBuffSizeValue.AutoSize = true;
-            this.lblBuffSizeValue.BackColor = System.Drawing.Color.Transparent;
-            this.lblBuffSizeValue.Location = new System.Drawing.Point(252, 21);
-            this.lblBuffSizeValue.Name = "lblBuffSizeValue";
-            this.lblBuffSizeValue.Size = new System.Drawing.Size(31, 13);
-            this.lblBuffSizeValue.TabIndex = 22;
-            this.lblBuffSizeValue.Text = "1000";
-            this.lblBuffSizeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 60);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 13);
-            this.label5.TabIndex = 19;
-            this.label5.Text = "Position";
-            // 
-            // lblBuffSize
-            // 
-            this.lblBuffSize.AutoSize = true;
-            this.lblBuffSize.BackColor = System.Drawing.Color.Transparent;
-            this.lblBuffSize.Location = new System.Drawing.Point(7, 21);
-            this.lblBuffSize.Name = "lblBuffSize";
-            this.lblBuffSize.Size = new System.Drawing.Size(51, 13);
-            this.lblBuffSize.TabIndex = 16;
-            this.lblBuffSize.Text = "Icon Size";
-            // 
-            // cboBuffPosition
-            // 
-            this.cboBuffPosition.AllowDrop = true;
-            this.cboBuffPosition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboBuffPosition.FormattingEnabled = true;
-            this.cboBuffPosition.Location = new System.Drawing.Point(117, 57);
-            this.cboBuffPosition.Name = "cboBuffPosition";
-            this.cboBuffPosition.Size = new System.Drawing.Size(124, 21);
-            this.cboBuffPosition.TabIndex = 18;
-            this.cboBuffPosition.SelectedIndexChanged += new System.EventHandler(this.cboBuffPosition_SelectedIndexChanged);
-            // 
-            // buffSize
-            // 
-            this.buffSize.AutoSize = false;
-            this.buffSize.BackColor = System.Drawing.Color.White;
-            this.buffSize.LargeChange = 1;
-            this.buffSize.Location = new System.Drawing.Point(79, 19);
-            this.buffSize.Maximum = 20;
-            this.buffSize.Name = "buffSize";
-            this.buffSize.Size = new System.Drawing.Size(170, 27);
-            this.buffSize.TabIndex = 15;
-            this.buffSize.Scroll += new System.EventHandler(this.buffSize_Scroll);
-            this.buffSize.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
-            // 
-            // grpHotkeys
-            // 
-            this.grpHotkeys.Controls.Add(this.txtZoomOutKey);
-            this.grpHotkeys.Controls.Add(this.txtZoomInKey);
-            this.grpHotkeys.Controls.Add(this.txtAreaLevelKey);
-            this.grpHotkeys.Controls.Add(this.txtToggleMapKey);
-            this.grpHotkeys.Controls.Add(this.label15);
-            this.grpHotkeys.Controls.Add(this.label14);
-            this.grpHotkeys.Controls.Add(this.label13);
-            this.grpHotkeys.Controls.Add(this.label12);
-            this.grpHotkeys.Location = new System.Drawing.Point(11, 9);
-            this.grpHotkeys.Name = "grpHotkeys";
-            this.grpHotkeys.Size = new System.Drawing.Size(300, 135);
-            this.grpHotkeys.TabIndex = 8;
-            this.grpHotkeys.TabStop = false;
-            this.grpHotkeys.Text = "Hotkeys";
-            // 
-            // txtZoomOutKey
-            // 
-            this.txtZoomOutKey.Location = new System.Drawing.Point(143, 102);
-            this.txtZoomOutKey.MaxLength = 1;
-            this.txtZoomOutKey.Name = "txtZoomOutKey";
-            this.txtZoomOutKey.Size = new System.Drawing.Size(94, 20);
-            this.txtZoomOutKey.TabIndex = 15;
-            this.txtZoomOutKey.TextChanged += new System.EventHandler(this.txtZoomOutKey_TextChanged);
-            // 
-            // txtZoomInKey
-            // 
-            this.txtZoomInKey.Location = new System.Drawing.Point(143, 75);
-            this.txtZoomInKey.MaxLength = 1;
-            this.txtZoomInKey.Name = "txtZoomInKey";
-            this.txtZoomInKey.Size = new System.Drawing.Size(94, 20);
-            this.txtZoomInKey.TabIndex = 14;
-            this.txtZoomInKey.TextChanged += new System.EventHandler(this.txtZoomInKey_TextChanged);
-            // 
-            // txtAreaLevelKey
-            // 
-            this.txtAreaLevelKey.Location = new System.Drawing.Point(143, 48);
-            this.txtAreaLevelKey.MaxLength = 1;
-            this.txtAreaLevelKey.Name = "txtAreaLevelKey";
-            this.txtAreaLevelKey.Size = new System.Drawing.Size(94, 20);
-            this.txtAreaLevelKey.TabIndex = 13;
-            this.txtAreaLevelKey.TextChanged += new System.EventHandler(this.txtAreaLevelKey_TextChanged);
-            // 
-            // txtToggleMapKey
-            // 
-            this.txtToggleMapKey.Location = new System.Drawing.Point(143, 21);
-            this.txtToggleMapKey.MaxLength = 1;
-            this.txtToggleMapKey.Name = "txtToggleMapKey";
-            this.txtToggleMapKey.Size = new System.Drawing.Size(94, 20);
-            this.txtToggleMapKey.TabIndex = 12;
-            this.txtToggleMapKey.TextChanged += new System.EventHandler(this.txtToggleMapKey_TextChanged);
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 105);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(75, 13);
-            this.label15.TabIndex = 11;
-            this.label15.Text = "Zoom Out Key";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 78);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(67, 13);
-            this.label14.TabIndex = 10;
-            this.label14.Text = "Zoom In Key";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 51);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(115, 13);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "Toggle Area Level Key";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 24);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(85, 13);
-            this.label12.TabIndex = 8;
-            this.label12.Text = "Toggle Map Key";
-            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.groupBox2);
@@ -1684,6 +1684,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.mapSize)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.iconOpacity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.opacity)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.grpPresets.ResumeLayout(false);
+            this.grpPresets.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.buffSize)).EndInit();
+            this.grpHotkeys.ResumeLayout(false);
+            this.grpHotkeys.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabDrawing.ResumeLayout(false);
@@ -1701,14 +1709,6 @@
             this.tabPage6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.soundVolume)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemDisplayForSeconds)).EndInit();
-            this.tabPage3.ResumeLayout(false);
-            this.grpMapLinesMode.ResumeLayout(false);
-            this.grpMapLinesMode.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.buffSize)).EndInit();
-            this.grpHotkeys.ResumeLayout(false);
-            this.grpHotkeys.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -1826,7 +1826,7 @@
         private System.Windows.Forms.CheckBox chkToggleViaMap;
         private System.Windows.Forms.Label lblIconOpacity;
         private System.Windows.Forms.CheckBox chkToggleViaPanels;
-        private System.Windows.Forms.GroupBox grpMapLinesMode;
+        private System.Windows.Forms.GroupBox grpPresets;
         private System.Windows.Forms.Label lblMapLinesMode;
         private System.Windows.Forms.ComboBox cboMapLinesMode;
         private System.Windows.Forms.GroupBox groupBox3;
