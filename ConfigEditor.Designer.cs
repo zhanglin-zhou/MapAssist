@@ -241,9 +241,9 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(7, 25);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(58, 13);
+            this.label11.Size = new System.Drawing.Size(55, 13);
             this.label11.TabIndex = 13;
-            this.label11.Text = "Language:";
+            this.label11.Text = "Language";
             // 
             // groupBox4
             // 
@@ -578,9 +578,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(123, 161);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.Size = new System.Drawing.Size(44, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "Position:";
+            this.label2.Text = "Position";
             // 
             // cboPosition
             // 
