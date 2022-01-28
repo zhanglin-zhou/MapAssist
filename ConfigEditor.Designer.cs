@@ -549,6 +549,7 @@
             this.btnBorderColor.TabIndex = 23;
             this.btnBorderColor.Text = "Border Color";
             this.btnBorderColor.UseVisualStyleBackColor = true;
+            this.btnBorderColor.Click += new System.EventHandler(this.btnBorderColor_Click);
             // 
             // btnWalkableColor
             // 
@@ -730,6 +731,7 @@
             this.chkToggleViaMap.TabIndex = 8;
             this.chkToggleViaMap.Text = "Show/Hide using in-game Map";
             this.chkToggleViaMap.UseVisualStyleBackColor = true;
+            this.chkToggleViaMap.CheckedChanged += new System.EventHandler(this.chkToggleViaMap_CheckedChanged);
             // 
             // lblIconOpacity
             // 
