@@ -490,7 +490,7 @@
             this.groupBox1.Size = new System.Drawing.Size(300, 310);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Map Rendering";
+            this.groupBox1.Text = "Rendering";
             // 
             // chkMonsterHealthBar
             // 
