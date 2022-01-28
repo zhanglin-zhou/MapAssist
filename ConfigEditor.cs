@@ -801,10 +801,5 @@ namespace MapAssist
 
             return brightness > 128 ? Color.Black : Color.White;
         }
-
-        private void IgnoreMouseWheel(object sender, MouseEventArgs e)
-        {
-
-        }
     }
 }
