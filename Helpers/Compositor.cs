@@ -1219,8 +1219,8 @@ namespace MapAssist.Helpers
         {
             switch (monster.MonsterType)
             {
-                case MonsterTypeFlags.Champion:    return MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster;
                 case MonsterTypeFlags.SuperUnique: return MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
+                case MonsterTypeFlags.Champion:    return MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster;
                 case MonsterTypeFlags.Minion:      return MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster;
                 case MonsterTypeFlags.Unique:      return MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
             }
