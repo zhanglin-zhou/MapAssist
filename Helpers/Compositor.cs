@@ -222,7 +222,7 @@ namespace MapAssist.Helpers
                     continue;
                 }
 
-                if (poi.RenderingSettings.CanDrawLine())
+                if (poi.RenderingSettings.CanDrawLine() && !_areaData.Area.IsTown())
                 {
                     var fontSize = gfx.ScaleFontSize((float)poi.RenderingSettings.LabelFontSize);
                     var padding = poi.RenderingSettings.CanDrawLabel() ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
@@ -578,7 +578,7 @@ namespace MapAssist.Helpers
                                 drawPlayerIcons.Add((rendering, playerUnit.Position));
                             }
 
-                            if (rendering.CanDrawLine() && playerUnit.IsHostile)
+                            if (rendering.CanDrawLine() && playerUnit.IsHostile && !_areaData.Area.IsTown())
                             {
                                 var fontSize = gfx.ScaleFontSize((float)MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize);
                                 var padding = rendering.CanDrawLabel() ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
