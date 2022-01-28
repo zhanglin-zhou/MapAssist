@@ -222,7 +222,7 @@ namespace MapAssist.Helpers
                     continue;
                 }
 
-                if (poi.RenderingSettings.CanDrawLine() && !_areaData.Area.IsTown())
+                if (CanDrawMapLines(MapLinesMode.PVE) && poi.RenderingSettings.CanDrawLine() && !_areaData.Area.IsTown())
                 {
                     var fontSize = gfx.ScaleFontSize((float)poi.RenderingSettings.LabelFontSize);
                     var padding = poi.RenderingSettings.CanDrawLabel() ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
@@ -578,7 +578,7 @@ namespace MapAssist.Helpers
                                 drawPlayerIcons.Add((rendering, playerUnit.Position));
                             }
 
-                            if (rendering.CanDrawLine() && playerUnit.IsHostile && !_areaData.Area.IsTown())
+                            if (CanDrawMapLines(MapLinesMode.PVP) && rendering.CanDrawLine() && playerUnit.IsHostile && !playerUnit.Area.IsTown())
                             {
                                 var fontSize = gfx.ScaleFontSize((float)MapAssistConfiguration.Loaded.MapConfiguration.HostilePlayer.LabelFontSize);
                                 var padding = rendering.CanDrawLabel() ? fontSize * 1.3f / 2 : 0; // 1.3f is the line height adjustment
@@ -1148,6 +1148,16 @@ namespace MapAssist.Helpers
         }
 
         // Utility Functions
+        private bool CanDrawMapLines(MapLinesMode mode)
+        {
+            if (_areaData.Area.IsTown()) return false;
+
+            var configMode = MapAssistConfiguration.Loaded.RenderingConfiguration.LinesMode;
+            if (configMode == MapLinesMode.All) return true;
+
+            return (configMode == mode);
+        }
+
         private Point[] GetIconShape(IconRendering render,
             bool equalScaling = false)
         {
