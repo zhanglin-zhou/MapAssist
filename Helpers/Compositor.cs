@@ -1153,9 +1153,7 @@ namespace MapAssist.Helpers
             if (_areaData.Area.IsTown()) return false;
 
             var configMode = MapAssistConfiguration.Loaded.RenderingConfiguration.LinesMode;
-            if (configMode == MapLinesMode.All) return true;
-
-            return (configMode == mode);
+            return configMode == MapLinesMode.All || configMode == mode;
         }
 
         private Point[] GetIconShape(IconRendering render,
