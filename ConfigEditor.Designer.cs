@@ -501,6 +501,7 @@
             this.chkMonsterHealthBar.TabIndex = 26;
             this.chkMonsterHealthBar.Text = "Show monster health bar";
             this.chkMonsterHealthBar.UseVisualStyleBackColor = true;
+            this.chkMonsterHealthBar.CheckedChanged += new System.EventHandler(this.chkMonsterHealthBar_CheckedChanged);
             // 
             // btnClearBorderColor
             // 
@@ -513,6 +514,7 @@
             this.btnClearBorderColor.TabIndex = 23;
             this.btnClearBorderColor.Text = "X";
             this.btnClearBorderColor.UseVisualStyleBackColor = true;
+            this.btnClearBorderColor.Click += new System.EventHandler(this.btnClearBorderColor_Click);
             // 
             // btnClearWalkableColor
             // 
@@ -525,6 +527,7 @@
             this.btnClearWalkableColor.TabIndex = 22;
             this.btnClearWalkableColor.Text = "X";
             this.btnClearWalkableColor.UseVisualStyleBackColor = true;
+            this.btnClearWalkableColor.Click += new System.EventHandler(this.btnClearWalkableColor_Click);
             // 
             // chkStickToLastGameWindow
             // 
@@ -535,6 +538,7 @@
             this.chkStickToLastGameWindow.TabIndex = 25;
             this.chkStickToLastGameWindow.Text = "Keep overlay active on last game window";
             this.chkStickToLastGameWindow.UseVisualStyleBackColor = true;
+            this.chkStickToLastGameWindow.CheckedChanged += new System.EventHandler(this.chkStickToLastGameWindow_CheckedChanged);
             // 
             // btnBorderColor
             // 
@@ -555,6 +559,7 @@
             this.btnWalkableColor.TabIndex = 22;
             this.btnWalkableColor.Text = "Walkable Color";
             this.btnWalkableColor.UseVisualStyleBackColor = true;
+            this.btnWalkableColor.Click += new System.EventHandler(this.btnWalkableColor_Click);
             // 
             // chkOverlayMode
             // 
@@ -565,6 +570,7 @@
             this.chkOverlayMode.TabIndex = 5;
             this.chkOverlayMode.Text = "Overlay Mode";
             this.chkOverlayMode.UseVisualStyleBackColor = true;
+            this.chkOverlayMode.CheckedChanged += new System.EventHandler(this.chkOverlayMode_CheckedChanged);
             // 
             // label2
             // 
@@ -584,6 +590,7 @@
             this.cboPosition.Name = "cboPosition";
             this.cboPosition.Size = new System.Drawing.Size(107, 21);
             this.cboPosition.TabIndex = 6;
+            this.cboPosition.SelectedIndexChanged += new System.EventHandler(this.cboPosition_SelectedIndexChanged);
             // 
             // mapZoom
             // 
@@ -597,6 +604,8 @@
             this.mapZoom.Size = new System.Drawing.Size(170, 27);
             this.mapZoom.TabIndex = 13;
             this.mapZoom.Value = 1;
+            this.mapZoom.Scroll += new System.EventHandler(this.mapZoom_Scroll);
+            this.mapZoom.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
             // 
             // mapSize
             // 
@@ -609,6 +618,8 @@
             this.mapSize.Size = new System.Drawing.Size(170, 27);
             this.mapSize.SmallChange = 25;
             this.mapSize.TabIndex = 10;
+            this.mapSize.Scroll += new System.EventHandler(this.mapSize_Scroll);
+            this.mapSize.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
             // 
             // lblMapZoomValue
             // 
@@ -652,6 +663,8 @@
             this.iconOpacity.Name = "iconOpacity";
             this.iconOpacity.Size = new System.Drawing.Size(170, 27);
             this.iconOpacity.TabIndex = 3;
+            this.iconOpacity.Scroll += new System.EventHandler(this.iconOpacity_Scroll);
+            this.iconOpacity.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
             // 
             // lblMapSize
             // 
@@ -695,6 +708,8 @@
             this.opacity.Name = "opacity";
             this.opacity.Size = new System.Drawing.Size(170, 27);
             this.opacity.TabIndex = 1;
+            this.opacity.Scroll += new System.EventHandler(this.opacity_Scroll);
+            this.opacity.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.IgnoreMouseWheel);
             // 
             // lblOpacity
             // 
@@ -735,6 +750,7 @@
             this.chkToggleViaPanels.TabIndex = 9;
             this.chkToggleViaPanels.Text = "Hide when in-game menus are open";
             this.chkToggleViaPanels.UseVisualStyleBackColor = true;
+            this.chkToggleViaPanels.CheckedChanged += new System.EventHandler(this.chkToggleViaPanels_CheckedChanged);
             // 
             // tabPage2
             // 
@@ -1523,6 +1539,7 @@
             this.txtZoomOutKey.Name = "txtZoomOutKey";
             this.txtZoomOutKey.Size = new System.Drawing.Size(94, 20);
             this.txtZoomOutKey.TabIndex = 15;
+            this.txtZoomOutKey.TextChanged += new System.EventHandler(this.txtZoomOutKey_TextChanged);
             // 
             // txtZoomInKey
             // 
@@ -1531,6 +1548,7 @@
             this.txtZoomInKey.Name = "txtZoomInKey";
             this.txtZoomInKey.Size = new System.Drawing.Size(94, 20);
             this.txtZoomInKey.TabIndex = 14;
+            this.txtZoomInKey.TextChanged += new System.EventHandler(this.txtZoomInKey_TextChanged);
             // 
             // txtAreaLevelKey
             // 
@@ -1539,6 +1557,7 @@
             this.txtAreaLevelKey.Name = "txtAreaLevelKey";
             this.txtAreaLevelKey.Size = new System.Drawing.Size(94, 20);
             this.txtAreaLevelKey.TabIndex = 13;
+            this.txtAreaLevelKey.TextChanged += new System.EventHandler(this.txtAreaLevelKey_TextChanged);
             // 
             // txtToggleMapKey
             // 
@@ -1547,6 +1566,7 @@
             this.txtToggleMapKey.Name = "txtToggleMapKey";
             this.txtToggleMapKey.Size = new System.Drawing.Size(94, 20);
             this.txtToggleMapKey.TabIndex = 12;
+            this.txtToggleMapKey.TextChanged += new System.EventHandler(this.txtToggleMapKey_TextChanged);
             // 
             // label15
             // 
