@@ -83,8 +83,8 @@ namespace MapAssist.Types
             get
             {
                 var monsterTypes = new List<MonsterTypeFlags>() {
-                    MonsterTypeFlags.Champion,
                     MonsterTypeFlags.SuperUnique,
+                    MonsterTypeFlags.Champion,
                     MonsterTypeFlags.Minion,
                     MonsterTypeFlags.Unique
                 };
