@@ -78,6 +78,29 @@ namespace MapAssist.Types
             }
         }
 
+        public MonsterTypeFlags MonsterType
+        {
+            get
+            {
+                var monsterTypes = new List<MonsterTypeFlags>() {
+                    MonsterTypeFlags.Champion,
+                    MonsterTypeFlags.SuperUnique,
+                    MonsterTypeFlags.Minion,
+                    MonsterTypeFlags.Unique
+                };
+
+                foreach (var type in monsterTypes)
+                {
+                    if ((MonsterData.MonsterType & type) == type)
+                    {
+                        return type;
+                    }
+                }
+
+                return MonsterTypeFlags.Other;
+            }
+        }
+
         public override string HashString => Npc + "/" + Position.X + "/" + Position.Y;
     }
 }

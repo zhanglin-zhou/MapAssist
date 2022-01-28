@@ -341,7 +341,7 @@ namespace MapAssist.Helpers
 
             foreach (var monster in _gameData.Monsters)
             {
-                var mobRender = GetMonsterIconRendering(monster.MonsterData);
+                var mobRender = GetMonsterIconRendering(monster);
 
                 if (NpcExtensions.IsTownsfolk(monster.Npc))
                 {
@@ -1215,28 +1215,15 @@ namespace MapAssist.Helpers
             };
         }
 
-        private IconRendering GetMonsterIconRendering(MonsterData monsterData)
+        private IconRendering GetMonsterIconRendering(UnitMonster monster)
         {
-            if ((monsterData.MonsterType & MonsterTypeFlags.Champion) == MonsterTypeFlags.Champion)
+            switch (monster.MonsterType)
             {
-                return MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster;
+                case MonsterTypeFlags.Champion:    return MapAssistConfiguration.Loaded.MapConfiguration.ChampionMonster;
+                case MonsterTypeFlags.SuperUnique: return MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
+                case MonsterTypeFlags.Minion:      return MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster;
+                case MonsterTypeFlags.Unique:      return MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
             }
-
-            if ((monsterData.MonsterType & MonsterTypeFlags.SuperUnique) == MonsterTypeFlags.SuperUnique)
-            {
-                return MapAssistConfiguration.Loaded.MapConfiguration.SuperUniqueMonster;
-            }
-
-            if ((monsterData.MonsterType & MonsterTypeFlags.Minion) == MonsterTypeFlags.Minion)
-            {
-                return MapAssistConfiguration.Loaded.MapConfiguration.MinionMonster;
-            }
-
-            if ((monsterData.MonsterType & MonsterTypeFlags.Unique) == MonsterTypeFlags.Unique)
-            {
-                return MapAssistConfiguration.Loaded.MapConfiguration.UniqueMonster;
-            }
-
             return MapAssistConfiguration.Loaded.MapConfiguration.NormalMonster;
         }
 
