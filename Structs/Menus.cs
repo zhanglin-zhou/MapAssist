@@ -17,12 +17,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  **/
 
+using MapAssist.Types;
 using System;
 using System.Runtime.InteropServices;
 
 namespace MapAssist.Structs
 {
-    [StructLayout(LayoutKind.Explicit), ]
+    [StructLayout(LayoutKind.Explicit)]
     public struct MenuData
     {
         [MarshalAs(UnmanagedType.U1)]
@@ -59,8 +60,21 @@ namespace MapAssist.Structs
         [FieldOffset(0x18)] public bool Stash;
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x19)] public bool Cube;
-        //missing 4
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x1A)] public bool PotionBelt;
+        //missing 3
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x1E)] public bool MercenaryInventory;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct HoverData
+    {
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x00)] public bool IsHovered;
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x01)] public bool IsItemTooltip;
+        [FieldOffset(0x04)] public UnitType UnitType;
+        [FieldOffset(0x08)] public uint UnitId;
     }
 }
