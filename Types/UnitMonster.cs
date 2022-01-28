@@ -89,11 +89,11 @@ namespace MapAssist.Types
                     MonsterTypeFlags.Unique
                 };
 
-                foreach (var type in monsterTypes)
+                foreach (var monType in monsterTypes)
                 {
-                    if ((MonsterData.MonsterType & type) == type)
+                    if ((MonsterData.MonsterType & monType) == monType)
                     {
-                        return type;
+                        return monType;
                     }
                 }
 
