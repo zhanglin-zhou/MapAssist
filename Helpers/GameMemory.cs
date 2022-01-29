@@ -79,6 +79,11 @@ namespace MapAssist.Helpers
 
                 if (playerUnit == null)
                 {
+                    if (_lastMapSeeds.ContainsKey(_currentProcessId))
+                    {
+                        _lastMapSeeds[_currentProcessId] = 0;
+                    }
+
                     if (_errorThrown) return null;
 
                     _errorThrown = true;
@@ -220,7 +225,7 @@ namespace MapAssist.Helpers
                     if (item.UnitId == uint.MaxValue) continue;
 
                     item.IsPlayerOwned = _playerCubeOwnerID[_currentProcessId] != uint.MaxValue &&
-                        item.ItemData.dwOwnerID == _playerCubeOwnerID[_currentProcessId];
+                        item.ItemData.dwOwnerID == _playerCubeOwnerID[_currentProcessId] && !item.IsInSocket;
 
                     if (item.IsInStore)
                     {
