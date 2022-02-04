@@ -22,7 +22,7 @@ namespace MapAssist.Helpers
 
                 template = template.Replace("{{player-name}}", player.Name);
 
-                var items = itemAry.Select(item => item.Update()).ToList();
+                var items = itemAry.Select(item => { item.IsCached = false; return item.Update(); }).ToList();
 
                 var equippedItems = items.Where(x => x.ItemData.dwOwnerID == player.UnitId && x.ItemData.InvPage == InvPage.NULL && x.ItemData.BodyLoc != BodyLoc.NONE);
 

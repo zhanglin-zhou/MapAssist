@@ -70,7 +70,8 @@ namespace MapAssist.Types
                 {
                     Color = item.ItemBaseColor,
                     ItemHashString = item.HashString,
-                    UnitItem = item
+                    UnitItem = item,
+                    Rule = rule
                 });
             }
         }
@@ -217,6 +218,7 @@ namespace MapAssist.Types
             foreach (var (stat, shift) in Stats.StatShifts.Select(x => (x.Key, x.Value)))
             {
                 var property = rule.GetType().GetProperty(stat.ToString());
+                if (property == null) continue;
                 var propertyValue = property.GetValue(rule, null);
                 if (propertyValue == null) continue;
 
@@ -1810,7 +1812,6 @@ namespace MapAssist.Types
         public DateTime LogDate { get; private set; } = DateTime.Now;
         public bool ItemLogExpired => DateTime.Now.Subtract(LogDate).TotalSeconds > MapAssistConfiguration.Loaded.ItemLog.DisplayForSeconds;
         public string ItemHashString { get; set; }
-        public string ShowOnMap { get; set; }
         public UnitItem UnitItem { get; set; }
         public ItemFilter Rule { get; set; }
     }

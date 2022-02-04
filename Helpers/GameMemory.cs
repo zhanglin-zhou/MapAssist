@@ -199,12 +199,10 @@ namespace MapAssist.Helpers
                 var objectList = rawObjectUnits.Where(x => x != null && x.UnitType == UnitType.Object && x.UnitId < uint.MaxValue).ToArray();
 
                 // Items
-                var allItemsUnupdated = new List<UnitItem>();
+                var allItems = GetUnits<UnitItem>(UnitType.Item, true).Where(x => x.UnitId < uint.MaxValue).ToArray();
                 var rawItemUnits = new List<UnitItem>();
-                foreach (var item in GetUnits<UnitItem>(UnitType.Item, true).Where(x => x.UnitId < uint.MaxValue).ToArray())
+                foreach (var item in allItems)
                 {
-                    allItemsUnupdated.Add(item);
-
                     if (Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId)) continue;
 
                     if (_playerMapChanged[_currentProcessId] && item.IsAnyPlayerHolding && item.Item != Item.HoradricCube && !Items.ItemUnitIdsToSkip[_currentProcessId].Contains(item.UnitId))
@@ -231,8 +229,7 @@ namespace MapAssist.Helpers
 
                     if (item.UnitId == uint.MaxValue) continue;
 
-                    item.IsPlayerOwned = _playerCubeOwnerID[_currentProcessId] != uint.MaxValue &&
-                        item.ItemData.dwOwnerID == _playerCubeOwnerID[_currentProcessId];
+                    item.IsPlayerOwned = _playerCubeOwnerID[_currentProcessId] != uint.MaxValue && item.ItemData.dwOwnerID == _playerCubeOwnerID[_currentProcessId];
 
                     if (item.IsInStore)
                     {
@@ -247,7 +244,9 @@ namespace MapAssist.Helpers
                         }
                     }
 
-                    if (item.IsValidItem && ((item.IsDropped && !item.IsIdentified) || (item.IsIdentified && item.IsInStore) || enableInventoryFilterCheck))
+                    var isOnGround = !item.IsIdentified && item.IsDropped;
+                    var isInStore = item.IsIdentified && item.IsInStore;
+                    if (item.IsValidItem && (isOnGround || isInStore || enableInventoryFilterCheck))
                     {
                         Items.LogItem(item, _currentProcessId);
                     }
@@ -278,7 +277,7 @@ namespace MapAssist.Helpers
                 // Set Cube Owner
                 if (_playerMapChanged[_currentProcessId])
                 {
-                    var cube = rawItemUnits.FirstOrDefault(x => x.Item == Item.HoradricCube);
+                    var cube = allItems.FirstOrDefault(x => x.Item == Item.HoradricCube);
                     if (cube != null)
                     {
                         _playerCubeOwnerID[_currentProcessId] = cube.ItemData.dwOwnerID;
@@ -318,7 +317,7 @@ namespace MapAssist.Helpers
                     Mercs = mercList,
                     Objects = objectList,
                     Items = itemList,
-                    AllItems = allItemsUnupdated.ToArray(),
+                    AllItems = allItems,
                     ItemLog = Items.ItemLog[_currentProcessId].ToArray(),
                     Session = session,
                     Roster = rosterData,
