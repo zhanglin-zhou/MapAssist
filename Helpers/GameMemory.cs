@@ -378,7 +378,6 @@ namespace MapAssist.Helpers
                     MainWindowHandle = GameManager.MainWindowHandle,
                     PlayerName = playerUnit.Name,
                     PlayerUnit = playerUnit,
-                    StashTabOrder = stashTabOrder,
                     Players = playerList,
                     Corpses = corpseList,
                     Monsters = monsterList,
