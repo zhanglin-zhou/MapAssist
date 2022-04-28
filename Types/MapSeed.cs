@@ -44,7 +44,9 @@ namespace MapAssist.Types
                 {
                     var pMapSeedData = processContext.Read<IntPtr>(_pMapSeed);
                     var mapSeedData = processContext.Read<Structs.MapSeed>(pMapSeedData);
-                    Seed = mapSeedData.mapSeed;
+
+                    Seed = mapSeedData.mapSeed2;
+                    if (Seed == 0) Seed = mapSeedData.mapSeed1;
                 }
                 catch (Exception) { }
             }

@@ -25,6 +25,7 @@ namespace MapAssist.Structs
     [StructLayout(LayoutKind.Explicit)]
     public struct MapSeed
     {
-        [FieldOffset(0x10C0)] public uint mapSeed;
+        [FieldOffset(0x840)] public uint mapSeed1;
+        [FieldOffset(0x10C0)] public uint mapSeed2;
     }
 }
