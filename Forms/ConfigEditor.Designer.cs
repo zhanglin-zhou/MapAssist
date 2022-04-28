@@ -171,6 +171,7 @@
             this.btnAddHidden = new System.Windows.Forms.Button();
             this.lstHidden = new System.Windows.Forms.ListBox();
             this.groupBoxAuthorizedWindowTitle = new System.Windows.Forms.GroupBox();
+            this.txtAuthorizedWindowTitle = new System.Windows.Forms.TextBox();
             this.btnRemoveAuthorizedWindowTitle = new System.Windows.Forms.Button();
             this.btnAddAuthorizedWindowTitle = new System.Windows.Forms.Button();
             this.lstAuthorizedWindowTitle = new System.Windows.Forms.ListBox();
@@ -178,7 +179,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.chkDPIAware = new System.Windows.Forms.CheckBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.txtAuthorizedWindowTitle = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -1815,6 +1817,8 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.label4);
+            this.tabPage4.Controls.Add(this.comboBox1);
             this.tabPage4.Controls.Add(this.groupBox2);
             this.tabPage4.Controls.Add(this.groupBoxAuthorizedWindowTitle);
             this.tabPage4.Controls.Add(this.groupBox8);
@@ -1832,7 +1836,7 @@
             this.groupBox2.Controls.Add(this.lstHidden);
             this.groupBox2.Location = new System.Drawing.Point(11, 9);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(335, 100);
+            this.groupBox2.Size = new System.Drawing.Size(335, 88);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Hidden Areas";
@@ -1862,7 +1866,7 @@
             this.lstHidden.FormattingEnabled = true;
             this.lstHidden.Location = new System.Drawing.Point(10, 19);
             this.lstHidden.Name = "lstHidden";
-            this.lstHidden.Size = new System.Drawing.Size(293, 69);
+            this.lstHidden.Size = new System.Drawing.Size(293, 56);
             this.lstHidden.TabIndex = 0;
             // 
             // groupBoxAuthorizedWindowTitle
@@ -1871,12 +1875,19 @@
             this.groupBoxAuthorizedWindowTitle.Controls.Add(this.btnRemoveAuthorizedWindowTitle);
             this.groupBoxAuthorizedWindowTitle.Controls.Add(this.btnAddAuthorizedWindowTitle);
             this.groupBoxAuthorizedWindowTitle.Controls.Add(this.lstAuthorizedWindowTitle);
-            this.groupBoxAuthorizedWindowTitle.Location = new System.Drawing.Point(11, 115);
+            this.groupBoxAuthorizedWindowTitle.Location = new System.Drawing.Point(11, 103);
             this.groupBoxAuthorizedWindowTitle.Name = "groupBoxAuthorizedWindowTitle";
             this.groupBoxAuthorizedWindowTitle.Size = new System.Drawing.Size(335, 124);
             this.groupBoxAuthorizedWindowTitle.TabIndex = 2;
             this.groupBoxAuthorizedWindowTitle.TabStop = false;
             this.groupBoxAuthorizedWindowTitle.Text = "Authorized Window Titles";
+            // 
+            // txtAuthorizedWindowTitle
+            // 
+            this.txtAuthorizedWindowTitle.Location = new System.Drawing.Point(10, 94);
+            this.txtAuthorizedWindowTitle.Name = "txtAuthorizedWindowTitle";
+            this.txtAuthorizedWindowTitle.Size = new System.Drawing.Size(293, 20);
+            this.txtAuthorizedWindowTitle.TabIndex = 3;
             // 
             // btnRemoveAuthorizedWindowTitle
             // 
@@ -1911,7 +1922,7 @@
             this.groupBox8.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.groupBox8.Controls.Add(this.label3);
             this.groupBox8.Controls.Add(this.chkDPIAware);
-            this.groupBox8.Location = new System.Drawing.Point(11, 245);
+            this.groupBox8.Location = new System.Drawing.Point(11, 233);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(335, 58);
             this.groupBox8.TabIndex = 29;
@@ -1940,12 +1951,33 @@
             this.chkDPIAware.UseVisualStyleBackColor = true;
             this.chkDPIAware.CheckedChanged += new System.EventHandler(this.chkDPIAware_CheckedChanged);
             // 
-            // txtAuthorizedWindowTitle
+            // comboBox1
             // 
-            this.txtAuthorizedWindowTitle.Location = new System.Drawing.Point(10, 94);
-            this.txtAuthorizedWindowTitle.Name = "txtAuthorizedWindowTitle";
-            this.txtAuthorizedWindowTitle.Size = new System.Drawing.Size(293, 20);
-            this.txtAuthorizedWindowTitle.TabIndex = 3;
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "Default",
+            "110",
+            "124",
+            "830",
+            "870",
+            "990",
+            "BE0",
+            "F60"});
+            this.comboBox1.Location = new System.Drawing.Point(83, 297);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(108, 21);
+            this.comboBox1.TabIndex = 30;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 300);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(69, 13);
+            this.label4.TabIndex = 31;
+            this.label4.Text = "Offset Check";
             // 
             // ConfigEditor
             // 
@@ -2005,6 +2037,7 @@
             this.grpHotkeys.ResumeLayout(false);
             this.grpHotkeys.PerformLayout();
             this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBoxAuthorizedWindowTitle.ResumeLayout(false);
             this.groupBoxAuthorizedWindowTitle.PerformLayout();
@@ -2166,5 +2199,7 @@
         private System.Windows.Forms.CheckBox chkDPIAware;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtAuthorizedWindowTitle;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

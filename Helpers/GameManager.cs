@@ -53,6 +53,8 @@ namespace MapAssist.Helpers
         private static IntPtr _InteractedNpcOffset;
         private static IntPtr _LastHoverDataOffset;
 
+        public static string OffsetCheck = "Default";
+
         private static WindowsExternal.WinEventDelegate _eventDelegate = null;
 
         public static void MonitorForegroundWindow()
@@ -91,7 +93,7 @@ namespace MapAssist.Helpers
             try // The process can end before this block is done, hence wrap it in a try catch
             {
                 process = Process.GetProcessById(_foregroundProcessId); // If closing another non-foreground window, Process.GetProcessById can fail
-                
+
                 // Skip process by window title
                 if (MapAssistConfiguration.Loaded.AuthorizedWindowTitles.Length != 0 && !MapAssistConfiguration.Loaded.AuthorizedWindowTitles.Any(process.MainWindowTitle.Contains))
                 {

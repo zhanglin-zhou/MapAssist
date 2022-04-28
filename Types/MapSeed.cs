@@ -45,8 +45,51 @@ namespace MapAssist.Types
                     var pMapSeedData = processContext.Read<IntPtr>(_pMapSeed);
                     var mapSeedData = processContext.Read<Structs.MapSeed>(pMapSeedData);
 
-                    Seed = mapSeedData.mapSeed2;
-                    if (Seed == 0) Seed = mapSeedData.mapSeed1;
+                    uint check = 0;
+
+                    switch (GameManager.OffsetCheck)
+                    {
+                        case "Default":
+                            Seed = mapSeedData.mapSeed2;
+                            if (Seed == 0) Seed = mapSeedData.mapSeed1;
+
+                            break;
+
+                        case "110":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed1 : mapSeedData.mapSeed2;
+                            break;
+
+                        case "124":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed2 : mapSeedData.mapSeed1;
+                            break;
+
+                        case "830":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed1 : mapSeedData.mapSeed2;
+                            break;
+
+                        case "870":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed1 : mapSeedData.mapSeed2;
+                            break;
+
+                        case "990":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed2 : mapSeedData.mapSeed1;
+                            break;
+
+                        case "BE0":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed2 : mapSeedData.mapSeed1;
+                            break;
+
+                        case "F60":
+                            check = processContext.Read<uint>(IntPtr.Add(pMapSeedData, Convert.ToInt32(GameManager.OffsetCheck, 16)));
+                            Seed = check > 0 ? mapSeedData.mapSeed2 : mapSeedData.mapSeed1;
+                            break;
+                    }
                 }
                 catch (Exception) { }
             }
