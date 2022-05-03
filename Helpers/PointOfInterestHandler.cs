@@ -122,7 +122,6 @@ namespace MapAssist.Helpers
 
         private static readonly HashSet<GameObject> Doors = new HashSet<GameObject>
         {
-            GameObject.DoorCathedralDouble,
             GameObject.DoorCathedralLeft,
             GameObject.DoorCathedralRight,
             GameObject.DoorCourtyardLeft,
@@ -145,12 +144,9 @@ namespace MapAssist.Helpers
             GameObject.WoodenDoorRight,
             GameObject.WoodenGrateDoorLeft,
             GameObject.WoodenGrateDoorRight,
-            GameObject.DoorByAct2Dock,
             GameObject.AndarielDoor,
-            GameObject.ArreatSummitDoor,
             GameObject.PenBreakableDoor,
-            GameObject.SecretDoor1,
-            GameObject.TrappDoor
+            GameObject.SecretDoor1
         };
 
         public static void UpdateLocalizationNames()
