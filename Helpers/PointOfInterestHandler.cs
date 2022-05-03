@@ -120,6 +120,39 @@ namespace MapAssist.Helpers
             GameObject.JungleShrine5,
         };
 
+        private static readonly HashSet<GameObject> Doors = new HashSet<GameObject>
+        {
+            GameObject.DoorCathedralDouble,
+            GameObject.DoorCathedralLeft,
+            GameObject.DoorCathedralRight,
+            GameObject.DoorCourtyardLeft,
+            GameObject.DoorCourtyardRight,
+            GameObject.DoorGateLeft,
+            GameObject.DoorGateRight,
+            GameObject.DoorMonasteryDoubleRight,
+            GameObject.DoorWoodenLeft,
+            GameObject.DoorWoodenLeft2,
+            GameObject.DoorWoodenRight,
+            GameObject.IronGrateDoorLeft,
+            GameObject.IronGrateDoorRight,
+            GameObject.SlimeDoor1,
+            GameObject.SlimeDoor2,
+            GameObject.TombDoorLeft,
+            GameObject.TombDoorLeft2,
+            GameObject.TombDoorRight,
+            GameObject.TombDoorRight2,
+            GameObject.WoodenDoorLeft,
+            GameObject.WoodenDoorRight,
+            GameObject.WoodenGrateDoorLeft,
+            GameObject.WoodenGrateDoorRight,
+            GameObject.DoorByAct2Dock,
+            GameObject.AndarielDoor,
+            GameObject.ArreatSummitDoor,
+            GameObject.PenBreakableDoor,
+            GameObject.SecretDoor1,
+            GameObject.TrappDoor
+        };
+
         public static void UpdateLocalizationNames()
         {
             QuestObjects = new Dictionary<GameObject, string>
@@ -551,6 +584,20 @@ namespace MapAssist.Helpers
                             Position = point,
                             RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.ArmorWeapRack,
                             Type = PoiType.ArmorWeapRack
+                        });
+                    }
+                }
+                else if (Doors.Contains(obj))
+                {
+                    foreach (var point in points)
+                    {
+                        pointsOfInterest.Add(new PointOfInterest
+                        {
+                            Area = areaData.Area,
+                            Label = obj.ToString(),
+                            Position = point,
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Door,
+                            Type = PoiType.Door
                         });
                     }
                 }

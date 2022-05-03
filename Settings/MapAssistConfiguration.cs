@@ -161,6 +161,9 @@ namespace MapAssist.Settings
         [YamlMember(Alias = "ArmorWeapRack", ApplyNamingConventions = false)]
         public PointOfInterestRendering ArmorWeapRack { get; set; }
 
+        [YamlMember(Alias = "Door", ApplyNamingConventions = false)]
+        public PointOfInterestRendering Door { get; set; }
+
         [YamlMember(Alias = "Item", ApplyNamingConventions = false)]
         public PointOfInterestRendering Item { get; set; }
 

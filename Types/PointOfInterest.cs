@@ -62,6 +62,7 @@ namespace MapAssist.Types
         AreaPortal,
         Shrine,
         SuperChest,
-        ArmorWeapRack
+        ArmorWeapRack,
+        Door
     }
 }
