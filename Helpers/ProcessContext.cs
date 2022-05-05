@@ -211,6 +211,14 @@ namespace MapAssist.Helpers
             {
                 WindowsExternal.ReadProcessMemory(_handle, address, buf, buf.Length, out _);
                 var result = new T[count];
+
+                // Optimisation when reading byte sized things.
+                if (sz == 1)
+                {
+                    Buffer.BlockCopy(buf, 0, result, 0, buf.Length);
+                    return result;
+                }
+
                 for (var i = 0; i < count; i++)
                 {
                     result[i] = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject() + (i * sz), typeof(T));
