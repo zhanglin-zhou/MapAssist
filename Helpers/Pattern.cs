@@ -9,7 +9,7 @@ namespace MapAssist.Helpers
         private readonly string _mask;
         private readonly byte[] _pattern;
 
-        public Pattern(string pattern, string mask = null)
+        public Pattern(string pattern)
         {
             List<string> cleanPattern = pattern
                 .Replace("\\x", " ")
