@@ -18,13 +18,12 @@ namespace MapAssist.Helpers
                 .Split(' ')
                 .ToList();
 
-            mask = string.Join("", cleanPattern.Select(o => o == "?" ? "?" : "x"));
+            _mask = string.Join("", cleanPattern.Select(o => o == "?" ? "?" : "x"));
             cleanPattern = cleanPattern.Select(o => o == "?" ? "00" : o).ToList();
 
             _pattern = cleanPattern
                 .Select(o => byte.Parse(o, NumberStyles.HexNumber))
-                .ToArray();
-            _mask = mask;
+                .ToArray();            
         }
 
         public bool Match(byte[] data, int offset)
