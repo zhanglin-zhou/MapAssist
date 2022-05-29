@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- https://github.com/ravibpatel/AutoUpdater.NET -->
 <item>
-  <version>2.4.0.15</version>
+  <version>2.4.0.16</version>
   <url>https://github.com/OneXDeveloper/MapAssist/releases/tag/beta</url>
   <mandatory minVersion="2.4.0.0" mode="1">true</mandatory>
 </item>
