@@ -3,5 +3,5 @@
 <item>
   <version>2.4.0.42</version>
   <url>https://github.com/OneXDeveloper/MapAssist/releases/tag/beta</url>
-  <mandatory minVersion="2.4.0.28" mode="1">true</mandatory>
+  <mandatory minVersion="2.4.0.42" mode="1">true</mandatory>
 </item>
