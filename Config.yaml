@@ -333,7 +333,7 @@ GameInfo:
   LabelTextShadow: true
 Portraits:
   ShowArea: true
-  ShowAreaLevel: true
+  ShowAreaLevel: false
   ShowPlayerLevel: true
   Area:
     Font: Formal 436
