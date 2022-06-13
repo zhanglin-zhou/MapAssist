@@ -1237,6 +1237,50 @@ namespace MapAssist.Helpers
             }
         }
 
+        public void DrawPortraitsInfo(Graphics gfx)
+        {
+            if (_gameData.MenuOpen.EscMenu || _gameData.MenuOpen.IsLeftMenuOpen() || !_gameData.MenuOpen.Portraits) return;
+
+            // Player level and area on portraits
+            if (MapAssistConfiguration.Loaded.Portraits.ShowArea || MapAssistConfiguration.Loaded.Portraits.ShowPlayerLevel)
+            {
+                var portraitCount = 1;
+                var marginX = gfx.Height / 45;
+                var marginY = gfx.Height / 10.6f;
+                var offsetLevelY = marginY * .65f;
+                var padding = 6;
+
+                foreach (var player in _gameData.Roster.List)
+                {
+                    if (!player.InParty || player.UnitId == _gameData.PlayerUnit.UnitId) continue;
+
+                    portraitCount++;
+
+                    // Draw labels when player area is known
+                    if (player.Area != Area.None)
+                    {
+                        if (MapAssistConfiguration.Loaded.Portraits.ShowPlayerLevel && player.PlayerLevel > 0)
+                        {
+                            var position = new Point(marginX + padding, marginY * portraitCount - offsetLevelY);
+                            DrawPortraitsText(gfx, position, "Lvl " + player.PlayerLevel, MapAssistConfiguration.Loaded.Portraits.PlayerLevel);
+                        }
+
+                        if (MapAssistConfiguration.Loaded.Portraits.ShowAreaLevel)
+                        {
+                            var position = new Point(marginX, marginY * portraitCount + padding);
+                            var areaText = MapAssistConfiguration.Loaded.Portraits.ShowAreaLevel ? player.Area.MapLabel(_gameData.Difficulty) : player.Area.Name();
+                            DrawPortraitsText(gfx, position, areaText, MapAssistConfiguration.Loaded.Portraits.Area);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DrawPortraitsText(Graphics gfx, Point position, string text, PortraitsRendering rendering)
+        {
+            DrawText(gfx, position, text, rendering.Font, gfx.ScaleFontSize((float)rendering.FontSize), rendering.TextColor, rendering.TextShadow, TextAlign.Left, rendering.Opacity);
+        }
+
         public void DrawWatermark(Graphics gfx)
         {
             var font = "Exocet Blizzard Mixed Caps";
