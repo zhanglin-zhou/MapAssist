@@ -128,6 +128,7 @@ namespace MapAssist.Types
             get
             {
                 if (MappedItemQuality == null) return Color.Empty;
+                if (IsRuneWord) return MapAssistConfiguration.Loaded.ItemLog.UniqueColor;
 
                 var ItemColors = new Dictionary<ItemQuality, Color>()
                 {

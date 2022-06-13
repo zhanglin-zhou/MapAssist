@@ -35,6 +35,7 @@ namespace MapAssist.Helpers
         private float scaleHeight = 1;
         private const int WALKABLE = 0;
         private const int BORDER = 1;
+        private uint _lastHoveredPlayer = 0;
 
         public Compositor()
         {
@@ -1216,18 +1217,24 @@ namespace MapAssist.Helpers
             }
         }
 
-        public void DrawPortraitsInfo(Graphics gfx)
+        public void DrawPortraitsInfo(Graphics gfx, Point mouseRelativePos)
         {
-            if (_gameData.MenuOpen.EscMenu || _gameData.MenuOpen.IsLeftMenuOpen() || !_gameData.MenuOpen.Portraits) return;
+            if (_gameData.MenuOpen.EscMenu || _gameData.MenuOpen.IsLeftMenuOpen() ||
+                !_gameData.MenuOpen.Portraits) return;
 
             // Player level and area on portraits
-            if (MapAssistConfiguration.Loaded.Portraits.ShowArea || MapAssistConfiguration.Loaded.Portraits.ShowPlayerLevel)
+            if (MapAssistConfiguration.Loaded.Portraits.ShowArea ||
+                MapAssistConfiguration.Loaded.Portraits.ShowPlayerLevel)
             {
                 var portraitCount = 1;
                 var marginX = gfx.Height / 46;
                 var marginY = gfx.Height / 10.6f;
                 var offsetLevelY = marginY * .27f;
                 var padding = 6;
+                var hoveringPlayerOrStats = false;
+                
+                var boxHeightOffset = gfx.Height * 0.0185F;
+                var boxWidth = gfx.Width * 0.035F;
 
                 foreach (var player in _gameData.Roster.List)
                 {
@@ -1241,18 +1248,122 @@ namespace MapAssist.Helpers
                         if (MapAssistConfiguration.Loaded.Portraits.ShowPlayerLevel && player.PlayerLevel > 0)
                         {
                             var position = new Point(marginX + padding, marginY * portraitCount - offsetLevelY);
-                            DrawPortraitsText(gfx, position, "Lvl " + player.PlayerLevel, MapAssistConfiguration.Loaded.Portraits.PlayerLevel);
+                            DrawPortraitsText(gfx, position, "Lvl " + player.PlayerLevel,
+                                MapAssistConfiguration.Loaded.Portraits.PlayerLevel);
                         }
 
                         if (MapAssistConfiguration.Loaded.Portraits.ShowArea)
                         {
                             var position = new Point(marginX, marginY * portraitCount + padding);
-                            var areaText = MapAssistConfiguration.Loaded.Portraits.ShowAreaLevel ? player.Area.MapLabel(_gameData.Difficulty) : player.Area.Name();
+                            var areaText = MapAssistConfiguration.Loaded.Portraits.ShowAreaLevel
+                                ? player.Area.MapLabel(_gameData.Difficulty)
+                                : player.Area.Name();
                             DrawPortraitsText(gfx, position, areaText, MapAssistConfiguration.Loaded.Portraits.Area);
                         }
                     }
                 }
+
+                portraitCount = 1;
+
+                foreach (var player in _gameData.Roster.List)
+                {
+                    if (!player.InParty || player.UnitId == _gameData.PlayerUnit.UnitId) continue;
+                    portraitCount++;
+                    
+                    // TODO: Remove debug rendering
+                    var playerIconRect = new Rectangle(marginX - 5,
+                        ((portraitCount * marginY) - marginY + boxHeightOffset), boxWidth,
+                        (portraitCount * marginY) + boxHeightOffset);
+                    // Debug rect draw
+                    // var rectBrush = CreateBrush(gfx, Color.DarkRed, 1.0F);
+                    // gfx.DrawRectangle(rectBrush, playerIconRect, 1.0F);
+                    if (playerIconRect.IncludesPoint(mouseRelativePos))
+                    {
+                        _lastHoveredPlayer = player.UnitId;
+                        hoveringPlayerOrStats = true;
+                    }
+
+                    if (_lastHoveredPlayer != player.UnitId)
+                    {
+                        continue;
+                    }
+
+                    var itemsToRender = player.Items.Where(x => !x.IsInSocket && !x.IsInInventoryOrCube).ToList();
+                    if (itemsToRender.Count == 0) continue;
+                    
+                    var fontSize = gfx.ScaleFontSize((float)MapAssistConfiguration.Loaded.GameInfo.LabelFontSize);
+                    var lineHeight = gfx.LineHeight(fontSize);
+                    
+                    var itemsAreaRect =
+                        new Rectangle(marginX + 100, ((portraitCount * marginY) - marginY + boxHeightOffset), 500,
+                            (portraitCount * marginY) + (lineHeight * itemsToRender.Count));
+                    var backgroundBrush = CreateBrush(gfx, Color.Black, opacity: 1.0F);
+                    gfx.FillRectangle(backgroundBrush, itemsAreaRect);
+                    
+                    var hoverRect = new Rectangle(left: itemsAreaRect.Left - 35, itemsAreaRect.Top, itemsAreaRect.Right,
+                        itemsAreaRect.Bottom);
+                    // var itemsAreaBrush = CreateBrush(gfx, Color.Orange, 1.0F);
+                    // gfx.DrawRectangle(itemsAreaBrush, hoverRect, 1.0F);
+                    if (hoverRect.IncludesPoint(mouseRelativePos))
+                    {
+                        hoveringPlayerOrStats = true;
+                    }
+
+                    var anchor = new Point(itemsAreaRect.Left, itemsAreaRect.Top);
+                    
+                    foreach (UnitItem item in itemsToRender)
+                    {
+                        var rosterItemFont = CreateFont(gfx, MapAssistConfiguration.Loaded.ItemLog.LabelFont, fontSize);
+                        var itemBrush = CreateBrush(gfx, item.ItemBaseColor);
+                        var text = Items.ItemFullName(item);
+                        var size = gfx.MeasureString(rosterItemFont, text);
+                        gfx.DrawText(rosterItemFont, itemBrush, anchor, text);
+
+                        var rect = new Rectangle(anchor.X, anchor.Y, itemsAreaRect.Right,
+                            anchor.Y + size.Y);
+                        // Debug rect draw
+                        // gfx.DrawRectangle(rectBrush, rect, 1.0F);
+                        var shouldRenderStats = rect.IncludesPoint(mouseRelativePos);
+
+                        anchor.Y += lineHeight;
+                        if (shouldRenderStats)
+                        {
+                            hoveringPlayerOrStats = true;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        var statsBoxHeight = Math.Max((itemsAreaRect.Bottom - itemsAreaRect.Top),
+                            lineHeight * item.Stats.Count);
+                        var statsRect = new Rectangle(itemsAreaRect.Right, itemsAreaRect.Top, itemsAreaRect.Right + 350,
+                            itemsAreaRect.Top + statsBoxHeight);
+                        gfx.FillRectangle(backgroundBrush, statsRect);
+
+                        var statsAnchor = new Point(statsRect.Left, statsRect.Top);
+
+                        foreach (var stat in item.Stats)
+                        {
+                            text = "- " + stat.Key + ": " + stat.Value;
+                            gfx.DrawText(rosterItemFont, itemBrush, statsAnchor, text);
+                            statsAnchor.Y += lineHeight;
+                        }
+                    }
+
+                    anchor.X -= 10;
+                    anchor.Y += lineHeight;
+                }
+
+                if (!hoveringPlayerOrStats)
+                {
+                    _lastHoveredPlayer = 0;
+                }
             }
+
+            // Debug render mouse position
+            // var brush = CreateBrush(gfx, Color.Red, 1.0F);
+            // gfx.DrawCircle(brush, mouseRelativePos, 2.0F, 1.0F);
         }
 
         private void DrawPortraitsText(Graphics gfx, Point position, string text, PortraitsRendering rendering)

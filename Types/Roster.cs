@@ -48,6 +48,8 @@ namespace MapAssist.Types
             return this;
         }
 
+        public List<UnitItem> Items { get; set; }
+
         private bool GetIsHostileTo(RosterEntry otherUnit)
         {
             if (UnitId == otherUnit.UnitId)

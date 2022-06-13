@@ -119,15 +119,16 @@ namespace MapAssist
                             }
 
                             _compositor.DrawPlayerInfo(gfx);
-                            _compositor.DrawPortraitsInfo(gfx);
 
                             var gameInfoAnchor = GameInfoAnchor(MapAssistConfiguration.Loaded.GameInfo.Position);
                             var nextAnchor = _compositor.DrawGameInfo(gfx, gameInfoAnchor, e, errorLoadingAreaData);
-
+                            
                             var itemLogAnchor = (MapAssistConfiguration.Loaded.ItemLog.Position == MapAssistConfiguration.Loaded.GameInfo.Position)
                                 ? nextAnchor.Add(0, GameInfoPadding())
                                 : GameInfoAnchor(MapAssistConfiguration.Loaded.ItemLog.Position);
                             _compositor.DrawItemLog(gfx, itemLogAnchor);
+                            
+                            _compositor.DrawPortraitsInfo(gfx, _mouseRelativePos);
 
                             if (Program.isPrecompiled) _compositor.DrawWatermark(gfx);
                         }
