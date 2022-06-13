@@ -1247,7 +1247,7 @@ namespace MapAssist.Helpers
                 var portraitCount = 1;
                 var marginX = gfx.Height / 45;
                 var marginY = gfx.Height / 10.6f;
-                var offsetLevelY = marginY * .65f;
+                var offsetLevelY = marginY * .27f;
                 var padding = 6;
 
                 foreach (var player in _gameData.Roster.List)
@@ -1265,7 +1265,7 @@ namespace MapAssist.Helpers
                             DrawPortraitsText(gfx, position, "Lvl " + player.PlayerLevel, MapAssistConfiguration.Loaded.Portraits.PlayerLevel);
                         }
 
-                        if (MapAssistConfiguration.Loaded.Portraits.ShowAreaLevel)
+                        if (MapAssistConfiguration.Loaded.Portraits.ShowArea)
                         {
                             var position = new Point(marginX, marginY * portraitCount + padding);
                             var areaText = MapAssistConfiguration.Loaded.Portraits.ShowAreaLevel ? player.Area.MapLabel(_gameData.Difficulty) : player.Area.Name();
