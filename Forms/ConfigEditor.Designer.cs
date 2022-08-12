@@ -2503,7 +2503,7 @@
             this.MinimizeBox = false;
             this.Name = "ConfigEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MapAssist - Configuration";
+            this.Text = "Defender - Configuration";
             this.TopMost = true;
             this.Shown += new System.EventHandler(this.ConfigEditor_Shown);
             this.tabControl1.ResumeLayout(false);
