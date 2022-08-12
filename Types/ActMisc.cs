@@ -29,7 +29,6 @@ namespace MapAssist.Types
         public Act Act => new Act(_actMisc.pAct);
         public Level LevelFirst => new Level(_actMisc.pLevelFirst);
         public Area RealTombArea => _actMisc.RealTombArea;
-        public ulong InitSeedHash => _actMisc.dwInitSeedHash;
-        public uint EndSeedHash => _actMisc.EndSeedHash;
+        public uint MapSeed => _actMisc.mapSeed;
     }
 }

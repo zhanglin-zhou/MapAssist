@@ -25,7 +25,7 @@ namespace MapAssist.Helpers
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         private static Process _pipeClient;
         private static readonly object _pipeRequestLock = new object();
-        private const string _procName = "MAServer.exe";
+        private const string _procName = "DefenderServer.exe";
 
         private readonly ConcurrentDictionary<Area, AreaData> _cache;
         private GameData _gameData;
