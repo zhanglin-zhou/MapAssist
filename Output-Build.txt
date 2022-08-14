@@ -1,0 +1,7 @@
+﻿Build started...
+1>------ Build started: Project: MapAssist, Configuration: Debug x64 ------
+1>  MapAssist -> D:\git\MapAssist\bin\x64\Debug\Defender.exe
+1>  D:\git\MapAssist\Config.yaml
+1>  1 File(s) copied
+1>  Assembly Version: 3.4.0.0
+========== Build: 1 succeeded, 0 failed, 0 up-to-date, 0 skipped ==========

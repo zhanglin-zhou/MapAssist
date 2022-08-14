@@ -157,6 +157,26 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PrroBot\BotConfig.cs" />
+    <Compile Include="PrroBot\BotStats.cs" />
+    <Compile Include="PrroBot\Builds\Build.cs" />
+    <Compile Include="PrroBot\Builds\Hammerdin.cs" />
+    <Compile Include="PrroBot\Core.cs" />
+    <Compile Include="PrroBot\GameInteraction\Common.cs" />
+    <Compile Include="PrroBot\GameInteraction\Input.cs" />
+    <Compile Include="PrroBot\GameInteraction\Lifeguard.cs" />
+    <Compile Include="PrroBot\GameInteraction\Movement.cs" />
+    <Compile Include="PrroBot\GameInteraction\Town.cs" />
+    <Compile Include="PrroBot\Inventory.cs" />
+    <Compile Include="PrroBot\Pathing.cs" />
+    <Compile Include="PrroBot\PrroBot.cs" />
+    <Compile Include="PrroBot\Runs\Andariel.cs" />
+    <Compile Include="PrroBot\Runs\Countess.cs" />
+    <Compile Include="PrroBot\Runs\Diablo.cs" />
+    <Compile Include="PrroBot\Runs\Mephisto.cs" />
+    <Compile Include="PrroBot\Runs\Nihlathak.cs" />
+    <Compile Include="PrroBot\Runs\Run.cs" />
+    <Compile Include="PrroBot\Runs\Summoner.cs" />
     <Compile Include="Settings\LootLogConfiguration.cs" />
     <Compile Include="Settings\MapAssistConfiguration.cs" />
     <Compile Include="Structs\MapSeed.cs" />
@@ -183,6 +203,8 @@
     <Compile Include="Types\Locale.cs" />
     <Compile Include="Types\Items.cs" />
     <Compile Include="Types\Missile.cs" />
+    <Compile Include="Types\Mode.cs" />
+    <Compile Include="Types\PotionType.cs" />
     <Compile Include="Types\Roster.cs" />
     <Compile Include="Types\MapSeed.cs" />
     <Compile Include="Types\Session.cs" />
@@ -251,6 +273,9 @@
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.7.12</Version>
+    </PackageReference>
+    <PackageReference Include="RoyT.AStar">
+      <Version>3.0.2</Version>
     </PackageReference>
     <PackageReference Include="YamlDotNet">
       <Version>11.2.1</Version>

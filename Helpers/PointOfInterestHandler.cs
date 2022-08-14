@@ -357,7 +357,8 @@ namespace MapAssist.Helpers
                                 Label = questArea.MapLabel(gameData.Difficulty),
                                 Position = questLevel.Exits[0],
                                 RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
-                                Type = PoiType.Quest
+                                Type = PoiType.Quest,
+                                IsQuest = true
                             });
                             areaRenderDecided.Add(questArea);
                         }
@@ -461,7 +462,8 @@ namespace MapAssist.Helpers
                             Label = AreaSpecificQuestObjects[areaData.Area][obj],
                             Position = points[0],
                             RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
-                            Type = PoiType.AreaSpecificQuest
+                            Type = PoiType.AreaSpecificQuest,
+                            IsQuest = true
                         });
                     }
                 }
@@ -507,7 +509,8 @@ namespace MapAssist.Helpers
                             Area = areaData.Area,
                             Label = questObjectName,
                             Position = point,
-                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
+                            IsQuest = true
                         });
                     }
                 }
@@ -567,7 +570,8 @@ namespace MapAssist.Helpers
                             Area = areaData.Area,
                             Label = AreaExtensions.NameFromKey("Izual"),
                             Position = objAndPoints.Value[0],
-                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest
+                            RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.Quest,
+                            IsQuest = true
                         });
                     }
                     break;
