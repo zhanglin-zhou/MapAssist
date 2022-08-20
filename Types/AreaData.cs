@@ -19,6 +19,7 @@ namespace MapAssist.Types
 
     public class AreaData
     {
+        public readonly float RotateRadians = (float)(45 * Math.PI / 180f);
         public Area Area;
         public Point Origin;
         public int MapPadding = 0;
@@ -36,7 +37,7 @@ namespace MapAssist.Types
             return (AreaData)MemberwiseClone();
         }
 
-        public void CalcViewAreas(float angleRadians)
+        public void CalcViewAreas()
         {
             var points = new List<Point>(); // All non-unwalkable points used for calculating the input and output view dimensions
 
@@ -92,7 +93,7 @@ namespace MapAssist.Types
             else
             {
                 ViewInputRect = points.ToArray().ToRectangle(1);
-                ViewOutputRect = points.Select(point => point.Subtract(ViewInputRect.Left + ViewInputRect.Width / 2, ViewInputRect.Top + ViewInputRect.Height / 2).Rotate(angleRadians)).ToArray().ToRectangle(1);
+                ViewOutputRect = points.Select(point => point.Subtract(ViewInputRect.Left + ViewInputRect.Width / 2, ViewInputRect.Top + ViewInputRect.Height / 2).Rotate(RotateRadians)).ToArray().ToRectangle(1);
             }
         }
 

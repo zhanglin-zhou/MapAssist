@@ -61,7 +61,10 @@ namespace MapAssist.Types
             var result = "Name: " + name;
             result += ", IsPortal: " + isPortal;
             result += ", UnitType: " + UnitType;
-            result += ", Owner: " + Encoding.UTF8.GetString(ObjectData.Owner).TrimEnd((char)0);
+            if (ObjectData.Owner != null)
+            {
+                result += ", Owner: " + Encoding.UTF8.GetString(ObjectData.Owner).TrimEnd((char)0);
+            }
             return result;
         }
     }

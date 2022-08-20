@@ -115,7 +115,8 @@ namespace PrroBot
                 {
                     try
                     {
-                        Movement.MoveToNextArea();
+                        //Movement.MoveToNextArea();
+                        Movement.MoveToPortal(MapAssist.Types.Area.NihlathaksTemple);
                     }
                     catch (Exception ex)
                     {
@@ -155,15 +156,10 @@ namespace PrroBot
                     }
                     else
                     {
-                        var build = new Hammerdin();
+                        var build = new Heavendin();
                         var runs = new List<Run>
                         {
-                            new Countess(),
-                            new Andariel(),
-                            new Summoner(),
-                            new Mephisto(),
-                            new Nihlathak(),
-                            new Diablo()
+                            new Pindleskin()
                         };
 
                         Start(build, runs);

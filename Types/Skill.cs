@@ -72,6 +72,8 @@ namespace MapAssist.Types
         Unsummon,
         LeftHandThrow,
         LeftHandSwing,
+
+        // Amazon
         MagicArrow,
         FireArrow,
         InnerSight,
@@ -102,6 +104,8 @@ namespace MapAssist.Types
         Pierce,
         LightningStrike,
         LightningFury,
+
+        // Sorc
         FireBolt,
         Warmth,
         ChargedBolt,
@@ -132,6 +136,8 @@ namespace MapAssist.Types
         LightningMastery,
         FrozenOrb,
         ColdMastery,
+
+        // Necro
         AmplifyDamage,
         Teeth,
         BoneArmor,
@@ -162,6 +168,8 @@ namespace MapAssist.Types
         BoneSpirit,
         FireGolem,
         Revive,
+
+        // Paladin
         Sacrifice,
         Smite,
         Might,
@@ -192,6 +200,8 @@ namespace MapAssist.Types
         Conviction,
         Redemption,
         Salvation,
+
+        // Barb
         Bash,
         BladeMastery,
         AxeMastery,
@@ -222,6 +232,8 @@ namespace MapAssist.Types
         NaturalResistance,
         WarCry,
         BattleCommand,
+
+
         FireHit,
         UnHolyBolt,
         SkeletonRaise,
@@ -283,10 +295,14 @@ namespace MapAssist.Types
         RegurgitatorEat,
         MonFrenzy,
         QueenDeath,
+
+        // General stuff
         ScrollOfIdentify,
         TomeOfIdentify,
         ScrollOfTownPortal,
         TomeOfTownPortal,
+
+        // Druid
         Raven,
         PoisonCreeper,
         Werewolf,
@@ -317,6 +333,8 @@ namespace MapAssist.Types
         Fury,
         Armageddon,
         Hurricane,
+
+        // Assa
         FireBlast,
         ClawMastery,
         PsychicHammer,
@@ -526,6 +544,11 @@ namespace MapAssist.Types
         public static PlayerClass GetPlayerClass(this Skill skill)
         {
             return skill.GetSkillTree().GetPlayerClass();
+        }
+
+        public static int GetRange(this Skill skill)
+        {
+            return 0;
         }
     }
 }

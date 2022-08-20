@@ -114,7 +114,7 @@ namespace PrroBot.GameInteraction
         {
             var menuData = GetCurrentMenuData();
             if (!menuData.InGame) return;
-
+            Input.SetExclusiveThread(Thread.CurrentThread.ManagedThreadId);
             CloseAllMenus();
 
             var rect = GetGameBounds();
@@ -130,6 +130,7 @@ namespace PrroBot.GameInteraction
                 Thread.Sleep(100);
                 menuData = GetCurrentMenuData();
             } while ((menuData.LoadingScreen || menuData.InGame) && maxWaitCounter < 150);
+            Input.SetExclusiveThread(-1);
         }
 
         public static void WaitForLoading(Area startingArea) 

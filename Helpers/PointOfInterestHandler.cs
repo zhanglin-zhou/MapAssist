@@ -476,6 +476,7 @@ namespace MapAssist.Helpers
                         pointsOfInterest.Add(new PointOfInterest
                         {
                             Area = areaData.Area,
+                            NextArea = AreaPortals[areaData.Area][obj],
                             Label = AreaPortals[areaData.Area][obj].PortalLabel(gameData.Difficulty),
                             Position = points[0],
                             RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.GamePortal,

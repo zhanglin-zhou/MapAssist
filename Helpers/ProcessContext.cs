@@ -116,6 +116,7 @@ namespace MapAssist.Helpers
 
         public IntPtr GetInteractedNpcOffset(byte[] buffer)
         {
+            /*
             var pattern = new Pattern("43 01 84 31 ? ? ? ?");
             var patternAddress = FindPattern(buffer, pattern);
 
@@ -127,7 +128,12 @@ namespace MapAssist.Helpers
                 return IntPtr.Zero;
             }
             var offsetAddressToInt = BitConverter.ToInt32(offsetBuffer, 0);
+            
+            
             return IntPtr.Add(_baseAddr, (int)(offsetAddressToInt + 0x1D4));
+            */
+            return IntPtr.Add(_baseAddr, (int)(0x226B554));
+
         }
 
         public IntPtr GetLastHoverObjectOffset(byte[] buffer)

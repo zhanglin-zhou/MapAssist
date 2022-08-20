@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Runtime.Serialization;
 
+
 namespace PrroBot.Builds
 {
     public abstract class Build
@@ -16,6 +17,14 @@ namespace PrroBot.Builds
         public bool UseLifeguard = true;
 
         public abstract bool DoPrebuffs();
+
+        public virtual void KillSingleTarget(string name)
+        {
+            var monstor = Core.GetGameData().Monsters.FirstOrDefault(x => x.SuperUniqueName == name);
+            if (monstor == null) throw new BuildException("Monster not found");
+            KillSingleTarget(monstor);
+        }
+
         public virtual void KillSingleTarget(Npc npc)
         {
             var monster = Core.GetGameData().Monsters.FirstOrDefault(x => x.Npc == npc);

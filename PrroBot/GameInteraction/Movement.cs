@@ -472,6 +472,42 @@ namespace PrroBot.GameInteraction
             MoveToPoint(poi.Position);
         }
 
+        public static void MoveToPortal(Area area)
+        {
+            var tryCount = 0;
+
+            var pointsOfInterest = Core.GetPois();
+
+            if (pointsOfInterest == null) throw new MovementException("Pois null");
+
+            PointOfInterest poiNextArea = pointsOfInterest.Find(x => (x.Type == PoiType.AreaPortal) && (x.NextArea == area));
+
+            if (poiNextArea == null) throw new MovementException("No portal found");
+
+            do
+            {
+                tryCount++;
+
+                _log.Info("Starting Movement (" + tryCount + ") to next Area " + area);
+
+                try
+                {
+                    MoveToNextAreaPortal(poiNextArea);
+                }
+                catch (Exception e)
+                {
+                    _log.Info(e.ToString());
+                    continue;
+                }
+
+                var currentAreaData = Core.GetAreaData();
+
+                if (currentAreaData.Area == area) return;
+
+            } while (tryCount < 4);
+
+            throw new MovementException("Failed to move to portal");
+        }
 
         public static bool MoveToNpc(Npc npc)
         {

@@ -98,7 +98,9 @@ namespace PrroBot.GameInteraction
 
                 if (ShouldExitGame(gameData))
                 {
+                    _log.Info($"Task {Thread.CurrentThread.ManagedThreadId}: Exiting game");
                     Common.ExitGame();
+                    _log.Info($"Task {Thread.CurrentThread.ManagedThreadId}: Setting Panic mode");
                     PanicMode = true;
                     BotStats.Chicken++;
                     continue;

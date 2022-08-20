@@ -51,12 +51,14 @@ namespace MapAssist.Helpers
             _areaData = areaData;
             if (_areaData == null) return;
 
-            _areaData.CalcViewAreas(_rotateRadians);
+            /*
+            _areaData.CalcViewAreas();
 
             foreach (var adjacentArea in _areaData.AdjacentAreas.Values)
             {
-                adjacentArea.CalcViewAreas(_rotateRadians);
+                adjacentArea.CalcViewAreas();
             }
+            */
 
             gamemaps = new HashSet<(Bitmap, Point)>();
         }
@@ -439,7 +441,9 @@ namespace MapAssist.Helpers
             {
                 if (area.PointsOfInterest == null) continue;
 
-                foreach (var poi in area.PointsOfInterest)
+                var pois = area.PointsOfInterest.ToArray();
+
+                foreach (var poi in pois)
                 {
                     if ((new PoiType[] { PoiType.PreviousArea, PoiType.NextArea }).Contains(poi.Type))
                     {
@@ -464,7 +468,7 @@ namespace MapAssist.Helpers
                     }
                 }
 
-                foreach (var poi in area.PointsOfInterest)
+                foreach (var poi in pois)
                 {
                     if (poi.Area != _areaData.Area && (new PoiType[] { PoiType.PreviousArea, PoiType.NextArea, PoiType.Quest, PoiType.Waypoint, PoiType.AreaPortal }).Contains(poi.Type))
                     {
@@ -654,7 +658,7 @@ namespace MapAssist.Helpers
             foreach ((var rendering, var monster) in drawMonsterIcons.OrderBy(x => Array.IndexOf(monsterRenderingOrder, x.Item1)))
             {
                 var monsterPosition = monster.Position;
-
+                //_log.Info("Draw monster:" + monster.Npc + " ," + monster.MonsterType);
                 DrawIcon(gfx, rendering, monsterPosition);
 
                 // Draw Monster Immunities on top of monster icon

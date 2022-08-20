@@ -10,6 +10,7 @@ namespace MapAssist.Types
         public Point PlayerPosition;
         public uint MapSeed;
         public bool MapSeedReady;
+        public bool PlayerMapChanged;
         public Difficulty Difficulty;
         public Area Area;
         public IntPtr MainWindowHandle;
@@ -47,7 +48,7 @@ namespace MapAssist.Types
 
         public bool HasMapChanged(GameData other)
         {
-            return HasGameChanged(other) || Area != other.Area;
+            return PlayerMapChanged || HasGameChanged(other) || Area != other.Area;
         }
 
         public override string ToString()

@@ -9,6 +9,7 @@ namespace MapAssist.Helpers
 {
     public static class GameMemory
     {
+        private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         private static Dictionary<int, uint> _lastMapSeeds = new Dictionary<int, uint>();
         private static Dictionary<int, bool> _playerMapChanged = new Dictionary<int, bool>();
         private static Dictionary<int, Area> _playerArea = new Dictionary<int, Area>();
@@ -212,6 +213,16 @@ namespace MapAssist.Helpers
 
                 var monsterList = rawMonsterUnits.Where(x => x.UnitType == UnitType.Monster && x.IsMonster).ToArray();
 
+                foreach (var monster in monsterList)
+                {
+                    if (monster.IsSuperUnique)
+                    {   
+                        _log.Info($"Monster: type {monster.MonsterType} IsSuperUnique {monster.IsSuperUnique} npc {monster.Npc} TxtFileNo {monster.TxtFileNo}, unitid {monster.UnitId}");
+                        _log.Info($"SuperUnique name {monster.SuperUniqueName}");
+                    }
+
+                }
+
                 foreach (var petEntry in pets.List)
                 {
                     var pet = rawMonsterUnits.FirstOrDefault(x => x.UnitId == petEntry.UnitId);
@@ -373,6 +384,7 @@ namespace MapAssist.Helpers
                     PlayerPosition = playerUnit.Position,
                     MapSeed = mapSeed,
                     MapSeedReady = mapSeedIsReady,
+                    PlayerMapChanged = _playerMapChanged[_currentProcessId],
                     Area = levelId,
                     Difficulty = gameDifficulty,
                     MainWindowHandle = currentWindowHandle,

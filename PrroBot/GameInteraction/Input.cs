@@ -7,6 +7,8 @@ namespace PrroBot.GameInteraction
 {
     public static class Input
     {
+        private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
+
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
@@ -40,7 +42,8 @@ namespace PrroBot.GameInteraction
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
-
+        private static readonly object _lock = new object();
+        private static int exclusiveThreadId = -0x1;
 
         // wrap the external functions
         public static Point GetCursorPosition()
@@ -70,11 +73,18 @@ namespace PrroBot.GameInteraction
             mouse_event(dwFlags, (int)p.X, (int)p.Y, 0, 0);
         }
 
-
-
         // provide more convenient interface functions for other classes
         public static void SetCursorPos(Point p)
         {
+            lock (_lock)
+            {
+                if (exclusiveThreadId > 0 && exclusiveThreadId != Thread.CurrentThread.ManagedThreadId)
+                {
+                    _log.Info($"Ignore setting cursor position {p.X},{p.Y}, current thread: {Thread.CurrentThread.ManagedThreadId} exclusive thread {exclusiveThreadId}");
+                    return;
+                }
+            }
+
             SetCursorPos(p.X, p.Y);
         }
 
@@ -89,8 +99,12 @@ namespace PrroBot.GameInteraction
 
         public static void LeftMouseClick(Point p)
         {
+            _log.Info($"Task {Thread.CurrentThread.ManagedThreadId}: set cursor to {p.X},{p.Y}");
             SetCursorPos(p);
             Thread.Sleep(200);
+            POINT lpPoint;
+            GetCursorPos(out lpPoint);
+            _log.Info($"Task {Thread.CurrentThread.ManagedThreadId}: actual cursor {lpPoint.X},{lpPoint.Y}");
             mouse_event(MOUSEEVENTF_LEFTDOWN, p);
             Thread.Sleep(10);
             mouse_event(MOUSEEVENTF_LEFTUP, p);
@@ -131,6 +145,14 @@ namespace PrroBot.GameInteraction
             KeyDown(key);
             Thread.Sleep(delay);
             KeyUp(key);
+        }
+
+        public static void SetExclusiveThread(int threadID)
+        {
+            lock(_lock)
+            {
+                exclusiveThreadId = threadID;
+            }
         }
     }
 }
