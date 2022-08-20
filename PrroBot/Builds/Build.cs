@@ -18,6 +18,24 @@ namespace PrroBot.Builds
 
         public abstract bool DoPrebuffs();
 
+        public bool LootItemsOnGround()
+        {
+            GameData gameData = Core.GetGameData();
+
+            var itemsOnGround = Core.GetGameData().AllItems.Where(i => i.ItemModeMapped == ItemModeMapped.Ground).ToList().OrderBy(x => Pathing.CalculateDistance(x.Position, gameData.PlayerPosition));
+            var itemsToPickup = Inventory.GetAllItemsToKeep(itemsOnGround.ToArray());
+
+            var success = true;
+
+            foreach (var item in itemsToPickup)
+            {
+                ClearArea(item.Position, 10);
+                success &= Movement.PickUpItem(item);
+            }
+
+            return success;
+        }
+
         public virtual void KillSingleTarget(string name)
         {
             var monstor = Core.GetGameData().Monsters.FirstOrDefault(x => x.SuperUniqueName == name);
@@ -80,7 +98,7 @@ namespace PrroBot.Builds
                 monstersInRange = Common.GetMonstersInRange(startPos, radius);
             }
 
-            Movement.LootItemsOnGround();
+            //Movement.LootItemsOnGround();
             Movement.MoveToPoint(startPos);
         }
     }

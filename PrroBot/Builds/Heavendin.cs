@@ -78,10 +78,11 @@ namespace PrroBot.Builds
             */
             var attackCount = 0;
             var notHitCounter = 0;
-            while (monster != null && monster.HealthPercentage > 0 && attackCount < MaxAttackerCount && notHitCounter < 15)
+            var gameData = Core.GetGameData();
+            var player = gameData.PlayerUnit;
+            while (monster != null && monster.HealthPercentage > 0 && attackCount < MaxAttackerCount && notHitCounter < 15 && player.LifePercentage > 0)
             {
                 attackCount++;
-                var gameData = Core.GetGameData();
                 var areaData = Core.GetAreaData();
 
                 var attackSkill = FistOfHeaven;
@@ -119,6 +120,7 @@ namespace PrroBot.Builds
                 var oldHealth = monster.HealthPercentage;
                 gameData = Core.GetGameData();
                 monster = gameData.Monsters.FirstOrDefault(x => x.UnitId == monster.UnitId);
+                player = gameData.PlayerUnit;
                 if (monster != null && monster.HealthPercentage >= oldHealth)
                 {
                     notHitCounter++;

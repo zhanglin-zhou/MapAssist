@@ -387,7 +387,7 @@ namespace PrroBot.GameInteraction
             return success;
         }
 
-        internal static bool PickUpItem(UnitItem item)
+        public static bool PickUpItem(UnitItem item)
         {
             _log.Info("Picking up item: " + item.HashString);
             //TODO clearArea before attempting to pick up the item
@@ -704,7 +704,7 @@ namespace PrroBot.GameInteraction
                     Input.KeyDown(Keys.E);
                     do
                     {
-                        currentNode += 2;
+                        currentNode += 3;
                         Point p = path[Math.Min(currentNode, path.Count - 1)];
                         pointNotReachedCounter = 0;
 

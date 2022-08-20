@@ -26,7 +26,7 @@ namespace PrroBot.Runs
 
             //build.ClearArea();
 
-            Movement.LootItemsOnGround();
+            build.LootItemsOnGround();
 
             //Movement.ToTownViaPortal(build);
 

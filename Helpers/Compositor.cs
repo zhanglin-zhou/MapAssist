@@ -517,7 +517,7 @@ namespace MapAssist.Helpers
                 {
                     var destinationArea = (Area)Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
 
-                    var playerNameUnicode = Encoding.UTF8.GetString(gameObject.ObjectData.Owner).TrimEnd((char)0);
+                    var playerNameUnicode = gameObject.ObjectData.Owner != null ? Encoding.UTF8.GetString(gameObject.ObjectData.Owner).TrimEnd((char)0) : null;
                     var playerName = !string.IsNullOrWhiteSpace(playerNameUnicode) ? playerNameUnicode : null;
 
                     var rosterEntry = _gameData.Roster.List.FirstOrDefault(x => x.Name == playerNameUnicode);

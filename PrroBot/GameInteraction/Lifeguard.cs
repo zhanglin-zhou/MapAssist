@@ -56,7 +56,7 @@ namespace PrroBot.GameInteraction
 
         public static void CheckInteractionPossible()
         {
-            if(PanicMode) throw new LifeguardException("Panic Mode active");
+            //if(PanicMode) throw new LifeguardException("Panic Mode active");
         }
 
         private static bool GetPotionKey(GameData gameData, PotionType type, out Keys key)

@@ -30,7 +30,7 @@ namespace MapAssist.Helpers
             foreach (var rule in matches.SelectMany(kv => kv.Value))
             {
                 // Skip generic unid rules for identified items on ground or in inventory
-                if (item.IsIdentified && (item.IsDropped || item.IsAnyPlayerHolding) && rule.TargetsUnidItem()) continue;
+                if (item.IsIdentified && (item.IsDropped || item.IsAnyPlayerHolding) && item.ItemData.ItemQuality < ItemQuality.MAGIC && rule.TargetsUnidItem()) continue;
 
                 if (item.IsInStore && !rule.CheckVendor) continue;
 

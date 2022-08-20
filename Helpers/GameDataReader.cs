@@ -121,7 +121,7 @@ namespace MapAssist.Helpers
                 } else if (gameObject.IsPortal)
                 {
                     var destinationArea = (Area)Enum.ToObject(typeof(Area), gameObject.ObjectData.InteractType);
-                    var playerNameUnicode = Encoding.UTF8.GetString(gameObject.ObjectData.Owner).TrimEnd((char)0);
+                    var playerNameUnicode = gameObject.ObjectData.Owner != null ? Encoding.UTF8.GetString(gameObject.ObjectData.Owner).TrimEnd((char)0) : null;
                     var playerName = !string.IsNullOrWhiteSpace(playerNameUnicode) ? playerNameUnicode : null;
                     var label = destinationArea.PortalLabel(_gameData.Difficulty, playerName);
                     _areaData.PointsOfInterest.Add(new PointOfInterest
@@ -133,7 +133,7 @@ namespace MapAssist.Helpers
                         RenderingSettings = MapAssistConfiguration.Loaded.MapConfiguration.GamePortal,
                         Type = PoiType.AreaPortal
                     });
-                    _log.Info($"Add portal {label} into PointsOfInterest");
+                    //_log.Info($"Add portal {label} into PointsOfInterest");
                 }
             }
         }

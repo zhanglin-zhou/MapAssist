@@ -17,12 +17,64 @@ namespace PrroBot.GameInteraction
         private static readonly NLog.Logger _log = NLog.LogManager.GetCurrentClassLogger();
         private static AreaData _areaData;
 
-        private static readonly TownConfig[] configs = { new TownConfig { shopNpc = Npc.Akara,   shopDialogueOption = 1, repairNpc = Npc.Charsi, healNpc = Npc.Akara  , identifyNpc = Npc.DeckardCain5, mercNpcs = new Npc[]{Npc.Kashya                            } },
-                                                         new TownConfig { shopNpc = Npc.Drognan, shopDialogueOption = 1, repairNpc = Npc.Fara  , healNpc = Npc.Fara   , identifyNpc = Npc.DeckardCain2, mercNpcs = new Npc[]{Npc.Greiz                             } },
-                                                         new TownConfig { shopNpc = Npc.Ormus,   shopDialogueOption = 1, repairNpc = Npc.Hratli, healNpc = Npc.Ormus  , identifyNpc = Npc.DeckardCain3, mercNpcs = new Npc[]{Npc.Asheara                           } },
-                                                         new TownConfig { shopNpc = Npc.Jamella, shopDialogueOption = 0, repairNpc = Npc.Halbu , healNpc = Npc.Jamella, identifyNpc = Npc.DeckardCain4, mercNpcs = new Npc[]{Npc.Tyrael  , Npc.Tyrael2, Npc.Tyrael3} },
-                                                         new TownConfig { shopNpc = Npc.Malah,   shopDialogueOption = 1, repairNpc = Npc.Larzuk, healNpc = Npc.Malah  , identifyNpc = Npc.DeckardCain6, mercNpcs = new Npc[]{Npc.QualKehk                          } },
-                                                       };
+        private static readonly TownConfig[] configs = { 
+            new TownConfig { 
+                shopNpc = Npc.Akara,   
+                shopDialogueOption = 1, 
+                repairNpc = Npc.Charsi, 
+                healNpc = Npc.Akara  , 
+                identifyNpc = Npc.DeckardCain5, 
+                mercNpcs = new Npc[]{
+                    Npc.Kashya                            
+                } 
+            },
+                                                         
+            new TownConfig { 
+                shopNpc = Npc.Drognan, 
+                shopDialogueOption = 1, 
+                repairNpc = Npc.Fara, 
+                healNpc = Npc.Fara, 
+                identifyNpc = Npc.DeckardCain2, 
+                mercNpcs = new Npc[]{
+                    Npc.Greiz                             
+                } 
+            },
+            new TownConfig { 
+                shopNpc = Npc.Ormus,
+                shopDialogueOption = 1, 
+                repairNpc = Npc.Hratli, 
+                healNpc = Npc.Ormus  , 
+                identifyNpc = Npc.DeckardCain3, 
+                mercNpcs = new Npc[]{
+                    Npc.Asheara                           
+                } 
+            },
+                                                         
+            new TownConfig { 
+                shopNpc = Npc.Jamella, 
+                shopDialogueOption = 0, 
+                repairNpc = Npc.Halbu , 
+                healNpc = Npc.Jamella, 
+                identifyNpc = Npc.DeckardCain4, 
+                mercNpcs = new Npc[]{
+                    Npc.Tyrael  , 
+                    Npc.Tyrael2, 
+                    Npc.Tyrael3
+                } 
+            },
+                                                         
+            new TownConfig { 
+                shopNpc = Npc.Malah,   
+                shopDialogueOption = 1, 
+                repairNpc = Npc.Larzuk, 
+                healNpc = Npc.Malah  , 
+                identifyNpc = Npc.DeckardCain6, 
+                mercNpcs = new Npc[]{
+                    Npc.QualKehk                          
+                } 
+            },
+                                                       
+        };
 
         private struct TownConfig
         {
@@ -514,8 +566,6 @@ namespace PrroBot.GameInteraction
 
             return success;
         }
-
-
 
         private static bool RepairNeeded()
         {

@@ -213,6 +213,7 @@ namespace MapAssist.Helpers
 
                 var monsterList = rawMonsterUnits.Where(x => x.UnitType == UnitType.Monster && x.IsMonster).ToArray();
 
+                /*
                 foreach (var monster in monsterList)
                 {
                     if (monster.IsSuperUnique)
@@ -222,6 +223,7 @@ namespace MapAssist.Helpers
                     }
 
                 }
+                */
 
                 foreach (var petEntry in pets.List)
                 {

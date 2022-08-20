@@ -9,25 +9,28 @@ namespace PrroBot
 { 
     public static class Inventory
     {
-        public static UnitItem[] GetAllItemsDamaged(UnitItem[] allItems, float damageThreshold = 0.6f)
+        public static UnitItem[] GetAllItemsDamaged(UnitItem[] allItems, float damageThreshold = 60)
         {
             var result = new List<UnitItem>();
             foreach (UnitItem item in allItems)
             {
-                double durability = item.Stats.ContainsKey(Stats.Stat.Durability) ? item.Stats[Stats.Stat.Durability] : 100;
-                double maxDurability = item.Stats.ContainsKey(Stats.Stat.MaxDurability) ? item.Stats[Stats.Stat.MaxDurability] : 100;
-
-                if (durability / maxDurability < damageThreshold) result.Add(item);
+                // Skip ethereal items
+                if (item.IsEthereal) continue;
+                if (item.IsIndestructible) continue;
+                if (item.durabilityPercent < damageThreshold)
+                {
+                    result.Add(item);
+                }
             }
             return result.ToArray();
         }
 
 
-        public static UnitItem[] GetAllItemsEquipped(UnitItem[] allItems) => allItems.Where(item => item.ItemMode == ItemMode.EQUIP).ToArray();
+        public static UnitItem[] GetAllItemsEquipped(UnitItem[] allItems) => allItems.Where(item => item.ItemMode == ItemMode.EQUIP && item.IsPlayerOwned).ToArray();
 
         public static UnitItem[] GetAllItemsInPlayerInventory(UnitItem[] allItems) => allItems.Where(item => item.ItemModeMapped == ItemModeMapped.Inventory).ToArray();
 
-        public static UnitItem[] GetAllUnidentifiedItems(UnitItem[] allItems) => allItems.Where(item => !item.IsIdentified && item.ItemData.ItemQuality == ItemQuality.UNIQUE).ToArray();
+        public static UnitItem[] GetAllUnidentifiedItems(UnitItem[] allItems) => allItems.Where(item => !item.IsIdentified).ToArray();
 
         public static UnitItem[] GetAllItemsToKeep(UnitItem[] allItems)
         {

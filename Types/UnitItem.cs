@@ -48,7 +48,9 @@ namespace MapAssist.Types
 
         public bool IsEthereal => (ItemData.ItemFlags & ItemFlags.IFLAG_ETHEREAL) == ItemFlags.IFLAG_ETHEREAL;
 
-        public bool IsIdentified => ItemData.ItemQuality >= ItemQuality.MAGIC && (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
+        public bool IsIndestructible => Stats.ContainsKey(Types.Stats.Stat.Indestructible) ? Stats[Types.Stats.Stat.Indestructible] > 0 : false;
+
+        public bool IsIdentified => ItemData.ItemQuality < ItemQuality.MAGIC || (ItemData.ItemFlags & ItemFlags.IFLAG_IDENTIFIED) == ItemFlags.IFLAG_IDENTIFIED;
 
         public bool IsIdentifiedForLog { get; set; }
 
@@ -71,6 +73,16 @@ namespace MapAssist.Types
         public ushort[] Suffixes => ItemData.Affixes.Skip(3).ToArray();
 
         public StashTab StashTab { get; set; } = StashTab.None;
+
+        public float durabilityPercent
+        {
+            get
+            {
+                var durability = Stats.ContainsKey(Types.Stats.Stat.Durability) ? Stats[Types.Stats.Stat.Durability] : 100;
+                var maxDurability = Stats.ContainsKey(Types.Stats.Stat.MaxDurability) ? Stats[Types.Stats.Stat.MaxDurability] : durability;
+                return durability * 100 / maxDurability;
+            }
+        }
 
         public bool IsAnyPlayerHolding
         {
