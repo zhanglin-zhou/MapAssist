@@ -129,103 +129,153 @@ namespace PrroBot.GameInteraction
                     throw ex;
                 }
             }
-
-            try
+            var actionList = new string[] { };
+            if (_areaData.Area == Area.Harrogath)
             {
-                _log.Info("DoIdentifyTask");
-                tmp = DoIdentifyTask(townConfig);
-                success &= tmp;
-                _log.Info("Done, " + tmp);
-            }
-            catch (Exception ex)
-            {
-                //  catch only specific exceptions and propagate all other exceptions to the caller
-                if (!(ex is TownException) && !(ex is MovementException))
+                actionList = new string[]
                 {
-                    throw ex;
+                    "heal",
+                    "pet",
+                    "identify",
+                    "store",
+                    "repair",
+                    "pet",
+                };
+            } else
+            {
+                actionList = new string[]
+{
+                    "heal",
+                    "pet",
+                    "identify",
+                    "store",
+                    "repair",
+                    "pet",
+};
+            }
+
+            foreach (var action in actionList)
+            {
+                switch (action)
+                {
+                    case "repair":
+                        {
+                            try
+                            {
+                                _log.Info("DoRepairTask");
+                                tmp = DoRepairTask(townConfig);
+                                success &= tmp;
+                                _log.Info("Done, " + tmp);
+                            }
+                            catch (Exception ex)
+                            {
+                                //  catch only specific exceptions and propagate all other exceptions to the caller
+                                if (!(ex is TownException) && !(ex is MovementException))
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        break;
+                    case "heal":
+                        {
+                            try
+                            {
+                                _log.Info("DoHealTask");
+                                tmp = DoHealTask(townConfig);
+                                success &= tmp;
+                                _log.Info("Done, " + tmp);
+                            }
+                            catch (Exception ex)
+                            {
+                                //  catch only specific exceptions and propagate all other exceptions to the caller
+                                if (!(ex is TownException) && !(ex is MovementException))
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        break;
+                    case "identify":
+                        {
+                            try
+                            {
+                                _log.Info("DoIdentifyTask");
+                                tmp = DoIdentifyTask(townConfig);
+                                success &= tmp;
+                                _log.Info("Done, " + tmp);
+                            }
+                            catch (Exception ex)
+                            {
+                                //  catch only specific exceptions and propagate all other exceptions to the caller
+                                if (!(ex is TownException) && !(ex is MovementException))
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        break;
+                    case "shopping":
+                        {
+                            try
+                            {
+                                _log.Info("DoShoppingTask");
+                                tmp = DoShoppingTask(townConfig);
+                                success &= tmp;
+                                _log.Info("Done, " + tmp);
+                            }
+                            catch (Exception ex)
+                            {
+                                //  catch only specific exceptions and propagate all other exceptions to the caller
+                                if (!(ex is TownException) && !(ex is MovementException))
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        break;
+                    case "store":
+                        {
+                            try
+                            {
+                                _log.Info("DoStoreItemsTask");
+                                tmp = DoStoreItemsTask();
+                                success &= tmp;
+                                _log.Info("Done, " + tmp);
+                            }
+                            catch (Exception ex)
+                            {
+                                //  catch only specific exceptions and propagate all other exceptions to the caller
+                                if (!(ex is TownException) && !(ex is MovementException))
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        break;
+                    case "pet":
+                        {
+                            try
+                            {
+                                _log.Info("DoReviveMercTask");
+                                tmp = DoReviveMercTask(townConfig);
+                                success &= tmp;
+                                _log.Info("Done, " + tmp);
+                            }
+                            catch (Exception ex)
+                            {
+                                //  catch only specific exceptions and propagate all other exceptions to the caller
+                                if (!(ex is TownException) && !(ex is MovementException))
+                                {
+                                    throw ex;
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
-
-            try
-            {
-                _log.Info("DoShoppingTask");
-                tmp = DoShoppingTask(townConfig);
-                success &= tmp;
-                _log.Info("Done, " + tmp);
-            }
-            catch (Exception ex)
-            {
-                //  catch only specific exceptions and propagate all other exceptions to the caller
-                if (!(ex is TownException) && !(ex is MovementException))
-                {
-                    throw ex;
-                }
-            }
-
-            try
-            {
-                _log.Info("DoStoreItemsTask");
-                tmp = DoStoreItemsTask();
-                success &= tmp;
-                _log.Info("Done, " + tmp);
-            }
-            catch (Exception ex)
-            {
-                //  catch only specific exceptions and propagate all other exceptions to the caller
-                if (!(ex is TownException) && !(ex is MovementException))
-                {
-                    throw ex;
-                }
-            }
-
-            try
-            {
-                _log.Info("DoRepairTask");
-                tmp = DoRepairTask(townConfig);
-                success &= tmp;
-                _log.Info("Done, " + tmp);
-            }
-            catch (Exception ex)
-            {
-                //  catch only specific exceptions and propagate all other exceptions to the caller
-                if (!(ex is TownException) && !(ex is MovementException))
-                {
-                    throw ex;
-                }
-            }
-
-            try
-            {
-                _log.Info("DoReviveMercTask");
-                tmp = DoReviveMercTask(townConfig);
-                success &= tmp;
-                _log.Info("Done, " + tmp);
-            }
-            catch (Exception ex)
-            {
-                //  catch only specific exceptions and propagate all other exceptions to the caller
-                if (!(ex is TownException) && !(ex is MovementException))
-                {
-                    throw ex;
-                }
-            }
-
-            try
-            {
-                _log.Info("DoHealTask");
-                tmp = DoHealTask(townConfig);
-                success &= tmp;
-                _log.Info("Done, " + tmp);
-            }
-            catch (Exception ex)
-            {
-                //  catch only specific exceptions and propagate all other exceptions to the caller
-                if (!(ex is TownException) && !(ex is MovementException))
-                {
-                    throw ex;
-                }
-            }
-
 
             Thread.Sleep(150);
 
@@ -545,7 +595,7 @@ namespace PrroBot.GameInteraction
         {
             //TODO also check merc health
             UnitPlayer currPlayer = GameMemory.GetCurrentPlayerUnit();
-            return currPlayer != null && currPlayer.LifePercentage != 100;
+            return currPlayer != null && currPlayer.LifePercentage < 95;
         }
 
         private static bool DoRepairTask(TownConfig townConfig)
