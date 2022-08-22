@@ -135,6 +135,7 @@ namespace PrroBot.GameInteraction
                 actionList = new string[]
                 {
                     "heal",
+                    "shopping",
                     "pet",
                     "identify",
                     "store",
@@ -146,6 +147,7 @@ namespace PrroBot.GameInteraction
                 actionList = new string[]
 {
                     "heal",
+                    "shopping",
                     "pet",
                     "identify",
                     "store",

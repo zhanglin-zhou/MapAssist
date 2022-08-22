@@ -382,6 +382,10 @@ namespace PrroBot.GameInteraction
             foreach (var item in itemsToPickup)
             {
                 success &= PickUpItem(item);
+                if (!success)
+                {
+                    _log.Info("Failed to pick up item: " + item.HashString);
+                }
             }
 
             return success;
@@ -395,8 +399,8 @@ namespace PrroBot.GameInteraction
             GameData gameData = Core.GetGameData();
             AreaData areaData = Core.GetAreaData();
             var rect = Common.GetGameBounds(); 
-            var xOffset = rect.Right * -0.01f;
-            var yOffset = rect.Bottom * 0.01f;
+            var xOffset = rect.Right * 0.005f;
+            var yOffset = rect.Bottom * 0.005f;
             var success = false;
             var tryCounter = 0;
 
@@ -421,23 +425,30 @@ namespace PrroBot.GameInteraction
                 }
 
                 _log.Info("Item close enough, trying to pick it up");
-
                 Input.SetCursorPos(new Point(0, 0));
                 Thread.Sleep(50);
                 var (_, screenCoord) = Common.WorldToScreen(gameData, areaData, item.Position, gameData.PlayerPosition);
 
-                var cursorPos = new Point(screenCoord.X + xOffset, screenCoord.Y + yOffset);
-                Input.SetCursorPos(cursorPos);
-                Thread.Sleep(50);
-                var hoverData = GameMemory.GetCurrentHoverData();
-                if(!hoverData.IsHovered || hoverData.UnitType != UnitType.Item)
+                var offsets = new[] {
+                    (-1, 1),
+                    (1, -1),
+                    (1, 0),
+                    (0, 1),
+                    (0, 0)
+                };
+                foreach (var offset in offsets)
                 {
-                    cursorPos = new Point(screenCoord.X, screenCoord.Y);
+                    var cursorPos = new Point(screenCoord.X + xOffset * offset.Item1, screenCoord.Y + yOffset * offset.Item2);
                     Input.SetCursorPos(cursorPos);
                     Thread.Sleep(50);
+                    var hoverData = GameMemory.GetCurrentHoverData();
+                    if (!hoverData.IsHovered || hoverData.UnitType != UnitType.Item)
+                    {
+                        continue;
+                    }
+                    Input.LeftMouseClick(cursorPos);
+                    break;
                 }
-                Input.LeftMouseClick(cursorPos);
-
 
                 WaitForNeutral();
                 Thread.Sleep(100);

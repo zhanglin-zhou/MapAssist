@@ -80,7 +80,9 @@ namespace PrroBot.Builds
             var notHitCounter = 0;
             var gameData = Core.GetGameData();
             var player = gameData.PlayerUnit;
-            while (monster != null && monster.HealthPercentage > 0 && attackCount < MaxAttackerCount && notHitCounter < 15 && player.LifePercentage > 0)
+            var menuData = Common.GetCurrentMenuData();
+
+            while (menuData.InGame && monster != null && monster.HealthPercentage > 0 && attackCount < MaxAttackerCount && notHitCounter < 15 && player.LifePercentage > 0)
             {
                 attackCount++;
                 var areaData = Core.GetAreaData();
@@ -121,11 +123,17 @@ namespace PrroBot.Builds
                 gameData = Core.GetGameData();
                 monster = gameData.Monsters.FirstOrDefault(x => x.UnitId == monster.UnitId);
                 player = gameData.PlayerUnit;
+                menuData = Common.GetCurrentMenuData();
+
                 if (monster != null && monster.HealthPercentage >= oldHealth)
                 {
                     notHitCounter++;
                     if (notHitCounter % 5 == 0)
                         _log.Info("Did not hit monster (" + notHitCounter + ")");
+                }
+                if (player.LifePercentage <= 2)
+                {
+                    _log.Info("You are dead!");
                 }
             }
             //Input.KeyUp(BotConfig.SkillConfig.BlessedHammer);

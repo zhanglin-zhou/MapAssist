@@ -12,7 +12,7 @@ namespace PrroBot.Runs
             Town.DoTownChores();
 
             //Movement.TakeWaypoint(4, 0);
-            Movement.MoveToNpc(Npc.Drehya);
+            Movement.MoveToPoint(5106, 5115);
 
             Movement.MoveToPortal(MapAssist.Types.Area.NihlathaksTemple);
 

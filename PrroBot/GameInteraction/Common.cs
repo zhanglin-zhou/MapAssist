@@ -156,21 +156,25 @@ namespace PrroBot.GameInteraction
         {
             var menuData = GetCurrentMenuData();
             if (menuData.InGame) return true;
+            var count = 3;
+            while (count > 0)
+            {
+                var rect = GetGameBounds();
+                Input.LeftMouseClick(rect.Right * 0.47f, rect.Bottom * 0.90f);
+                Thread.Sleep(250);
 
-            var rect = GetGameBounds();
-            Input.LeftMouseClick(rect.Right * 0.47f, rect.Bottom * 0.90f);
-            Thread.Sleep(250);
+                var x = rect.Right * 0.5f;
+                var y = rect.Bottom * 0.42f;
+                y += rect.Bottom * 0.06f * difficulty;
 
-            var x = rect.Right * 0.5f;
-            var y = rect.Bottom * 0.42f;
-            y += rect.Bottom * 0.06f * difficulty;
+                Input.LeftMouseClick(x, y);
 
-            Input.LeftMouseClick(x, y);
+                WaitForLoading(Area.None);
 
-            WaitForLoading(Area.None);
-
-            menuData = GetCurrentMenuData();
-            if (menuData.InGame) return true;
+                menuData = GetCurrentMenuData();
+                if (menuData.InGame) return true;
+                count--;
+            }
 
             return false;
         }
@@ -194,6 +198,12 @@ namespace PrroBot.GameInteraction
 
         public static List<UnitMonster> GetMonstersInRange(Point startPos, int range)
         {
+            var menuData = GetCurrentMenuData();
+            if (!menuData.InGame)
+            {
+                return new List<UnitMonster>();
+            }
+
             var gameData = Core.GetGameData();
             /* get all monsters in range ordered by current distance to the player unit */
             return gameData.Monsters.Where(x => !x.IsCorpse && Pathing.CalculateDistance(startPos, x.Position) < range).OrderBy(x => Pathing.CalculateDistance(x.Position, gameData.PlayerPosition)).ToList();

@@ -107,7 +107,8 @@ Glaive:
 ### To activate them for the loot log, remove the ## in front of them
 ### To inactivate items, include a ## in front of them or delete it completely, then save this file.
 ### You can test this with Full Rejuvenation Potion below.
-## Full Rejuvenation Potion:
+Full Rejuvenation Potion:
+Rejuvenation Potion:
 
 ### Mercenary Weapon Bases
 Colossus Voulge:
@@ -202,7 +203,6 @@ Twisted Essence of Suffering:
 Charged Essence of Hatred:
 Burning Essence of Terror:
 Festering Essence of Destruction:
-Full Rejuvenation Potion:
 
 ### Boots
 Boots:

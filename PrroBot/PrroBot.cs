@@ -32,12 +32,11 @@ namespace PrroBot
                 while(_running)
                 {
                     
-                    if (_build.UseLifeguard) Lifeguard.Start();
+                    if (_build.UseLifeguard) Lifeguard.Start(_mainThread);
                     var success = Common.StartGame(2);
                     if(!success)
                     {
                         _log.Error("Failed to start the game. Aborting");
-                        _running = false;
                         break;
                     }
 
@@ -98,6 +97,16 @@ namespace PrroBot
 
             BotStats.Running = true;
             BotStats.NewRunSequence(runs);
+        }
+
+        public static void Restart()
+        {
+            if (_mainThread != null)
+            {
+                _mainThread.Abort();
+            }
+            _mainThread = new Thread(new ThreadStart(Run));
+            _mainThread.Start();
         }
 
         public static void Stop()

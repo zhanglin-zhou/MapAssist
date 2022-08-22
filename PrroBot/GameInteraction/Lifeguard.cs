@@ -14,6 +14,7 @@ namespace PrroBot.GameInteraction
         private static DateTime lastHealing;
         private static DateTime lastMana;
         private static Thread thread = null;
+        private static Thread _mainThread = null;
         public static bool PanicMode = false;
 
         private static bool ShouldExitGame(GameData gameData)
@@ -101,6 +102,9 @@ namespace PrroBot.GameInteraction
                     _log.Info($"Task {Thread.CurrentThread.ManagedThreadId}: Exiting game");
                     Common.ExitGame();
                     _log.Info($"Task {Thread.CurrentThread.ManagedThreadId}: Setting Panic mode");
+                    _mainThread.Abort();
+                    _mainThread = null;
+                    PrroBot.Restart();
                     PanicMode = true;
                     BotStats.Chicken++;
                     continue;
@@ -145,8 +149,9 @@ namespace PrroBot.GameInteraction
             thread = null;
         }
 
-        public static void Start()
+        public static void Start(Thread mainThread)
         {
+            _mainThread = mainThread;
             PanicMode = false;
             run = true;
             if (thread == null)
