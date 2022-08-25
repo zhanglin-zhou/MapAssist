@@ -107,6 +107,28 @@ namespace PrroBot
             return new Point(finalX, baseY);
         }
 
+        public static Point GetInventoryDepositPos()
+        {
+            var rect = Common.GetGameBounds();
+
+            var baseX = rect.Right * 0.755f;
+            var baseY = rect.Bottom * 0.732f;
+
+            return new Point(baseX, baseY);
+        }
+
+
+        public static Point GetStashDepositPos()
+        {
+            var rect = Common.GetGameBounds();
+
+            var baseX = rect.Right * 0.18f;
+            var baseY = rect.Bottom * 0.71f;
+
+            return new Point(baseX, baseY);
+        }
+
+
         private static int MapStashTabToInt(StashTab stashTab)
         {
             switch (stashTab)

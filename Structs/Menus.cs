@@ -32,15 +32,37 @@ namespace MapAssist.Structs
         [FieldOffset(0x0D)] public bool Anvil; // Imbue and sockets
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x0E)] public bool QuestLog;
+
         //missing 3
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x0F)] public bool m1;
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x10)] public bool m2;
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x11)] public bool m3;
+        //missing 3
+
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x12)] public bool HasMercenary;
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x13)] public bool Waypoint;
+
         //missing 1
         [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x11)] public bool m4;
+        //missing 1
+
+        [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x15)] public bool Party;
+
+
         //missing 2
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x15)] public bool m5;
+        [MarshalAs(UnmanagedType.U1)]
+        [FieldOffset(0x15)] public bool m6;
+        //missing 2
+
         [MarshalAs(UnmanagedType.U1)]
         [FieldOffset(0x18)] public bool Stash;
         [MarshalAs(UnmanagedType.U1)]

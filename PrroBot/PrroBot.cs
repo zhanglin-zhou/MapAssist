@@ -125,7 +125,9 @@ namespace PrroBot
                     try
                     {
                         //Movement.MoveToNextArea();
-                        Movement.MoveToPortal(MapAssist.Types.Area.NihlathaksTemple);
+                        //Movement.MoveToPortal(MapAssist.Types.Area.NihlathaksTemple);
+                        //Town.DoDeposit();
+                        Town.DoWithDraw();
                     }
                     catch (Exception ex)
                     {

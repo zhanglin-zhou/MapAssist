@@ -116,6 +116,10 @@ namespace MapAssist.Types
             }
         }
 
+        public int Gold => Stats.TryGetValue(Types.Stats.Stat.Gold, out var val) ? val : 0;
+
+        public int StashGold => Stats.TryGetValue(Types.Stats.Stat.StashGold, out var val) ? val : 0;
+
         public Dictionary<Resist, int> GetResists(Difficulty difficulty)
         {
             var penalty = (ushort)difficulty == 2 ? 100 : (ushort)difficulty == 1 ? 40 : 0;

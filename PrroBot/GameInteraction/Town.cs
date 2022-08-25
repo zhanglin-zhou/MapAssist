@@ -140,7 +140,6 @@ namespace PrroBot.GameInteraction
                     "identify",
                     "store",
                     "repair",
-                    "pet",
                 };
             } else
             {
@@ -430,6 +429,57 @@ namespace PrroBot.GameInteraction
             return missingPotions;
         }
 
+        public static void DoDeposit()
+        {
+            var depos = Inventory.GetInventoryDepositPos();
+            Input.SetCursorPos(depos);
+            Thread.Sleep(200);
+            Input.LeftMouseClick(depos);
+            Thread.Sleep(200);
+            Input.KeyPress(Keys.Enter);
+            Thread.Sleep(150);
+        }
+
+        public static void DoWithDraw()
+        {
+            var gameData = Core.GetGameData();
+            var gold = gameData.PlayerUnit.StashGold;
+            if (gold < 100000)
+            {
+                var screenCoord = Inventory.GetStashTabScreenPos(gameData, StashTab.Shared1);
+                Input.LeftMouseClick(screenCoord);
+                Thread.Sleep(500);
+                var depos = Inventory.GetStashDepositPos();
+                Input.SetCursorPos(depos);
+                Thread.Sleep(200);
+                Input.LeftMouseClick(depos);
+                Thread.Sleep(200);
+
+                Input.KeyDown(Keys.ControlKey);
+                Thread.Sleep(250);
+                Input.KeyPress(Keys.A);
+                Thread.Sleep(250);
+                Input.KeyUp(Keys.ControlKey);
+                Thread.Sleep(500);
+
+                int num = 100000 - gold;
+                var s = num.ToString();
+                foreach (var c in s)
+                {
+                    Input.KeyPress((Keys)c);
+                    Thread.Sleep(250);
+                }
+                Input.KeyPress(Keys.Enter);
+                Thread.Sleep(150);
+                
+                screenCoord = Inventory.GetStashTabScreenPos(gameData, StashTab.Personal);
+                Input.LeftMouseClick(screenCoord);
+                Thread.Sleep(500);
+                DoDeposit();
+            }
+        }
+
+
         private static bool DoStoreItemsTask()
         {
             var gameData = Core.GetGameData();
@@ -443,8 +493,10 @@ namespace PrroBot.GameInteraction
             var itemsToKeep = Inventory.GetAllItemsToKeep(itemsInInventory);
 
             var rejuvsMissing = GetMissingPotions(gameData, new PotionType[] { PotionType.RejuvenationPotion }).Count();
-
-            if (itemsToKeep.Length == 0 && rejuvsMissing == 0) return true; //TODO also check for rejuvs in stash and return if there are none
+            // find all rejuvenation potions that are currently stored in a stash tab that is available for refilling rejuv potions
+            var rejuvsInStash = gameData.AllItems.Where(x => x.ItemModeMapped == ItemModeMapped.Stash && x.Item == Item.FullRejuvenationPotion && Inventory.IsStashtabAvailForRefillRejuvs(x.StashTab)).ToList();
+            
+            if (itemsToKeep.Length == 0 && (rejuvsMissing == 0 || rejuvsInStash.Count == 0)) return true;
 
             var chest = areaData.Objects[GameObject.Bank][0];
             Movement.MoveToPoint(chest);
@@ -475,6 +527,8 @@ namespace PrroBot.GameInteraction
                         Thread.Sleep(1000);
                     }
 
+                    DoDeposit();
+
                     gameData = Core.GetGameData();
 
                     itemsInInventory = Inventory.GetAllItemsInPlayerInventory(gameData.AllItems);
@@ -487,10 +541,44 @@ namespace PrroBot.GameInteraction
                 }
             }
 
-            if(rejuvsMissing != 0)
+            var gold = gameData.PlayerUnit.StashGold;
+            if (gold < 100000)
             {
-                // find all rejuvenation potions that are currently stored in a stash tab that is available for refilling rejuv potions
-                var rejuvsInStash = gameData.AllItems.Where(x => x.ItemModeMapped == ItemModeMapped.Stash && x.Item == Item.FullRejuvenationPotion && Inventory.IsStashtabAvailForRefillRejuvs(x.StashTab)).ToList();
+                var screenCoord = Inventory.GetStashTabScreenPos(gameData, StashTab.Shared1);
+                Input.LeftMouseClick(screenCoord);
+                Thread.Sleep(500);
+                var depos = Inventory.GetStashDepositPos();
+                Input.SetCursorPos(depos);
+                Thread.Sleep(200);
+                Input.LeftMouseClick(depos);
+                Thread.Sleep(200);
+
+                Input.KeyDown(Keys.ControlKey);
+                Thread.Sleep(250);
+                Input.KeyPress(Keys.A);
+                Thread.Sleep(250);
+                Input.KeyUp(Keys.ControlKey);
+                Thread.Sleep(500);
+
+                int num = 100000 - gold;
+                var s = num.ToString();
+                foreach (var c in s)
+                {
+                    Input.KeyPress((Keys)c);
+                    Thread.Sleep(250);
+                }
+                Input.KeyPress(Keys.Enter);
+                Thread.Sleep(150);
+
+                screenCoord = Inventory.GetStashTabScreenPos(gameData, StashTab.Personal);
+                Input.LeftMouseClick(screenCoord);
+                Thread.Sleep(500);
+                DoDeposit();
+            }
+
+
+            if (rejuvsMissing != 0)
+            {
                 var currentStashTab = StashTab.None;
 
                 if(rejuvsInStash != null && rejuvsInStash.Count() > 0)
